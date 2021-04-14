@@ -1,0 +1,24 @@
+{
+  "name": "ipu",
+  "version": "1.0.0",
+  "description": "ipu",
+  "main": "server.js",
+  "scripts": {
+    "test": "node server.js",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/miho73/SES.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/miho73/SES/issues"
+  },
+  "homepage": "https://github.com/miho73/SES#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1"
+  }
+}
