@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Sign In</title>
+		<meta charset="utf-8">
+		<link rel="stylesheet" type="text/css" href="/lib/auth/signin.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	</head>
+	<body>
+		<p id="err" style="display: <%= visible%>;">Sign up cannot be completed</p>
+		<section id="container-h">
+			<section id="container-v">
+				<form method="POST">
+					<label id="title">Sign Up</label><br>
+					<input type="text" id="name" class="input second" name="name" placeholder="Name" spellcheck="false" style="display: none;" required>
+					<input type="text" id="id" class="input second" name="id" placeholder="ID" spellcheck="false" style="display: none;" required>
+					<input type="password" id="pwd" class="input second" name="password" placeholder="Password" spellcheck="false" style="display: none;" required>
+					<input type="text" id="invite" class="input" name="invite" placeholder="Invite code" spellcheck="false" maxlength="6" required>
+					<label id="errdisplay" style="display: none;"></label>
+					<button type="button" id="submit" class="input" onclick="formNxt()">Proceed</button>
+				</form>
+			</section>
+		</section>
+	</body>
+	<script>
+		function formNxt() {
+			$.ajax({
+				url: "/auth/invite",
+				data: {"code": document.getElementById('invite').value},
+				type: "POST",
+				dataType: "json",
+				success: function(data) {
+					if(data.status == 1) {
+						document.getElementById('invite').style.opacity = 0;
+						document.getElementById('errdisplay').style.display = "none";
+						document.getElementById('submit').onclick = undefined;
+						setTimeout(()=>{
+							document.getElementById('invite').style.display = 'none';
+							document.getElementById('name').style.display = 'inline-block';
+							document.getElementById('id').style.display = 'inline-block';
+							document.getElementById('pwd').style.display = 'inline-block';
+							setTimeout(()=>{
+								document.getElementById('name').style.opacity = 1;
+								document.getElementById('id').style.opacity = 1;
+								document.getElementById('pwd').style.opacity = 1;
+								document.getElementById('submit').type = 'submit';
+								document.getElementById('submit').innerText = "Sign up";
+							}, 50);
+						}, 300);
+					}
+					else {
+						document.getElementById('errdisplay').innerText = "Cannot confirm your invition code";
+						document.getElementById('errdisplay').style.display = "inline-block";
+						document.getElementById('invite').value = "";
+					}
+				},
+				error: function(err) {
+					document.getElementById('errdisplay').innerText = "Cannot use identification server";
+					document.getElementById('errdisplay').style.display = "inline-block";
+					document.getElementById('invite').value = "";
+				}
+			});
+		}
+	</script>
+</html>

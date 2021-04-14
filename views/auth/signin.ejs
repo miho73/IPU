@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Sign In</title>
+		<meta charset="utf-8">
+		<link rel="stylesheet" type="text/css" href="/lib/auth/signin.css">
+	</head>
+	<body>
+		<p id="err" style="display: <%= visible%>;">You've entered the wrong identification</p>
+		<section id="container-h">
+			<section id="container-v">
+				<form method="POST" action="/login">
+					<label id="title">Login</label><br>
+					<input type="text" id="id" class="input" name="u" placeholder="ID" spellcheck="false" required style="margin-top: 20px;">
+					<input type="password" id="pwd" class="input" name="p" placeholder="Password" spellcheck="false" required>
+					<button type="submit" id="submit" class="input">Login</button>
+				</form>
+			</section>
+		</section>
+	</body>
+</html>

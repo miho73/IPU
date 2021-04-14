@@ -7,10 +7,6 @@ function onload() {
     if(check) {
         alert("Mobile does not fully supported");
     }
-    setInterval(()=>{
-        document.getElementById('header').classList.add('showme');
-        document.getElementById('footer').classList.add('showme');
-    }, 400);
 }
 
 function FullscreenRelease(event) {
@@ -32,13 +28,16 @@ function Fullscreen() {
 }
 
 function AboutDisplay() {
-    document.getElementById('about-page').classList.remove('about-hide-page');
-    document.getElementById('about-page').classList.add('about-show-page');
-    for(let i=1; i<=3; i++) {
-        document.getElementById(`footer-up-${i}`).classList.add('inverse-footer-up');
-    }
-    document.getElementById('fullscr-txt').classList.add('inverse-footer-dwn');
-    document.getElementById('header-title').classList.add('inverse-header');
+    document.getElementById('about-page').style.display = 'block';
+    setTimeout(()=>{ 
+        document.getElementById('about-page').classList.remove('about-hide-page');
+        document.getElementById('about-page').classList.add('about-show-page');
+        for(let i=1; i<=3; i++) {
+            document.getElementById(`footer-up-${i}`).classList.add('inverse-footer-up');
+        }
+        document.getElementById('fullscr-txt').classList.add('inverse-footer-dwn');
+        document.getElementById('header-title').classList.add('inverse-header');
+    }, 100);
 }
 function HideAboutDisplay() {
     document.getElementById('about-page').classList.add('about-hide-page');
@@ -48,4 +47,7 @@ function HideAboutDisplay() {
     }
     document.getElementById('fullscr-txt').classList.remove('inverse-footer-dwn');
     document.getElementById('header-title').classList.remove('inverse-header');
+    setTimeout(()=>{ 
+        document.getElementById('about-page').style.display = 'none';
+    }, 350);
 }

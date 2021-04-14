@@ -36,7 +36,7 @@ a {
 }
 
 div#display {
-    position: relative;
+    position: absolute;
     width: 100%;
     height: 100%;
     background-color: #fff;
@@ -45,14 +45,12 @@ div#display {
 }
 #header {
     text-align: center;
-    opacity: 0;
 }
 #footer {
     bottom: 0;
     position: absolute;
     left: 50%;
     margin-left: -72px;
-    opacity: 0;
 }
 .footer-up {
     margin-top: 5px;
@@ -65,9 +63,9 @@ div#display {
     text-align: center;
 }
 #about-page {
+    position: absolute;
     width: 100%;
     height: 100%;
-    z-index: 9999;
     background-color: #000000df;
     opacity: 0;
 }
@@ -91,6 +89,26 @@ div#display {
     -moz-transition: opacity .3s linear;
     -webkit-transition: opacity .3s linear;
     -o-transition: opacity .3s linear;
+}
+#root {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+#user {
+    position: absolute;
+    text-align: right;
+    width: 200px;
+    margin-top: 60px;
+    height: 25px;
+    padding: 0 20px 0 0;
+    right: 0;
+}
+#heading {
+    width: 100%;
+    height: 85px;
+    border-color: #000;
+    border-bottom: 2px;
 }
 
 p.footer-text {
@@ -120,6 +138,14 @@ span#header-title {
     margin-left: -37px;
     font-size: 80px;
     font-family: 'Cafe24Shiningstar', 'Cafe24Oneprettynight', 'Spoqa Han Sans Neo', 'sans-serif';
+}
+#welcome {
+    width: fit-content;
+    text-align: right;
+    font-size: 1.5em;
+    font-weight: 300;
+    text-decoration: underline;
+    font-family: 'Cafe24Oneprettynight', 'Spoqa Han Sans Neo', 'sans-serif';
 }
 
 a.footer-href {
@@ -184,7 +210,7 @@ a#about-close {
     position: absolute;
     top: 50%;
     left: 10px;
-    margin-top: -25px;
+    margin-top: -20px;
 }
 img.about-close {
     content: url('/lib/imgs/x.png');
