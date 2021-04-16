@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Make a problem</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="/lib/univ.css">
+        <link rel="stylesheet" type="text/css" href="/lib/problem/problem.css">
+
+        <script src="/lib/univ.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+        <!--Quill load-->
+        <link rel="stylesheet" type="text/css" href="/lib/quill/quill.bubble.css">
+        <link rel="stylesheet" type="text/css" href="/lib/quill/quill.core.css">
+        <link rel="stylesheet" type="text/css" href="/lib/quill/quill.snow.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/monokai-sublime.min.css">
+        <script src="/lib/quill/quill.core.js"></script>
+        <script src="/lib/quill/quill.js"></script>
+        <script src="/lib/quill/quill.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    </head>
+    <body class="no-mathjax">
+        <div id="display" style="text-align: center;">
+            <div id="root">
+                <div id="heading">
+                    <div id="user">
+                        <div id="nloged" style="display: <%= nlog%>">
+                            <span id="welcome" style="margin-right: 5px;">
+                                <a href="/login/?ret=problem/make" style="color: black; font-family: inherit; font-size: inherit;">login</a>
+                            </span>
+                            <span id="welcome" style="margin-left: 5px;">
+                                <a href="/signup" style="color: black; font-family: inherit; font-size: inherit;">signup</a>
+                            </span>
+                        </div>
+                        <div id="yloged" style="display: <%= ylog%>;">
+                            <span id="welcome" style="margin-right: 5px;">
+                                <a href="/profile" style="color: black; font-family: inherit; font-size: inherit;"><%= username%></a>
+                            </span>
+                            <span id="welcome" style="margin-left: 5px;">
+                                <a href="/login/deauth" style="color: black; font-family: inherit; font-size: inherit;">Logout</a>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <h2 id="title">문제 등록</h2>
+                <div id="prob-cont">
+                    <div id="top-menu">
+                        <input type="text" id="name" class="prob-name" spellcheck="false">
+                        <select id="category" class="selbox">
+                            <option disabled selected>분류</option>
+                            <optgroup label="수학">
+                                <option value="alge">대수</option>
+                                <option value="numb">정수</option>
+                                <option value="comb">조합</option>
+                                <option value="geom">기하</option>
+                            </optgroup>
+                            <optgroup label="과학">
+                                <option value="phys">물리</option>
+                                <option value="chem">화학</option>
+                                <option value="biol">생물</option>
+                                <option value="eart">지구</option>
+                            </optgroup>
+                            <option value="etc">기타</option>
+                        </select>
+                        <select id="diffi" class="selbox">
+                            <option disabled selected>난이도</option>
+                            <option value="unra">Unrated</option>
+                            <option value="broz">Bronze</option>
+                            <option value="silv">Silver</option>
+                            <option value="gold">Gold</option>
+                            <option value="sapp">Sapphire</option>
+                            <option value="ruby">Ruby</option>
+                            <option value="diam">Diamond</option>
+                        </select>
+                    </div>
+                    <h3 id="pro-cont" class="sub-title">문제 내용*</h3>
+                    <div class="editor-container">
+                        <div id="editor-cont"></div>
+                    </div>
+                    <h3 id="pro-exp" class="sub-title">해설*</h3>
+                    <div class="editor-container">
+                        <div id="editor-exp"></div>
+                    </div>
+                    <h3 id="pro-ans" class="sub-title">정답*</h3>
+                    <div class="editor-container">
+                        <div id="editor-ans"></div>
+                    </div>
+                    <div id="hint-edit-container" class="expand-height" style="display: none; max-height: 0;">
+                        <h3 id="pro-hint" class="sub-title">힌트</h3>
+                        <div class="editor-container" style="margin-bottom: 5px;">
+                            <div id="editor-hint"></div>
+                        </div>
+                    </div>
+                    <div style="text-align: left;">
+                        <label><input type="checkbox" id="hashint" onchange="hintSH()">이 문제에 힌트를 추가합니다.</label>
+                    </div>
+                    <button id="preview" onclick="preview()">Preview</button>
+                    <div id="preview-container" style="display: none;">
+                        <p class="title-prev">문제:</p>
+                        <div id="preview-cont" class="mathjax preview-div"></div>
+                        <p class="title-prev">풀이:</p>
+                        <div id="preview-exp" class="mathjax preview-div"></div>
+                        <p class="title-prev">정답:</p>
+                        <div id="preview-ans" class="mathjax preview-div"></div>
+                        <div id="hint-prev" class="expand-height" style="display: none; max-height: 0;">
+                            <p class="title-prev">힌트:</p>
+                            <div id="preview-hint" class="mathjax preview-div"></div>
+                        </div>
+                        <button id="confirm" onclick="confirme()">Confirm</button>
+                    </div>
+                </div>
+            </div>
+            <%- include('../ejs-components/simple.ejs')%>
+        </div>
+        <script>
+            const toolbar_conf = 
+            {
+                toolbar: [
+                    [ {size: []} ],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'script': 'sub'}, { 'script': 'super' }],
+                    [{'header': '1'}, {'header': '2'}, 'blockquote'],
+                    ['link', 'image'],
+                    [{ 'indent': '-1'}, { 'indent': '+1' }, { 'align': [] }],
+                    [{ list: 'ordered' }, { list: 'bullet' }],
+                    [{ color: [] }, { background: [] }],
+                ]
+            };
+            var contedit = new Quill('#editor-cont', {
+                placeholder: '문제 내용',
+                modules: toolbar_conf,
+                theme: 'snow'
+            });
+            var expedit = new Quill('#editor-exp', {
+                placeholder: '문제 풀이',
+                modules: toolbar_conf,
+                theme: 'snow'
+            });
+            var ansedit = new Quill('#editor-ans', {
+                placeholder: '정답',
+                modules: toolbar_conf,
+                theme: 'snow'
+            });
+            var hintedit = new Quill('#editor-hint', {
+                placeholder: '힌트',
+                modules: toolbar_conf,
+                theme: 'snow'
+            });
+            contedit.getModule('toolbar').addHandler('image', function() {
+                selectLocalImage(contedit);
+            });
+            expedit.getModule('toolbar').addHandler('image', function() {
+                selectLocalImage(expedit);
+            });
+            ansedit.getModule('toolbar').addHandler('image', function() {
+                selectLocalImage(ansedit);
+            });
+            hintedit.getModule('toolbar').addHandler('image', function() {
+                selectLocalImage(hintedit);
+            });
+            function selectLocalImage(forwhat) {
+                const input = document.createElement('input');
+                input.setAttribute('type', 'file');
+                input.click();
+                input.onchange = function() {
+                    const fd = new FormData();
+                    const file = $(this)[0].files[0];
+                    fd.append('img', file);
+                    $.ajax({
+                        type: 'POST',
+                        enctype: 'multipart/form-data',
+                        url: '/problem/make/upload',
+                        data: fd,
+                        processData: false,
+                        contentType: false,
+                        success: function(data) {
+                            const range = forwhat.getSelection();
+                            forwhat.insertEmbed(range.index, 'image', 'http://localhost:8888/problem/lib/'+data);
+                        },
+                        error: function(err) {
+                            console.error("Error: "+err);
+                        }
+                    });
+                };
+            }
+        </script>
+    </body>
+    <script>
+        function preview() {
+            content = document.getElementById('editor-cont').getElementsByClassName('ql-editor')[0].innerHTML;
+            exp = document.getElementById('editor-exp').getElementsByClassName('ql-editor')[0].innerHTML;
+            ans = document.getElementById('editor-ans').getElementsByClassName('ql-editor')[0].innerHTML;
+            hint = document.getElementById('editor-hint').getElementsByClassName('ql-editor')[0].innerHTML;
+            document.getElementById('preview-container').style.display = "block";
+            setTimeout(()=>{
+                document.getElementById('preview-container').style.opacity = 1;
+            }, 10);
+            $('#preview-cont').html(content);
+            $('#preview-exp').html(exp);
+            $('#preview-ans').html(ans);
+            $('#preview-hint').html(hint);
+            MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+            location.href = '#confirm'
+        }
+        function confirme() {
+            let proceed = confirm("문제를 등록할까요?");
+            let precond = true;
+            if(!proceed) return;
+            content = document.getElementById('editor-cont').getElementsByClassName('ql-editor')[0].innerHTML;
+            exp = document.getElementById('editor-exp').getElementsByClassName('ql-editor')[0].innerHTML;
+            ans = document.getElementById('editor-ans').getElementsByClassName('ql-editor')[0].innerHTML;
+            hintx = document.getElementById('editor-hint').getElementsByClassName('ql-editor')[0].innerHTML;
+            namep = document.getElementById('name').value;
+            if(namep == "" || namep == undefined) {
+                document.getElementById('name').classList.add('formthis');
+                location.href = "#name";
+                precond = false;
+            }
+            else {
+                document.getElementById('name').classList.remove('formthis');
+            }
+            cat = document.getElementById('category');
+            if(cat.selectedIndex == 0) {
+                document.getElementById('category').classList.add('formthis');
+                location.href = "#category";
+                precond = false;
+            }
+            else {
+                document.getElementById('category').classList.remove('formthis');
+            }
+            dif = document.getElementById('diffi');
+            if(dif.selectedIndex == 0) {
+                document.getElementById('diffi').classList.add('formthis');
+                location.href = "#diffi";
+                precond = false;
+            }
+            else {
+                document.getElementById('diffi').classList.remove('formthis');
+            }
+            if(!precond) return;
+            $.ajax({
+                type: 'POST',
+                url: '/problem/make/register',
+                data: {
+                    title: namep,
+                    cate: cat.value,
+                    difficult: dif.value,
+                    cont: content,
+                    expl: exp,
+                    answ: ans,
+                    hint: hintx,
+                    hashint: document.getElementById('hashint').checked
+                },
+                success: function(data) {
+                    console.log(data);
+                },
+                error: function(err) {
+                    if(err.status == 401) {
+                        let x = confirm('문제를 추가하려면 로그인해야 합니다.');
+                        if(x) {
+                            window.location.href = `/login/?ret=problem/make`;
+                        }
+                    }
+                }
+            });
+        }
+        function hintSH() {
+            if(document.getElementById('hashint').checked) {
+                document.getElementById('hint-edit-container').style.display = "block";
+                setTimeout(()=>{
+                    document.getElementById('hint-edit-container').style.maxHeight = "500px"
+                }, 5);
+                document.getElementById('hint-prev').style.display = "block";
+                setTimeout(()=>{
+                    document.getElementById('hint-prev').style.maxHeight = "500px"
+                }, 5);
+            }
+            else {
+                document.getElementById('hint-edit-container').style.maxHeight = "0"
+                setTimeout(()=>{
+                    document.getElementById('hint-edit-container').style.display = "none";
+                }, 500);
+                document.getElementById('hint-prev').style.maxHeight = "0"
+                setTimeout(()=>{
+                    document.getElementById('hint-prev').style.display = "none";
+                }, 500);
+            }
+        }
+    </script>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                processEscapes: true,
+                processClass: "mathjax",
+                ignoreClass: "no-mathjax"
+            }
+        });
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML'></script>
+</html>

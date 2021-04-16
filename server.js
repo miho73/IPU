@@ -6,6 +6,7 @@ const session = require('express-session');
 const ejs = require('ejs');
 
 const auth = require('./server-component/auth');
+const problem = require('./server-component/problem');
 
 const app = express();
 app.set("view engine", "ejs");
@@ -46,9 +47,10 @@ app.get('/', (req, res)=>{
 });
 
 auth.authRouter(app);
+problem.problemRouter(app, __dirname);
 
 app.use(function(req, res) {
-    res.set('status', 404)
+    res.status = 404;
     res.send("404");
 });
 

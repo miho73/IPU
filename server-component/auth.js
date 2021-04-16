@@ -16,6 +16,7 @@ IdenDb.serialize(()=>{
                 'user_password TEXT NOT NULL,'+
                 'user_salt TEXT NOT NULL,'+
                 'invite_code TEXT NOT NULL,'+
+                'bio TEXT NOT NULL,'+
                 'privilege TEXT NOT NULL);');
 });
 
@@ -53,15 +54,19 @@ module.exports = {
         });
         //Login Post Handler; u, p
         app.post('/login', (req, res)=>{
+            let ret = '';
+            if(req.query.ret != undefined) ret = req.query.ret;
             if(req.body.u == undefined || req.body.p == undefined) {
                 res.render("../views/auth/signin.ejs", {
-                    'visible': 'block'
+                    'visible': 'block',
+                    'ret': `/${ret}`
                 });
                 return;
             }
             if(!new RegExp('^[a-zA-Z0-9]{1,50}$').test(req.body.u)) {
                 res.render("../views/auth/signin.ejs", {
-                    'visible': 'block'
+                    'visible': 'block',
+                    'ret': `/${ret}`
                 });
                 return;
             }
@@ -71,7 +76,8 @@ module.exports = {
                     if(err) {
                         if(!sucess) {
                             res.render("../views/auth/signin.ejs", {
-                                'visible': 'block'
+                                'visible': 'block',
+                                'ret': `/${ret}`
                             });
                         }
                     }
@@ -86,13 +92,14 @@ module.exports = {
                                     prev: row[0].privilege,
                                     auth: true
                                 };
-                                res.redirect("/");
+                                res.redirect(`${req.body.ret}`);
                                 sucess = true;
                             }
                             else {
                                 if(!sucess) {
                                     res.render("../views/auth/signin.ejs", {
-                                        'visible': 'block'
+                                        'visible': 'block',
+                                        'ret': `/${ret}`
                                     });
                                 }
                             }
@@ -101,7 +108,8 @@ module.exports = {
                 }
                 else {
                     res.render("../views/auth/signin.ejs", {
-                        'visible': 'block'
+                        'visible': 'block',
+                        'ret': `/${ret}`
                     });
                 }
             });
@@ -152,8 +160,8 @@ module.exports = {
             }
             crypto.randomBytes(64, (err, buf) => {
                 crypto.pbkdf2(req.body.password, buf.toString('base64'), 12495, 64, 'sha512', (err, key) => {
-                IdenDb.run(`INSERT INTO iden(user_id, user_name, user_password, user_salt, invite_code, privilege) `+
-                           `values (?, ?, ?, ?, ?, "usr")`,
+                IdenDb.run(`INSERT INTO iden(user_id, user_name, user_password, user_salt, invite_code, bio, privilege) `+
+                           `values (?, ?, ?, ?, ?, "", "usr")`,
                            [req.body.id, req.body.name, key.toString('base64'), buf.toString('base64'), req.body.invite]);
                 });
             });
@@ -164,8 +172,11 @@ module.exports = {
                 res.redirect('/');
             }
             else {
+                let ret = ''
+                if(req.query.ret != undefined) ret = req.query.ret;
                 res.render("../views/auth/signin.ejs", {
-                    'visible': 'none'
+                    'visible': 'none',
+                    'ret': `/${ret}`
                 });
             }            
         });
