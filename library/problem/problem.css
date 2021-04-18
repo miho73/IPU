@@ -57,6 +57,7 @@ div#display {
     border-width: 1px;
     border-color: black;
     border-style: solid;
+    padding: 7px;
 }
 #preview-container {
     width: 100%;
@@ -76,6 +77,10 @@ div#display {
     width: 80%;
     margin: auto;
 }
+#prob-cont-v {
+    width: 60%;
+    margin: auto;
+}
 #top-menu {
     width: 100%;
     height: 40px;
@@ -91,15 +96,6 @@ div#display {
     box-sizing: border-box;
     padding: 0;
     width: 100%;
-}
-.prob-element {
-    width: 80%;
-    height: 30px;
-    margin: auto;
-    box-sizing: border-box;
-    border-width: 1px;
-    border-style: solid;
-    border-color: black;
 }
 
 p.title-prev {
@@ -139,4 +135,17 @@ select.selbox {
     border-style: solid;
     border-color: red;
     box-shadow: 0 0 3px red;
+}
+
+a.prob-href {
+    font-weight: 400;
+}
+
+span.prob-title {
+    margin-bottom: 0;
+    font-size: 25px;
+}
+
+hr {
+    margin-top: 0 !important;
 }

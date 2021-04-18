@@ -2,18 +2,20 @@
 
 <html>
     <head>
-        <title>문제</title>
+        <title><%= problem_name%></title>
         <meta charset="utf-8">
 
         <link rel="stylesheet" type="text/css" href="/lib/univ.css">
         <link rel="stylesheet" type="text/css" href="/lib/problem/problem.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap.min.css">
-        <script src="/lib/univ.js"></script>
+        <link rel="stylesheet" type="text/css" href="/lib/quill/quill.bubble.css">
+        <link rel="stylesheet" type="text/css" href="/lib/quill/quill.core.css">
+        <link rel="stylesheet" type="text/css" href="/lib/quill/quill.snow.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/monokai-sublime.min.css">
         <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-        <script src="/lib/problem/pShow.js"></script>
     </head>
     <body>
-        <div id="display" style="text-align: center;">
+        <div id="display">
             <div id="root">
                 <div id="heading">
                     <%- include('../ejs-components/goto.ejs')%>
@@ -36,24 +38,26 @@
                         </div>
                     </div>
                 </div>
-                <div id="prob-cont">
-                    <h1 style="margin-bottom: 1em;">Problems</h1>
-                    <table class="table table-striped table-bordered">
-                        <thead>
-                            <tr>
-                                <th style="width: 6%">문제</th>
-                                <th style="width: 50%;">문제 제목</th>
-                                <th style="width: 30%;">정보</th>
-                                <th style="width: 9%;">맞은 사람</th>
-                                <th style="width: 5%;">분류</th>
-                            </tr>
-                        </thead>
-                        <tbody id="addProb">
-                        </tbody>
-                    </table>
+                <div id="prob-cont-v">
+                    <h1 style="margin-bottom: 1em;"><%= problem_name%></h1>
+                    <span class="prob-title">문제</span>
+                    <hr>
+                    <%- prob_cont%>
+                    <hr>
                 </div>
             </div>
             <%- include('../ejs-components/simple.ejs')%>
         </div>
     </body>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                processEscapes: true,
+                processClass: "mathjax",
+                ignoreClass: "no-mathjax"
+            }
+        });
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML'></script>
 </html>

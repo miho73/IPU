@@ -114,11 +114,21 @@ div#display {
     height: 85px;
     border-color: #000;
     border-bottom: 2px;
+    line-height: normal;
 }
 #root-margin {
     position: absolute;
     width: 100%;
     top: 85px;
+}
+#goto {
+    position: absolute;
+    text-align: left;
+    width: 200px;
+    margin-top: 60px;
+    height: 25px;
+    padding: 0 0 0 20px;
+    left: 0;
 }
 
 p.footer-text {
@@ -142,17 +152,18 @@ p.footer-text {
 
 span#header-title {
     position: absolute;
-    top: 0.1em;
+    top: 0;
     left: 50%;
     width: 74px;
+    height: 84.8px;
     margin-left: -37px;
     font-size: 80px;
     font-family: 'Cafe24Shiningstar', 'Cafe24Oneprettynight', 'Spoqa Han Sans Neo', 'sans-serif';
 }
-#welcome {
+.welcome {
     width: fit-content;
     text-align: right;
-    font-size: 1.2em;
+    font-size: 18px;
     font-weight: 300;
     text-decoration: underline;
     font-family: 'Cafe24Oneprettynight', 'Spoqa Han Sans Neo', 'sans-serif';
@@ -178,6 +189,16 @@ a.footer-href {
     -moz-transition: color .15s linear;
     -webkit-transition: color .15s linear;
     -o-transition: color .15s linear;
+}
+
+table.table {
+    border: 1px solid #ddd;
+    font-size: 15px;
+    font-weight: 450;
+    text-align: left;
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 0;
 }
 
 /*About Page CSS*/

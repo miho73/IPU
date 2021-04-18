@@ -22,13 +22,6 @@ app.use(session({
 const HTTP_PORT = 8888;
 const HTTPS_PORT = 4444;
 
-function sendError(errCode, errName, res) {
-    res.status(errCode).render("error.ejs", {
-        errorCode: errCode,
-        errorExp: errName
-    });
-}
-
 app.get('/', (req, res)=>{
     if(auth.checkIdentity(req)) {
         res.render("main.ejs", {

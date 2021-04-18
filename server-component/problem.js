@@ -1,5 +1,7 @@
+const e = require('express');
 const multer = require('multer');
 const auth = require('./auth');
+const error = require('./error');
 const upload = multer({dest: 'problem/lib'});
 const sqlite3 = require('sqlite3').verbose();
 
@@ -50,7 +52,7 @@ module.exports = {
         });
         app.post('/problem/make/register', (req, res)=>{
             if(!auth.checkIdentity(req)) {
-                res.sendStatus(401);
+                error.sendError(403, 'Forbidden', res);
                 return;
             }
             let now = new Date();
@@ -58,10 +60,39 @@ module.exports = {
             if(!req.body.hashint) {
                 hint = undefined;
             }
+            //TODO: XSS filter maybe?
             ProbDb.run(`INSERT INTO prob(problem_name, problem_category, problem_difficulty, problem_content, problem_solution, problem_answer, problem_hint, author_id, added_at, last_modified, answers) `+
                        `values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)`,
                         [req.body.title, req.body.cate, req.body.difficult, req.body.cont, req.body.expl, req.body.answ, hint, req.session.user.id, now.toISOString(), now.toISOString()]);
             res.redirect('/problem');
+        });
+        app.post('/problem/api/get', (req, res)=>{
+            let from = req.body.frm;
+            let length = req.body.len;
+            let regex = new RegExp('^[0-9]{1,2}$');
+            if(from <= 0 || length<=0 || length>20 || !regex.test(from) || !regex.test(length)) {
+                error.sendError(400, 'Bad Request', res);
+                return;
+            }
+            ProbDb.all('SELECT problem_code, problem_name, problem_category, problem_difficulty, answers FROM prob WHERE problem_code>=? ORDER BY problem_code LIMIT ?;', [from, length], (err, rows)=>{
+                if(err || rows == undefined) {
+                    console.log("problem table query error: "+err);
+                    error.sendError(500, 'Internal Server Error', res);
+                }
+                else {
+                    let ret = [];
+                    rows.forEach(row => {
+                        ret.push({
+                            code: row.problem_code,
+                            name: row.problem_name,
+                            cate: row.problem_category,
+                            diff: row.problem_difficulty,
+                            anss: row.answers
+                        });
+                    });
+                    res.send(ret);
+                }
+            });
         });
         app.get('/problem', (req, res)=>{
             if(auth.checkIdentity(req)) {
@@ -78,6 +109,40 @@ module.exports = {
                     username: ""
                 });
             }
+        });
+        app.get('/problem/:code', (req, res)=>{
+            let regex = new RegExp('^[0-9]{1,2}$');
+            let code = req.params.code;
+            if(!regex.test(code)) {
+                error.sendError(400, 'Bad Request', res);
+                return;
+            }
+            ProbDb.get('SELECT problem_code, problem_name, problem_category, problem_difficulty, answers, problem_content, problem_hint, problem_solution, problem_answer FROM prob WHERE problem_code=?;', [code], (err, row)=>{
+                if(err || row == undefined) {
+                    console.log("problem table query error: "+err);
+                    error.sendError(500, 'Internal Server Error', res);
+                }
+                else {
+                    if(auth.checkIdentity(req)) {
+                        res.render('../views/problem/problem_page.ejs', {
+                            ylog: "block",
+                            nlog: "none",
+                            username: req.session.user.name,
+                            problem_name: row.problem_name,
+                            prob_cont: row.problem_content
+                        });
+                    }
+                    else {
+                        res.render('../views/problem/problem_page.ejs', {
+                            ylog: "none",
+                            nlog: "block",
+                            username: "",
+                            problem_name: row.problem_name,
+                            prob_cont: row.problem_content
+                        });
+                    }
+                }
+            });
         });
         app.get('/problem/lib/:path', (req, res)=>{
             res.sendFile(dirname+`/problem/lib/${req.params.path}`);

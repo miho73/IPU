@@ -6,6 +6,7 @@
         <meta charset="utf-8">
         <link rel="stylesheet" type="text/css" href="/lib/univ.css">
         <link rel="stylesheet" type="text/css" href="/lib/problem/problem.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap.min.css">
 
         <script src="/lib/univ.js"></script>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -24,20 +25,21 @@
         <div id="display" style="text-align: center;">
             <div id="root">
                 <div id="heading">
+                    <%- include('../ejs-components/goto.ejs')%>
                     <div id="user">
                         <div id="nloged" style="display: <%= nlog%>">
-                            <span id="welcome" style="margin-right: 5px;">
+                            <span class="welcome" style="margin-right: 5px;">
                                 <a href="/login/?ret=problem/make" style="color: black; font-family: inherit; font-size: inherit;">login</a>
                             </span>
-                            <span id="welcome" style="margin-left: 5px;">
+                            <span class="welcome" style="margin-left: 5px;">
                                 <a href="/signup" style="color: black; font-family: inherit; font-size: inherit;">signup</a>
                             </span>
                         </div>
                         <div id="yloged" style="display: <%= ylog%>;">
-                            <span id="welcome" style="margin-right: 5px;">
+                            <span class="welcome" style="margin-right: 5px;">
                                 <a href="/profile" style="color: black; font-family: inherit; font-size: inherit;"><%= username%></a>
                             </span>
-                            <span id="welcome" style="margin-left: 5px;">
+                            <span class="welcome" style="margin-left: 5px;">
                                 <a href="/login/deauth" style="color: black; font-family: inherit; font-size: inherit;">Logout</a>
                             </span>
                         </div>
@@ -96,7 +98,7 @@
                         <label><input type="checkbox" id="hashint" onchange="hintSH()">이 문제에 힌트를 추가합니다.</label>
                     </div>
                     <button id="preview" onclick="preview()">Preview</button>
-                    <div id="preview-container" style="display: none;">
+                    <div id="preview-container" style="display: none; text-align: unset !important;">
                         <p class="title-prev">문제:</p>
                         <div id="preview-cont" class="mathjax preview-div"></div>
                         <p class="title-prev">풀이:</p>

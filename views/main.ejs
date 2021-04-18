@@ -5,6 +5,7 @@
         <title>IPU</title>
         <meta charset="utf-8">
         <link rel="stylesheet" type="text/css" href="/lib/univ.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap.min.css">
         <script src="/lib/univ.js"></script>
     </head>
     <body>
@@ -12,20 +13,21 @@
         <div id="display">
             <div id="root">
                 <div id="heading">
+                    <%- include('../ejs-components/goto.ejs')%>
                     <div id="user">
                         <div id="nloged" style="display: <%= nlog%>">
-                            <span id="welcome" style="margin-right: 5px;">
+                            <span class="welcome" style="margin-right: 5px;">
                                 <a href="/login" style="color: black; font-family: inherit; font-size: inherit;">login</a>
                             </span>
-                            <span id="welcome" style="margin-left: 5px;">
+                            <span class="welcome" style="margin-left: 5px;">
                                 <a href="/signup" style="color: black; font-family: inherit; font-size: inherit;">signup</a>
                             </span>
                         </div>
                         <div id="yloged" style="display: <%= ylog%>;">
-                            <span id="welcome" style="margin-right: 5px;">
+                            <span class="welcome" style="margin-right: 5px;">
                                 <a href="/profile" style="color: black; font-family: inherit; font-size: inherit;"><%= username%></a>
                             </span>
-                            <span id="welcome" style="margin-left: 5px;">
+                            <span class="welcome" style="margin-left: 5px;">
                                 <a href="/login/deauth" style="color: black; font-family: inherit; font-size: inherit;">Logout</a>
                             </span>
                         </div>
