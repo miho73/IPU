@@ -13,8 +13,9 @@
         <link rel="stylesheet" type="text/css" href="/lib/quill/quill.snow.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/monokai-sublime.min.css">
         <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="/lib/problem/pShowPage.js"></script>
     </head>
-    <body>
+    <body onload="onload(<%= spec%>)">
         <div id="display">
             <div id="root">
                 <div id="heading">
@@ -38,12 +39,20 @@
                         </div>
                     </div>
                 </div>
-                <div id="prob-cont-v">
+                <div id="prob-cont-v" style="margin-top: 30px;">
                     <h1 style="margin-bottom: 1em;"><%= problem_name%></h1>
                     <span class="prob-title">문제</span>
-                    <hr>
+                    <hr class="prob-hr">
                     <%- prob_cont%>
-                    <hr>
+                    <hr class="prob-div-hr">
+                    <div id="custom-tabs"></div>
+                    <div style="display: <%= hashint%>;">
+                        <span class="prob-title">힌트</span>
+                        <hr class="prob-hr">
+                        <%- prob_hint%>
+                        <hr class="prob-div-hr">
+                    </div>
+
                 </div>
             </div>
             <%- include('../ejs-components/simple.ejs')%>

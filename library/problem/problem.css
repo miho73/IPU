@@ -15,6 +15,25 @@ h2#title {
     font-family: 'Spoqa Han Sans Neo', 'sans-serif';
 }
 
+button#preview,#confirm {
+    padding: 10px 20px 10px 20px;
+    font-size: 1.2em;
+    border-radius: 24.4px;
+    background-color: #ff7f50;
+    outline: none;
+    border: none;
+    margin-top: 5px;
+    margin-bottom: 20px;
+}
+
+h3.sub-title {
+    margin-bottom: 5px;
+    text-align: left;
+    width: 100%;
+    margin: auto;
+    font-weight: 500;
+}
+
 div.editor-container {
     width: 100%;
     height: fit-content;
@@ -28,36 +47,8 @@ textarea#editor {
     box-sizing: border-box;
     resize: vertical
 }
-
-button#preview,#confirm {
-    padding: 10px 20px 10px 20px;
-    font-size: 1.2em;
-    border-radius: 24.4px;
-    background-color: #ff7f50;
-    outline: none;
-    border: none;
-    margin-top: 5px;
-    margin-bottom: 10px;
-}
-
-h3.sub-title {
-    margin-bottom: 5px;
-    text-align: left;
-    width: 100%;
-    margin: auto;
-    font-weight: 500;
-}
-
-div#display {
-    overflow-y: auto    ;
-}
-.preview-div {
-    margin: auto;
-    margin-bottom: 1.5em;
-    border-width: 1px;
-    border-color: black;
-    border-style: solid;
-    padding: 7px;
+#display {
+    overflow-y: auto !important;
 }
 #preview-container {
     width: 100%;
@@ -97,6 +88,17 @@ div#display {
     padding: 0;
     width: 100%;
 }
+.extr-tab-edit-div {
+    text-align: left;
+    margin-bottom: 5px;
+}
+.extr-ctrl-div {
+    width: 100%;
+    height: fit-content;
+    margin: 0;
+    height: 33px;
+}
+
 
 p.title-prev {
     margin-bottom: 0;
@@ -114,6 +116,17 @@ input.prob-name {
     font-weight: 400;
     height: 100%;
     box-sizing: border-box;
+}
+.extr-tab-name {
+    outline: none;
+    font-size: 15px;
+    width: 50%;
+    padding: 5px 10px 5px 10px;
+    border-radius: 0;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #ccc;
+    display: inline-block;
 }
 
 select.selbox {
@@ -144,8 +157,34 @@ a.prob-href {
 span.prob-title {
     margin-bottom: 0;
     font-size: 25px;
+    border-bottom: #6495ed 3px solid;
 }
 
 hr {
     margin-top: 0 !important;
+}
+.prob-hr {
+    background-color: #eee;
+    height: 1px;
+}
+.prob-div-hr {
+    background-color: #ddd;
+    height: 1px;
+}
+
+button#extr-add {
+    width: 100%;
+    background-color: #eee;
+    font-size: 20px;
+    border: none;
+    outline: none;
+    padding: 7px;
+    margin-bottom: 10px;
+    transition: background-color .15s linear;
+    -moz-transition: background-color .15s linear;
+    -webkit-transition: background-color .15s linear;
+    -o-transition: background-color .15s linear;
+}
+#extr-add:hover {
+    background-color: #c5c5c5;
 }

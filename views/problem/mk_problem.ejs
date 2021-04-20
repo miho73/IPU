@@ -80,7 +80,7 @@
                     <div class="editor-container">
                         <div id="editor-cont"></div>
                     </div>
-                    <h3 id="pro-exp" class="sub-title">해설*</h3>
+                    <h3 id="pro-exp" class="sub-title">풀이*</h3>
                     <div class="editor-container">
                         <div id="editor-exp"></div>
                     </div>
@@ -94,22 +94,43 @@
                             <div id="editor-hint"></div>
                         </div>
                     </div>
-                    <div style="text-align: left;">
+                    <div style="text-align: left; margin-bottom: 20px;">
                         <label><input type="checkbox" id="hashint" onchange="hintSH()">이 문제에 힌트를 추가합니다.</label>
                     </div>
+                    <h3 id="pro-extr" class="sub-title" style="margin-bottom: 10px;">추가 탭</h3>
+                    <div id="extr-tab-cont">
+                        <div id="extr-edit-cont"></div>
+                        <button id="extr-add" onclick="addExtr()" style="margin-top: 10px;">+ 추가</button>
+                    </div>
                     <button id="preview" onclick="preview()">Preview</button>
-                    <div id="preview-container" style="display: none; text-align: unset !important;">
-                        <p class="title-prev">문제:</p>
-                        <div id="preview-cont" class="mathjax preview-div"></div>
-                        <p class="title-prev">풀이:</p>
-                        <div id="preview-exp" class="mathjax preview-div"></div>
-                        <p class="title-prev">정답:</p>
-                        <div id="preview-ans" class="mathjax preview-div"></div>
-                        <div id="hint-prev" class="expand-height" style="display: none; max-height: 0;">
-                            <p class="title-prev">힌트:</p>
-                            <div id="preview-hint" class="mathjax preview-div"></div>
+                    <div id="preview-container" style="display: none; text-align: left !important; padding: 0;">
+                        <div id="prob-cont-v" style="padding: 0 20px 0 20px; margin: 0; width: 100%;">
+                            <h1 style="margin-bottom: 1em;" id="preview-name"></h1>
+                            <span class="prob-title">문제</span>
+                            <hr class="prob-hr">
+                            <div id="preview-content" class="mathjax"></div>
+                            <hr class="prob-div-hr">
+                            <div id="hint-prev" class="expand-height" style="display: none; max-height: 0;">
+                                <span class="prob-title">힌트</span>
+                                <hr class="prob-hr">
+                                <div id="preview-hint" class="mathjax"></div>
+                                <hr class="prob-div-hr">
+                            </div>
+                            <span class="prob-title">풀이</span>
+                            <hr class="prob-hr">
+                            <div id="preview-exp" class="mathjax"></div>
+                            <hr class="prob-div-hr">
+                            <span class="prob-title">정답</span>
+                            <hr class="prob-hr">
+                            <div id="preview-ans" class="mathjax"></div>
+                            <hr class="prob-div-hr">
+                            <div id="custon-tabs">
+
+                            </div>
+                        </div>                        
+                        <div id="prev-tool" style="text-align: center;">
+                            <button id="confirm" onclick="confirme()">Confirm</button>
                         </div>
-                        <button id="confirm" onclick="confirme()">Confirm</button>
                     </div>
                 </div>
             </div>
@@ -190,6 +211,7 @@
     </body>
     <script>
         function preview() {
+            namex = document.getElementById('name').value;
             content = document.getElementById('editor-cont').getElementsByClassName('ql-editor')[0].innerHTML;
             exp = document.getElementById('editor-exp').getElementsByClassName('ql-editor')[0].innerHTML;
             ans = document.getElementById('editor-ans').getElementsByClassName('ql-editor')[0].innerHTML;
@@ -198,10 +220,29 @@
             setTimeout(()=>{
                 document.getElementById('preview-container').style.opacity = 1;
             }, 10);
-            $('#preview-cont').html(content);
+            $('#preview-name').text(namex);
+            $('#preview-content').html(content);
             $('#preview-exp').html(exp);
             $('#preview-ans').html(ans);
             $('#preview-hint').html(hint);
+            let toAdd = document.getElementById('custon-tabs');
+            let div = document.createElement('hr');
+            div.classList.add('prob-hr');
+            let divProb = document.createElement('hr');
+            divProb.classList.add('prob-div-hr');
+            toAdd.innerHTML = '';
+            for(let i=0; i<extrTabCnt; i++) {
+                let title = document.createElement('span');
+                let cont = document.createElement('div');
+                title.classList.add('prob-title');
+                title.innerText = document.getElementById(`extr-tab-name-${i}`).value;
+                cont.classList.add('mathjax');
+                cont.innerHTML = document.getElementById(`extr-tab-edit-${i}`).getElementsByClassName('ql-editor')[0].innerHTML;
+                toAdd.appendChild(title);
+                toAdd.appendChild(div);
+                toAdd.appendChild(cont);
+                toAdd.appendChild(divProb);
+            }
             MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
             location.href = '#confirm'
         }
@@ -214,6 +255,17 @@
             ans = document.getElementById('editor-ans').getElementsByClassName('ql-editor')[0].innerHTML;
             hintx = document.getElementById('editor-hint').getElementsByClassName('ql-editor')[0].innerHTML;
             namep = document.getElementById('name').value;
+            tabs = Array(extrTabCnt);
+            for(let i=0; i<extrTabCnt; i++) {
+                if(document.getElementById(`extr-tab-name-${i}`) == '') {
+                    proceed = false;
+                    break;
+                }
+                tabs[i] = {
+                    name: document.getElementById(`extr-tab-name-${i}`).value,
+                    content: document.getElementById(`extr-tab-edit-${i}`).getElementsByClassName('ql-editor')[0].innerHTML
+                };
+            }
             if(namep == "" || namep == undefined) {
                 document.getElementById('name').classList.add('formthis');
                 location.href = "#name";
@@ -241,6 +293,7 @@
                 document.getElementById('diffi').classList.remove('formthis');
             }
             if(!precond) return;
+            console.log(tabs);
             $.ajax({
                 type: 'POST',
                 url: '/problem/make/register',
@@ -252,13 +305,14 @@
                     expl: exp,
                     answ: ans,
                     hint: hintx,
-                    hashint: document.getElementById('hashint').checked
+                    hashint: document.getElementById('hashint').checked,
+                    extr: JSON.stringify(tabs)
                 },
                 success: function(data) {
-                    console.log(data);
+                    window.location.href = "/problem";
                 },
                 error: function(err) {
-                    if(err.status == 401) {
+                    if(err.status == 403) {
                         let x = confirm('문제를 추가하려면 로그인해야 합니다.');
                         if(x) {
                             window.location.href = `/login/?ret=problem/make`;
@@ -288,6 +342,34 @@
                     document.getElementById('hint-prev').style.display = "none";
                 }, 500);
             }
+        }
+        var extrTabCnt = 0;
+        function addExtr() {
+            let conf = confirm('새 탭을 추가할까요?');
+            if(!conf) return;
+            const toAdd = document.getElementById('extr-edit-cont');
+            const rt_div = document.createElement('div');
+            const name = document.createElement('input');
+            const edit_div = document.createElement('div');
+            const controls_div = document.createElement('div');        
+            rt_div.id = `extr-tab-cont-${extrTabCnt}`;
+            edit_div.id = `extr-tab-edit-${extrTabCnt}`;
+            name.type = 'textfield';
+            controls_div.classList.add('extr-ctrl-div');
+            name.placeholder = '탭 이름';
+            name.classList.add('extr-tab-name');
+            name.id = `extr-tab-name-${extrTabCnt}`;
+            controls_div.appendChild(name);
+            rt_div.classList.add('extr-tab-edit-div');
+            rt_div.appendChild(controls_div);
+            rt_div.appendChild(edit_div);
+            toAdd.appendChild(rt_div);
+            var extr = new Quill(`#extr-tab-edit-${extrTabCnt}`, {
+                placeholder: '추가 탭',
+                modules: toolbar_conf,
+                theme: 'snow'
+            });
+            extrTabCnt++;
         }
     </script>
     <script type="text/x-mathjax-config">

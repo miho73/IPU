@@ -22,10 +22,12 @@ ProbDb.serialize(()=>{
                 'problem_solution TEXT NOT NULL,'+
                 'problem_answer TEXT NOT NULL,'+
                 'problem_hint TEXT,'+
-                'author_id INTEGER NOT NULL,'+
+                'has_hint INTEGER NOT NULL,'+
+                'author_name INTEGER NOT NULL,'+
                 'added_at TEXT NOT NULL,'+
                 'last_modified TEXT NOT NULL,'+
-                'answers INTEGER NOT NULL);');
+                'answers INTEGER NOT NULL,'+
+                'extr_tabs TEXT NOT NULL);');
 });
 
 
@@ -40,11 +42,7 @@ module.exports = {
                 });
             }
             else {
-                res.render('../views/problem/mk_problem.ejs', {
-                    ylog: "none",
-                    nlog: "block",
-                    username: ""
-                });
+                res.redirect('/login/?ret=problem/make');
             }
         });
         app.post('/problem/make/upload', upload.single('img'),(req, res)=>{
@@ -52,7 +50,7 @@ module.exports = {
         });
         app.post('/problem/make/register', (req, res)=>{
             if(!auth.checkIdentity(req)) {
-                error.sendError(403, 'Forbidden', res);
+                res.status(403).send('forbidden');
                 return;
             }
             let now = new Date();
@@ -61,10 +59,10 @@ module.exports = {
                 hint = undefined;
             }
             //TODO: XSS filter maybe?
-            ProbDb.run(`INSERT INTO prob(problem_name, problem_category, problem_difficulty, problem_content, problem_solution, problem_answer, problem_hint, author_id, added_at, last_modified, answers) `+
-                       `values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)`,
-                        [req.body.title, req.body.cate, req.body.difficult, req.body.cont, req.body.expl, req.body.answ, hint, req.session.user.id, now.toISOString(), now.toISOString()]);
-            res.redirect('/problem');
+            ProbDb.run(`INSERT INTO prob(problem_name, problem_category, problem_difficulty, problem_content, problem_solution, problem_answer, problem_hint, author_name, added_at, last_modified, answers, extr_tabs, has_hint) `+
+                       `values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?)`,
+                        [req.body.title, req.body.cate, req.body.difficult, req.body.cont, req.body.expl, req.body.answ, hint, req.session.user.id, now.toISOString(), now.toISOString(), req.body.extr, req.body.hashint ? 1 : 0]);
+            res.send('/problem');
         });
         app.post('/problem/api/get', (req, res)=>{
             let from = req.body.frm;
@@ -117,28 +115,31 @@ module.exports = {
                 error.sendError(400, 'Bad Request', res);
                 return;
             }
-            ProbDb.get('SELECT problem_code, problem_name, problem_category, problem_difficulty, answers, problem_content, problem_hint, problem_solution, problem_answer FROM prob WHERE problem_code=?;', [code], (err, row)=>{
+            ProbDb.get('SELECT problem_code, problem_name, problem_category, problem_difficulty, answers, problem_content, problem_hint, problem_solution, problem_answer, has_hint, extr_tabs FROM prob WHERE problem_code=?;', [code], (err, row)=>{
                 if(err || row == undefined) {
                     console.log("problem table query error: "+err);
                     error.sendError(500, 'Internal Server Error', res);
                 }
                 else {
-                    if(auth.checkIdentity(req)) {
+                    if(!auth.checkIdentity(req)) {
+                        res.redirect(`/login/?ret=problem/${req.params.code}`);
+                    }
+                    else {
+                        let hashintx='none', hintx='';
+                        if(row.has_hint == 1) {
+                            hashintx = 'block';
+                            hintx = row.problem_hint;
+                        }
                         res.render('../views/problem/problem_page.ejs', {
                             ylog: "block",
                             nlog: "none",
                             username: req.session.user.name,
+                            problem_code: row.problem_code,
                             problem_name: row.problem_name,
-                            prob_cont: row.problem_content
-                        });
-                    }
-                    else {
-                        res.render('../views/problem/problem_page.ejs', {
-                            ylog: "none",
-                            nlog: "block",
-                            username: "",
-                            problem_name: row.problem_name,
-                            prob_cont: row.problem_content
+                            prob_cont: row.problem_content,
+                            hashint: hashintx,
+                            prob_hint: hintx,
+                            spec: row.extr_tabs
                         });
                     }
                 }

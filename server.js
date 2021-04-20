@@ -43,8 +43,7 @@ auth.authRouter(app);
 problem.problemRouter(app, __dirname);
 
 app.use(function(req, res) {
-    res.status = 404;
-    res.send("404");
+    res.status(404).send("404");
 });
 
 app.listen(HTTP_PORT);
