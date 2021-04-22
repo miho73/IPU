@@ -1,24 +1,34 @@
 const sqlite3 = require('sqlite3').verbose();
 const crypto = require('crypto');
+const pg = require('pg');
+const fs = require('fs');
 
-let IdenDb = new sqlite3.Database('./db/iden.db', sqlite3.OPEN_READWRITE, (err) => {
+const dbconfig_json = fs.readFileSync(__dirname+'/db_config.json');
+const dbconfig = JSON.parse(dbconfig_json).auth;
+
+const IdenDb = new pg.Client(dbconfig);
+IdenDb.connect(err => {
     if (err) {
-        console.error(err.message);
-    } else {
-        console.log('Connected to the IDENTIFICATION database.');
+        console.log('Failed to connect to identification db: ' + err);
+    }
+    else {
+        console.log('Connected to identification db');
     }
 });
-IdenDb.serialize(()=>{
-    IdenDb.each('CREATE TABLE IF NOT EXISTS iden('+
-                'user_code INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,'+
-                'user_id TEXT NOT NULL,'+
-                'user_name TEXT NOT NULL,'+
-                'user_password TEXT NOT NULL,'+
-                'user_salt TEXT NOT NULL,'+
-                'invite_code TEXT NOT NULL,'+
-                'bio TEXT NOT NULL,'+
-                'privilege TEXT NOT NULL);');
-});
+
+IdenDb.query('CREATE TABLE IF NOT EXISTS iden('+
+             'user_code BIGSERIAL NOT NULL PRIMARY KEY,'+
+             'user_id TEXT NOT NULL,'+
+             'user_name TEXT NOT NULL,'+
+             'user_password TEXT NOT NULL,'+
+             'user_salt TEXT NOT NULL,'+
+             'invite_code TEXT NOT NULL,'+
+             'bio TEXT,'+
+             'privilege TEXT NOT NULL);', (err, data)=>{
+                if(err) {
+                    console.log('Failed to create table to identification database: '+err);
+                }
+             });
 
 function CheckIdentity(req) {
     if(req.session == undefined) return false;
@@ -71,7 +81,8 @@ module.exports = {
                 return;
             }
             var sucess = false;
-            IdenDb.all('SELECT * FROM iden WHERE user_id=?;', [req.body.u], (err, row) => {
+            IdenDb.query('SELECT * FROM iden WHERE user_id=$1;', [req.body.u], (err, data) => {
+                row = data.rows;
                 if(row.length == 1) {
                     if(err) {
                         if(!sucess) {
@@ -123,7 +134,7 @@ module.exports = {
         app.post('/auth/invite', (req, res)=>{
             if(req.body.code == undefined) res.send(`{"status":0}`);
             if(inviteCodeCheck(req.body.code)) {
-                res.send(`{"status":1,"secret":"123"}`);
+                res.send(`{"status":1}`);
             }
             else {
                 res.send(`{"status":0}`);
@@ -160,12 +171,20 @@ module.exports = {
             }
             crypto.randomBytes(64, (err, buf) => {
                 crypto.pbkdf2(req.body.password, buf.toString('base64'), 12495, 64, 'sha512', (err, key) => {
-                IdenDb.run(`INSERT INTO iden(user_id, user_name, user_password, user_salt, invite_code, bio, privilege) `+
-                           `values (?, ?, ?, ?, ?, "", "usr")`,
-                           [req.body.id, req.body.name, key.toString('base64'), buf.toString('base64'), req.body.invite]);
+                IdenDb.query(`INSERT INTO iden(user_id, user_name, user_password, user_salt, invite_code, bio, privilege) `+
+                             `values ($1, $2, $3, $4, $5, '', 'u')`,
+                             [req.body.id, req.body.name, key.toString('base64'), buf.toString('base64'), req.body.invite], (err, res)=>{
+                                 if(err) {
+                                    res.render("../views/auth/signup.ejs", {
+                                        'visible': 'inline-block'
+                                    });
+                                 }
+                                 else {
+                                    res.redirect('/');
+                                 }
+                             });
                 });
             });
-            res.redirect('/');
         });
         app.get('/login', (req, res)=>{
             if(CheckIdentity(req)) {

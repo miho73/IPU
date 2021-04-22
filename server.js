@@ -3,7 +3,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const session = require('express-session');
-const ejs = require('ejs');
+const pg = require('pg');
 
 const auth = require('./server-component/auth');
 const problem = require('./server-component/problem');
@@ -21,6 +21,8 @@ app.use(session({
 
 const HTTP_PORT = 8888;
 const HTTPS_PORT = 4444;
+
+//postgresql setup
 
 app.get('/', (req, res)=>{
     if(auth.checkIdentity(req)) {

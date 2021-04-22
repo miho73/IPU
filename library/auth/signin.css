@@ -117,8 +117,8 @@ p#err {
     text-align: center;
     margin: 0;
     top: 20px;
-    left: 50%;
-    margin-left: -232px;
+    width: 100%;
+    text-align: center;
     font-family: 'Cafe24Oneprettynight', 'Cafe24Shiningstar', 'Spoqa Han Sans Neo', 'sans-serif';
     font-weight: 500;
 }
