@@ -40,6 +40,23 @@ div.editor-container {
     margin: auto;
     margin-bottom: 30px;
 }
+#prob-control {
+    transition: opacity .2s linear;
+    -moz-transition: opacity .2s linear;
+    -webkit-transition: opacity .2s linear;
+    -o-transition: opacity .2s linear;
+}
+#prob-control-nd {
+    transition: opacity .2s linear;
+    -moz-transition: opacity .2s linear;
+    -webkit-transition: opacity .2s linear;
+    -o-transition: opacity .2s linear;
+}
+#after-sol {
+    transform: scaleY(0);    
+    transform-origin: top;
+    transition: transform 0.25s ease;
+}
 
 textarea#editor {
     width: 100%;
@@ -153,6 +170,20 @@ select.selbox {
 a.prob-href {
     font-weight: 400;
 }
+#makenew {
+    position: absolute;
+    left: 10px;
+    bottom: 0;
+    font-size: 17px;
+    color: black;
+}
+#makenew:hover {
+    text-decoration: underline;
+}
+#show-hint {
+    margin-bottom: 10px;
+    display: block;
+}
 
 span.prob-title {
     margin-bottom: 0;
@@ -172,12 +203,14 @@ hr {
     height: 1px;
 }
 
-button#extr-add {
+button {
+    outline: none;
+}
+#extr-add {
     width: 100%;
     background-color: #eee;
     font-size: 20px;
     border: none;
-    outline: none;
     padding: 7px;
     margin-bottom: 10px;
     transition: background-color .15s linear;
@@ -187,4 +220,28 @@ button#extr-add {
 }
 #extr-add:hover {
     background-color: #c5c5c5;
+}
+.end-btn {
+    padding: 7px 12px;
+    font-size: 18px;
+    font-weight: 700;
+    border: none;
+    color: #eee;
+    border-radius: 10px;
+    transition: background-color .15s linear;
+    -moz-transition: background-color .15s linear;
+    -webkit-transition: background-color .15s linear;
+    -o-transition: background-color .15s linear;
+}
+#wa-btn {
+    background-color: #dd4124;
+}
+#wa-btn:hover {
+    background-color: #b1230a;
+}
+#show-ans-btn {
+    background-color: #00b040;
+}
+#show-ans-btn:hover {
+    background-color: #099134;
 }

@@ -2,7 +2,7 @@
 
 <html>
     <head>
-        <title><%= problem_name%></title>
+        <title><%= problem_name%> - IPU <%= problem_code%>번</title>
         <meta charset="utf-8">
 
         <link rel="stylesheet" type="text/css" href="/lib/univ.css">
@@ -49,10 +49,30 @@
                     <div style="display: <%= hashint%>;">
                         <span class="prob-title">힌트</span>
                         <hr class="prob-hr">
-                        <%- prob_hint%>
+                        <a id="show-hint" onclick="showHint()">보기</a>
+                        <div id="hint-view" style="display: none;">
+                            <%- prob_hint%>
+                        </div>
                         <hr class="prob-div-hr">
                     </div>
-
+                    <div id="after-sol" style="display: none;">
+                        <span class="prob-title">풀이</span>
+                        <hr class="prob-hr">
+                        <%- prob_exp%>
+                        <hr class="prob-div-hr">
+                        <span class="prob-title">정답</span>
+                        <hr class="prob-hr">
+                        <%- prob_ans%>
+                        <hr class="prob-div-hr">
+                    </div>
+                </div>
+                <div id="prob-control" style="text-align: center; margin-top: 20px;">
+                    <button id="wa-btn" class="end-btn" style="margin-right: 15px;" onclick="markaswa(<%= problem_code%>)">틀렸다고 표시하고 정답 보기</button>
+                    <button id="show-ans-btn" class="end-btn" onclick="showAns()">정답 보기</button>
+                </div>
+                <div id="prob-control-nd" style="text-align: center; margin-top: 20px; display: none;">
+                    <button id="wa-btn" class="end-btn" style="margin-right: 15px;" onclick="wa(<%= problem_code%>)">틀렸다고 표시</button>
+                    <button id="show-ans-btn" class="end-btn" onclick="ac(<%= problem_code%>)">맞았다고 표시</button>
                 </div>
             </div>
             <%- include('../ejs-components/simple.ejs')%>

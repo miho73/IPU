@@ -3,12 +3,14 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const session = require('express-session');
+const favicon = require('serve-favicon');
 const pg = require('pg');
 
 const auth = require('./server-component/auth');
 const problem = require('./server-component/problem');
 
 const app = express();
+//app.use(favicon(__dirname + '/library/imgs/fav.ico')); TODO: favicon=maybe later
 app.set("view engine", "ejs");
 app.use('/lib', express.static('./library'));
 app.use(bodyParser.urlencoded({extended: false}));

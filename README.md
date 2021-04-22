@@ -7,11 +7,13 @@ Below's sql is command to make database. All tabes will be automatically created
 
 ### 1.1 USER settings
 
-|name|value|
-|-|-|
-|host|localhost|
-|user|miho|
-|port|5432|
+> |name|value|
+> |-|-|
+> |host|localhost|
+> |user|miho|
+> |port|5432|
+>
+> `CREATE USER miho WITH SUPERUSER`
 
 ### 1.2 IDENTIFICATION DB
 
@@ -19,7 +21,13 @@ Below's sql is command to make database. All tabes will be automatically created
 > Table name: iden   
 > `CREATE DATABASE identification OWNER miho;`
 
-### 1.3 PROBLEM DB
+### 1.3 USER SOLVE HISTORY DB
+
+> Database name: solves;   
+> Table name: <each user's name>   
+> `CREATE DATABASE solves OWNER miho;`
+
+### 1.4 PROBLEM DB
 
 > Database name: problem   
 > Table name: prob   

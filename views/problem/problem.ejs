@@ -20,7 +20,7 @@
                     <div id="user">
                         <div id="nloged" style="display: <%= nlog%>">
                             <span class="welcome" style="margin-right: 5px;">
-                                <a href="/login/?ret=problem/make" style="color: black; font-family: inherit;">login</a>
+                                <a href="/login/?ret=problem" style="color: black; font-family: inherit;">login</a>
                             </span>
                             <span class="welcome" style="margin-left: 5px;">
                                 <a href="/signup" style="color: black; font-family: inherit;">signup</a>
@@ -52,6 +52,7 @@
                         </tbody>
                     </table>
                 </div>
+                <a id="makenew" style="display: <%= ylog%>;" href="/problem/make">문제 출제하기</a>
             </div>
             <%- include('../ejs-components/simple.ejs')%>
         </div>
