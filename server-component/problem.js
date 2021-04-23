@@ -7,15 +7,25 @@ const pg = require('pg');
 const fs = require('fs');
 
 const dbconfig_json = fs.readFileSync(__dirname+'/db_config.json');
-const dbconfig = JSON.parse(dbconfig_json).prob;
+const dbconfig_prob = JSON.parse(dbconfig_json).prob;
+const dbconfig_solv = JSON.parse(dbconfig_json).solv;
 
-const ProbDb = new pg.Client(dbconfig);
+const ProbDb = new pg.Client(dbconfig_prob);
+const SolveDb = new pg.Client(dbconfig_solv);
 ProbDb.connect(err => {
     if (err) {
         console.log('Failed to connect to problem db: ' + err);
     }
     else {
         console.log('Connected to problem db');
+    }
+});
+SolveDb.connect(err => {
+    if (err) {
+        console.log('Failed to connect to solve db: ' + err);
+    }
+    else {
+        console.log('Connected to solve db');
     }
 });
 ProbDb.query('CREATE TABLE IF NOT EXISTS prob('+
@@ -69,7 +79,7 @@ module.exports = {
             //TODO: XSS filter maybe?
             ProbDb.query(`INSERT INTO prob(problem_name, problem_category, problem_difficulty, problem_content, problem_solution, problem_answer, problem_hint, author_name, added_at, last_modified, answers, extr_tabs, has_hint) `+
                          `values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 0, $11, $12)`,
-                        [req.body.title, req.body.cate, req.body.difficult, req.body.cont, req.body.expl, req.body.answ, hint, req.session.user.id, now.toISOString(), now.toISOString(), req.body.extr, (req.body.hashint ? 1 : 0)], (err, res)=>{
+                        [req.body.title, req.body.cate, req.body.difficult, req.body.cont, req.body.expl, req.body.answ, hint, req.session.user.id, now.toISOString(), now.toISOString(), req.body.extr, (req.body.hashint ? 1 : 0)], (err, resx)=>{
                             if(err) {
                                 console.log('Problem insert sql failure: '+err);
                                 error.sendError(500, 'Internal Server Error', res);
@@ -111,7 +121,22 @@ module.exports = {
                 res.status(403).send('forbidden');
                 return;
             }
-            
+            SolveDb.query(`CREATE TABLE IF NOT EXISTS u${req.session.user.code}(`+
+                          'code BIGSERIAL NOT NULL PRIMARY KEY,'+
+                          'problem_code INTEGER NOT NULL,'+
+                          'solved_time TEXT NOT NULL,'+
+                          'solving_time TEXT NOT NULL,'+
+                          'correct BOOLEAN NOT NULL);', (err, resx)=>{
+                if(err) {
+                    console.log('Failed to create solves table for user id: '+req.session.user.code+'. '+err);
+                    error.sendError(500, 'Internal Server Error', res);
+                }
+                else {
+                    let now = new Date();
+                    SolveDb.query(`INSERT INTO u${req.session.user.code}(problem_code, solved_time, solving_time, correct) VALUES ($1, $2, $3, $4)`, [req.body.code, req.body.time, now.toISOString(), req.body.res]);
+                    res.sendStatus(200);
+                }
+            });
         });
         app.get('/problem', (req, res)=>{
             if(auth.checkIdentity(req)) {

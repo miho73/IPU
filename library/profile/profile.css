@@ -1,0 +1,14 @@
+@import url(//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css);
+@font-face {
+    font-family: Cafe24Shiningstar;
+    src: url("/lib/fonts/Cafe24/Cafe24Shiningstar.ttf");
+}
+@font-face {
+    font-family: Cafe24Oneprettynight;
+    src: url("/lib/fonts/Cafe24/Cafe24Oneprettynight.ttf");
+}
+
+h1#uname {
+    font-family: 'Cafe24Oneprettynight', 'Spoqa Han Sans Neo', 'sans-serif';
+    font-size: 50px;
+}

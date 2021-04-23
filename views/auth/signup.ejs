@@ -5,10 +5,21 @@
 		<title>Sign In</title>
 		<meta charset="utf-8">
 		<link rel="stylesheet" type="text/css" href="/lib/auth/signin.css">
+		<script src="https://www.google.com/recaptcha/api.js?render=6LeldLYaAAAAAF2LqYQgHiq_SwPTXIAvQPBvWGWc"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<style>
+			div.grecaptcha-badge { 
+    			visibility: hidden;
+				left: 0;
+			}
+			a.recaptch-a {
+				text-decoration: none;
+				color: #6495ed;
+			}
+		</style>
 	</head>
 	<body>
-		<p id="err" style="display: <%= visible%>;">Sign up cannot be completed</p>
+		<p id="err" style="display: <%= visible%>;"><%= why_failed%></p>
 		<section id="container-h">
 			<section id="container-v">
 				<form method="POST">
@@ -17,11 +28,17 @@
 					<input type="text" id="id" class="input second" name="id" placeholder="ID" spellcheck="false" style="display: none;" required>
 					<input type="password" id="pwd" class="input second" name="password" placeholder="Password" spellcheck="false" style="display: none;" required>
 					<input type="text" id="invite" class="input" name="invite" placeholder="Invite code" spellcheck="false" maxlength="6" required>
+					<input type="text" id="gtoken" style="display: none;" name="gtoken" readonly required>
 					<label id="errdisplay" style="display: none;"></label>
 					<button type="button" id="submit" class="input" onclick="formNxt()">Proceed</button>
 				</form>
 			</section>
 		</section>
+		<div style="position: absolute; bottom: 5px; left: 5px; color: #aaa; font-size: 15px;">
+			This site is protected by reCAPTCHA and the Google
+	    	<a href="https://policies.google.com/privacy" class="recaptch-a">Privacy Policy</a> and
+    		<a href="https://policies.google.com/terms" class="recaptch-a">Terms of Service</a> apply.
+		</div>
 	</body>
 	<script>
 		function formNxt() {
@@ -32,6 +49,11 @@
 				dataType: "json",
 				success: function(data) {
 					if(data.status == 1) {
+						grecaptcha.ready(function() {
+		  					grecaptcha.execute('6LeldLYaAAAAAF2LqYQgHiq_SwPTXIAvQPBvWGWc', {action: 'signup'}).then(function(token) {
+								document.getElementById('gtoken').value = token;
+		  					});
+						});
 						document.getElementById('invite').style.opacity = 0;
 						document.getElementById('errdisplay').style.display = "none";
 						document.getElementById('submit').onclick = undefined;

@@ -5,6 +5,17 @@
 		<title>Sign In</title>
 		<meta charset="utf-8">
 		<link rel="stylesheet" type="text/css" href="/lib/auth/signin.css">
+		<script src="https://www.google.com/recaptcha/api.js?render=6LeldLYaAAAAAF2LqYQgHiq_SwPTXIAvQPBvWGWc"></script>
+		<style>
+			div.grecaptcha-badge { 
+    			visibility: hidden;
+				left: 0;
+			}
+			a.recaptch-a {
+				text-decoration: none;
+				color: #6495ed;
+			}
+		</style>
 	</head>
 	<body>
 		<p id="err" style="display: <%= visible%>;">You've entered the wrong identification</p>
@@ -15,9 +26,22 @@
 					<input type="text" id="id" class="input" name="u" placeholder="ID" spellcheck="false" required style="margin-top: 20px;">
 					<input type="password" id="pwd" class="input" name="p" placeholder="Password" spellcheck="false" required>
 					<input type="text" name="ret" style="display: none;" value="<%= ret%>">
+					<input type="text" id="gtoken" style="display: none;" name="gtoken" readonly required>
 					<button type="submit" id="submit" class="input">Login</button>
 				</form>
 			</section>
 		</section>
+		<div style="position: absolute; bottom: 5px; left: 5px; color: #aaa; font-size: 15px;">
+			This site is protected by reCAPTCHA and the Google
+	    	<a href="https://policies.google.com/privacy" class="recaptch-a">Privacy Policy</a> and
+    		<a href="https://policies.google.com/terms" class="recaptch-a">Terms of Service</a> apply.
+		</div>
 	</body>
+	<script>
+		grecaptcha.ready(function() {
+		  	grecaptcha.execute('6LeldLYaAAAAAF2LqYQgHiq_SwPTXIAvQPBvWGWc', {action: 'signin'}).then(function(token) {
+				document.getElementById('gtoken').value = token;
+		  	});
+		});
+	</script>
 </html>

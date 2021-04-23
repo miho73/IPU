@@ -1,18 +1,20 @@
-@font-face {
-    font-family: Cafe24Shiningstar;
-    src: url("/lib/fonts/Cafe24/Cafe24Shiningstar.ttf");
-}
-@font-face {
-    font-family: Cafe24Oneprettynight;
-    src: url("/lib/fonts/Cafe24/Cafe24Oneprettynight.ttf");
-}
-
 h2#title {
     margin-top: 50px;
     text-align: center;
     font-size: 2em;
     font-weight: 500;
     font-family: 'Spoqa Han Sans Neo', 'sans-serif';
+}
+#sol-time {
+    font-size: 60px;
+    font-weight: 500;
+    text-align: center;
+    margin: 0;
+}
+#sol-time::after {
+    content: '초';
+    font-size: 40px;
+    font-weight: 500;
 }
 
 button#preview,#confirm {
@@ -32,6 +34,11 @@ h3.sub-title {
     width: 100%;
     margin: auto;
     font-weight: 500;
+}
+#sol-time-took {
+    font-size: 20px;
+    text-align: center;
+    margin: 0;
 }
 
 div.editor-container {
@@ -115,6 +122,12 @@ textarea#editor {
     margin: 0;
     height: 33px;
 }
+#final-sol {
+    transition: opacity .2s linear;
+    -moz-transition: opacity .2s linear;
+    -webkit-transition: opacity .2s linear;
+    -o-transition: opacity .2s linear;
+}
 
 
 p.title-prev {
@@ -163,8 +176,8 @@ select.selbox {
 *.formthis {
     border-width: 1px;
     border-style: solid;
-    border-color: red;
-    box-shadow: 0 0 3px red;
+    border-color: #f00;
+    box-shadow: 0 0 3px #f00;
 }
 
 a.prob-href {

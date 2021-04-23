@@ -31,7 +31,7 @@
                         </div>
                         <div id="yloged" style="display: <%= ylog%>;">
                             <span class="welcome" style="margin-right: 5px;">
-                                <a href="/profile" style="color: black; font-family: inherit;"><%= username%></a>
+                                <a href="/profile/<%= username%>" style="color: black; font-family: inherit;"><%= username%></a>
                             </span>
                             <span class="welcome" style="margin-left: 5px;">
                                 <a href="/login/deauth" style="color: black; font-family: inherit;">Logout</a>
@@ -45,7 +45,6 @@
                     <hr class="prob-hr">
                     <%- prob_cont%>
                     <hr class="prob-div-hr">
-                    <div id="custom-tabs"></div>
                     <div style="display: <%= hashint%>;">
                         <span class="prob-title">힌트</span>
                         <hr class="prob-hr">
@@ -65,9 +64,16 @@
                         <%- prob_ans%>
                         <hr class="prob-div-hr">
                     </div>
+                    <div id="custom-tabs"></div>
+                    <div id="final-sol" style="display: none; margin-top: 40px; opacity: 0;">
+                        <h3 id="sol-time-took">풀이시간</h3>
+                        <h2 id="sol-time"></h2>
+                    </div>
                 </div>
                 <div id="prob-control" style="text-align: center; margin-top: 20px;">
+                    <!--
                     <button id="wa-btn" class="end-btn" style="margin-right: 15px;" onclick="markaswa(<%= problem_code%>)">틀렸다고 표시하고 정답 보기</button>
+                    -->
                     <button id="show-ans-btn" class="end-btn" onclick="showAns()">정답 보기</button>
                 </div>
                 <div id="prob-control-nd" style="text-align: center; margin-top: 20px; display: none;">

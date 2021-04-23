@@ -8,6 +8,7 @@ const pg = require('pg');
 
 const auth = require('./server-component/auth');
 const problem = require('./server-component/problem');
+const profile = require('./server-component/profile');
 
 const app = express();
 //app.use(favicon(__dirname + '/library/imgs/fav.ico')); TODO: favicon=maybe later
@@ -45,6 +46,7 @@ app.get('/', (req, res)=>{
 
 auth.authRouter(app);
 problem.problemRouter(app, __dirname);
+profile.profileRouter(app);
 
 app.use(function(req, res) {
     res.status(404).send("404");
