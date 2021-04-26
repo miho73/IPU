@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>IPU - <%= username%> 설정</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="/lib/univ.css">
+        <link rel="stylesheet" type="text/css" href="/lib/problem/problem.css">
+        <link rel="stylesheet" type="text/css" href="/lib/profile/profile.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap.min.css">
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+        <script src="/lib/profile/settings.js"></script>
+        <%- include('../ejs-components/header-comp.ejs')%>
+        <meta property="og:title" content="IPU - 프로필 설정">
+        <meta name="twitter:title" content="IPU - 프로필 설정">
+        <meta name="description" content="<%= username%>의 프로필 설정">
+        <meta property="og:description" content="<%= username%>의 프로필 설정">
+        <meta name="twitter:description" content="<%= username%>의 프로필 설정">
+    </head>
+    <body>
+        <div id="block" style="display: none;"></div>
+        <div id="display">
+            <div id="root">
+                <div id="heading">
+                    <%- include('../ejs-components/goto.ejs')%>
+                    <%- include('../ejs-components/user_header.ejs')%>
+                </div>
+                <div id="prob-cont-v" style="margin-top: 50px;">
+                    <div id="headerup">
+                        <h1 id="uname"><%=username%></h1>
+                        <h3 id="uid"><%=userid%></h3>
+                        <blockquote><%= bio%></blockquote>
+                    </div>
+                    <hr style="border-top: 1px solid #ccc;">
+                        <div id="settings-cont">
+                            <div class="big-cont">
+                                <h2 class="big-title">일반</h2>
+                                <div class="set-cont">
+                                    <span class="config-label">
+                                        이름:<br>
+                                        <input type="text" class="input" value="<%= username%>" id="name" name="name">
+                                        <p class="caption">이 이름은 모두에게 공개됩니다. 언제든 변경할 수 있습니다.</p>
+                                    </span>
+                                </div>
+                                <div class="set-cont">
+                                    <span class="config-label">
+                                        상태메시지:<br>
+                                        <input type="text" class="input" value="<%= bio%>" id="bios" name="bios">
+                                        <p class="caption">여러분의 느낌과 감정을 표현하세요. 프로필 페이지에 뜨게 되며, 언제든 변경할 수 있습니다.</p>
+                                    </span>
+                                </div>
+                                <div class="set-cont">
+                                    <span class="config-label">
+                                        이메일:<br>
+                                        <input type="text" class="input" value="<%= email%>" id="email" name="email">
+                                        <p class="caption">이메일을 설정하면 암호를 분실했을 때 복구할 수 있습니다.</p>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="big-cont">
+                                <h2 class="big-title">보안</h2>
+                                <button type="button" id="changepwd" onclick="activePwd()">암호 변경</button>
+                                <input type="checkbox" style="display: none;" id="pwdChange" name="hasPwdChange">
+                                <div id="pwdreg" style="display: none;">
+                                    <div class="set-cont">
+                                        <span class="config-label">
+                                            새 암호:<br>
+                                            <input type="password" class="input" id="npwd" name="npwd">
+                                            <p class="caption">암호를 충분히 복잡하고 어렵게 설정하세요.</p>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="big-cont">
+                                <h2 class="big-title">정보</h2>
+                                <table>
+                                    <tr>
+                                        <td style="padding: 0 7px">가입일</td>
+                                        <td style="padding: 0 7px"><%= joined%></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 0 7px">최종 로그인 시각</td>
+                                        <td style="padding: 0 7px"><%= last_login%></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="big-cont">
+                            <h2 class="big-title">설정을 저장하려면 기존 암호를 입력하세요:</h2>
+                            <span class="config-label" style="margin-top: 20px;">
+                            <input type="password" class="input" id="lpwd" name="lpwd" style="margin: 0;">
+                        </span>
+                    </div>
+                    <button type="button" onclick="upload()" id="apply">적용</button>
+                </div>
+            </div>
+            <%- include('../ejs-components/simple.ejs')%>
+        </div>
+    </body>
+</html>

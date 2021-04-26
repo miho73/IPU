@@ -5,6 +5,7 @@ const error = require('./error');
 const upload = multer({dest: 'problem/lib'});
 const pg = require('pg');
 const fs = require('fs');
+const sanitize = require('sanitize-html');
 
 const dbconfig_json = fs.readFileSync(__dirname+'/db_config.json');
 const dbconfig_prob = JSON.parse(dbconfig_json).prob;
@@ -22,10 +23,10 @@ ProbDb.connect(err => {
 });
 SolveDb.connect(err => {
     if (err) {
-        console.log('Failed to connect to solve db: ' + err);
+        console.log('Failed to connect to solve db(problem solving purpose): ' + err);
     }
     else {
-        console.log('Connected to solve db');
+        console.log('Connected to solve db (problem solving purpose)');
     }
 });
 ProbDb.query('CREATE TABLE IF NOT EXISTS prob('+
@@ -56,7 +57,8 @@ module.exports = {
                 res.render('../views/problem/mk_problem.ejs', {
                     ylog: "block",
                     nlog: "none",
-                    username: req.session.user.name
+                    userid: req.session.user.id,
+                    username: req.session.user.name,
                 });
             }
             else {
@@ -76,7 +78,6 @@ module.exports = {
             if(!req.body.hashint) {
                 hint = undefined;
             }
-            //TODO: XSS filter maybe?
             ProbDb.query(`INSERT INTO prob(problem_name, problem_category, problem_difficulty, problem_content, problem_solution, problem_answer, problem_hint, author_name, added_at, last_modified, answers, extr_tabs, has_hint) `+
                          `values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 0, $11, $12)`,
                         [req.body.title, req.body.cate, req.body.difficult, req.body.cont, req.body.expl, req.body.answ, hint, req.session.user.id, now.toISOString(), now.toISOString(), req.body.extr, (req.body.hashint ? 1 : 0)], (err, resx)=>{
@@ -96,12 +97,12 @@ module.exports = {
                 return;
             }
             ProbDb.query('SELECT problem_code, problem_name, problem_category, problem_difficulty, answers FROM prob WHERE problem_code>=$1 ORDER BY problem_code LIMIT $2;', [from, length], (err, data)=>{
-                rows = data.rows;
-                if(err || rows == undefined) {
+                if(err || data.rowCount == 0) {
                     console.log("problem table query error: "+err);
                     error.sendError(500, 'Internal Server Error', res);
                 }
                 else {
+                    rows = data.rows;
                     let ret = [];
                     rows.forEach(row => {
                         ret.push({
@@ -121,36 +122,26 @@ module.exports = {
                 res.status(403).send('forbidden');
                 return;
             }
-            SolveDb.query(`CREATE TABLE IF NOT EXISTS u${req.session.user.code}(`+
-                          'code BIGSERIAL NOT NULL PRIMARY KEY,'+
-                          'problem_code INTEGER NOT NULL,'+
-                          'solved_time TEXT NOT NULL,'+
-                          'solving_time TEXT NOT NULL,'+
-                          'correct BOOLEAN NOT NULL);', (err, resx)=>{
-                if(err) {
-                    console.log('Failed to create solves table for user id: '+req.session.user.code+'. '+err);
-                    error.sendError(500, 'Internal Server Error', res);
-                }
-                else {
-                    let now = new Date();
-                    SolveDb.query(`INSERT INTO u${req.session.user.code}(problem_code, solved_time, solving_time, correct) VALUES ($1, $2, $3, $4)`, [req.body.code, req.body.time, now.toISOString(), req.body.res]);
-                    res.sendStatus(200);
-                }
-            });
+            
+            let now = new Date();
+            SolveDb.query(`INSERT INTO u${req.session.user.code}(problem_code, solved_time, solving_time, correct) VALUES ($1, $2, $3, $4)`, [req.body.code, now.toISOString(), req.body.time, req.body.res]);
+            res.sendStatus(200);
         });
         app.get('/problem', (req, res)=>{
             if(auth.checkIdentity(req)) {
                 res.render('../views/problem/problem.ejs', {
                     ylog: "block",
                     nlog: "none",
-                    username: req.session.user.name
+                    userid: req.session.user.id,
+                    username: req.session.user.name,
                 });
             }
             else {
                 res.render('../views/problem/problem.ejs', {
                     ylog: "none",
                     nlog: "block",
-                    username: ""
+                    userid: '',
+                    username: '',
                 });
             }
         });
@@ -162,12 +153,12 @@ module.exports = {
                 return;
             }
             ProbDb.query('SELECT problem_code, problem_name, problem_category, problem_difficulty, answers, problem_content, problem_hint, problem_solution, problem_answer, has_hint, extr_tabs FROM prob WHERE problem_code=$1;', [code], (err, data)=>{
-                row = data.rows[0];
-                if(err || row == undefined) {
+                if(err || data.rowCount == 0) {
                     console.log("problem table query error: "+err);
                     error.sendError(500, 'Internal Server Error', res);
                 }
                 else {
+                    row = data.rows[0];
                     if(!auth.checkIdentity(req)) {
                         res.redirect(`/login/?ret=problem/${req.params.code}`);
                     }
@@ -180,6 +171,7 @@ module.exports = {
                         res.render('../views/problem/problem_page.ejs', {
                             ylog: "block",
                             nlog: "none",
+                            userid: req.session.user.id,
                             username: req.session.user.name,
                             problem_code: row.problem_code,
                             problem_name: row.problem_name,
@@ -196,6 +188,23 @@ module.exports = {
         });
         app.get('/problem/lib/:path', (req, res)=>{
             res.sendFile(dirname+`/problem/lib/${req.params.path}`);
+        });
+    },
+    probQuery: function(requiredCode, callback) {
+        let condition = "(";
+        requiredCode.forEach(v => {
+            condition += "problem_code="+v+" OR ";
+        });
+        condition = condition.substr(0, condition.length-4);
+        condition += ")";
+        ProbDb.query(`SELECT * FROM prob WHERE ${condition}`, (err, data)=>{
+            if(err || data.rowCount == 0) {
+                console.log('Problem query api error: '+err);
+                return;
+            }
+            else {
+                callback(data.rows);
+            }
         });
     }
 }

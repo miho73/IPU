@@ -196,6 +196,7 @@ a.prob-href {
 #show-hint {
     margin-bottom: 10px;
     display: block;
+    cursor: pointer;
 }
 
 span.prob-title {

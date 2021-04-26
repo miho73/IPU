@@ -2,39 +2,27 @@
 
 <html>
     <head>
-        <title>문제</title>
+        <title>문제 - IPU</title>
         <meta charset="utf-8">
-
         <link rel="stylesheet" type="text/css" href="/lib/univ.css">
         <link rel="stylesheet" type="text/css" href="/lib/problem/problem.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap.min.css">
         <script src="/lib/univ.js"></script>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
         <script src="/lib/problem/pShow.js"></script>
+        <%- include('../ejs-components/header-comp.ejs')%>
+        <meta property="og:title" content="IPU - 문제">
+        <meta name="twitter:title" content="IPU - 문제">
+        <meta name="description" content="IPU - 문제 목록">
+        <meta property="og:description" content="IPU - 문제 목록">
+        <meta name="twitter:description" content="IPU - 문제 목록">
     </head>
     <body>
         <div id="display" style="text-align: center;">
             <div id="root">
                 <div id="heading">
                     <%- include('../ejs-components/goto.ejs')%>
-                    <div id="user">
-                        <div id="nloged" style="display: <%= nlog%>">
-                            <span class="welcome" style="margin-right: 5px;">
-                                <a href="/login/?ret=problem" style="color: black; font-family: inherit;">login</a>
-                            </span>
-                            <span class="welcome" style="margin-left: 5px;">
-                                <a href="/signup" style="color: black; font-family: inherit;">signup</a>
-                            </span>
-                        </div>
-                        <div id="yloged" style="display: <%= ylog%>;">
-                            <span class="welcome" style="margin-right: 5px;">
-                                <a href="/profile/<%= username%>" style="color: black; font-family: inherit;"><%= username%></a>
-                            </span>
-                            <span class="welcome" style="margin-left: 5px;">
-                                <a href="/login/deauth" style="color: black; font-family: inherit;">Logout</a>
-                            </span>
-                        </div>
-                    </div>
+                    <%- include('../ejs-components/user_header.ejs')%>
                 </div>
                 <div id="prob-cont">
                     <h1 style="margin-bottom: 1em;">Problems</h1>

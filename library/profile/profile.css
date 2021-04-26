@@ -11,4 +11,111 @@
 h1#uname {
     font-family: 'Cafe24Oneprettynight', 'Spoqa Han Sans Neo', 'sans-serif';
     font-size: 50px;
+    margin-bottom: 0;
+}
+h3#uid {
+    font-size: 20px;
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+a {
+    text-decoration: none;
+}
+.correct {
+    color: #00b040;
+}
+.wrong {
+    color: #dd4124;
+}
+
+span.tag {
+    color: #fff;
+    padding: 4px 7px;
+    margin-right: 7px;
+    border-radius: 5px;
+    cursor: default;
+}
+.tag-cate {
+    background-color: #9b6bcc;
+}
+.tag-ac {
+    background-color: #00b040;
+}
+.tag-wa {
+    background-color: #dd4124;
+}
+
+div#settings-cont {
+    width: 100%;
+    font-size: 1.2em;
+}
+input.input {
+    margin-left: 10px;
+    outline: none;
+    padding: 3px 5px;
+    border-radius: 5px;
+    border: 1px solid #aaa;
+    box-sizing: border-box;
+}
+.input:hover {
+    border: 1px solid #77d;
+}
+.big-cont {
+    padding-left: 20px;
+}
+#pwdreg {
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform 0.25s ease;
+}
+
+p.caption {
+    color: #777;
+    font-size: 0.9em;
+    margin-left: 10px;
+}
+
+h2.big-title {
+    margin-left: -20px;
+    font-size: 1.4em;
+}
+
+button#apply {
+    padding: 7px 20px;
+    font-size: 1.2em;
+    margin-top: 20px;
+    outline: none;
+    border-radius: 5px;
+    border: 1px solid #aaa;
+    background-color: #e6e6e6;
+    transition: background-color .15s linear;
+    -moz-transition: background-color .15s linear;
+    -webkit-transition: background-color .15s linear;
+    -o-transition: background-color .15s linear;
+}
+#apply:hover {
+    background-color: #ddd;
+}
+button#changepwd {
+    padding: 7px 20px;
+    font-size: 1em;
+    outline: none;
+    border-radius: 5px;
+    border: 1px solid #aaa;
+    background-color: #e6e6e6;
+    transition: background-color .15s linear;
+    -moz-transition: background-color .15s linear;
+    -webkit-transition: background-color .15s linear;
+    -o-transition: background-color .15s linear;
+}
+#changepwd:hover {
+    background-color: #ddd;
+}
+
+*.formthis {
+    border-width: 1px;
+    border-style: solid;
+    border-color: #f00;
+    box-shadow: 0 0 3px #f00;
 }

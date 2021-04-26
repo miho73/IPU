@@ -14,30 +14,19 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/monokai-sublime.min.css">
         <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
         <script src="/lib/problem/pShowPage.js"></script>
+        <%- include('../ejs-components/header-comp.ejs')%>
+        <meta property="og:title" content="IPU - <%=problem_name%>">
+        <meta name="twitter:title" content="IPU - <%=problem_name%>">
+        <meta name="description" content="IPU - <%=problem_name%> 문제 풀기">
+        <meta property="og:description" content="IPU - <%=problem_name%> 문제 풀기">
+        <meta name="twitter:description" content="IPU - <%=problem_name%> 문제 풀기">
     </head>
     <body onload="onload(<%= spec%>)">
         <div id="display">
             <div id="root">
                 <div id="heading">
                     <%- include('../ejs-components/goto.ejs')%>
-                    <div id="user">
-                        <div id="nloged" style="display: <%= nlog%>">
-                            <span class="welcome" style="margin-right: 5px;">
-                                <a href="/login/?ret=problem/make" style="color: black; font-family: inherit;">login</a>
-                            </span>
-                            <span class="welcome" style="margin-left: 5px;">
-                                <a href="/signup" style="color: black; font-family: inherit;">signup</a>
-                            </span>
-                        </div>
-                        <div id="yloged" style="display: <%= ylog%>;">
-                            <span class="welcome" style="margin-right: 5px;">
-                                <a href="/profile/<%= username%>" style="color: black; font-family: inherit;"><%= username%></a>
-                            </span>
-                            <span class="welcome" style="margin-left: 5px;">
-                                <a href="/login/deauth" style="color: black; font-family: inherit;">Logout</a>
-                            </span>
-                        </div>
-                    </div>
+                    <%- include('../ejs-components/user_header.ejs')%>
                 </div>
                 <div id="prob-cont-v" style="margin-top: 30px;">
                     <h1 style="margin-bottom: 1em;"><%= problem_name%></h1>

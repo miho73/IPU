@@ -8,44 +8,38 @@
         <link rel="stylesheet" type="text/css" href="/lib/problem/problem.css">
         <link rel="stylesheet" type="text/css" href="/lib/profile/profile.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap.min.css">
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+        <script src="/lib/univ/converter.js"></script>
+        <script src="/lib/profile/pProfile.js"></script>
+        <%- include('../ejs-components/header-comp.ejs')%>
+        <meta property="og:title" content="IPU - 프로필">
+        <meta name="twitter:title" content="IPU - 프로필">
+        <meta name="description" content="<%= username%>의 프로필">
+        <meta property="og:description" content="<%= username%>의 프로필">
+        <meta name="twitter:description" content="<%= username%>의 프로필">
     </head>
-    <body>
+    <body onload="onload()">
         <div id="block" style="display: none;"></div>
         <div id="display">
             <div id="root">
                 <div id="heading">
                     <%- include('../ejs-components/goto.ejs')%>
-                    <div id="user">
-                        <div id="nloged" style="display: <%= nlog%>">
-                            <span class="welcome" style="margin-right: 5px;">
-                                <a href="/login" style="color: black; font-family: inherit; font-size: inherit;">login</a>
-                            </span>
-                            <span class="welcome" style="margin-left: 5px;">
-                                <a href="/signup" style="color: black; font-family: inherit; font-size: inherit;">signup</a>
-                            </span>
-                        </div>
-                        <div id="yloged" style="display: <%= ylog%>;">
-                            <span class="welcome" style="margin-right: 5px;">
-                                <a href="/profile/<%= username%>" style="color: black; font-family: inherit; font-size: inherit;"><%= username%></a>
-                            </span>
-                            <span class="welcome" style="margin-left: 5px;">
-                                <a href="/login/deauth" style="color: black; font-family: inherit; font-size: inherit;">Logout</a>
-                            </span>
-                        </div>
-                    </div>
+                    <%- include('../ejs-components/user_header.ejs')%>
                 </div>
                 <div id="prob-cont-v" style="margin-top: 50px;">
                     <div id="headerup">
-                        <h1 id="uname"><%=username%></h1>
-                        <blockquote><%= bio%></blockquote>
+                        <h1 id="uname"><%=usernameT%></h1>
+                        <h3 id="uid"><%=useridT%></h3>
+                        <blockquote><%= bioT%></blockquote>
                         <table class="table table-striped table-bordered">
                             <thead>
                                 <tr>
                                     <th style="width: 6%">문제</th>
                                     <th style="width: 39%;">문제 제목</th>
                                     <th style="width: 25%;">정보</th>
-                                    <th style="width: 15%;">풀이 시간</th>
-                                    <th style="width: 15%;">푼 시각</th>
+                                    <th style="width: 7%;">풀이 시간</th>
+                                    <th style="width: 23%;">푼 시각</th>
                                 </tr>
                             </thead>
                             <tbody id="solveds"></tbody>

@@ -3,6 +3,13 @@
 <html>
     <head>
         <title><%= errorCode%> Error</title>
+        <%- include('./ejs-components/header-comp.ejs')%>
+        <meta name="title" content="IPU - <%=errorCode%> error">
+        <meta property="og:title" content="IPU - <%=errorCode%> error">
+        <meta name="twitter:title" content="IPU - <%=errorCode%> error">
+        <meta name="description" content="IPU - <%=errorCode%> error">
+        <meta property="og:description" content="IPU - <%=errorCode%> error">
+        <meta name="twitter:description" content="IPU - <%=errorCode%> error">
         <style>
             @import url(//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css);
             * {

@@ -1,0 +1,21 @@
+<div id="user">
+    <div id="nloged" style="display: <%= nlog%>">
+        <span class="welcome" style="margin-right: 5px;">
+            <a href="/login" style="color: black; font-family: inherit; font-size: inherit;">로그인</a>
+        </span>
+        <span class="welcome" style="margin-left: 5px;">
+            <a href="/signup" style="color: black; font-family: inherit; font-size: inherit;">가입</a>
+        </span>
+    </div>
+    <div id="yloged" style="display: <%= ylog%>;">
+        <span class="welcome" style="margin-right: 5px;">
+            <a href="/profile/<%= userid%>" style="color: black; font-family: inherit; font-size: inherit;"><%= username%></a>
+        </span>
+        <span class="welcome" style="margin-right: 5px;">
+            <a href="/settings" style="color: black; font-family: inherit; font-size: inherit;">설정</a>
+        </span>
+        <span class="welcome" style="margin-left: 5px;">
+            <a href="/login/deauth" style="color: black; font-family: inherit; font-size: inherit;">로그아웃</a>
+        </span>
+    </div>
+</div>

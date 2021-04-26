@@ -2,10 +2,11 @@
 
 <html>
 	<head>
-		<title>Sign In</title>
+		<title>로그인 - IPU</title>
 		<meta charset="utf-8">
 		<link rel="stylesheet" type="text/css" href="/lib/auth/signin.css">
-		<script src="https://www.google.com/recaptcha/api.js?render=6LeldLYaAAAAAF2LqYQgHiq_SwPTXIAvQPBvWGWc"></script>
+		<script src="https://www.google.com/recaptcha/api.js?render=<%= capt_site%>"></script>
+		<%- include('../ejs-components/header-comp.ejs')%>
 		<style>
 			div.grecaptcha-badge { 
     			visibility: hidden;
@@ -18,16 +19,18 @@
 		</style>
 	</head>
 	<body>
-		<p id="err" style="display: <%= visible%>;">You've entered the wrong identification</p>
+		<p id="err" style="display: <%= visible%>;">Please try again</p>
 		<section id="container-h">
 			<section id="container-v">
-				<form method="POST" action="/login">
+				<form method="POST" action="/login/?ret=<%= ret%>">
 					<label id="title">Login</label><br>
 					<input type="text" id="id" class="input" name="u" placeholder="ID" spellcheck="false" required style="margin-top: 20px;">
 					<input type="password" id="pwd" class="input" name="p" placeholder="Password" spellcheck="false" required>
 					<input type="text" name="ret" style="display: none;" value="<%= ret%>">
 					<input type="text" id="gtoken" style="display: none;" name="gtoken" readonly required>
 					<button type="submit" id="submit" class="input">Login</button>
+					<input type="text" style="display: none;" name="gVers" value="<%= capt2%>">
+					<div id="captcha" style="display: <%= capt2%>;" class="g-recaptcha" data-sitekey="<%= capt_site%>" data-theme="dark"></div>
 				</form>
 			</section>
 		</section>
@@ -39,7 +42,7 @@
 	</body>
 	<script>
 		grecaptcha.ready(function() {
-		  	grecaptcha.execute('6LeldLYaAAAAAF2LqYQgHiq_SwPTXIAvQPBvWGWc', {action: 'signin'}).then(function(token) {
+		  	grecaptcha.execute('<%= capt_site%>', {action: 'signin'}).then(function(token) {
 				document.getElementById('gtoken').value = token;
 		  	});
 		});

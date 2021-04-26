@@ -108,6 +108,12 @@ button#submit {
 #submit:hover{
     background-color: #fffe;
 }
+div#captcha {
+    position: absolute;
+    left: 50%;
+    margin-left: -152px;
+    margin-top: 10px;
+}
 
 p#err {
     position: absolute;

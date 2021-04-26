@@ -5,8 +5,10 @@ const request = require('request');
 
 const dbconfig_json = fs.readFileSync(__dirname+'/db_config.json');
 const dbconfig = JSON.parse(dbconfig_json).auth;
+const dbconfig_solv = JSON.parse(dbconfig_json).solv;
 
 const IdenDb = new pg.Client(dbconfig);
+const SolveDb = new pg.Client(dbconfig_solv);
 IdenDb.connect(err => {
     if (err) {
         console.log('Failed to connect to identification db: ' + err);
@@ -15,16 +17,27 @@ IdenDb.connect(err => {
         console.log('Connected to identification db');
     }
 });
+SolveDb.connect(err => {
+    if (err) {
+        console.log('Failed to connect to solve db(auth purpose): ' + err);
+    }
+    else {
+        console.log('Connected to solve db(auth purpose)');
+    }
+});
 
 IdenDb.query('CREATE TABLE IF NOT EXISTS iden('+
              'user_code BIGSERIAL NOT NULL PRIMARY KEY,'+
              'user_id TEXT NOT NULL,'+
              'user_name TEXT NOT NULL,'+
-             'user_password TEXT NOT NULL,'+
-             'user_salt TEXT NOT NULL,'+
+             'user_password TEXT NOT NULL,'+//to be hashed
+             'user_salt TEXT NOT NULL,'+//to be hashed
              'invite_code TEXT NOT NULL,'+
              'bio TEXT,'+
-             'privilege TEXT NOT NULL);', (err, data)=>{
+             'privilege TEXT NOT NULL,'+
+             'email TEXT,'+//to be encrypted
+             'joined TEXT NOT NULL,'+
+             'last_login TEXT);', (err, data)=>{
                 if(err) {
                     console.log('Failed to create table to identification database: '+err);
                 }
@@ -34,6 +47,30 @@ function CheckIdentity(req) {
     if(req.session == undefined) return false;
     else if(req.session.user) return true;
     else return false;
+}
+
+function QueryId(id, toget, callback) {
+    IdenDb.query("SELECT * FROM iden WHERE user_id=$1;", [id], (err, data)=>{
+        if(err || data.rowCount == 0) {
+            console.log('queryId error: '+err);
+            callback(true, undefined);
+        }
+        else {
+            callback(err, data.rows[0][toget]);
+        }
+    });
+}
+
+function AllQueryId(id, callback) {
+    IdenDb.query("SELECT * FROM iden WHERE user_id=$1;", [id], (err, data)=>{
+        if(err || data.rowCount == 0) {
+            console.log('allQueryId error: '+err);
+            callback(true, undefined);
+        }
+        else {
+            callback(err, data.rows[0]);
+        }
+    });
 }
 
 module.exports = {
@@ -69,33 +106,50 @@ module.exports = {
             if(req.body.u == undefined || req.body.p == undefined) {
                 res.render("../views/auth/signin.ejs", {
                     'visible': 'block',
-                    'ret': `/${ret}`
+                    'ret': `${ret}`,
+                    'capt_site': '6LeldLYaAAAAAF2LqYQgHiq_SwPTXIAvQPBvWGWc',
+                    'capt2': 'none',
                 });
                 return;
             }
-            const secret_key = fs.readFileSync(__dirname+'/private/recaptcha_secret.key');
-            const token = req.body.gtoken;
+            let secret_key;
+            let token;
+            if(req.body.gVers == 'block') {
+                secret_key = fs.readFileSync(__dirname+'/private/recaptcha_secret_v2.key');
+                token = req.body['g-recaptcha-response'];
+            }
+            else {
+                secret_key = fs.readFileSync(__dirname+'/private/recaptcha_secret.key');
+                token = req.body['gtoken'];
+            }
             const url = `https://www.google.com/recaptcha/api/siteverify?secret=${secret_key}&response=${token}`;
             request(url, function(err, resp, body) {
                 if(err) {
                     res.render("../views/auth/signin.ejs", {
                         'visible': 'block',
-                        'ret': `/${ret}`
+                        'ret': `${ret}`,
+                        'capt_site': '6LeldLYaAAAAAF2LqYQgHiq_SwPTXIAvQPBvWGWc',
+                        'capt2': 'none',
                     });
+                    console.log('CAPTCHA ERROR:'+err);
                     return;
                 }
                 pbody = JSON.parse(body);
                 if(!pbody.success) {
                     res.render("../views/auth/signin.ejs", {
                         'visible': 'block',
-                        'ret': `/${ret}`
+                        'ret': `${ret}`,
+                        'capt_site': '6Lcq9rgaAAAAAIieJ_q-d0am_YWDKZP8b1V1effD',
+                        'capt2': 'block',
                     });
                     return;
                 }
                 if(!new RegExp('^[a-zA-Z0-9]{1,50}$').test(req.body.u)) {
                     res.render("../views/auth/signin.ejs", {
                         'visible': 'block',
-                        'ret': `/${ret}`
+                        'ret': `${ret}`,
+                        'capt_site': '6LeldLYaAAAAAF2LqYQgHiq_SwPTXIAvQPBvWGWc',
+                        'capt2': 'none',
                     });
                     return;
                 }
@@ -103,11 +157,13 @@ module.exports = {
                 IdenDb.query('SELECT * FROM iden WHERE user_id=$1;', [req.body.u], (err, data) => {
                     row = data.rows;
                     if(row.length == 1) {
-                        if(err) {
+                        if(err || data.rowCount == 0) {
                             if(!sucess) {
                                 res.render("../views/auth/signin.ejs", {
                                     'visible': 'block',
-                                    'ret': `/${ret}`
+                                    'ret': `${ret}`,
+                                    'capt_site': '6LeldLYaAAAAAF2LqYQgHiq_SwPTXIAvQPBvWGWc',
+                                    'capt2': 'none',
                                 });
                             }
                         }
@@ -115,22 +171,36 @@ module.exports = {
                             const buf = Buffer.from(row[0].user_salt, 'base64');
                             crypto.pbkdf2(req.body.p, buf.toString('base64'), 12495, 64, 'sha512', (err, key) => {
                                 if(row[0].user_password==key.toString('base64')) {
-                                    req.session.user = {
-                                        code: row[0].user_code,
-                                        id: row[0].user_id,
-                                        pwd: req.body.p,
-                                        name: row[0].user_name,
-                                        prev: row[0].privilege,
-                                        auth: true
-                                    };
-                                    res.redirect(`${req.body.ret}`);
-                                    sucess = true;
+                                    IdenDb.query('UPDATE iden SET last_login=$1 WHERE user_code=$2', [new Date().toISOString(), row[0].user_code], (err, datre) =>{
+                                        if(err) {
+                                            res.render("../views/auth/signin.ejs", {
+                                                'visible': 'block',
+                                                'ret': `${ret}`,
+                                                'capt_site': '6LeldLYaAAAAAF2LqYQgHiq_SwPTXIAvQPBvWGWc',
+                                                'capt2': 'none',
+                                            });
+                                        }
+                                        else {
+                                            req.session.user = {
+                                                code: row[0].user_code,
+                                                id: row[0].user_id,
+                                                name: row[0].user_name,
+                                                pwd: req.body.p,
+                                                prev: row[0].privilege,
+                                                auth: true
+                                            };
+                                            res.redirect(`/${req.body.ret}`);
+                                            sucess = true;
+                                        }
+                                    });
                                 }
                                 else {
                                     if(!sucess) {
                                         res.render("../views/auth/signin.ejs", {
                                             'visible': 'block',
-                                            'ret': `/${ret}`
+                                            'ret': `${ret}`,
+                                            'capt_site': '6LeldLYaAAAAAF2LqYQgHiq_SwPTXIAvQPBvWGWc',
+                                            'capt2': 'none',
                                         });
                                     }
                                 }
@@ -140,7 +210,9 @@ module.exports = {
                     else {
                         res.render("../views/auth/signin.ejs", {
                             'visible': 'block',
-                            'ret': `/${ret}`
+                            'ret': `${ret}`,
+                            'capt_site': '6LeldLYaAAAAAF2LqYQgHiq_SwPTXIAvQPBvWGWc',
+                            'capt2': 'none',
                         });
                     }
                 });
@@ -163,8 +235,8 @@ module.exports = {
         })
         //Signup Post Handler; id, password, name, invite
         app.post('/signup', (req, res)=>{
-            const secret_key = fs.readFileSync(__dirname+'/private/recaptcha_secret.key');
-            const token = req.body.gtoken;
+            const secret_key = fs.readFileSync(__dirname+'/private/recaptcha_secret_v2.key');
+            const token = req.body['g-recaptcha-response'];
             const url = `https://www.google.com/recaptcha/api/siteverify?secret=${secret_key}&response=${token}`;
             request(url, function(err, resp, body) {
                 if(err) {
@@ -176,9 +248,9 @@ module.exports = {
                 }
                 pbody = JSON.parse(body);
                 if(!pbody.success) {
-                    res.render("../views/auth/signup.ejs", {
+                    res.render("../views/auth/signup_v2.ejs", {
                         'visible': 'inline-block',
-                        'why_failed': 'reCAPTCHA로 인증할 수 없습니다.'
+                        'why_failed': '다시 시도해주세요.'
                     });
                     return;
                 }
@@ -222,21 +294,41 @@ module.exports = {
                         });
                     }
                     else {
-                        crypto.randomBytes(64, (err, buf) => {
+                        crypto.randomBytes(64, (errq, buf) => {
                             crypto.pbkdf2(req.body.password, buf.toString('base64'), 12495, 64, 'sha512', (err, key) => {
-                            IdenDb.query(`INSERT INTO iden(user_id, user_name, user_password, user_salt, invite_code, bio, privilege) `+
-                                        `values ($1, $2, $3, $4, $5, '', 'u')`,
-                                        [req.body.id, req.body.name, key.toString('base64'), buf.toString('base64'), req.body.invite], (err, resx)=>{
-                                            if(err) {
+                                IdenDb.query(`INSERT INTO iden(user_id, user_name, user_password, user_salt, invite_code, bio, privilege, joined) `+
+                                             `values ($1, $2, $3, $4, $5, '', 'u', $6)`,
+                                             [req.body.id, req.body.name, key.toString('base64'), buf.toString('base64'), req.body.invite, new Date().toISOString()], (err, resx)=>{
+                                    if(errq) {
+                                        res.render("../views/auth/signup.ejs", {
+                                            'visible': 'inline-block',
+                                            'why_failed': '지금은 서비스를 사용할 수 없습니다. 잠시 후 다시 시도해주세요.'
+                                        });
+                                    }
+                                    else {
+                                        QueryId(req.body.id, 'user_code', (errx, data) =>{
+                                            if(errx) {
                                                 res.render("../views/auth/signup.ejs", {
                                                     'visible': 'inline-block',
                                                     'why_failed': '지금은 서비스를 사용할 수 없습니다. 잠시 후 다시 시도해주세요.'
                                                 });
+                                                return;
                                             }
-                                            else {
-                                                res.redirect('/');
+                                            SolveDb.query(`CREATE TABLE IF NOT EXISTS u${data}(`+
+                                                          'code BIGSERIAL NOT NULL PRIMARY KEY,'+
+                                                          'problem_code INTEGER NOT NULL,'+
+                                                          'solved_time TEXT NOT NULL,'+
+                                                          'solving_time TEXT NOT NULL,'+
+                                                          'correct BOOLEAN NOT NULL);', (errp, resx)=>{
+                                            if(err) {
+                                                console.log('Failed to create solves table for user id: '+req.session.user.code+'. '+err);
+                                                error.sendError(500, 'Internal Server Error', res);
                                             }
+                                            });
+                                            res.redirect('/');
                                         });
+                                    }
+                                });
                             });
                         });
                     }
@@ -252,7 +344,9 @@ module.exports = {
                 if(req.query.ret != undefined) ret = req.query.ret;
                 res.render("../views/auth/signin.ejs", {
                     'visible': 'none',
-                    'ret': `/${ret}`
+                    'ret': `${ret}`,
+                    'capt_site': '6LeldLYaAAAAAF2LqYQgHiq_SwPTXIAvQPBvWGWc',
+                    'capt2': 'none'
                 });
             }            
         });
@@ -263,15 +357,6 @@ module.exports = {
             });
         });
     },
-    queryId: function(id, toget) {
-        IdenDb.query("SELECT * FROM iden WHERE user_id=$1;", [id], (err, data)=>{
-            if(err) {
-                console.log('queryId error: '+err);
-                return err;
-            }
-            else {
-                return data.rows[0][toget];
-            }
-        });
-    }
+    queryId: QueryId,
+    allQueryId: AllQueryId
 }

@@ -7,6 +7,13 @@
         <link rel="stylesheet" type="text/css" href="/lib/univ.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap.min.css">
         <script src="/lib/univ.js"></script>
+        <%- include('./ejs-components/header-comp.ejs')%>
+        <meta name="title" content="IPU">
+        <meta property="og:title" content="IPU">
+        <meta name="twitter:title" content="IPU">
+        <meta name="description" content="Welcome to the IPU">
+        <meta property="og:description" content="Welcome to the IPU">
+        <meta name="twitter:description" content="Welcome to the IPU">
     </head>
     <body>
         <div id="block" style="display: none;"></div>
@@ -14,24 +21,7 @@
             <div id="root">
                 <div id="heading">
                     <%- include('./ejs-components/goto.ejs')%>
-                    <div id="user">
-                        <div id="nloged" style="display: <%= nlog%>">
-                            <span class="welcome" style="margin-right: 5px;">
-                                <a href="/login" style="color: black; font-family: inherit; font-size: inherit;">login</a>
-                            </span>
-                            <span class="welcome" style="margin-left: 5px;">
-                                <a href="/signup" style="color: black; font-family: inherit; font-size: inherit;">signup</a>
-                            </span>
-                        </div>
-                        <div id="yloged" style="display: <%= ylog%>;">
-                            <span class="welcome" style="margin-right: 5px;">
-                                <a href="/profile/<%= username%>" style="color: black; font-family: inherit; font-size: inherit;"><%= username%></a>
-                            </span>
-                            <span class="welcome" style="margin-left: 5px;">
-                                <a href="/login/deauth" style="color: black; font-family: inherit; font-size: inherit;">Logout</a>
-                            </span>
-                        </div>
-                    </div>
+                    <%- include('./ejs-components/user_header.ejs')%>
                 </div>
             </div>
             <%- include('ejs-components/basics.ejs')%>

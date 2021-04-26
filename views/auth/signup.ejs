@@ -2,11 +2,17 @@
 
 <html>
 	<head>
-		<title>Sign In</title>
+		<title>가입 - IPU</title>
 		<meta charset="utf-8">
 		<link rel="stylesheet" type="text/css" href="/lib/auth/signin.css">
-		<script src="https://www.google.com/recaptcha/api.js?render=6LeldLYaAAAAAF2LqYQgHiq_SwPTXIAvQPBvWGWc"></script>
+		<script src="https://www.google.com/recaptcha/api.js?render=6Lcq9rgaAAAAAIieJ_q-d0am_YWDKZP8b1V1effD"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<%- include('../ejs-components/header-comp.ejs')%>
+		<meta property="og:title" content="IPU - 회원가입">
+        <meta name="twitter:title" content="IPU - 회원가입">
+        <meta name="description" content="IPU에 회원가입하기">
+        <meta property="og:description" content="IPU에 회원가입하기">
+        <meta name="twitter:description" content="IPU에 회원가입하기">
 		<style>
 			div.grecaptcha-badge { 
     			visibility: hidden;
@@ -28,9 +34,9 @@
 					<input type="text" id="id" class="input second" name="id" placeholder="ID" spellcheck="false" style="display: none;" required>
 					<input type="password" id="pwd" class="input second" name="password" placeholder="Password" spellcheck="false" style="display: none;" required>
 					<input type="text" id="invite" class="input" name="invite" placeholder="Invite code" spellcheck="false" maxlength="6" required>
-					<input type="text" id="gtoken" style="display: none;" name="gtoken" readonly required>
 					<label id="errdisplay" style="display: none;"></label>
 					<button type="button" id="submit" class="input" onclick="formNxt()">Proceed</button>
+					<div id="captcha" style="display: none;" class="g-recaptcha" data-sitekey="6Lcq9rgaAAAAAIieJ_q-d0am_YWDKZP8b1V1effD" data-theme="dark"></div>
 				</form>
 			</section>
 		</section>
@@ -49,11 +55,6 @@
 				dataType: "json",
 				success: function(data) {
 					if(data.status == 1) {
-						grecaptcha.ready(function() {
-		  					grecaptcha.execute('6LeldLYaAAAAAF2LqYQgHiq_SwPTXIAvQPBvWGWc', {action: 'signup'}).then(function(token) {
-								document.getElementById('gtoken').value = token;
-		  					});
-						});
 						document.getElementById('invite').style.opacity = 0;
 						document.getElementById('errdisplay').style.display = "none";
 						document.getElementById('submit').onclick = undefined;
@@ -62,11 +63,13 @@
 							document.getElementById('name').style.display = 'inline-block';
 							document.getElementById('id').style.display = 'inline-block';
 							document.getElementById('pwd').style.display = 'inline-block';
+							document.getElementById('captcha').style.display = "block";
 							setTimeout(()=>{
 								document.getElementById('name').style.opacity = 1;
 								document.getElementById('id').style.opacity = 1;
 								document.getElementById('pwd').style.opacity = 1;
 								document.getElementById('submit').type = 'submit';
+								document.getElementById('captcha').style.opacity = 1;
 								document.getElementById('submit').innerText = "Sign up";
 							}, 50);
 						}, 300);
@@ -84,5 +87,10 @@
 				}
 			});
 		}
+	</script>
+	<script>
+		grecaptcha.ready(function() {
+		  	grecaptcha.execute('6Lcq9rgaAAAAAIieJ_q-d0am_YWDKZP8b1V1effD', {action: 'signup'}).then(function(token) {});
+		});
 	</script>
 </html>
