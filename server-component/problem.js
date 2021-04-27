@@ -206,5 +206,10 @@ module.exports = {
                 callback(data.rows);
             }
         });
+    },
+    probNonquery: function(query, param, callback) {
+        ProbDb.query(query, param, (err, res)=>{
+            callback(err);
+        });
     }
 }

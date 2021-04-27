@@ -3,6 +3,7 @@ const fs = require('fs');
 const pg = require('pg');
 const error = require('./error');
 const prob = require('./problem');
+const crypto = require('crypto');
 
 const dbconfig_json = fs.readFileSync(__dirname+'/db_config.json');
 const dbconfig_solv = JSON.parse(dbconfig_json).solv;
@@ -19,6 +20,11 @@ SolveDb.connect(err => {
 String.prototype.string = function(len){var s = '', i = 0; while (i++ < len) { s += this; } return s;};
 String.prototype.zf = function(len){return "0".string(len - this.length) + this;};
 Number.prototype.zf = function(len){return this.toString().zf(len);};
+
+function validateEmail(email) {
+    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+}
 
 module.exports = {
     profileRouter: function(app) {
@@ -77,8 +83,8 @@ module.exports = {
                 }
                 else {
                     res.render("profile/user_profile.ejs", {
-                        ylog: 'block',
-                        nlog: 'none',
+                        ylog: 'none',
+                        nlog: 'block',
                         userid: '',
                         username: '',
                         usernameT: data['user_name'],
@@ -114,11 +120,27 @@ module.exports = {
                 });
             }
         });
+        app.get('/settings/gbye', (req, res)=>{
+            if(auth.checkIdentity(req)) {
+                res.render('profile/goodbye.ejs', {
+                    ylog: 'block',
+                    nlog: 'none',
+                    userid: req.session.user.id,
+                    username: req.session.user.name,
+                    fail: 'none',
+                    whyfail: ''
+                });
+            }
+            else {
+                res.redirect('/login/?ret=settings/gbye');
+            }
+        });
         app.post('/settings', (req, res)=>{
             if(!auth.checkIdentity(req)) {
                 error.sendError(403, "Forbidden", res);
             }
-            IdenDb.query('SELECT * FROM iden WHERE user_id=$1;', [req.session.user.id], (err, data) => {
+            auth.query('SELECT * FROM iden WHERE user_id=$1;', [req.session.user.id], (err, data) => {
+                try {
                 row = data.rows;
                 if(row.length == 1) {
                     if(err || data.rowCount == 0) {
@@ -132,17 +154,55 @@ module.exports = {
                             if(row[0].user_password==key.toString('base64')) {
                                 //Auth success
                                 //name regex violent
-                                if(!new RegExp('^[a-zA-Zㄱ-힣]{1,50}$').test(req.body.uname)) {
-                                    res.render("../views/auth/signup.ejs", {
-                                        'visible': 'inline-block',
-                                        'why_failed': '이름은 한글과 영어의 조합이여야 합니다.'
-                                    });
+                                let uname = req.body.name;
+                                let bio = req.body.bio;
+                                let ema = req.body.email;
+                                if(!new RegExp('^[a-zA-Zㄱ-힣]{1,50}$').test(uname)) {
+                                    res.status(400).send('name');
                                     return;
                                 }
-                                IdenDb.query('UPDATE iden ')
+                                if(bio.length >= 100) {
+                                    res.status(400).send('bio');
+                                    return;
+                                }
+                                if(!validateEmail(ema) && ema != '') {
+                                    res.status(400).send('email');
+                                    return;
+                                }
+                                if(req.body.pwdC) {
+                                    //password regex violent
+                                    if(req.body.npwd == undefined || !new RegExp('^[a-zA-Z0-9]{4,100}$').test(req.body.npwd)) {
+                                        res.status(400).send('pwdf');
+                                        return;
+                                    }
+                                    crypto.randomBytes(64, (errq, bufx) => {
+                                        crypto.pbkdf2(req.body.npwd, bufx.toString('base64'), 12495, 64, 'sha512', (err, keyp) => {
+                                            auth.query('UPDATE iden SET user_name=$1, bio=$2, email=$3, user_password=$4, user_salt=$5 WHERE user_code=$6', [uname, bio, ema, keyp.toString('base64'), bufx.toString('base64'), req.session.user.code], (err, resp)=>{
+                                                if(err) {
+                                                    res.status(500).send('dbupdate-pwd');
+                                                }
+                                                else {
+                                                    req.session.user.name = uname;
+                                                    res.sendStatus(200);
+                                                }
+                                            });
+                                        });
+                                    });
+                                }
+                                else {
+                                    auth.query('UPDATE iden SET user_name=$1, bio=$2, email=$3 WHERE user_code=$4', [uname, bio, ema, req.session.user.code], (err, resp)=>{
+                                        if(err) {
+                                            res.status(500).send('dbupdate-npwd');
+                                        }
+                                        else {
+                                            req.session.user.name = uname;
+                                            res.sendStatus(200);
+                                        }
+                                    });
+                                }
                             }
                             else {
-                                error.sendError(403, "Forbidden", res);
+                                res.status(403).send('pwd');
                             }
                         });
                     }
@@ -155,7 +215,108 @@ module.exports = {
                         'capt2': 'none',
                     });
                 }
+                }
+                catch {
+                    res.sendStatus(500);
+                }
             });
+        });
+        app.post('/settings/gbye', (req, res)=>{
+            try{
+            if(!auth.checkIdentity(req)) {
+                error.sendError(403, 'Forbidden', res);
+                return;
+            }
+            auth.query('SELECT * FROM iden WHERE user_code=$1;', [req.session.user.code], (err, data) => {
+                row = data.rows;
+                if(row.length == 1) {
+                    if(err || data.rowCount == 0) {
+                        res.render('profile/goodbye.ejs', {
+                            ylog: 'block',
+                            nlog: 'none',
+                            userid: req.session.user.id,
+                            username: req.session.user.name,
+                            fail: 'block',
+                            whyfail: '사용자를 찾을 수 없습니다.'
+                        });
+                    }
+                    else {
+                        const buf = Buffer.from(row[0].user_salt, 'base64');
+                        crypto.pbkdf2(req.body.pwd, buf.toString('base64'), 12495, 64, 'sha512', (errp, key) => {
+                            if(row[0].user_password==key.toString('base64')) {
+                                if(!errp) {
+                                    auth.query("DELETE FROM iden WHERE user_code=$1;", [req.session.user.code], (err, response)=>{
+                                        SolveDb.query(`DROP TABLE u${req.session.user.code};`, [], (resxp)=>{
+                                            if(resxp) {
+                                                res.render('profile/goodbye.ejs', {
+                                                    ylog: 'block',
+                                                    nlog: 'none',
+                                                    userid: req.session.user.id,
+                                                    username: req.session.user.name,
+                                                    fail: 'block',
+                                                    whyfail: '계정 데이터를 삭제할 수 없습니다.'
+                                                });
+                                            }
+                                            else {
+                                                req.session.destroy(
+                                                    function (err) {
+                                                        if (err) {
+                                                            error.sendError(500, 'INTERNAL SERVER ERROR', res);
+                                                            return;
+                                                        }
+                                                    }
+                                                );
+                                                res.render('profile/realbye.ejs');
+                                            }
+                                        });
+                                    });
+                                }
+                                else {
+                                    res.render('profile/goodbye.ejs', {
+                                        ylog: 'block',
+                                        nlog: 'none',
+                                        userid: req.session.user.id,
+                                        username: req.session.user.name,
+                                        fail: 'block',
+                                        whyfail: '암호를 처리할 수 없습니다.'
+                                    });
+                                }
+                            }
+                            else {
+                                res.render('profile/goodbye.ejs', {
+                                    ylog: 'block',
+                                    nlog: 'none',
+                                    userid: req.session.user.id,
+                                    username: req.session.user.name,
+                                    fail: 'block',
+                                    whyfail: '잘못된 암호입니다.'
+                                });
+                            }
+                        });
+                    }
+                }
+                else {
+                    res.render('profile/goodbye.ejs', {
+                        ylog: 'block',
+                        nlog: 'none',
+                        userid: req.session.user.id,
+                        username: req.session.user.name,
+                        fail: 'block',
+                        whyfail: '사용자를 식별할 수 없습니다.'
+                    });
+                }
+            });
+            }
+            catch {
+                res.render('profile/goodbye.ejs', {
+                    ylog: 'block',
+                    nlog: 'none',
+                    userid: req.session.user.id,
+                    username: req.session.user.name,
+                    fail: 'block',
+                    whyfail: '요청을 처리할 수 없습니다. 잠시 후 다시 시도해주세요.'
+                });
+            }
         });
         app.post('/profile/api/get-solved', (req, res)=>{
             let from = req.body.frm;
@@ -173,12 +334,19 @@ module.exports = {
                 SolveDb.query(`SELECT code, problem_code, solved_time, solving_time, correct `+
                               `FROM (SELECT code, problem_code, solved_time, solving_time, correct FROM u${datax} ORDER BY code DESC) AS probs `+
                               `WHERE code>=$1 AND code<$2;`, [from, length+from], (err, data)=>{
-                    if(err || data.rowCount == 0) {
+                    if(err) {
                         console.log("problem table query error: "+err);
                         error.sendError(500, 'Internal Server Error', res);
                     }
+                    else if(data.rowCount == 0) {
+                        res.send({});
+                    }
                     else {
-                        prob.probQuery([1, 5], (datap)=>{
+                        let toget = [];
+                        data.rows.forEach(ele=>{
+                            toget.push(ele.problem_code);
+                        });
+                        prob.probQuery(toget, (datap)=>{
                             rows = data.rows;
                             let dataprob = {};
                             datap.forEach(elem=>{

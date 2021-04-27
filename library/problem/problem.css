@@ -96,6 +96,14 @@ textarea#editor {
     width: 60%;
     margin: auto;
 }
+
+@media only screen 
+and (min-device-width : 320px) 
+and (max-device-width : 480px) {
+    #prob-cont-v {
+        width: 90%;
+    }
+}
 #top-menu {
     width: 100%;
     height: 40px;

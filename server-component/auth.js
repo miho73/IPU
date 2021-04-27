@@ -84,14 +84,14 @@ module.exports = {
        return result.join('');
     },
     checkIdentity: CheckIdentity,
-    authRouter: function(app) {
+    authRouter: function(app, rtd) {
         //Release login Request Handler
         app.get('/login/deauth', (req, res)=>{
             if (CheckIdentity(req)) {
                 req.session.destroy(
                     function (err) {
                         if (err) {
-                            sendError(500, 'INTERNAL SERVER ERROR', res);
+                            error.sendError(500, 'INTERNAL SERVER ERROR', res);
                             return;
                         }
                     }
@@ -104,7 +104,7 @@ module.exports = {
             let ret = '';
             if(req.query.ret != undefined) ret = req.query.ret;
             if(req.body.u == undefined || req.body.p == undefined) {
-                res.render("../views/auth/signin.ejs", {
+                res.render("auth/signin.ejs", {
                     'visible': 'block',
                     'ret': `${ret}`,
                     'capt_site': '6LeldLYaAAAAAF2LqYQgHiq_SwPTXIAvQPBvWGWc',
@@ -125,7 +125,7 @@ module.exports = {
             const url = `https://www.google.com/recaptcha/api/siteverify?secret=${secret_key}&response=${token}`;
             request(url, function(err, resp, body) {
                 if(err) {
-                    res.render("../views/auth/signin.ejs", {
+                    res.render("auth/signin.ejs", {
                         'visible': 'block',
                         'ret': `${ret}`,
                         'capt_site': '6LeldLYaAAAAAF2LqYQgHiq_SwPTXIAvQPBvWGWc',
@@ -136,7 +136,7 @@ module.exports = {
                 }
                 pbody = JSON.parse(body);
                 if(!pbody.success) {
-                    res.render("../views/auth/signin.ejs", {
+                    res.render("auth/signin.ejs", {
                         'visible': 'block',
                         'ret': `${ret}`,
                         'capt_site': '6Lcq9rgaAAAAAIieJ_q-d0am_YWDKZP8b1V1effD',
@@ -145,7 +145,7 @@ module.exports = {
                     return;
                 }
                 if(!new RegExp('^[a-zA-Z0-9]{1,50}$').test(req.body.u)) {
-                    res.render("../views/auth/signin.ejs", {
+                    res.render("auth/signin.ejs", {
                         'visible': 'block',
                         'ret': `${ret}`,
                         'capt_site': '6LeldLYaAAAAAF2LqYQgHiq_SwPTXIAvQPBvWGWc',
@@ -159,7 +159,7 @@ module.exports = {
                     if(row.length == 1) {
                         if(err || data.rowCount == 0) {
                             if(!sucess) {
-                                res.render("../views/auth/signin.ejs", {
+                                res.render("auth/signin.ejs", {
                                     'visible': 'block',
                                     'ret': `${ret}`,
                                     'capt_site': '6LeldLYaAAAAAF2LqYQgHiq_SwPTXIAvQPBvWGWc',
@@ -173,7 +173,7 @@ module.exports = {
                                 if(row[0].user_password==key.toString('base64')) {
                                     IdenDb.query('UPDATE iden SET last_login=$1 WHERE user_code=$2', [new Date().toISOString(), row[0].user_code], (err, datre) =>{
                                         if(err) {
-                                            res.render("../views/auth/signin.ejs", {
+                                            res.render("auth/signin.ejs", {
                                                 'visible': 'block',
                                                 'ret': `${ret}`,
                                                 'capt_site': '6LeldLYaAAAAAF2LqYQgHiq_SwPTXIAvQPBvWGWc',
@@ -196,7 +196,7 @@ module.exports = {
                                 }
                                 else {
                                     if(!sucess) {
-                                        res.render("../views/auth/signin.ejs", {
+                                        res.render("auth/signin.ejs", {
                                             'visible': 'block',
                                             'ret': `${ret}`,
                                             'capt_site': '6LeldLYaAAAAAF2LqYQgHiq_SwPTXIAvQPBvWGWc',
@@ -208,7 +208,7 @@ module.exports = {
                         }
                     }
                     else {
-                        res.render("../views/auth/signin.ejs", {
+                        res.render("auth/signin.ejs", {
                             'visible': 'block',
                             'ret': `${ret}`,
                             'capt_site': '6LeldLYaAAAAAF2LqYQgHiq_SwPTXIAvQPBvWGWc',
@@ -218,21 +218,37 @@ module.exports = {
                 });
             });
         });
-        function inviteCodeCheck(code) {
-            //TODO: implement
-            if(code == "1234") return true;
-            return false
+        function inviteCodeCheck(code, callback) {
+            try {
+                fs.readFile(rtd+'/invites.json', (err, data)=>{
+                    if(err) {
+                        console.log("invite code error: "+err);
+                        callback(false);
+                    }
+                    else {
+                        let obj = JSON.parse(data);
+                        if(obj.codes.includes(code)) callback(true);
+                        else callback(false);
+                    }
+                });
+            }
+            catch {
+                console.log("invites code checker error: "+err);
+                callback(false);
+            }
         }
         //Invite code checker
         app.post('/auth/invite', (req, res)=>{
             if(req.body.code == undefined) res.send(`{"status":0}`);
-            if(inviteCodeCheck(req.body.code)) {
-                res.send(`{"status":1}`);
-            }
-            else {
-                res.send(`{"status":0}`);
-            }
-        })
+            inviteCodeCheck(req.body.code, (resq)=>{
+                if(resq) {
+                    res.send(`{"status":1}`);
+                }
+                else {
+                    res.send(`{"status":0}`);
+                }
+            });
+        });
         //Signup Post Handler; id, password, name, invite
         app.post('/signup', (req, res)=>{
             const secret_key = fs.readFileSync(__dirname+'/private/recaptcha_secret_v2.key');
@@ -240,7 +256,7 @@ module.exports = {
             const url = `https://www.google.com/recaptcha/api/siteverify?secret=${secret_key}&response=${token}`;
             request(url, function(err, resp, body) {
                 if(err) {
-                    res.render("../views/auth/signup.ejs", {
+                    res.render("auth/signup.ejs", {
                         'visible': 'inline-block',
                         'why_failed': '일시적으로 reCAPTCHA 서버에 접속할 수 없습니다.'
                     });
@@ -248,22 +264,24 @@ module.exports = {
                 }
                 pbody = JSON.parse(body);
                 if(!pbody.success) {
-                    res.render("../views/auth/signup_v2.ejs", {
+                    res.render("auth/signup.ejs", {
                         'visible': 'inline-block',
                         'why_failed': '다시 시도해주세요.'
                     });
                     return;
                 }
                 //invalid invite code
-                if(!inviteCodeCheck(req.body.invite)) {
-                    res.render("../views/auth/signup.ejs", {
-                        'visible': 'inline-block',
-                        'why_failed': '초대코드를 확인할 수 없습니다.'
-                    });
-                }
-                //id regex violent
+                inviteCodeCheck(req.body.code, (qwer)=>{
+                    if(!qwer) {
+                        res.render("/auth/signup.ejs", {
+                            'visible': 'inline-block',
+                            'why_failed': '초대코드를 확인할 수 없습니다.'
+                        });
+                        return;
+                    }
+                    //id regex violent
                 if(!new RegExp('^[a-zA-Z0-9]{1,50}$').test(req.body.id)) {
-                    res.render("../views/auth/signup.ejs", {
+                    res.render("auth/signup.ejs", {
                         'visible': 'inline-block',
                         'why_failed': 'ID는 글자(a-z, A-Z)와 숫자(0-9)로만 이루어져 있어야 합니다.'
                     });
@@ -271,7 +289,7 @@ module.exports = {
                 }
                 //password regex violent
                 if(!new RegExp('^[a-zA-Z0-9]{4,100}$').test(req.body.password)) {
-                    res.render("../views/auth/signup.ejs", {
+                    res.render("auth/signup.ejs", {
                         'visible': 'inline-block',
                         'why_failed': '암호는 4자리 이상, 100자리 이하여야 하며, 글자(a-z, A-Z)와 숫자(0-9)로 만 이루어져 있어야 합니다.'
                     });
@@ -279,7 +297,7 @@ module.exports = {
                 }
                 //name regex violent
                 if(!new RegExp('^[a-zA-Zㄱ-힣]{1,50}$').test(req.body.name)) {
-                    res.render("../views/auth/signup.ejs", {
+                    res.render("auth/signup.ejs", {
                         'visible': 'inline-block',
                         'why_failed': '이름은 한글과 영어의 조합이여야 합니다.'
                     });
@@ -288,7 +306,7 @@ module.exports = {
                 //check if id is duplicated
                 IdenDb.query('SELECT user_code FROM iden WHERE user_id=$1', [req.body.id], (err, data)=>{
                     if(err || data.rowCount != 0) {
-                        res.render("../views/auth/signup.ejs", {
+                        res.render("auth/signup.ejs", {
                             'visible': 'inline-block',
                             'why_failed': '해당 ID는 이미 사용중입니다.'
                         });
@@ -300,7 +318,7 @@ module.exports = {
                                              `values ($1, $2, $3, $4, $5, '', 'u', $6)`,
                                              [req.body.id, req.body.name, key.toString('base64'), buf.toString('base64'), req.body.invite, new Date().toISOString()], (err, resx)=>{
                                     if(errq) {
-                                        res.render("../views/auth/signup.ejs", {
+                                        res.render("auth/signup.ejs", {
                                             'visible': 'inline-block',
                                             'why_failed': '지금은 서비스를 사용할 수 없습니다. 잠시 후 다시 시도해주세요.'
                                         });
@@ -308,7 +326,7 @@ module.exports = {
                                     else {
                                         QueryId(req.body.id, 'user_code', (errx, data) =>{
                                             if(errx) {
-                                                res.render("../views/auth/signup.ejs", {
+                                                res.render("auth/signup.ejs", {
                                                     'visible': 'inline-block',
                                                     'why_failed': '지금은 서비스를 사용할 수 없습니다. 잠시 후 다시 시도해주세요.'
                                                 });
@@ -333,6 +351,7 @@ module.exports = {
                         });
                     }
                 });
+                });
             });
         });
         app.get('/login', (req, res)=>{
@@ -342,7 +361,7 @@ module.exports = {
             else {
                 let ret = ''
                 if(req.query.ret != undefined) ret = req.query.ret;
-                res.render("../views/auth/signin.ejs", {
+                res.render("auth/signin.ejs", {
                     'visible': 'none',
                     'ret': `${ret}`,
                     'capt_site': '6LeldLYaAAAAAF2LqYQgHiq_SwPTXIAvQPBvWGWc',
@@ -351,12 +370,15 @@ module.exports = {
             }            
         });
         app.get('/signup', (req, res)=>{
-            res.render("../views/auth/signup.ejs", {
+            res.render("auth/signup.ejs", {
                 'visible': 'none',
                 'why_failed': ''
             });
         });
     },
     queryId: QueryId,
-    allQueryId: AllQueryId
+    allQueryId: AllQueryId,
+    query: function(q, p, callback) {
+        IdenDb.query(q, p, callback);
+    }
 }

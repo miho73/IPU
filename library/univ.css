@@ -130,6 +130,13 @@ div#display {
     padding: 0 0 0 20px;
     left: 0;
 }
+#img-cont {
+    width: 100%;
+    max-height: 550px;
+    overflow-y: hidden;
+    margin: auto;
+    box-shadow: 0 0 8px 8px #fff inset;
+}
 
 p.footer-text {
     color: #222;
@@ -160,6 +167,13 @@ span#header-title {
     font-size: 80px;
     font-family: 'Cafe24Shiningstar', 'Cafe24Oneprettynight', 'Spoqa Han Sans Neo', 'sans-serif';
 }
+#moving-p {
+    font-size: 4em;
+    font-weight: 600;
+    color: #444;
+    width: 100%;
+    text-align: center;
+}
 .welcome {
     width: fit-content;
     text-align: right;
@@ -170,6 +184,9 @@ span#header-title {
 }
 .welcome:hover {
     text-decoration: underline;
+}
+#welcomemsg {
+    font-size: 2em;
 }
 
 a.footer-href {
