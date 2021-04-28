@@ -61,8 +61,8 @@ app.get('/', (req, res)=>{
     }
 });
 
-app.get('/.well-known/pki-validation/AE90BEC8EBFB3A7B8CD2825DA22282D3.txt', (req, res)=>{
-    res.sendFile(__dirname+'/cert/AE90BEC8EBFB3A7B8CD2825DA22282D3.txt');
+app.get('/.well-known/pki-validation/498270B9B3DEEF400FD91E437D56AA4D.txt', (req, res)=>{
+    res.sendFile(__dirname+'/cert/498270B9B3DEEF400FD91E437D56AA4D.txt');
 });
 app.get('/robots.txt', (req, res)=>{
     res.sendFile(__dirname+'/robots.txt');
@@ -89,7 +89,6 @@ var options = {
 
 app.listen(HTTP_PORT);
 console.log("HTTP server listening on port " + HTTP_PORT);
-
 https.createServer(options, app).listen(HTTPS_PORT, function() {
     console.log("HTTPS server listening on port " + HTTPS_PORT);
 });

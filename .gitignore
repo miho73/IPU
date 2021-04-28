@@ -1,4 +1,6 @@
 server-component/db_config.json
+cert
+server-component/private
 
 # Logs
 logs

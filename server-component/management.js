@@ -1,5 +1,5 @@
 const fs = require('fs');
-const auth = require('auth');
+const auth = require('./auth');
 
 function pPermission(req, callback) {
     if(!auth.checkIdentity(req)) {

@@ -107,7 +107,7 @@ module.exports = {
                 res.render("auth/signin.ejs", {
                     'visible': 'block',
                     'ret': `${ret}`,
-                    'capt_site': '6LeldLYaAAAAAF2LqYQgHiq_SwPTXIAvQPBvWGWc',
+                    'capt_site': '6LefxLwaAAAAAOUYGq_6QLMbRMmGJZlQUQAcw-7u',
                     'capt2': 'none',
                 });
                 return;
@@ -128,7 +128,7 @@ module.exports = {
                     res.render("auth/signin.ejs", {
                         'visible': 'block',
                         'ret': `${ret}`,
-                        'capt_site': '6LeldLYaAAAAAF2LqYQgHiq_SwPTXIAvQPBvWGWc',
+                        'capt_site': '6LefxLwaAAAAAOUYGq_6QLMbRMmGJZlQUQAcw-7u',
                         'capt2': 'none',
                     });
                     console.log('CAPTCHA ERROR:'+err);
@@ -139,7 +139,7 @@ module.exports = {
                     res.render("auth/signin.ejs", {
                         'visible': 'block',
                         'ret': `${ret}`,
-                        'capt_site': '6Lcq9rgaAAAAAIieJ_q-d0am_YWDKZP8b1V1effD',
+                        'capt_site': '6LeoxLwaAAAAABC-oJu76Dt36Yb5K12Eu7a0pjD8',
                         'capt2': 'block',
                     });
                     return;
@@ -148,7 +148,7 @@ module.exports = {
                     res.render("auth/signin.ejs", {
                         'visible': 'block',
                         'ret': `${ret}`,
-                        'capt_site': '6LeldLYaAAAAAF2LqYQgHiq_SwPTXIAvQPBvWGWc',
+                        'capt_site': '6LefxLwaAAAAAOUYGq_6QLMbRMmGJZlQUQAcw-7u',
                         'capt2': 'none',
                     });
                     return;
@@ -162,7 +162,7 @@ module.exports = {
                                 res.render("auth/signin.ejs", {
                                     'visible': 'block',
                                     'ret': `${ret}`,
-                                    'capt_site': '6LeldLYaAAAAAF2LqYQgHiq_SwPTXIAvQPBvWGWc',
+                                    'capt_site': '6LefxLwaAAAAAOUYGq_6QLMbRMmGJZlQUQAcw-7u',
                                     'capt2': 'none',
                                 });
                             }
@@ -176,7 +176,7 @@ module.exports = {
                                             res.render("auth/signin.ejs", {
                                                 'visible': 'block',
                                                 'ret': `${ret}`,
-                                                'capt_site': '6LeldLYaAAAAAF2LqYQgHiq_SwPTXIAvQPBvWGWc',
+                                                'capt_site': '6LefxLwaAAAAAOUYGq_6QLMbRMmGJZlQUQAcw-7u',
                                                 'capt2': 'none',
                                             });
                                         }
@@ -199,7 +199,7 @@ module.exports = {
                                         res.render("auth/signin.ejs", {
                                             'visible': 'block',
                                             'ret': `${ret}`,
-                                            'capt_site': '6LeldLYaAAAAAF2LqYQgHiq_SwPTXIAvQPBvWGWc',
+                                            'capt_site': '6LefxLwaAAAAAOUYGq_6QLMbRMmGJZlQUQAcw-7u',
                                             'capt2': 'none',
                                         });
                                     }
@@ -211,7 +211,7 @@ module.exports = {
                         res.render("auth/signin.ejs", {
                             'visible': 'block',
                             'ret': `${ret}`,
-                            'capt_site': '6LeldLYaAAAAAF2LqYQgHiq_SwPTXIAvQPBvWGWc',
+                            'capt_site': '6LefxLwaAAAAAOUYGq_6QLMbRMmGJZlQUQAcw-7u',
                             'capt2': 'none',
                         });
                     }
@@ -372,7 +372,7 @@ module.exports = {
                 res.render("auth/signin.ejs", {
                     'visible': 'none',
                     'ret': `${ret}`,
-                    'capt_site': '6LeldLYaAAAAAF2LqYQgHiq_SwPTXIAvQPBvWGWc',
+                    'capt_site': '6LefxLwaAAAAAOUYGq_6QLMbRMmGJZlQUQAcw-7u',
                     'capt2': 'none'
                 });
             }            
