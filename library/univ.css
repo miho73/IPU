@@ -132,7 +132,7 @@ div#display {
 }
 #img-cont {
     width: 100%;
-    max-height: 550px;
+    max-height: 530px;
     overflow-y: hidden;
     margin: auto;
     box-shadow: 0 0 8px 8px #fff inset;
@@ -209,6 +209,27 @@ a.footer-href {
     -moz-transition: color .15s linear;
     -webkit-transition: color .15s linear;
     -o-transition: color .15s linear;
+}
+#maincontents {
+    margin-top: 10px;
+}
+.cont-href {
+    padding: 0.8em 1.3em;
+    background-color: #222;
+    margin: 0 10px;
+    font-size: 1.7em;
+    color: #ddd;
+    display: inline-block;
+    width: fit-content;
+    transition: background-color .15s linear;
+    -moz-transition: background-color .15s linear;
+    -webkit-transition: background-color .15s linear;
+    -o-transition: background-color .15s linear;
+}
+.cont-href:hover {
+    text-decoration: none;
+    background-color: #555;
+    color: #fff;
 }
 
 table.table {

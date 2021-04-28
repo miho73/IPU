@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /problem
+Allow: /profile
+Allow: /settings
+Allow: /lib
+Allow: /signup
+Allow: /signin
+Allow: /favicon.ico
+Disallow: /problem/*
+Disallow: /manage

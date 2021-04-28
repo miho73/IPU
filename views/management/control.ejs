@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>관리자 항목 - IPU</title>
+        <%- include('../ejs-components/header-comp.ejs')%>
+        <meta name="title" content="IPU - 관리자 항목">
+        <meta property="og:title" content="IPU - 관리자 항목">
+        <meta name="twitter:title" content="IPU - 관리자 항목">
+        <meta name="description" content="sudo ipu">
+        <meta property="og:description" content="sudo ipu">
+        <meta name="twitter:description" content="sudo ipu">
+        <link rel="stylesheet" type="text/css" href="/lib/univ.css">
+        <link rel="stylesheet" type="text/css" href="/lib/problem/problem.css">
+        <link rel="stylesheet" type="text/css" href="/lib/profile/profile.css">
+        <link rel="stylesheet" type="text/css" href="/lib/manage/manage.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap.min.css">
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="/lib/manage/controls.js"></script>
+    </head>
+    <body onload="loaded()">
+        <div id="display">
+            <div id="root">
+                <div id="heading">
+                    <%- include('../ejs-components/goto.ejs')%>
+                </div>
+                <div id="prob-cont-v">
+                    <span style="display: none; font-size: 1.5em; color: #f00" id="errdis"></span>
+                    <div id="settings-cont">
+                        <div class="big-cont">
+                            <h2 class="big-title">초대코드</h2>
+                            <div class="set-cont">
+                                <span class="config-label">
+                                    <table class="table table-striped table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 10%">연번</th>
+                                                <th style="width: 60%;">초대코드</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="addInv"></tbody>
+                                    </table>
+                                    <div class="control">
+                                        <span class="console-note">명령: </span>
+                                        <input type="text" id="invQuery" class="input console-field">
+                                        <button class="commit" onclick="invSend()">COMMIT</button>
+                                        <p class="ctrl-exp" style="margin-top: 5px;">APPEND [new code]</p>
+                                        <p class="ctrl-exp">DELETE [primary key]</p>
+                                        <p class="ctrl-exp">UPDATE [primary key] [new code]</p>
+                                        <p class="ctrl-exp">GET</p>
+                                    </div>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <%- include('../ejs-components/simple.ejs')%>
+        </div>
+    </body>
+</html>

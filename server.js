@@ -12,6 +12,7 @@ const pg = require('pg');
 const auth = require('./server-component/auth');
 const problem = require('./server-component/problem');
 const profile = require('./server-component/profile');
+const mgr = require('./server-component/management');
 
 const app = express();
 app.use(favicon(__dirname + '/library/resources/favicon.ico'));
@@ -42,6 +43,8 @@ app.get('/', (req, res)=>{
         res.render("main.ejs", {
             ylog: 'block',
             nlog: 'none',
+            ylogi: 'inline-block',
+            nlogi: 'none',
             userid: req.session.user.id,
             username: req.session.user.name,
         });
@@ -50,6 +53,8 @@ app.get('/', (req, res)=>{
         res.render("main.ejs", {
             ylog: 'none',
             nlog: 'block',
+            ylogi: 'none',
+            nlogi: 'inline-block',
             userid: '',
             username: '',
         });
@@ -59,10 +64,19 @@ app.get('/', (req, res)=>{
 app.get('/.well-known/pki-validation/AE90BEC8EBFB3A7B8CD2825DA22282D3.txt', (req, res)=>{
     res.sendFile(__dirname+'/cert/AE90BEC8EBFB3A7B8CD2825DA22282D3.txt');
 });
+app.get('/robots.txt', (req, res)=>{
+    res.sendFile(__dirname+'/robots.txt');
+});
 
-auth.authRouter(app, __dirname);
-problem.problemRouter(app, __dirname);
-profile.profileRouter(app);
+try {
+    auth.authRouter(app, __dirname);
+    problem.problemRouter(app, __dirname);
+    profile.profileRouter(app);
+    mgr.manageRouter(app, __dirname);
+}
+catch(error) {
+   console.log("Global Exception Catch: "+error)
+}
 
 app.use((req, res) => {
     error.sendError(404, 'Not Found', res);

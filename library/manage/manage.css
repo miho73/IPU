@@ -1,0 +1,32 @@
+div.control {
+    text-align: left;
+    margin-top: 10px;
+    font-size: 1.2em;
+}
+
+span.console-note {
+    font-size: 1em;
+    height: 100%;
+    padding: auto;
+}
+
+input.console-field {
+    width: 30%;
+    margin: auto;
+    margin-right: 0;
+}
+
+button.commit {
+    background-color: #fff;
+    outline: none;
+    border: 1px solid #999;
+    border-radius: 5px;
+    height: 100%;
+    padding: 3px 5px;
+}
+
+p.ctrl-exp {
+    font-size: 0.7em;
+    color: #777;
+    margin-bottom: 0;
+}

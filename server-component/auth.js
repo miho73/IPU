@@ -271,9 +271,9 @@ module.exports = {
                     return;
                 }
                 //invalid invite code
-                inviteCodeCheck(req.body.code, (qwer)=>{
+                inviteCodeCheck(req.body.invite, (qwer)=>{
                     if(!qwer) {
-                        res.render("/auth/signup.ejs", {
+                        res.render("auth/signup.ejs", {
                             'visible': 'inline-block',
                             'why_failed': '초대코드를 확인할 수 없습니다.'
                         });
@@ -314,10 +314,12 @@ module.exports = {
                     else {
                         crypto.randomBytes(64, (errq, buf) => {
                             crypto.pbkdf2(req.body.password, buf.toString('base64'), 12495, 64, 'sha512', (err, key) => {
-                                IdenDb.query(`INSERT INTO iden(user_id, user_name, user_password, user_salt, invite_code, bio, privilege, joined) `+
+                                IdenDb.query('BEGIN', (err1, res1)=>{
+                                    IdenDb.query(`INSERT INTO iden(user_id, user_name, user_password, user_salt, invite_code, bio, privilege, joined) `+
                                              `values ($1, $2, $3, $4, $5, '', 'u', $6)`,
                                              [req.body.id, req.body.name, key.toString('base64'), buf.toString('base64'), req.body.invite, new Date().toISOString()], (err, resx)=>{
                                     if(errq) {
+                                        IdenDb.query('ROLLBACK');
                                         res.render("auth/signup.ejs", {
                                             'visible': 'inline-block',
                                             'why_failed': '지금은 서비스를 사용할 수 없습니다. 잠시 후 다시 시도해주세요.'
@@ -326,6 +328,7 @@ module.exports = {
                                     else {
                                         QueryId(req.body.id, 'user_code', (errx, data) =>{
                                             if(errx) {
+                                                IdenDb.query('ROLLBACK');
                                                 res.render("auth/signup.ejs", {
                                                     'visible': 'inline-block',
                                                     'why_failed': '지금은 서비스를 사용할 수 없습니다. 잠시 후 다시 시도해주세요.'
@@ -338,14 +341,19 @@ module.exports = {
                                                           'solved_time TEXT NOT NULL,'+
                                                           'solving_time TEXT NOT NULL,'+
                                                           'correct BOOLEAN NOT NULL);', (errp, resx)=>{
-                                            if(err) {
-                                                console.log('Failed to create solves table for user id: '+req.session.user.code+'. '+err);
-                                                error.sendError(500, 'Internal Server Error', res);
-                                            }
+                                                if(errp) {
+                                                    console.log('Failed to create solves table for user id: '+req.session.user.code+'. '+err);
+                                                    IdenDb.query('ROLLBACK');
+                                                    error.sendError(500, 'Internal Server Error', res);
+                                                }
+                                                else {
+                                                    IdenDb.query('COMMIT');
+                                                    res.redirect('/login');
+                                                }
                                             });
-                                            res.redirect('/');
                                         });
                                     }
+                                });
                                 });
                             });
                         });
