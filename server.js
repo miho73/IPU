@@ -61,9 +61,6 @@ app.get('/', (req, res)=>{
     }
 });
 
-app.get('/.well-known/pki-validation/498270B9B3DEEF400FD91E437D56AA4D.txt', (req, res)=>{
-    res.sendFile(__dirname+'/cert/498270B9B3DEEF400FD91E437D56AA4D.txt');
-});
 app.get('/robots.txt', (req, res)=>{
     res.sendFile(__dirname+'/robots.txt');
 });
