@@ -131,11 +131,13 @@ div#display {
     left: 0;
 }
 #img-cont {
+    background-image: url(/lib/imgs/bg/1.jpg);
     width: 100%;
-    max-height: 530px;
+    height: 50%;
+    background-position: center center;
+    background-repeat: no-repeat;
     overflow-y: hidden;
     margin: auto;
-    box-shadow: 0 0 8px 8px #fff inset;
 }
 
 p.footer-text {
@@ -214,7 +216,7 @@ a.footer-href {
     margin-top: 10px;
 }
 .cont-href {
-    padding: 0.8em 1.3em;
+    padding: 0.5em 1em;
     background-color: #222;
     margin: 0 10px;
     font-size: 1.7em;

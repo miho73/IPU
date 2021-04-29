@@ -8,6 +8,7 @@ const https = require('https');
 const fs = require('fs');
 const error = require('./server-component/error');
 const pg = require('pg');
+const fileStore = require('session-file-store')(session);
 
 const auth = require('./server-component/auth');
 const problem = require('./server-component/problem');
@@ -22,8 +23,14 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.use(session({
     secret: auth.randomString(20),
+    httpOnly: true,
     resave: false,
-    saveUninitialized:true
+    saveUninitialized: true,
+    cookie: {
+        httpOnly: true,
+        secure: true
+    },
+    store: new fileStore()
 }));
 
 const HTTP_PORT = 8888;

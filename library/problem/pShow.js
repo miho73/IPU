@@ -14,7 +14,7 @@ $.ajax({
             name.innerHTML = `<a class="prob-href" href="/problem/${datum.code}">${datum.name}</a>`
             let info = document.createElement('td'); 
             let answers = document.createElement('td'); answers.innerText = datum.anss
-            let cate = document.createElement('td'); cate.innerText = datum.cate;
+            let cate = document.createElement('td'); cate.innerText = convertSubj(datum.cate);
             tr.appendChild(number);
             tr.appendChild(name);
             tr.appendChild(info);
