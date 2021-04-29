@@ -4,6 +4,7 @@ const pg = require('pg');
 const error = require('./error');
 const prob = require('./problem');
 const crypto = require('crypto');
+const sanitizeHtml = require('sanitize-html');
 
 const dbconfig_json = fs.readFileSync(__dirname+'/db_config.json');
 const dbconfig_solv = JSON.parse(dbconfig_json).solv;
@@ -150,6 +151,10 @@ module.exports = {
                     }
                     else {
                         const buf = Buffer.from(row[0].user_salt, 'base64');
+                        if(req.body.lpwd == undefined || !new RegExp('^[a-zA-Z0-9]{4,100}$').test(req.body.lpwd)) {
+                            res.status(400).send('pwd');
+                            return;
+                        }
                         crypto.pbkdf2(req.body.lpwd, buf.toString('base64'), 12495, 64, 'sha512', (err, key) => {
                             if(row[0].user_password==key.toString('base64')) {
                                 //Auth success
@@ -169,7 +174,7 @@ module.exports = {
                                     res.status(400).send('email');
                                     return;
                                 }
-                                if(req.body.pwdC) {
+                                if(req.body.pwdC == 'true') {
                                     //password regex violent
                                     if(req.body.npwd == undefined || !new RegExp('^[a-zA-Z0-9]{4,100}$').test(req.body.npwd)) {
                                         res.status(400).send('pwdf');
@@ -177,7 +182,7 @@ module.exports = {
                                     }
                                     crypto.randomBytes(64, (errq, bufx) => {
                                         crypto.pbkdf2(req.body.npwd, bufx.toString('base64'), 12495, 64, 'sha512', (err, keyp) => {
-                                            auth.query('UPDATE iden SET user_name=$1, bio=$2, email=$3, user_password=$4, user_salt=$5 WHERE user_code=$6', [uname, bio, ema, keyp.toString('base64'), bufx.toString('base64'), req.session.user.code], (err, resp)=>{
+                                            auth.query('UPDATE iden SET user_name=$1, bio=$2, email=$3, user_password=$4, user_salt=$5 WHERE user_code=$6', [uname, sanitizeHtml(bio), ema, keyp.toString('base64'), bufx.toString('base64'), req.session.user.code], (err, resp)=>{
                                                 if(err) {
                                                     res.status(500).send('dbupdate-pwd');
                                                 }
@@ -190,7 +195,7 @@ module.exports = {
                                     });
                                 }
                                 else {
-                                    auth.query('UPDATE iden SET user_name=$1, bio=$2, email=$3 WHERE user_code=$4', [uname, bio, ema, req.session.user.code], (err, resp)=>{
+                                    auth.query('UPDATE iden SET user_name=$1, bio=$2, email=$3 WHERE user_code=$4', [uname, sanitizeHtml(bio), ema, req.session.user.code], (err, resp)=>{
                                         if(err) {
                                             res.status(500).send('dbupdate-npwd');
                                         }

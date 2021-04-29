@@ -6,6 +6,7 @@
         <meta charset="utf-8">
         <link rel="stylesheet" type="text/css" href="/lib/univ.css">
         <link rel="stylesheet" type="text/css" href="/lib/problem/problem.css">
+        <link rel="stylesheet" type="text/css" href="/lib/profile/profile.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap.min.css">
         <script src="/lib/univ.js"></script>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -18,7 +19,7 @@
         <meta property="og:description" content="IPU - 문제 목록">
         <meta name="twitter:description" content="IPU - 문제 목록">
     </head>
-    <body>
+    <body onload="load(<%= pg%>)">
         <div id="display" style="text-align: center;">
             <div id="root">
                 <div id="heading">
@@ -39,6 +40,14 @@
                         </thead>
                         <tbody id="addProb"></tbody>
                     </table>
+                </div>
+                <div id="not" style="display: none;">
+                    <span style="font-size: 1.4em; font-weight: 400;">여기엔 아무것도 없네요.</span>
+                </div>
+                <div id="nav">
+                    <a id="prev" class="previous round">이전</a>
+                    <span id="pnsep" style="user-select: none;">······</span>
+                    <a id="next" class="next round">다음</a>
                 </div>
                 <a id="makenew" style="display: <%= ylog%>;" href="/problem/make">문제 출제하기</a>
             </div>

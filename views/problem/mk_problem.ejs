@@ -27,6 +27,11 @@
         <meta name="description" content="새 문제 만들기">
         <meta property="og:description" content="새 문제 만들기">
         <meta name="twitter:description" content="새 문제 만들기">
+        <style>
+            img {
+                width: 100% !important;
+            }
+        </style>
     </head>
     <body class="no-mathjax">
         <div id="display" style="text-align: center;">
@@ -130,7 +135,6 @@
             const toolbar_conf = 
             {
                 toolbar: [
-                    [ {size: []} ],
                     ['bold', 'italic', 'underline', 'strike'],
                     [{ 'script': 'sub'}, { 'script': 'super' }],
                     [{'header': '1'}, {'header': '2'}, 'blockquote'],
@@ -188,7 +192,7 @@
                         contentType: false,
                         success: function(data) {
                             const range = forwhat.getSelection();
-                            forwhat.insertEmbed(range.index, 'image', 'http://localhost:8888/problem/lib/'+data);
+                            forwhat.insertEmbed(range.index, 'image', 'https://ipu.r-e.kr/problem/lib/'+data);
                         },
                         error: function(err) {
                             console.error("Error: "+err);
@@ -356,6 +360,9 @@
                 placeholder: '추가 탭',
                 modules: toolbar_conf,
                 theme: 'snow'
+            });
+            extr.getModule('toolbar').addHandler('image', function() {
+                selectLocalImage(extr);
             });
             extrTabCnt++;
         }

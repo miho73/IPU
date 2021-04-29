@@ -73,6 +73,26 @@ function AllQueryId(id, callback) {
     });
 }
 
+function inviteCodeCheck(code, callback) {
+    try {
+        fs.readFile(rtd+'/invites.json', (err, data)=>{
+            if(err) {
+                console.log("invite code error: "+err);
+                callback(false);
+            }
+            else {
+                let obj = JSON.parse(data);
+                if(obj.codes.includes(code)) callback(true);
+                else callback(false);
+            }
+        });
+    }
+    catch {
+        console.log("invites code checker error: "+err);
+        callback(false);
+    }
+}
+
 module.exports = {
     randomString: function randomString(length) {
         var result           = [];
@@ -218,25 +238,6 @@ module.exports = {
                 });
             });
         });
-        function inviteCodeCheck(code, callback) {
-            try {
-                fs.readFile(rtd+'/invites.json', (err, data)=>{
-                    if(err) {
-                        console.log("invite code error: "+err);
-                        callback(false);
-                    }
-                    else {
-                        let obj = JSON.parse(data);
-                        if(obj.codes.includes(code)) callback(true);
-                        else callback(false);
-                    }
-                });
-            }
-            catch {
-                console.log("invites code checker error: "+err);
-                callback(false);
-            }
-        }
         //Invite code checker
         app.post('/auth/invite', (req, res)=>{
             if(req.body.code == undefined) res.send(`{"status":0}`);
@@ -280,85 +281,85 @@ module.exports = {
                         return;
                     }
                     //id regex violent
-                if(!new RegExp('^[a-zA-Z0-9]{1,50}$').test(req.body.id)) {
-                    res.render("auth/signup.ejs", {
-                        'visible': 'inline-block',
-                        'why_failed': 'ID는 글자(a-z, A-Z)와 숫자(0-9)로만 이루어져 있어야 합니다.'
-                    });
-                    return;
-                }
-                //password regex violent
-                if(!new RegExp('^[a-zA-Z0-9]{4,100}$').test(req.body.password)) {
-                    res.render("auth/signup.ejs", {
-                        'visible': 'inline-block',
-                        'why_failed': '암호는 4자리 이상, 100자리 이하여야 하며, 글자(a-z, A-Z)와 숫자(0-9)로 만 이루어져 있어야 합니다.'
-                    });
-                    return;
-                }
-                //name regex violent
-                if(!new RegExp('^[a-zA-Zㄱ-힣]{1,50}$').test(req.body.name)) {
-                    res.render("auth/signup.ejs", {
-                        'visible': 'inline-block',
-                        'why_failed': '이름은 한글과 영어의 조합이여야 합니다.'
-                    });
-                    return;
-                }
-                //check if id is duplicated
-                IdenDb.query('SELECT user_code FROM iden WHERE user_id=$1', [req.body.id], (err, data)=>{
-                    if(err || data.rowCount != 0) {
+                    if(!new RegExp('^[a-zA-Z0-9]{1,50}$').test(req.body.id)) {
                         res.render("auth/signup.ejs", {
                             'visible': 'inline-block',
-                            'why_failed': '해당 ID는 이미 사용중입니다.'
+                            'why_failed': 'ID는 글자(a-z, A-Z)와 숫자(0-9)로만 이루어져 있어야 합니다.'
                         });
+                        return;
                     }
-                    else {
-                        crypto.randomBytes(64, (errq, buf) => {
-                            crypto.pbkdf2(req.body.password, buf.toString('base64'), 12495, 64, 'sha512', (err, key) => {
-                                IdenDb.query('BEGIN', (err1, res1)=>{
-                                    IdenDb.query(`INSERT INTO iden(user_id, user_name, user_password, user_salt, invite_code, bio, privilege, joined) `+
-                                             `values ($1, $2, $3, $4, $5, '', 'u', $6)`,
-                                             [req.body.id, req.body.name, key.toString('base64'), buf.toString('base64'), req.body.invite, new Date().toISOString()], (err, resx)=>{
-                                    if(errq) {
-                                        IdenDb.query('ROLLBACK');
-                                        res.render("auth/signup.ejs", {
-                                            'visible': 'inline-block',
-                                            'why_failed': '지금은 서비스를 사용할 수 없습니다. 잠시 후 다시 시도해주세요.'
-                                        });
-                                    }
-                                    else {
-                                        QueryId(req.body.id, 'user_code', (errx, data) =>{
-                                            if(errx) {
+                    //password regex violent
+                    if(!new RegExp('^[a-zA-Z0-9]{4,100}$').test(req.body.password)) {
+                        res.render("auth/signup.ejs", {
+                            'visible': 'inline-block',
+                            'why_failed': '암호는 4자리 이상, 100자리 이하여야 하며, 글자(a-z, A-Z)와 숫자(0-9)로 만 이루어져 있어야 합니다.'
+                        });
+                        return;
+                    }
+                    //name regex violent
+                    if(!new RegExp('^[a-zA-Zㄱ-힣]{1,50}$').test(req.body.name)) {
+                        res.render("auth/signup.ejs", {
+                            'visible': 'inline-block',
+                            'why_failed': '이름은 한글과 영어의 조합이여야 합니다.'
+                        });
+                        return;
+                    }
+                    //check if id is duplicated
+                    IdenDb.query('SELECT user_code FROM iden WHERE user_id=$1', [req.body.id], (err, data)=>{
+                        if(err || data.rowCount != 0) {
+                            res.render("auth/signup.ejs", {
+                                'visible': 'inline-block',
+                                'why_failed': '해당 ID는 이미 사용중입니다.'
+                            });
+                        }
+                        else {
+                            crypto.randomBytes(64, (errq, buf) => {
+                                crypto.pbkdf2(req.body.password, buf.toString('base64'), 12495, 64, 'sha512', (err, key) => {
+                                    IdenDb.query('BEGIN', (err1, res1)=>{
+                                        IdenDb.query(`INSERT INTO iden(user_id, user_name, user_password, user_salt, invite_code, bio, privilege, joined) `+
+                                                 `values ($1, $2, $3, $4, $5, '', 'u', $6)`,
+                                                 [req.body.id, req.body.name, key.toString('base64'), buf.toString('base64'), req.body.invite, new Date().toISOString()], (err, resx)=>{
+                                            if(errq) {
                                                 IdenDb.query('ROLLBACK');
                                                 res.render("auth/signup.ejs", {
                                                     'visible': 'inline-block',
                                                     'why_failed': '지금은 서비스를 사용할 수 없습니다. 잠시 후 다시 시도해주세요.'
                                                 });
-                                                return;
                                             }
-                                            SolveDb.query(`CREATE TABLE IF NOT EXISTS u${data}(`+
-                                                          'code BIGSERIAL NOT NULL PRIMARY KEY,'+
-                                                          'problem_code INTEGER NOT NULL,'+
-                                                          'solved_time TEXT NOT NULL,'+
-                                                          'solving_time TEXT NOT NULL,'+
-                                                          'correct BOOLEAN NOT NULL);', (errp, resx)=>{
-                                                if(errp) {
-                                                    console.log('Failed to create solves table for user id: '+req.session.user.code+'. '+err);
-                                                    IdenDb.query('ROLLBACK');
-                                                    error.sendError(500, 'Internal Server Error', res);
-                                                }
-                                                else {
-                                                    IdenDb.query('COMMIT');
-                                                    res.redirect('/login');
-                                                }
-                                            });
+                                            else {
+                                                QueryId(req.body.id, 'user_code', (errx, data) =>{
+                                                    if(errx) {
+                                                        IdenDb.query('ROLLBACK');
+                                                        res.render("auth/signup.ejs", {
+                                                            'visible': 'inline-block',
+                                                            'why_failed': '지금은 서비스를 사용할 수 없습니다. 잠시 후 다시 시도해주세요.'
+                                                        });
+                                                        return;
+                                                    }
+                                                    SolveDb.query(`CREATE TABLE IF NOT EXISTS u${data}(`+
+                                                                  'code BIGSERIAL NOT NULL PRIMARY KEY,'+
+                                                                  'problem_code INTEGER NOT NULL,'+
+                                                                  'solved_time TEXT NOT NULL,'+
+                                                                  'solving_time TEXT NOT NULL,'+
+                                                                  'correct BOOLEAN NOT NULL);', (errp, resx)=>{
+                                                        if(errp) {
+                                                            console.log('Failed to create solves table for user id: '+req.session.user.code+'. '+err);
+                                                            IdenDb.query('ROLLBACK');
+                                                            error.sendError(500, 'Internal Server Error', res);
+                                                        }
+                                                        else {
+                                                            IdenDb.query('COMMIT');
+                                                            res.redirect('/login');
+                                                        }
+                                                    });
+                                                });
+                                            }
                                         });
-                                    }
-                                });
+                                    });
                                 });
                             });
-                        });
-                    }
-                });
+                        }
+                    });
                 });
             });
         });

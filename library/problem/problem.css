@@ -267,3 +267,8 @@ button {
 #show-ans-btn:hover {
     background-color: #099134;
 }
+
+a.previous, a.next {
+    text-decoration: none;
+    font-size: 1.3em;
+}

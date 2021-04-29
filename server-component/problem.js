@@ -5,7 +5,7 @@ const error = require('./error');
 const upload = multer({dest: 'problem/lib'});
 const pg = require('pg');
 const fs = require('fs');
-const sanitize = require('sanitize-html');
+const sanitizeHtml = require('sanitize-html');
 
 const dbconfig_json = fs.readFileSync(__dirname+'/db_config.json');
 const dbconfig_prob = JSON.parse(dbconfig_json).prob;
@@ -80,7 +80,7 @@ module.exports = {
             }
             ProbDb.query(`INSERT INTO prob(problem_name, problem_category, problem_difficulty, problem_content, problem_solution, problem_answer, problem_hint, author_name, added_at, last_modified, answers, extr_tabs, has_hint) `+
                          `values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 0, $11, $12)`,
-                        [req.body.title, req.body.cate, req.body.difficult, req.body.cont, req.body.expl, req.body.answ, hint, req.session.user.id, now.toISOString(), now.toISOString(), req.body.extr, (req.body.hashint ? 1 : 0)], (err, resx)=>{
+                        [req.body.title, req.body.cate, req.body.difficult, req.body.cont, req.body.expl, req.body.answ, hint, req.session.user.id, now.toISOString(), now.toISOString(), req.body.extr, (req.body.hashint=="true" ? 1 : 0)], (err, resx)=>{
                             if(err) {
                                 console.log('Problem insert sql failure: '+err);
                                 error.sendError(500, 'Internal Server Error', res);
@@ -92,12 +92,12 @@ module.exports = {
             let from = req.body.frm;
             let length = req.body.len;
             let regex = new RegExp('^[0-9]{1,2}$');
-            if(from <= 0 || length<=0 || length>20 || !regex.test(from) || !regex.test(length)) {
+            if(from <= 0 || length<=0 || length>100 || !regex.test(from) || !regex.test(length)) {
                 error.sendError(400, 'Bad Request', res);
                 return;
             }
             ProbDb.query('SELECT problem_code, problem_name, problem_category, problem_difficulty, answers FROM prob WHERE problem_code>=$1 ORDER BY problem_code LIMIT $2;', [from, length], (err, data)=>{
-                if(err || data.rowCount == 0) {
+                if(err) {
                     console.log("problem table query error: "+err);
                     error.sendError(500, 'Internal Server Error', res);
                 }
@@ -110,7 +110,17 @@ module.exports = {
                             name: row.problem_name,
                             cate: row.problem_category,
                             diff: row.problem_difficulty,
-                            anss: row.answers
+                            anss: row.answers,
+                            tags: [
+                                {
+                                    key:"cate",
+                                    content: row.problem_category
+                                },
+                                {
+                                    key:"diff",
+                                    content: row.problem_difficulty
+                                }
+                            ]
                         });
                     });
                     res.send(ret);
@@ -128,12 +138,17 @@ module.exports = {
             res.sendStatus(200);
         });
         app.get('/problem', (req, res)=>{
+            let page = 0;
+            if(req.query.page != undefined && req.query.page >= 0) {
+                page = req.query.page;
+            }
             if(auth.checkIdentity(req)) {
                 res.render('../views/problem/problem.ejs', {
                     ylog: "block",
                     nlog: "none",
                     userid: req.session.user.id,
                     username: req.session.user.name,
+                    pg: page
                 });
             }
             else {
@@ -142,6 +157,7 @@ module.exports = {
                     nlog: "block",
                     userid: '',
                     username: '',
+                    pg: page
                 });
             }
         });
