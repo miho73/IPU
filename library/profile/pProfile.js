@@ -1,14 +1,22 @@
-function onload() {
+const PROBLEM_PER_PAGE = 30;
+
+function load(pg) {
+    let getLen = -1;
     $.ajax({
         type: 'POST',
         url: '/profile/api/get-solved',
         dataType: 'json',
         data: {
-            frm: 1,
-            len: 10,
+            frm: pg*PROBLEM_PER_PAGE+1,
+            len: PROBLEM_PER_PAGE,
             id: document.getElementById('uid').innerText
         },
         success: function(data) {
+            getLen = data.length;
+            if(getLen == 0) {
+                document.getElementById('not').style.display = 'block';
+                return;
+            }
             data.forEach(datum => {
                 let tr = document.createElement('tr');
                 let number = document.createElement('td'); number.innerText = datum.code;
@@ -62,6 +70,23 @@ function onload() {
         },
         error: function(error) {
             $('html').html(error.responseText);
+        },
+        complete: function() {
+            if(getLen == -1) return;
+            if(pg==0) {
+                document.getElementById('prev').style.display = 'none';
+                document.getElementById('pnsep').style.display = 'none';
+            }
+            else {
+                document.getElementById('prev').setAttribute('href', `/profile/${document.getElementById('uid').innerText}/?page=${pg-1}`);
+            }
+            if(getLen < PROBLEM_PER_PAGE) {
+                document.getElementById('next').style.display = 'none';
+                document.getElementById('pnsep').style.display = 'none';
+            }
+            else {
+                document.getElementById('next').setAttribute('href', `/profile/${document.getElementById('uid').innerText}/?page=${pg+1}`)
+            }
         }
     });
 }

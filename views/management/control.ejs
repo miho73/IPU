@@ -52,6 +52,62 @@
                                 </span>
                             </div>
                         </div>
+                        <div class="big-cont">
+                            <h2 class="big-title">권한관리</h2>
+                            <div class="set-cont">
+                                <span class="config-label">
+                                    <div class="control">
+                                        <span class="console-note">명령: </span>
+                                        <input type="text" id="usrQuery" class="input console-field">
+                                        <button class="commit" onclick="sendPermQuery()">COMMIT</button><br>
+                                        <span style="font-size: 0.9em;" id="usrRes">결과</span>
+                                        <p class="ctrl-exp" style="margin-top: 5px;">QUERY [user id]</p>
+                                        <p class="ctrl-exp">UPDATE [privilege] [user id]</p>
+                                        <table class="table table-striped table-bordered" style="width: 50%;">
+                                            <thread>
+                                                <tr>
+                                                    <th style="width: 8%;">권한 코드</th>
+                                                    <th style="width: 10%;">일반 사용자</th>
+                                                    <th style="width: 10%;">초대코드 관리</th>
+                                                    <th style="width: 10%;">권한관리</th>
+                                                    <th style="width: 10%;">문제 생성</th>
+                                                </tr>
+                                            </thread>
+                                            <tbody>
+                                                <tr>
+                                                    <td>u</td>
+                                                    <td>O</td>
+                                                    <td>X</td>
+                                                    <td>X</td>
+                                                    <td>X</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>p</td>
+                                                    <td>O</td>
+                                                    <td>X</td>
+                                                    <td>X</td>
+                                                    <td>O</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>m</td>
+                                                    <td>O</td>
+                                                    <td>O</td>
+                                                    <td>X</td>
+                                                    <td>O</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>s</td>
+                                                    <td>O</td>
+                                                    <td>O</td>
+                                                    <td>O</td>
+                                                    <td>O</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -19,7 +19,7 @@
         <meta property="og:description" content="<%= username%>의 프로필">
         <meta name="twitter:description" content="<%= username%>의 프로필">
     </head>
-    <body onload="onload()">
+    <body onload="load(<%= pg%>)">
         <div id="block" style="display: none;"></div>
         <div id="display">
             <div id="root">
@@ -44,6 +44,16 @@
                             </thead>
                             <tbody id="solveds"></tbody>
                         </table>
+                        <div id="nav">
+                            <div id="not" style="display: none; text-align: center;">
+                                <p style="font-size: 1.4em; font-weight: 400;">이 페이지는 비어있습니다.</p>
+                            </div>
+                            <div id="nav" style="text-align: center;">
+                                <a id="prev" class="previous round">이전</a>
+                                <span id="pnsep" style="user-select: none;">······</span>
+                                <a id="next" class="next round">다음</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

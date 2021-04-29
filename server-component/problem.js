@@ -5,7 +5,7 @@ const error = require('./error');
 const upload = multer({dest: 'problem/lib'});
 const pg = require('pg');
 const fs = require('fs');
-const sanitizeHtml = require('sanitize-html');
+const perm = require('./permission');
 
 const dbconfig_json = fs.readFileSync(__dirname+'/db_config.json');
 const dbconfig_prob = JSON.parse(dbconfig_json).prob;
@@ -49,17 +49,23 @@ ProbDb.query('CREATE TABLE IF NOT EXISTS prob('+
                 }
              });
 
-
 module.exports = {
     problemRouter: function(app, dirname) {
         app.get('/problem/make', (req, res)=>{
             if(auth.checkIdentity(req)) {
-                res.render('../views/problem/mk_problem.ejs', {
-                    ylog: "block",
-                    nlog: "none",
-                    userid: req.session.user.id,
-                    username: req.session.user.name,
-                });
+                perm.checkPrivilege(req, ['p', 'm'], (rex)=>{
+                    if(rex) {
+                        res.render('../views/problem/mk_problem.ejs', {
+                            ylog: "block",
+                            nlog: "none",
+                            userid: req.session.user.id,
+                            username: req.session.user.name,
+                        });
+                    }
+                    else {
+                        error.sendError(403, 'Forbidden', res);
+                    }
+                })
             }
             else {
                 res.redirect('/login/?ret=problem/make');
@@ -73,20 +79,27 @@ module.exports = {
                 res.status(403).send('forbidden');
                 return;
             }
-            let now = new Date();
-            let hint = req.body.hint;
-            if(!req.body.hashint) {
-                hint = undefined;
-            }
-            ProbDb.query(`INSERT INTO prob(problem_name, problem_category, problem_difficulty, problem_content, problem_solution, problem_answer, problem_hint, author_name, added_at, last_modified, answers, extr_tabs, has_hint) `+
-                         `values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 0, $11, $12)`,
-                        [req.body.title, req.body.cate, req.body.difficult, req.body.cont, req.body.expl, req.body.answ, hint, req.session.user.id, now.toISOString(), now.toISOString(), req.body.extr, (req.body.hashint=="true" ? 1 : 0)], (err, resx)=>{
-                            if(err) {
-                                console.log('Problem insert sql failure: '+err);
-                                error.sendError(500, 'Internal Server Error', res);
-                            }
-                        });
-            res.send('/problem');
+            perm.checkPrivilege(req, ['p', 'm'], (rex)=>{
+                if(rex) {
+                    let now = new Date();
+                    let hint = req.body.hint;
+                    if(!req.body.hashint) {
+                        hint = undefined;
+                    }
+                    ProbDb.query(`INSERT INTO prob(problem_name, problem_category, problem_difficulty, problem_content, problem_solution, problem_answer, problem_hint, author_name, added_at, last_modified, answers, extr_tabs, has_hint) `+
+                                 `values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 0, $11, $12)`,
+                                [req.body.title, req.body.cate, req.body.difficult, req.body.cont, req.body.expl, req.body.answ, hint, req.session.user.id, now.toISOString(), now.toISOString(), req.body.extr, (req.body.hashint=="true" ? 1 : 0)], (err, resx)=>{
+                        if(err) {
+                            console.log('Problem insert sql failure: '+err);
+                            error.sendError(500, 'Internal Server Error', res);
+                        }
+                    });
+                    res.send('/problem');
+                }
+                else {
+                    res.sendStatus(403);
+                }
+            });
         });
         app.post('/problem/api/get', (req, res)=>{
             let from = req.body.frm;
@@ -110,7 +123,6 @@ module.exports = {
                             name: row.problem_name,
                             cate: row.problem_category,
                             diff: row.problem_difficulty,
-                            anss: row.answers,
                             tags: [
                                 {
                                     key:"cate",

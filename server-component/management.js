@@ -1,34 +1,26 @@
 const fs = require('fs');
 const auth = require('./auth');
 const error = require('./error');
-
-function pPermission(req, callback) {
-    if(!auth.checkIdentity(req)) {
-        callback(false);
-        return;
-    }
-    auth.queryId(req.session.user.id, 'privilege', (err, dat)=>{
-        if(err) callback(false);
-        else if(dat.includes('p')) callback(true);
-        else callback(false);
-    });
-}
+const perm = require('./permission');
 
 module.exports = {
     manageRouter: function(app, rtp) {
         app.get('/manage', (req, res)=>{
-            pPermission(req, (rex)=>{
+            perm.checkPrivilege(req, ['m'], (rex)=>{
                 if(rex) {
                     res.render('management/control.ejs');
                 }
                 else {
-                    error.sendError(404, 'Not Found', res);
+                    error.sendError(403, 'Forbidden', res);
                 }
             });
         });
         app.post('/mgr/api/get/inv', (req, res)=>{
-            pPermission(req, (rex)=>{
-                if(!rex) return;
+            perm.checkPrivilege(req, ['m'], (rex)=>{
+                if(!rex) {
+                    res.status(403).send("Permission");
+                    return;
+                }
                 query = req.body.q;
                 if(query == 'GET') {
                     res.sendFile(rtp+'/invites.json');
@@ -104,6 +96,46 @@ module.exports = {
                     }
                 }
             });
+        });
+        app.post('/mgr/api/perm', (req, res)=>{
+            try {
+                perm.checkPrivilege(req, [], (rex)=>{
+                    if(rex) {
+                        parsed = req.body.q.split(' ');
+                        switch(parsed[0]) {
+                            case "QUERY":
+                                auth.queryId(parsed[1], 'privilege', (err, data)=>{
+                                    if(err) {
+                                        res.status(500).send('dbquery');
+                                    }
+                                    else {
+                                        res.send("Privilege of user "+parsed[1]+" is \'"+data+"\'");
+                                    }
+                                })
+                                break;
+                            case "UPDATE":
+                                if(parsed[1].length != 1) res.status(400).send('permFormat');
+                                else {
+                                    auth.query('UPDATE iden SET privilege=$1 WHERE user_id=$2', [parsed[1], parsed[2]], (err, data)=>{
+                                        if(err) res.status(500).send('dbquery');
+                                        else {
+                                            res.send('Updated');
+                                        }
+                                    });
+                                }
+                                break;
+                            default:
+                                res.status(400).send('unk');
+                        }
+                    }
+                    else {
+                        res.status(403).send('perm');
+                    }
+                });
+            }
+            catch {
+                res.status(500).send('cat');
+            }
         });
     }
 }

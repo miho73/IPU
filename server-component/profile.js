@@ -37,6 +37,10 @@ module.exports = {
                         error.sendError(404, 'Not Found', res);
                         return;
                     }
+                    let page = 0;
+                    if(req.query.page != undefined && req.query.page >= 0) {
+                        page = req.query.page;
+                    }
                     if(auth.checkIdentity(req)) {
                         res.render("profile/user_profile.ejs", {
                             ylog: 'block',
@@ -45,7 +49,8 @@ module.exports = {
                             username: req.session.user.name,
                             usernameT: data['user_name'],
                             useridT: data['user_id'],
-                            bioT: data['bio']
+                            bioT: data['bio'],
+                            pg: page
                         });
                     }
                     else {
@@ -56,7 +61,8 @@ module.exports = {
                             username: '',
                             usernameT: data['user_name'],
                             useridT: data['user_id'],
-                            bioT: data['bio']
+                            bioT: data['bio'],
+                            pg: page
                         });
                     }
                 });
@@ -71,6 +77,10 @@ module.exports = {
                     error.sendError(404, 'Not Found', res);
                     return;
                 }
+                let page = 0;
+                if(req.query.page != undefined && req.query.page >= 0) {
+                    page = req.query.page;
+                }
                 if(auth.checkIdentity(req)) {
                     res.render("profile/user_profile.ejs", {
                         ylog: 'block',
@@ -79,7 +89,8 @@ module.exports = {
                         username: req.session.user.name,
                         usernameT: data['user_name'],
                         useridT: data['user_id'],
-                        bioT: data['bio']
+                        bioT: data['bio'],
+                        pg: page
                     });
                 }
                 else {
@@ -90,7 +101,8 @@ module.exports = {
                         username: '',
                         usernameT: data['user_name'],
                         useridT: data['user_id'],
-                        bioT: data['bio']
+                        bioT: data['bio'],
+                        pg: page
                     });
                 }
             });
@@ -327,7 +339,7 @@ module.exports = {
             let from = req.body.frm;
             let length = req.body.len;
             let regex = new RegExp('^[0-9]{1,2}$');
-            if(from <= 0 || length<=0 || length>20 || !regex.test(from) || !regex.test(length)) {
+            if(from <= 0 || length<=0 || length>50 || !regex.test(from) || !regex.test(length)) {
                 error.sendError(400, 'Bad Request', res);
                 return;
             }
@@ -337,14 +349,14 @@ module.exports = {
                     return;
                 }
                 SolveDb.query(`SELECT code, problem_code, solved_time, solving_time, correct `+
-                              `FROM (SELECT code, problem_code, solved_time, solving_time, correct FROM u${datax} ORDER BY code DESC) AS probs `+
-                              `WHERE code>=$1 AND code<$2;`, [from, length+from], (err, data)=>{
+                              `FROM u${datax} WHERE code<=((SELECT COUNT(*) FROM u2 AS count)-$1) `+
+                              `ORDER BY code DESC LIMIT $2;`, [from-1, length], (err, data)=>{
                     if(err) {
                         console.log("problem table query error: "+err);
                         error.sendError(500, 'Internal Server Error', res);
                     }
                     else if(data.rowCount == 0) {
-                        res.send({});
+                        res.send([]);
                     }
                     else {
                         let toget = [];

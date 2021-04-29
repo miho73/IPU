@@ -1,5 +1,10 @@
 //Event Register
 document.onfullscreenchange = FullscreenRelease;
+document.onkeydown = function() {
+    if(event.keyCode == 192) {
+        window.location.href = `https://earth.google.com/web/@46.94912479,7.45835794,495.93389416a,117.8571077d,35y,-2.52896954h,67.14228684t,0r`;
+    }
+}
 
 //IE check
 function msieversion() {
