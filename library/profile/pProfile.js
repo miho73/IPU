@@ -1,5 +1,29 @@
 const PROBLEM_PER_PAGE = 30;
 
+cutTable = [0, 3000, 10000, 20000, 35000, 60000, 90000, 150000]
+
+codeTableRl = {
+    1: 'Unrated',
+    2: 'Bronze',
+    3: 'Silver',
+    4: 'Gold',
+    5: 'Sapphire',
+    6: 'Ruby',
+    7: 'Diamond',
+    8: 'Infinity'
+}
+
+codeTable = {
+    1: 'unra',
+    2: 'broz',
+    3: 'silv',
+    4: 'gold',
+    5: 'sapp',
+    6: 'ruby',
+    7: 'diam',
+    8: 'redd'
+}
+
 function load(pg) {
     let getLen = -1;
     $.ajax({
@@ -87,6 +111,34 @@ function load(pg) {
             else {
                 document.getElementById('next').setAttribute('href', `/profile/${document.getElementById('uid').innerText}/?page=${pg+1}`)
             }
+            let exp = document.getElementById('experi-visib').innerText;
+            let levelCode = 8;
+            for(let i=1; i<=7; i++) {
+                if(exp < cutTable[i]) {
+                    levelCode = i;
+                    break;
+                }
+            }
+            let lv_name = codeTable[levelCode];
+            document.getElementById('exp-name').innerText = codeTableRl[levelCode];
+            if(levelCode == 8) {
+                document.getElementById('next-lv').innerText = `YOU HAVE HIGHEST`;
+            }
+            else {
+                if(levelCode == 7) {
+                    document.getElementById('next-lv').innerText = `Ultimate 승급까지 ${cutTable[levelCode]-exp}`;
+                }
+                else {
+                    document.getElementById('next-lv').innerText = `${codeTableRl[levelCode+1]} 승급까지 ${cutTable[levelCode]-exp}`;
+                }
+            }
+            setTimeout(()=>{
+                if(levelCode == 8) {
+                    document.getElementById('experi-visib').style.width = `100%`;
+                }
+                else document.getElementById('experi-visib').style.width = `${(exp-cutTable[levelCode-1])/(cutTable[levelCode]-cutTable[levelCode-1])*100}%`;
+            }, 200);
+            document.getElementById('experi-visib').classList.add(`prog-exp-${lv_name}`);
         }
     });
 }

@@ -23,9 +23,9 @@
 		<section id="container-h">
 			<section id="container-v">
 				<form method="POST" action="/login/?ret=<%= ret%>">
-					<label id="title">Login</label><br>
-					<input type="text" id="id" class="input" name="u" placeholder="ID" spellcheck="false" required style="margin-top: 20px;">
-					<input type="password" id="pwd" class="input" name="p" placeholder="Password" spellcheck="false" required>
+					<label id="title">로그인</label><br>
+					<input type="text" id="id" class="input" name="u" placeholder="ID" spellcheck="false" required style="margin-top: 20px;" autocomplete="username">
+					<input type="password" id="pwd" class="input" name="p" placeholder="Password" spellcheck="false" required autocomplete="current-password">
 					<input type="text" name="ret" style="display: none;" value="<%= ret%>">
 					<input type="text" id="gtoken" style="display: none;" name="gtoken" readonly required>
 					<button type="submit" id="submit" class="input">Login</button>

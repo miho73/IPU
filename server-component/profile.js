@@ -50,6 +50,7 @@ module.exports = {
                             usernameT: data['user_name'],
                             useridT: data['user_id'],
                             bioT: data['bio'],
+                            experience: data['experience'],
                             pg: page
                         });
                     }
@@ -62,6 +63,7 @@ module.exports = {
                             usernameT: data['user_name'],
                             useridT: data['user_id'],
                             bioT: data['bio'],
+                            experience: data['experience'],
                             pg: page
                         });
                     }
@@ -90,6 +92,7 @@ module.exports = {
                         usernameT: data['user_name'],
                         useridT: data['user_id'],
                         bioT: data['bio'],
+                        experience: data['experience'],
                         pg: page
                     });
                 }
@@ -102,6 +105,7 @@ module.exports = {
                         usernameT: data['user_name'],
                         useridT: data['user_id'],
                         bioT: data['bio'],
+                        experience: data['experience'],
                         pg: page
                     });
                 }
@@ -349,7 +353,8 @@ module.exports = {
                     return;
                 }
                 SolveDb.query(`SELECT code, problem_code, solved_time, solving_time, correct `+
-                              `FROM u${datax} WHERE code<=((SELECT COUNT(*) FROM u2 AS count)-$1) `+
+                              `FROM u${datax} `+
+                              `WHERE code<=((SELECT code FROM u${datax} ORDER BY code DESc LIMIT 1)-$1) `+
                               `ORDER BY code DESC LIMIT $2;`, [from-1, length], (err, data)=>{
                     if(err) {
                         console.log("problem table query error: "+err);

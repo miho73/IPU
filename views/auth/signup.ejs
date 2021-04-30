@@ -29,11 +29,11 @@
 		<section id="container-h">
 			<section id="container-v">
 				<form method="POST">
-					<label id="title">Sign Up</label><br>
-					<input type="text" id="name" class="input second" name="name" placeholder="Name" spellcheck="false" style="display: none;" required>
-					<input type="text" id="id" class="input second" name="id" placeholder="ID" spellcheck="false" style="display: none;" required>
-					<input type="password" id="pwd" class="input second" name="password" placeholder="Password" spellcheck="false" style="display: none;" required>
-					<input type="text" id="invite" class="input" name="invite" placeholder="Invite code" spellcheck="false" maxlength="6" required>
+					<label id="title">가입</label><br>
+					<input type="text" id="name" class="input second" name="name" placeholder="Name" spellcheck="false" style="display: none;" required autocomplete="nickname">
+					<input type="text" id="id" class="input second" name="id" placeholder="ID" spellcheck="false" style="display: none;" required autocomplete="username">
+					<input type="password" id="pwd" class="input second" name="password" placeholder="Password" spellcheck="false" style="display: none;" required autocomplete="current-password">
+					<input type="text" id="invite" class="input" name="invite" placeholder="Invite code" spellcheck="false" maxlength="6" onkeypress="keyDwn()" required>
 					<label id="errdisplay" style="display: none;"></label>
 					<button type="button" id="submit" class="input" onclick="formNxt()">Proceed</button>
 					<div id="captcha" style="display: none;" class="g-recaptcha" data-sitekey="6LeoxLwaAAAAABC-oJu76Dt36Yb5K12Eu7a0pjD8" data-theme="dark"></div>
@@ -47,6 +47,11 @@
 		</div>
 	</body>
 	<script>
+		function keyDwn() {
+			if(event.keyCode == 13) {
+				formNxt();
+			}
+		}
 		function formNxt() {
 			$.ajax({
 				url: "/auth/invite",

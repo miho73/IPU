@@ -37,6 +37,7 @@ IdenDb.query('CREATE TABLE IF NOT EXISTS iden('+
              'privilege TEXT NOT NULL,'+
              'email TEXT,'+//to be encrypted
              'joined TEXT NOT NULL,'+
+             `experience INTEGER NOT NULL,`+
              'last_login TEXT);', (err, data)=>{
                 if(err) {
                     console.log('Failed to create table to identification database: '+err);
@@ -73,26 +74,6 @@ function AllQueryId(id, callback) {
     });
 }
 
-function inviteCodeCheck(code, callback) {
-    try {
-        fs.readFile(rtd+'/invites.json', (err, data)=>{
-            if(err) {
-                console.log("invite code error: "+err);
-                callback(false);
-            }
-            else {
-                let obj = JSON.parse(data);
-                if(obj.codes.includes(code)) callback(true);
-                else callback(false);
-            }
-        });
-    }
-    catch {
-        console.log("invites code checker error: "+err);
-        callback(false);
-    }
-}
-
 module.exports = {
     randomString: function randomString(length) {
         var result           = [];
@@ -105,6 +86,25 @@ module.exports = {
     },
     checkIdentity: CheckIdentity,
     authRouter: function(app, rtd) {
+        function inviteCodeCheck(code, callback) {
+            try {
+                fs.readFile(rtd+'/invites.json', (err, data)=>{
+                    if(err) {
+                        console.log("invite code error: "+err);
+                        callback(false);
+                    }
+                    else {
+                        let obj = JSON.parse(data);
+                        if(obj.codes.includes(code)) callback(true);
+                        else callback(false);
+                    }
+                });
+            }
+            catch(error) {
+                console.log("invites code checker error(catch): "+error);
+                callback(false);
+            }
+        }
         //Release login Request Handler
         app.get('/login/deauth', (req, res)=>{
             if (CheckIdentity(req)) {
@@ -205,8 +205,6 @@ module.exports = {
                                                 code: row[0].user_code,
                                                 id: row[0].user_id,
                                                 name: row[0].user_name,
-                                                pwd: req.body.p,
-                                                prev: row[0].privilege,
                                                 auth: true
                                             };
                                             res.redirect(`/${req.body.ret}`);
@@ -316,8 +314,8 @@ module.exports = {
                             crypto.randomBytes(64, (errq, buf) => {
                                 crypto.pbkdf2(req.body.password, buf.toString('base64'), 12495, 64, 'sha512', (err, key) => {
                                     IdenDb.query('BEGIN', (err1, res1)=>{
-                                        IdenDb.query(`INSERT INTO iden(user_id, user_name, user_password, user_salt, invite_code, bio, privilege, joined) `+
-                                                 `values ($1, $2, $3, $4, $5, '', 'u', $6)`,
+                                        IdenDb.query(`INSERT INTO iden(user_id, user_name, user_password, user_salt, invite_code, bio, privilege, joined, experience) `+
+                                                 `values ($1, $2, $3, $4, $5, '', 'u', $6, 0)`,
                                                  [req.body.id, req.body.name, key.toString('base64'), buf.toString('base64'), req.body.invite, new Date().toISOString()], (err, resx)=>{
                                             if(errq) {
                                                 IdenDb.query('ROLLBACK');
@@ -327,7 +325,7 @@ module.exports = {
                                                 });
                                             }
                                             else {
-                                                QueryId(req.body.id, 'user_code', (errx, data) =>{
+                                                QueryId(req.body.id, 'user_code', (errx, datre) =>{
                                                     if(errx) {
                                                         IdenDb.query('ROLLBACK');
                                                         res.render("auth/signup.ejs", {
@@ -336,7 +334,7 @@ module.exports = {
                                                         });
                                                         return;
                                                     }
-                                                    SolveDb.query(`CREATE TABLE IF NOT EXISTS u${data}(`+
+                                                    SolveDb.query(`CREATE TABLE IF NOT EXISTS u${datre}(`+
                                                                   'code BIGSERIAL NOT NULL PRIMARY KEY,'+
                                                                   'problem_code INTEGER NOT NULL,'+
                                                                   'solved_time TEXT NOT NULL,'+

@@ -54,7 +54,24 @@ function wa(cod) {
             activeFinal(false);
         },
         error: function(err) {
-            alert(err);
+            let ec, suf = " 잠시 후 다시 시도해주세요";
+            switch(err.responseText) {
+                case "trans":
+                    ec = "데이터베이스 트랜잭션을 개시하는데 실패했습니다."+suf;
+                    break;
+                case "forbidden":
+                    ec = "권한이 없습니다."+suf;
+                    break;
+                case "sdb":
+                    ec = "풀이를 기록할 수 없습니다."+suf;
+                    break;
+                case "expUpd":
+                    ec = "경험치를 업데이트할 수 없습니다."+suf;
+                    break;
+                default:
+                    ec = "예기치 못한 오류가 발생했습니다. "+suf;
+            }
+            alert(ec);
         }
     });
 }
@@ -72,7 +89,23 @@ function ac(cod) {
             activeFinal(true);
         },
         error: function(err) {
-            alert(err);
+            let ec, suf = " 잠시 후 다시 시도해주세요";
+            switch(err.responseText) {
+                case "trans":
+                    ec = "데이터베이스 트랜잭션을 개시하는데 실패했습니다."+suf;
+                    break;
+                case "forbidden":
+                    ec = "권한이 없습니다."+suf;
+                    break;
+                case "sdb":
+                    ec = "풀이를 기록할 수 없습니다."+suf;
+                    break;
+                case "expUpd":
+                    ec = "경험치를 업데이트할 수 없습니다."+suf;
+                    break;
+                default:
+                    ec = "예기치 못한 오류가 발생했습니다. "+suf;
+            }
         }
     });
 }
