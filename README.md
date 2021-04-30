@@ -18,7 +18,7 @@ Below's sql is command to make database. All tabes will be automatically created
 > |user|miho|
 > |port|5432|
 >
-> `CREATE USER miho WITH SUPERUSER`
+> `CREATE USER miho WITH SUPERUSER;`
 
 ### 1.3 IDENTIFICATION DB
 
