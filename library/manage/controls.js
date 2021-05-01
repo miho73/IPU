@@ -69,6 +69,10 @@ function sendPermQuery() {
                     break;
                 case "permFormat":
                     txt = "권한코드 형식 오류"
+                    break;
+                case "self":
+                    txt = "자기 자신의 권한은 수정할 수 없습니다.";
+                    break;
             }
             document.getElementById('usrRes').innerText = txt;
         }

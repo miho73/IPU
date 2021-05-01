@@ -14,6 +14,7 @@ const auth = require('./server-component/auth');
 const problem = require('./server-component/problem');
 const profile = require('./server-component/profile');
 const mgr = require('./server-component/management');
+const docs = require('./server-component/docs');
 
 const app = express();
 app.use(favicon(__dirname + '/library/resources/favicon.ico'));
@@ -77,6 +78,7 @@ try {
     problem.problemRouter(app, __dirname);
     profile.profileRouter(app);
     mgr.manageRouter(app, __dirname);
+    docs.docsRouter(app, __dirname);
 }
 catch(error) {
    console.log("Global Exception Catch: "+error)

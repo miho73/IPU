@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>IPU</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="/lib/univ.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap.min.css">
+        <script src="/lib/univ.js"></script>
+        <%- include('../ejs-components/header-comp.ejs')%>
+        <meta name="title" content="IPU">
+        <meta property="og:title" content="IPU">
+        <meta name="twitter:title" content="IPU">
+        <meta name="description" content="Welcome to the IPU">
+        <meta property="og:description" content="Welcome to the IPU">
+        <meta name="twitter:description" content="Welcome to the IPU">
+        <style>
+            h1.title {
+                text-align: center;
+                margin-top: 20px;
+                font-size: 3em;
+                font-weight: 400;
+            }
+            .center {
+                text-align: center;
+            }
+            .nom {
+                margin: 0;
+            }
+            .pt {
+                font-size: 1.3em;
+            }
+            .li {
+                font-size: 17px;
+            }
+            p {
+                margin: 0;
+                font-size: 17px;
+            }
+            #cont-v {
+                width: 60%;
+                margin: auto;
+            }
+            @media only screen 
+            and (min-device-width : 320px) 
+            and (max-device-width : 480px) {
+                #cont-v {
+                    width: 90%;
+                }
+                .pt {
+                    font-size: 1.9em;
+                }
+                .li {
+                    font-size: 30px;
+                }
+                p {
+                    font-size: 30px;
+                }
+                h1.title {
+                    font-size: 4.5em;
+                }
+                th {
+                    font-size: 30px;
+                }
+            }
+            th {
+                font-weight: 400;
+                font-size: 17px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="block" style="display: none;"></div>
+        <div id="display" style="overflow-y: scroll;">
+            <div id="root">
+                <div id="heading">
+                    <%- include('../ejs-components/goto.ejs')%>
+                    <%- include('../ejs-components/user_header.ejs')%>
+                </div>
+                <div>
+                    <div style="margin: auto;" id="cont-v">
+                        <h1 class="title">IPU 사용자 약관</h1>
+                        <h3 class="center nom pt">이 약관은 2021년 5월 1일 업데이트되었으며, 2021년 5월 3일부터 유효합니다.</h3>
+                        <h3 class="center pt">
+                            <strong>아래 약관을 주의깊게 읽어주세요. 귀하는 본 약관에 거부할 권리를 가지며, 만일 그러할시 회원가입을 하지 않으시면 됩니다. IPU에 가입함에 따라 본 약관을 준수하기로 동의하는 것으로 간주됩니다. IPU를 사용중 약관에 거부하게 된다면 즉시 계정을 삭제해주세요.</strong>
+                        </h3>
+                        <ol>
+                            <li class="li" type="A">
+                                <h3 class="pt">이용계약의 체결</h3>
+                                <ol>
+                                    <li class="li" type="1">
+                                        <p>IPU에 가입하여 계정을 만들 때 귀하가 IPU 사용자 약관에 동의하여 가입신청을 하시면, IPU가 이에 승인을 하며 이용계약이 체결됩니다.</p>
+                                        <p>다음 각 호중 하나라도 해당되는 경우 IPU는 이용계약을 임의로 해지할 수 있습니다.</p>
+                                        <ul>
+                                            <li>만 14세 이하의 회원이 법정대리인의 동의를 받지 않은 경우</li>
+                                            <li>약관 위반 등 부적합한 사용이 발견된 경우</li>
+                                            <li>허위의 정보를 기재하거나, IPU가 요구하는 정보를 기재하지 않은 경우</li>
+                                            <li>이전에 IPU에서 회원자격을 상실한 적이 있는 경우</li>
+                                        </ul>
+                                    </li>
+                                    <li class="li" type="1">
+                                        <p>귀하의 계정을 삭제하면 즉시 이용계약은 해지됩니다.</p>
+                                    </li>
+                                </ol>
+                            </li>
+                            <li class="li" type="A">
+                                <h3 class="pt">일반</h3>
+                                <ol>
+                                    <li class="li" type="1">
+                                        <p>IPU의 모든 콘텐츠는 저작권이 있으며, 귀하는 이를 존중하고, 보호할 의무를 지닙니다.</p>
+                                        <p>이 사이트의 콘텐츠(사이트에 있는 문제들을 포함하지만 이에 국한되지는 않음)의 저작권은 해당 문제의 제작자에게 있습니다. 문제를 허가없이 게시, 복제, 도용, 판매하거나 기타 저작권법에 어긋나게 무단사용하는 경우 법적 제제를 받을 수 있습니다. 문제를 블로그등에 올릴때는 문제 본문을 업로드하지 말고, 링크를 업로드해주세요.</p>
+                                    </li>
+                                    <li class="li" type="1">
+                                        <p>IPU에 있는 모든 사용자를 존중해야 합니다.</p>
+                                        <p>절대로 인종, 성, 지역, 종교, 교육 수준등으로 상대를 무시하거나, 비하, 험오적인 내용을 담은 콘텐츠를 만들지 마세요.</p>
+                                    </li>
+                                    <li class="li" type="1">
+                                        <p>IPU에 있는 모든 사용자를 존중해야 합니다.</p>
+                                        <p>절대로 인종, 성, 지역, 종교, 교육 수준등으로 상대를 무시하거나, 비하, 험오적인 내용을 담은 콘텐츠를 만들지 마세요.</p>
+                                    </li>
+                                </ol>
+                            </li>
+                            <li class="li" type="A">
+                                <h3 class="pt">개인정보</h3>
+                                <ol>
+                                    <li class="li" type="1">
+                                        <p>IPU는 서비스 운영을 위해 다음과 같은 개인정보를 귀하로부터 수집합니다.</p>
+                                        <table class="table table-striped table-bordered" style="width: 60%;">
+                                            <thread>
+                                                <tr>
+                                                    <th style="width: 20%">종류</th>
+                                                    <th style="width: 80%;">목적</th>
+                                                </tr>
+                                            </thread>
+                                            <tbody>
+                                                <tr>
+                                                    <th>이름</th>
+                                                    <th>IPU 내에서 사용자를 부르기 쉽도록 설정하는 이름으로, 실명을 써도 닉네임을 써도 무관합니다.</th>
+                                                </tr>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>IPU 내에서 사용자를 특정하는데 사용되는 문자열로 가입시 정할 수 있으며 이후로는 변경할 수 없습니다.</th>
+                                                </tr>
+                                                <tr>
+                                                    <th>이메일</th>
+                                                    <th>IPU가 귀하에게 연락하기 위한 수단입니다.</th>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        <p>개인정보는 사이트의 회원가입을 통해 수집되며, 각 정보는 상기한대로 사용됩니다.</p>
+                                        <p>귀하이 계정를 삭제하면 그 즉시 상기한 모든 개인정보는 복구할 수 없도록 IPU에서 삭제됩니다.</p>
+                                    </li>
+                                    <li class="li" type="1">
+                                        <p>IPU는 Google Analytics를 사용합니다.</p>
+                                        <p>귀하의 사이트 내 활동은 기록되어 Google Analytics에 전송됩니다. 이 데이터는 신규 서비스 개발, 마케팅 및 광고에 통계학적 자료로 사용됩니다. 이러한 데이터는 귀하의 계정이다 신원과 연관되지 않아 귀하를 식별할 수 없는 형태로 처리됩니다.</p>
+                                    </li>
+                                    <li class="li" type="1">
+                                        <p>IPU는 Google Cloud Platform에서 귀하의 정보를 처리합니다.</p>
+                                        <p>귀하의 정보는 IPU의 서버를 운영하고 있는 Google Cloud Platform 아시아 태평양 대한민국 서울 서버를 이용하여 처리됩니다. 귀하의 정보는 기본적으로 처리되는 서버를 이탈하지 않지만, (a) 이용자의 사전 동의가 있는 경우와 (b)수사기관의 요청이 있는 경우는 예외로 합니다.</p>
+                                    </li>
+                                    <li class="li" type="1">
+                                        <p>IPU는 사이트 내에서 사용자를 식별하기 위해 쿠키를 사용합니다.</p>
+                                        <p>로그인등의 절차에서 사용자를 기록하기 위해 IPU는 쿠키를 사용합니다. 만일 이를 사용하지 않고자 한다면 쿠키를 비활성화할 수 있습니다. 다만 이 경우 로그인이 불가합니다.</p>
+                                    </li>
+                                    <li class="li" type="1">
+                                        <p>IPU는 귀하의 개인정보를 소중히 생각합니다.</p>
+                                        <p>귀하의 암호는 무작위 솔트를 사용한 SHA-512로 해시되어 보관되며, 기타 민감한 정보는 암호화하여 저장할 방침입니다.</p>
+                                        <p>IPU는 데이터베이스에 접속할 수 있는 인원을 철저히 관리하고 있으며, 이에 필요한 조치를 수행하고 있습니다.</p>
+                                        <p>IPU는 귀하의 과실로 발생한 보안사고에 대한 책임을 지지 않습니다. 계정에 대한 보안의식을 가지고 암호를 주기적으로 변경하고, 공용 PC에서 로그인할때는 주의하여 주세요. 계정은 원칙적으로 한 사람만이 이용하도록 되어있습니다.</p>
+                                    </li>
+                                </ol>
+                            </li>
+                            <li class="li" type="A">
+                                <h3 class="pt">부정행위</h3>
+                                귀하가 아래 행위를 IPU에서 반복적으로 하는 경우 IPU는 귀하와의 이용계약을 임의로 해지할 수 있습니다.
+                                <ol>
+                                    <li class="li" type="1">경험치를 높이기 위해 문제를 풀지 않고 결과를 제출하는 경우</li>
+                                    <li class="li" type="1">고의로 IPU에 오류를 일으키거나 문제를 일으키려고 시도하는 행위</li>
+                                </ol>
+                            </li>
+                            <li class="li" type="A">
+                                <h3 class="pt">IPU의 면책</h3>
+                                다음 각 호의 상황에서 IPU는 귀하에게 발생한 피해를 책임지지 않습니다.
+                                <ol>
+                                    <li class="li" type="1">천채지변, 혹은 이에 준하는 불가항력에 의한 서비스의 정지에 의한 손해</li>
+                                    <li class="li" type="1">귀하의 보안인식 부재로 인한 보안사고</li>
+                                    <li class="li" type="1">다른 회원이 생성한 콘텐츠의 신뢰도, 정확성등의 내용</li>
+                                    <li class="li" type="1">귀하의 과실로 인한 서비스 비활성화</li>
+                                </ol>
+                            </li>
+                            <li class="li" type="A">
+                                <h3 class="pt">라이브러리 및 리소스 저작권 고지</h3>
+                                <ol>
+                                    <li class="li" type="1"><a href="https://fonts.cafe24.com/" target="_blank">Cafe24 글씨체</a>, OFL 라이선스로 사용 허가됨</li>
+                                    <li class="li" type="1"><a href="https://fonts.cafe24.com/" target="_blank">PostgreSQL</a>, IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING LOST PROFITS, ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATIONS TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.</li>
+                                    <li class="li" type="1"><a href="https://www.npmjs.com/package/pg" target="_blank">pg</a>, MIT 라이선스로 사용 허가됨</li>
+                                    <li class="li" type="1"><a href="https://www.npmjs.com/package/sanitize-html" target="_blank">sanitize-html</a>, MIT 라이선스로 사용 허가됨</li>
+                                    <li class="li" type="1"><a href="https://www.npmjs.com/package/body-parser" target="_blank">body-parser</a>, MIT 라이선스로 사용 허가됨</li>
+                                    <li class="li" type="1"><a href="https://www.npmjs.com/package/ejs" target="_blank">ejs</a>, Apache-2.0 라이선스로 사용 허가됨</li>
+                                    <li class="li" type="1"><a href="https://www.npmjs.com/package/express" target="_blank">express</a>, MIT 라이선스로 사용 허가됨</li>
+                                    <li class="li" type="1"><a href="https://www.npmjs.com/package/express-session" target="_blank">express-session</a>, MIT 라이선스로 사용 허가됨</li>
+                                    <li class="li" type="1"><a href="https://www.npmjs.com/package/multer" target="_blank">multer</a>, MIT 라이선스로 사용 허가됨</li>
+                                    <li class="li" type="1"><a href="https://www.npmjs.com/package/serve-favicon" target="_blank">serve-favicon</a>, MIT 라이선스로 사용 허가됨</li>
+                                    <li class="li" type="1"><a href="https://www.npmjs.com/package/session-file-store" target="_blank">session-file-store</a>, MIT 라이선스로 사용 허가됨</li>
+                                    <li class="li" type="1"><a href="https://quilljs.com/" target="_blank">quill</a>, BSD 3-Clause "New" or "Revised" License로 사용 허가됨</li>
+                                </ol>
+                            </li>
+                        </ol>
+                        <br><br>
+                    </div>
+                </div>
+            </div>
+            <%- include('../ejs-components/simple.ejs')%>
+        </div>
+    </body>
+</html>

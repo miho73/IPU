@@ -128,3 +128,16 @@ p#err {
     font-family: 'Cafe24Oneprettynight', 'Cafe24Shiningstar', 'Spoqa Han Sans Neo', 'sans-serif';
     font-weight: 500;
 }
+#eula-alert {
+    color: #fff;
+    font-weight: 400;
+    font-size: 1em;
+    margin-bottom: 0;
+}
+a.href {
+    text-decoration: none;
+    color: #ccd;
+}
+.href:hover {
+    text-decoration: underline;
+}
