@@ -1,6 +1,6 @@
 codetable = {
     unra: 1000,
-    brozz: 2000,
+    broz: 2000,
     silv: 4000,
     gold: 8000,
     sapp: 16000,
@@ -10,7 +10,7 @@ codetable = {
 
 wa_div = {
     unra: 2,
-    brozz: 3,
+    broz: 3,
     silv: 4,
     gold: 5,
     sapp: 6,
@@ -44,7 +44,7 @@ function getBaseScore(diff) {
 
 module.exports = {
     calculate_score: function(difficulty, number_of_solve) {
-        return Math.ceil(getBaseScore(difficulty) * getPow(parseInt(number_of_solve)+1));
+        return Math.ceil(getBaseScore(difficulty) * getPow(parseInt(number_of_solve)));
     },
     trans_wa: function(original, difficulty) {
         return Math.ceil(original/wa_div[difficulty]);

@@ -1,6 +1,6 @@
 const PROBLEM_PER_PAGE = 30;
 
-cutTable = [0, 3000, 10000, 20000, 35000, 60000, 90000, 150000]
+cutTable = [0, 3000, 15000, 40000, 80000, 150000, 200000, 300000]
 
 codeTableRl = {
     1: 'Unrated',

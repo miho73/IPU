@@ -377,7 +377,7 @@ module.exports = {
                             let ret = [];
                             rows.forEach(row => {
                                 ret.push({
-                                    code: row.code,
+                                    code: row.problem_code,
                                     name: dataprob[row['problem_code']]['problem_name'],
                                     sol: row.solved_time,
                                     solt: row.solving_time,
