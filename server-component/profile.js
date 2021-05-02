@@ -123,10 +123,13 @@ module.exports = {
                     }
                     else {
                         let jd = new Date(data.joined), ll = new Date(data.last_login);
-                        const secretByte = Buffer.from(crypto.createHash('md5').update(req.session.user.pwd).digest('hex'));
-                        const cipher = crypto.createDecipheriv('aes-256-cbc', secretByte, Buffer.from(data.aes_iv, 'hex'));
-                        let emailx = cipher.update(data.email, 'base64', 'utf8');
-                        emailx += cipher.final('utf8');
+                        let emailx = '';
+                        if(data.email != '' && data.email != undefined) {
+                            const secretByte = Buffer.from(crypto.createHash('md5').update(req.session.user.pwd).digest('hex'));
+                            const cipher = crypto.createDecipheriv('aes-256-cbc', secretByte, Buffer.from(data.aes_iv, 'hex'));
+                            emailx = cipher.update(data.email, 'base64', 'utf8');
+                            emailx += cipher.final('utf8');
+                        }
                         res.render('profile/profile_settings.ejs', {
                             ylog: 'block',
                             nlog: 'none',
