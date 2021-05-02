@@ -1,29 +1,5 @@
 const PROBLEM_PER_PAGE = 30;
 
-cutTable = [0, 3000, 15000, 40000, 80000, 150000, 200000, 300000]
-
-codeTableRl = {
-    1: 'Unrated',
-    2: 'Bronze',
-    3: 'Silver',
-    4: 'Gold',
-    5: 'Sapphire',
-    6: 'Ruby',
-    7: 'Diamond',
-    8: 'Infinity'
-}
-
-codeTable = {
-    1: 'unra',
-    2: 'broz',
-    3: 'silv',
-    4: 'gold',
-    5: 'sapp',
-    6: 'ruby',
-    7: 'diam',
-    8: 'redd'
-}
-
 function load(pg) {
     let getLen = -1;
     $.ajax({
@@ -112,17 +88,11 @@ function load(pg) {
                 document.getElementById('next').setAttribute('href', `/profile/${document.getElementById('uid').innerText}/?page=${pg+1}`)
             }
             let exp = document.getElementById('experi-visib').innerText;
-            let levelCode = 8;
-            for(let i=1; i<=7; i++) {
-                if(exp < cutTable[i]) {
-                    levelCode = i;
-                    break;
-                }
-            }
+            let levelCode = getLevelCode(exp);
             let lv_name = codeTable[levelCode];
             document.getElementById('exp-name').innerText = codeTableRl[levelCode];
             if(levelCode == 8) {
-                document.getElementById('next-lv').innerText = `YOU HAVE HIGHEST`;
+                document.getElementById('next-lv').innerText = `YOU HAVE THE HIGHEST`;
             }
             else {
                 if(levelCode == 7) {

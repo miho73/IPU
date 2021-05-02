@@ -40,6 +40,30 @@ function convertDiffColor(code) {
     }
 }
 
+cutTable = [0, 3000, 15000, 40000, 80000, 150000, 200000, 300000]
+
+codeTableRl = {
+    1: 'Unrated',
+    2: 'Bronze',
+    3: 'Silver',
+    4: 'Gold',
+    5: 'Sapphire',
+    6: 'Ruby',
+    7: 'Diamond',
+    8: 'Infinity'
+}
+
+codeTable = {
+    1: 'unra',
+    2: 'broz',
+    3: 'silv',
+    4: 'gold',
+    5: 'sapp',
+    6: 'ruby',
+    7: 'diam',
+    8: 'redd'
+}
+
 const Subj = {
     alge: "대수",
     numb: "정수",
@@ -53,6 +77,17 @@ const Subj = {
 function convertSubj(code) {
     if(Subj.hasOwnProperty(code)) return Subj[code];
     else return "미분류";
+}
+
+function getLevelCode(exp) {
+    let levelCode = 8;
+        for(let i=1; i<=7; i++) {
+        if(exp < cutTable[i]) {
+            levelCode = i;
+            break;
+        }
+    }
+    return levelCode;
 }
 
 String.prototype.string = function(len){var s = '', i = 0; while (i++ < len) { s += this; } return s;};

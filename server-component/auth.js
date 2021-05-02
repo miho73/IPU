@@ -38,7 +38,9 @@ IdenDb.query('CREATE TABLE IF NOT EXISTS iden('+
              'email TEXT,'+//to be encrypted
              'joined TEXT NOT NULL,'+
              `experience INTEGER NOT NULL,`+
-             'last_login TEXT);', (err, data)=>{
+             `aes_iv TEXT,`+
+             `last_solve TEXT,`+
+             `last_login TEXT);`, (err, data)=>{
                 if(err) {
                     console.log('Failed to create table to identification database: '+err);
                 }
@@ -205,6 +207,7 @@ module.exports = {
                                                 code: row[0].user_code,
                                                 id: row[0].user_id,
                                                 name: row[0].user_name,
+                                                pwd: req.body.p,
                                                 auth: true
                                             };
                                             res.redirect(`/${req.body.ret}`);

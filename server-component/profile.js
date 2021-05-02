@@ -123,15 +123,19 @@ module.exports = {
                     }
                     else {
                         let jd = new Date(data.joined), ll = new Date(data.last_login);
+                        const secretByte = Buffer.from(crypto.createHash('md5').update(req.session.user.pwd).digest('hex'));
+                        const cipher = crypto.createDecipheriv('aes-256-cbc', secretByte, Buffer.from(data.aes_iv, 'hex'));
+                        let emailx = cipher.update(data.email, 'base64', 'utf8');
+                        emailx += cipher.final('utf8');
                         res.render('profile/profile_settings.ejs', {
                             ylog: 'block',
                             nlog: 'none',
                             userid: req.session.user.id,
                             username: req.session.user.name,
                             bio: data.bio,
-                            email: data.email,
-                            joined: `${jd.getFullYear()}년 ${(jd.getMonth()+1).zf(2)}월 ${jd.getDate().zf(2)}일 ${jd.getHours().zf(2)}시 ${jd.getMinutes().zf(2)}분`,
-                            last_login: `${ll.getFullYear()}년 ${(ll.getMonth()+1).zf(2)}월 ${ll.getDate().zf(2)}일 ${ll.getHours().zf(2)}시 ${ll.getMinutes().zf(2)}분`,
+                            email: emailx,
+                            joined: `${jd.getFullYear()}년 ${(jd.getMonth()+1).zf(2)}월 ${jd.getDate().zf(2)}일 ${jd.getHours().zf(2)}시 ${jd.getMinutes().zf(2)}분 UTC`,
+                            last_login: `${ll.getFullYear()}년 ${(ll.getMonth()+1).zf(2)}월 ${ll.getDate().zf(2)}일 ${ll.getHours().zf(2)}시 ${ll.getMinutes().zf(2)}분 UTC`,
                         });
                     }
                 });
@@ -177,18 +181,37 @@ module.exports = {
                                 //name regex violent
                                 let uname = req.body.name;
                                 let bio = req.body.bio;
-                                let ema = req.body.email;
-                                if(!new RegExp('^[a-zA-Zㄱ-힣]{1,50}$').test(uname)) {
+                                let email = req.body.email, ema, IV;
+                                if(bio.len >= 50) {
                                     res.status(400).send('name');
                                     return;
                                 }
-                                if(bio.length >= 100) {
+                                if(bio.length >= 500) {
                                     res.status(400).send('bio');
                                     return;
                                 }
-                                if(!validateEmail(ema) && ema != '') {
+                                if(!validateEmail(email) && email != '') {
                                     res.status(400).send('email');
                                     return;
+                                }
+                                if(email != '') {
+                                    let secretByte;
+                                    if(req.body.pwdC == 'true') {
+                                        secretByte = Buffer.from(crypto.createHash('md5').update(req.body.npwd).digest('hex'));
+                                    }
+                                    else {
+                                        secretByte = Buffer.from(crypto.createHash('md5').update(req.body.lpwd).digest('hex'));
+                                    }
+                                    const iv = crypto.randomBytes(16);
+                                    const cipher = crypto.createCipheriv('aes-256-cbc', secretByte, iv);
+                                    let enc = cipher.update(email, 'utf8', 'base64');
+                                    enc += cipher.final('base64');
+                                    ema = enc;
+                                    IV = iv.toString('hex');
+                                }
+                                else {
+                                    ema = '';
+                                    IV = '';
                                 }
                                 if(req.body.pwdC == 'true') {
                                     //password regex violent
@@ -198,7 +221,7 @@ module.exports = {
                                     }
                                     crypto.randomBytes(64, (errq, bufx) => {
                                         crypto.pbkdf2(req.body.npwd, bufx.toString('base64'), 12495, 64, 'sha512', (err, keyp) => {
-                                            auth.query('UPDATE iden SET user_name=$1, bio=$2, email=$3, user_password=$4, user_salt=$5 WHERE user_code=$6', [uname, sanitizeHtml(bio), ema, keyp.toString('base64'), bufx.toString('base64'), req.session.user.code], (err, resp)=>{
+                                            auth.query('UPDATE iden SET user_name=$1, bio=$2, email=$3, user_password=$4, user_salt=$5, aes_iv=$6 WHERE user_code=$7', [sanitizeHtml(uname), sanitizeHtml(bio), ema, keyp.toString('base64'), bufx.toString('base64'), IV, req.session.user.code], (err, resp)=>{
                                                 if(err) {
                                                     res.status(500).send('dbupdate-pwd');
                                                 }
@@ -211,7 +234,7 @@ module.exports = {
                                     });
                                 }
                                 else {
-                                    auth.query('UPDATE iden SET user_name=$1, bio=$2, email=$3 WHERE user_code=$4', [uname, sanitizeHtml(bio), ema, req.session.user.code], (err, resp)=>{
+                                    auth.query('UPDATE iden SET user_name=$1, bio=$2, email=$3, aes_iv=$4 WHERE user_code=$5', [uname, sanitizeHtml(bio), ema, IV, req.session.user.code], (err, resp)=>{
                                         if(err) {
                                             res.status(500).send('dbupdate-npwd');
                                         }
@@ -399,6 +422,11 @@ module.exports = {
                     }
                 });
             });
+        });
+    },
+    solvesQuery: function(query, paramenter, callback) {
+        SolveDb.query(query, paramenter, (err, res)=>{
+            callback(err, res);
         });
     }
 }

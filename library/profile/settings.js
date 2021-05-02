@@ -11,13 +11,13 @@ function upload() {
     let ema = document.getElementById('email').value;
     let lpwd = document.getElementById('lpwd').value;
     let success = true;
-    if(!new RegExp('^[a-zA-Zㄱ-힣]{1,50}$').test(uname) || uname == '') {
+    if(uname.length >= 50 || uname == '') {
         document.getElementById('name').classList.add('formthis');
         window.location.hash = "name";
         success = false;
     }
     else document.getElementById('name').classList.remove('formthis');
-    if(bio.length >= 100) {
+    if(bio.length >= 500) {
         document.getElementById('bios').classList.add('formthis');
         window.location.hash = "bios";
         success = false;
@@ -60,13 +60,13 @@ function upload() {
                     document.getElementById('errdis').innerText = "암호는 4자리 이상, 100자리 이하여야 하며, 글자(a-z, A-Z)와 숫자(0-9)로 만 이루어져 있어야 합니다.";
                     return;
                 case "name":
-                    document.getElementById('errdis').innerText = "이름은 한글과 영어의 조합이여야 합니다.";
+                    document.getElementById('errdis').innerText = "이름은 50자 이내이여야 합니다.";
                     return;
                 case "bio":
-                    document.getElementById('errdis').innerText = "상태메시지는 최대 100자입니다.";
+                    document.getElementById('errdis').innerText = "상태메시지는 최대 500자입니다.";
                     return;
                 case "email":
-                    document.getElementById('errdis').innerText = "이메일이 아닙니다.";
+                    document.getElementById('errdis').innerText = "올바른 이메일을 입력하세요.";
                     return;
                 case "dbupdate-pwd":
                     document.getElementById('errdis').innerText = "업데이트할 수 없습니다.";

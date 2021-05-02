@@ -8,13 +8,13 @@ const https = require('https');
 const fs = require('fs');
 const error = require('./server-component/error');
 const pg = require('pg');
-const fileStore = require('session-file-store')(session);
 
 const auth = require('./server-component/auth');
 const problem = require('./server-component/problem');
 const profile = require('./server-component/profile');
 const mgr = require('./server-component/management');
 const docs = require('./server-component/docs');
+const usr = require('./server-component/users');
 
 const app = express();
 app.use(favicon(__dirname + '/library/resources/favicon.ico'));
@@ -31,7 +31,6 @@ app.use(session({
         httpOnly: true,
         secure: true
     },
-    store: new fileStore()
 }));
 
 const HTTP_PORT = 8888;
@@ -79,6 +78,7 @@ try {
     profile.profileRouter(app);
     mgr.manageRouter(app, __dirname);
     docs.docsRouter(app, __dirname);
+    usr.usrRouter(app);
 }
 catch(error) {
    console.log("Global Exception Catch: "+error)

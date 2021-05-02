@@ -103,7 +103,7 @@ div#display {
 #user {
     position: absolute;
     text-align: right;
-    width: 200px;
+    width: fit-content;
     margin-top: 60px;
     height: 25px;
     padding: 0 20px 0 0;

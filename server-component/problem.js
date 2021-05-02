@@ -276,8 +276,13 @@ module.exports = {
         });
     },
     probNonquery: function(query, param, callback) {
-        ProbDb.query(query, param, (err, res)=>{
+        ProbDb.query(query, param, (err)=>{
             callback(err);
+        });
+    },
+    query: function(query, parameter, callback) {
+        ProbDb.query(query, parameter, (err, res)=>{
+            callback(err, res);
         });
     }
 }
