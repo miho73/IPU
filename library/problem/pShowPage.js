@@ -68,6 +68,12 @@ function wa(cod) {
                 case "expUpd":
                     ec = "경험치를 업데이트할 수 없습니다."+suf;
                     break;
+                case "usrQ":
+                    ec = "사용자 정보를 불러올 수 없습니다. "+suf;
+                    break;
+                case "time":
+                    ec = "제출은 1분마다 할 수 있습니다.";
+                    break;
                 default:
                     ec = "예기치 못한 오류가 발생했습니다. "+suf;
             }
@@ -103,9 +109,16 @@ function ac(cod) {
                 case "expUpd":
                     ec = "경험치를 업데이트할 수 없습니다."+suf;
                     break;
+                case "usrQ":
+                    ec = "사용자 정보를 불러올 수 없습니다. "+suf;
+                    break;
+                case "time":
+                    ec = "제출은 1분마다 할 수 있습니다.";
+                    break;
                 default:
                     ec = "예기치 못한 오류가 발생했습니다. "+suf;
             }
+            alert(ec);
         }
     });
 }

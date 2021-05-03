@@ -43,6 +43,10 @@ module.exports = {
                                 case "DELETE":
                                     key = parsed[1]+1;
                                     obj = obj.splice(key-1, 1);
+                                    if(obj.length <= key || key<0) {
+                                        res.status(400).send("KeyOutOfRange");
+                                        return;
+                                    }
                                     fs.writeFile(rtp+'/invites.json', JSON.stringify({codes: obj}), (err)=>{
                                         if(err) {
                                             res.status(500).send("CannotSaveChange");

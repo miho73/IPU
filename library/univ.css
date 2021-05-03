@@ -106,8 +106,8 @@ div#display {
     width: fit-content;
     margin-top: 60px;
     height: 25px;
-    padding: 0 20px 0 0;
-    right: 0;
+    padding: 0;
+    right: 20px;
 }
 #heading {
     width: 100%;
@@ -127,8 +127,8 @@ div#display {
     width: 200px;
     margin-top: 60px;
     height: 25px;
-    padding: 0 0 0 20px;
-    left: 0;
+    padding: 0;
+    left: 20px;
 }
 #img-cont {
     background-image: url(/lib/imgs/bg/1.jpg);
@@ -291,4 +291,9 @@ img.about-close {
 }
 .about-close:hover {
     content: url('/lib/imgs/x-inv.png');
+}
+
+div#nloged, div#yloged {
+    width: fit-content;
+    min-width: 200px;
 }

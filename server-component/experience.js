@@ -10,12 +10,12 @@ codetable = {
 
 wa_div = {
     unra: 2,
-    broz: 3,
-    silv: 4,
-    gold: 5,
-    sapp: 6,
-    ruby: 7,
-    diam: 8
+    broz: 4,
+    silv: 8,
+    gold: 16,
+    sapp: 32,
+    ruby: 64,
+    diam: 128
 }
 
 powtable = {

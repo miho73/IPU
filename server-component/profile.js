@@ -122,7 +122,7 @@ module.exports = {
                         return;
                     }
                     else {
-                        let jd = new Date(data.joined), ll = new Date(data.last_login);
+                        let jd = new Date(data.joined), ll = new Date(data.last_login), ls = new Date(data.last_solve);
                         let emailx = '';
                         if(data.email != '' && data.email != undefined) {
                             const secretByte = Buffer.from(crypto.createHash('md5').update(req.session.user.pwd).digest('hex'));
@@ -139,6 +139,8 @@ module.exports = {
                             email: emailx,
                             joined: `${jd.getFullYear()}년 ${(jd.getMonth()+1).zf(2)}월 ${jd.getDate().zf(2)}일 ${jd.getHours().zf(2)}시 ${jd.getMinutes().zf(2)}분 UTC`,
                             last_login: `${ll.getFullYear()}년 ${(ll.getMonth()+1).zf(2)}월 ${ll.getDate().zf(2)}일 ${ll.getHours().zf(2)}시 ${ll.getMinutes().zf(2)}분 UTC`,
+                            last_solve: `${ls.getFullYear()}년 ${(ls.getMonth()+1).zf(2)}월 ${ls.getDate().zf(2)}일 ${ls.getHours().zf(2)}시 ${ls.getMinutes().zf(2)}분 UTC`,
+                            usr_cd : req.session.user.code,
                         });
                     }
                 });

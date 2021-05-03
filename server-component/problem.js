@@ -146,43 +146,54 @@ module.exports = {
                 return;
             }
             let now = new Date();
-            SolveDb.query('BEGIN', (err1)=>{
-                if(err1) {
-                    res.status(500).send('trans');
+            auth.queryId(req.session.user.id, 'last_solve', (errqw, ls)=>{
+                if(errqw) {
+                    res.status(500).send('usrQ');
                     return;
                 }
-                SolveDb.query(`INSERT INTO u${req.session.user.code}(problem_code, solved_time, solving_time, correct) VALUES ($1, $2, $3, $4);`, [req.body.code, now.toISOString(), req.body.time, req.body.res], (err2)=>{
-                    if(err2) {
-                        res.status(500).send('sdb');
+                let last = new Date(ls);
+                if((new Date().getTime()-last.getTime())/1000 < 60) {
+                    res.status(403).send('time');
+                    return;
+                }
+                SolveDb.query('BEGIN', (err1)=>{
+                    if(err1) {
+                        res.status(500).send('trans');
                         return;
                     }
-                    SolveDb.query(`SELECT COUNT(*) AS count FROM u${req.session.user.code} WHERE problem_code=$1;`, [req.body.code], (err3, nos)=>{
-                        if(err3) {
-                            console.log("problem/api/solrep get NOS error: "+err3);
-                            SolveDb.query('ROLLBACK');
-                            res.status(500).send('expUpd');
+                    SolveDb.query(`INSERT INTO u${req.session.user.code}(problem_code, solved_time, solving_time, correct) VALUES ($1, $2, $3, $4);`, [req.body.code, now.toISOString(), req.body.time, req.body.res], (err2)=>{
+                        if(err2) {
+                            res.status(500).send('sdb');
                             return;
                         }
-                        ProbDb.query('SELECT problem_difficulty AS dif FROM prob WHERE problem_code=$1;', [req.body.code], (err4, diff)=>{
-                            if(err4) {
-                                console.log("problem/api/solrep get difficulty error: "+err4);
+                        SolveDb.query(`SELECT COUNT(*) AS count FROM u${req.session.user.code} WHERE problem_code=$1;`, [req.body.code], (err3, nos)=>{
+                            if(err3) {
+                                console.log("problem/api/solrep get NOS error: "+err3);
                                 SolveDb.query('ROLLBACK');
                                 res.status(500).send('expUpd');
                                 return;
                             }
-                            let addExp = experi.calculate_score(diff.rows[0].dif, nos.rows[0].count);
-                            if(req.body.res == '0') addExp = experi.trans_wa(addExp, diff.rows[0].dif);
-                            auth.query('UPDATE iden SET experience=((SELECT experience FROM iden WHERE user_code=$1)+$2) WHERE user_code=$1;', [req.session.user.code, addExp], (err3)=>{
-                                if(err3) {
-                                    console.log("problem/api/solrep update exp error: "+err4);
+                            ProbDb.query('SELECT problem_difficulty AS dif FROM prob WHERE problem_code=$1;', [req.body.code], (err4, diff)=>{
+                                if(err4) {
+                                    console.log("problem/api/solrep get difficulty error: "+err4);
                                     SolveDb.query('ROLLBACK');
                                     res.status(500).send('expUpd');
                                     return;
                                 }
-                                else {
-                                    SolveDb.query('COMMIT');
-                                    res.sendStatus(200);
-                                }
+                                let addExp = experi.calculate_score(diff.rows[0].dif, nos.rows[0].count);
+                                if(req.body.res == '0') addExp = experi.trans_wa(addExp, diff.rows[0].dif);
+                                auth.query('UPDATE iden SET experience=((SELECT experience FROM iden WHERE user_code=$1)+$2), last_solve=$3 WHERE user_code=$1;', [req.session.user.code, addExp, new Date().toISOString()], (err3)=>{
+                                    if(err3) {
+                                        console.log("problem/api/solrep update exp error: "+err4);
+                                        SolveDb.query('ROLLBACK');
+                                        res.status(500).send('expUpd');
+                                        return;
+                                    }
+                                    else {
+                                        SolveDb.query('COMMIT');
+                                        res.sendStatus(200);
+                                    }
+                                });
                             });
                         });
                     });
