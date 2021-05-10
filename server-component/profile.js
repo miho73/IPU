@@ -402,10 +402,10 @@ module.exports = {
                             datap.forEach(elem=>{
                                 dataprob[elem.problem_code] = elem;
                             });
-                            let ret = [];
+                            let ret = [], frm=parseInt(from), cnt=0;
                             rows.forEach(row => {
                                 ret.push({
-                                    code: row.problem_code,
+                                    code: frm+cnt,
                                     name: dataprob[row['problem_code']]['problem_name'],
                                     sol: row.solved_time,
                                     solt: row.solving_time,
@@ -421,6 +421,7 @@ module.exports = {
                                         }
                                     ]
                                 });
+                                cnt++;
                             });
                             res.send(ret);
                         });

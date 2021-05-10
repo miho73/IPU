@@ -72,6 +72,44 @@ module.exports = {
                 res.redirect('/login/?ret=problem/make');
             }
         });
+        app.get('/problem/:code/edit', (req, res)=>{
+            perm.checkPrivilege(req, ['p', 'm'], (rex)=>{
+                if(rex) {
+                    ProbDb.query('SELECT * FROM prob WHERE problem_code=$1', [req.params.code], (err1, data)=>{
+                        if(err1) {
+                            console.log("problem/:code/edit get problem_data error: "+err1);
+                            error.sendError(500, 'Internal Server Error', res);
+                            return;
+                        }
+                        row = data.rows[0];
+                        let hashintx=false, hintx='';
+                        if(row.has_hint == 1) {
+                            hashintx = true;
+                            hintx = row.problem_hint;
+                        }
+                        res.render('../views/problem/edit_problem.ejs', {
+                            ylog: "block",
+                            nlog: "none",
+                            userid: req.session.user.id,
+                            username: req.session.user.name,
+                            prob_code: row.problem_code,
+                            prob_name: row.problem_name,
+                            cate: row.problem_category,
+                            diff: row.problem_difficulty,
+                            prob_cont: row.problem_content,
+                            prob_exp: row.problem_solution,
+                            prob_ans: row.problem_answer,
+                            hashint: hashintx,
+                            prob_hint: hintx,
+                            spec: row.extr_tabs
+                        });
+                    });
+                }
+                else {
+                    res.redirect(`/problem/${req.params.code}`);
+                }
+            });
+        })
         app.post('/problem/make/upload', upload.single('img'),(req, res)=>{
             res.json(req.file.filename);
         });
@@ -94,8 +132,38 @@ module.exports = {
                             console.log('Problem insert sql failure: '+err);
                             error.sendError(500, 'Internal Server Error', res);
                         }
+                        else {
+                            res.send('/problem');
+                        }
                     });
-                    res.send('/problem');
+                }
+                else {
+                    res.sendStatus(403);
+                }
+            });
+        });
+        app.post('/problem/make/update', (req, res)=>{
+            if(!auth.checkIdentity(req)) {
+                res.status(403).send('forbidden');
+                return;
+            }
+            perm.checkPrivilege(req, ['p', 'm'], (rex)=>{
+                if(rex) {
+                    let now = new Date();
+                    let hint = req.body.hint;
+                    if(!req.body.hashint) {
+                        hint = undefined;
+                    }
+                    ProbDb.query(`UPDATE prob SET problem_name=$1, problem_category=$2, problem_difficulty=$3, problem_content=$4, problem_solution=$5, problem_answer=$6, problem_hint=$7, author_name=$8, last_modified=$9, extr_tabs=$10, has_hint=$11 WHERE problem_code=$12`,
+                                [req.body.title, req.body.cate, req.body.difficult, req.body.cont, req.body.expl, req.body.answ, hint, req.session.user.id, now.toISOString(), req.body.extr, (req.body.hashint=="true" ? 1 : 0), req.body.codex], (err, resx)=>{
+                        if(err) {
+                            console.log('problem/make/update sql failure: '+err);
+                            error.sendError(500, 'Internal Server Error', res);
+                        }
+                        else {
+                            res.send('/problem/'+req.body.codex);
+                        }
+                    });
                 }
                 else {
                     res.sendStatus(403);

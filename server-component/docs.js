@@ -4,6 +4,24 @@ const error = require('./error');
 
 module.exports = {
     docsRouter: function(app, rtp) {
+        app.get('/docs', (req, res)=>{
+            if(auth.checkIdentity(req)) {
+                res.render('docs/docs.ejs', {
+                    ylog: "block",
+                    nlog: "none",
+                    userid: req.session.user.id,
+                    username: req.session.user.name,
+                });
+            }
+            else {
+                res.render('docs/docs.ejs', {
+                    ylog: "none",
+                    nlog: "block",
+                    userid: '',
+                    username: '',
+                });
+            }
+        });
         app.get('/docs/:type', (req, res)=>{
             try {
                 if(auth.checkIdentity(req)) {
