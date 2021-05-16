@@ -411,5 +411,14 @@
             }
         });
     </script>
+    <script>
+        window.onbeforeunload = function (e) {
+            e = e || window.event;
+            if (e) {
+                e.returnValue = '편집사항이 저장되지 않습니다. 정말 닫을까요?';
+            }
+            return '편집사항이 저장되지 않습니다. 정말 닫을까요?';
+        };
+    </script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML'></script>
 </html>

@@ -17,9 +17,10 @@ function load(pg) {
                 document.getElementById('not').style.display = 'block';
                 return;
             }
+            let cnt = 0;
             data.forEach(datum => {
                 let tr = document.createElement('tr');
-                let number = document.createElement('td'); number.innerText = datum.code;
+                let number = document.createElement('td'); number.innerText = pg*PROBLEM_PER_PAGE+cnt+1; cnt++;
                 let name = document.createElement('td'); name.innerHTML = `<a class="prob-href" href="/problem/${datum.code}">${datum.name}</a>`
                 let info = document.createElement('td');
                 let solved = document.createElement('td'); solved.innerText = datum.solt+"초";

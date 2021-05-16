@@ -35,7 +35,7 @@ module.exports = {
                 error.sendError(400, 'Bad Request', res);
                 return;
             }
-            auth.query('SELECT user_id, user_name, bio, experience, user_code FROM iden ORDER BY experience LIMIT $1', [length], (err, users)=>{
+            auth.query('SELECT user_id, user_name, bio, experience, user_code FROM iden ORDER BY experience DESC LIMIT $1', [length], (err, users)=>{
                 if(err) {
                     console.log("users/api/rank get rank error: "+err3);;
                     res.status(500).send("uq");

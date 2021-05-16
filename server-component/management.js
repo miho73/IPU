@@ -124,8 +124,10 @@ module.exports = {
                                         res.status(400).send('self');
                                         return;
                                     }
-                                    auth.query('UPDATE iden SET privilege=$1 WHERE user_id=$2', [parsed[1], parsed[2]], (err, data)=>{
-                                        if(err) res.status(500).send('dbquery');
+                                    auth.query('UPDATE iden SET privilege=$1 WHERE user_id=$2', [parsed[1], parsed[2]], (err314, data)=>{
+                                        if(err314 || data.rowCount == 0) {
+                                            res.status(500).send('dbquery');
+                                        }
                                         else {
                                             res.send('Updated');
                                         }
