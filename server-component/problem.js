@@ -75,41 +75,50 @@ module.exports = {
         app.get('/problem/:code/edit', (req, res)=>{
             perm.checkPrivilege(req, ['p', 'm'], (rex)=>{
                 if(rex) {
-                    ProbDb.query('SELECT * FROM prob WHERE problem_code=$1', [req.params.code], (err1, data)=>{
-                        if(err1) {
-                            console.log("problem/:code/edit get problem_data error: "+err1);
-                            error.sendError(500, 'Internal Server Error', res);
-                            return;
-                        }
-                        row = data.rows[0];
-                        let hashintx=false, hintx='';
-                        if(row.has_hint == 1) {
-                            hashintx = true;
-                            hintx = row.problem_hint;
-                        }
-                        res.render('../views/problem/edit_problem.ejs', {
-                            ylog: "block",
-                            nlog: "none",
-                            userid: req.session.user.id,
-                            username: req.session.user.name,
-                            prob_code: row.problem_code,
-                            prob_name: row.problem_name,
-                            cate: row.problem_category,
-                            diff: row.problem_difficulty,
-                            prob_cont: row.problem_content,
-                            prob_exp: row.problem_solution,
-                            prob_ans: row.problem_answer,
-                            hashint: hashintx,
-                            prob_hint: hintx,
-                            spec: row.extr_tabs
-                        });
+                    res.render('../views/problem/edit_problem.ejs', {
+                        ylog: "block",
+                        nlog: "none",
+                        userid: req.session.user.id,
+                        username: req.session.user.name,
+                        prob_code: row.problem_code,
                     });
                 }
                 else {
                     res.redirect(`/problem/${req.params.code}`);
                 }
             });
-        })
+        });
+        app.post('/problem/edit/getd', (req, res)=>{
+            const code = req.body.code;
+            if(code == undefined) {
+                res.status(400).send('cu');
+                return;
+            }
+            ProbDb.query('SELECT * FROM prob WHERE problem_code=$1', [code], (err1, data)=>{
+                if(err1) {
+                    console.log("problem/:code/edit get problem_data error(on loading phase): "+err1);
+                    res.status(500).send('db');
+                    return;
+                }
+                row = data.rows[0];
+                let hashintx=false, hintx='';
+                if(row.has_hint == 1) {
+                    hashintx = true;
+                    hintx = row.problem_hint;
+                }
+                res.send({
+                    prob_cont: row.problem_content,
+                    prob_exp: row.problem_solution,
+                    prob_ans: row.problem_answer,
+                    prob_hint: hintx,
+                    prob_name: row.problem_name,
+                    cate: row.problem_category,
+                    diff: row.problem_difficulty,
+                    hashint: hashintx,
+                    spec: row.extr_tabs
+                });
+            });
+        });
         app.post('/problem/make/upload', upload.single('img'),(req, res)=>{
             res.json(req.file.filename);
         });
@@ -293,6 +302,12 @@ module.exports = {
             }
         });
         app.get('/problem/:code', (req, res)=>{
+            /*
+            if(!auth.checkIdentity(req)) {
+                res.redirect(`/login/?ret=problem/${req.params.code}`);
+                return;
+            }
+            */
             let regex = new RegExp('^[0-9]{1,2}$');
             let code = req.params.code;
             if(!regex.test(code)) {
@@ -300,36 +315,47 @@ module.exports = {
                 return;
             }
             ProbDb.query('SELECT problem_code, problem_name, problem_category, problem_difficulty, answers, problem_content, problem_hint, problem_solution, problem_answer, has_hint, extr_tabs FROM prob WHERE problem_code=$1;', [code], (err, data)=>{
-                if(err || data.rowCount == 0) {
-                    console.log("problem table query error: "+err);
-                    error.sendError(500, 'Internal Server Error', res);
-                }
-                else {
-                    row = data.rows[0];
-                    if(!auth.checkIdentity(req)) {
-                        res.redirect(`/login/?ret=problem/${req.params.code}`);
+            if(err || data.rowCount == 0) {
+                console.log("problem table query error: "+err);
+                error.sendError(500, 'Internal Server Error', res);
+            }
+            else {
+                row = data.rows[0];
+                    let hashintx='none', hintx='';
+                    if(row.has_hint == 1) {
+                        hashintx = 'block';
+                        hintx = row.problem_hint;
                     }
-                    else {
-                        let hashintx='none', hintx='';
-                        if(row.has_hint == 1) {
-                            hashintx = 'block';
-                            hintx = row.problem_hint;
-                        }
-                        res.render('../views/problem/problem_page.ejs', {
-                            ylog: "block",
-                            nlog: "none",
-                            userid: req.session.user.id,
-                            username: req.session.user.name,
-                            problem_code: row.problem_code,
-                            problem_name: row.problem_name,
-                            prob_cont: row.problem_content,
-                            prob_exp: row.problem_solution,
-                            prob_ans: row.problem_answer,
-                            hashint: hashintx,
-                            prob_hint: hintx,
-                            spec: row.extr_tabs
-                        });
-                    }
+                    /*
+                    res.render('../views/problem/problem_page.ejs', {
+                        ylog: "block",
+                        nlog: "none",
+                        userid: req.session.user.id,
+                        username: req.session.user.name,
+                        problem_code: row.problem_code,
+                        problem_name: row.problem_name,
+                        prob_cont: row.problem_content,
+                        prob_exp: row.problem_solution,
+                        prob_ans: row.problem_answer,
+                        hashint: hashintx,
+                        prob_hint: hintx,
+                        spec: row.extr_tabs
+                    });
+                    */
+                    res.render('../views/problem/problem_page.ejs', {
+                        ylog: "block",
+                        nlog: "none",
+                        userid: "",
+                        username: "",
+                        problem_code: row.problem_code,
+                        problem_name: row.problem_name,
+                        prob_cont: row.problem_content,
+                        prob_exp: row.problem_solution,
+                        prob_ans: row.problem_answer,
+                        hashint: hashintx,
+                        prob_hint: hintx,
+                        spec: row.extr_tabs
+                    });
                 }
             });
         });

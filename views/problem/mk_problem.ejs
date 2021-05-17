@@ -300,6 +300,7 @@
                     extr: JSON.stringify(tabs)
                 },
                 success: function(data) {
+                    window.onbeforeunload = undefined;
                     window.location.href = "/problem";
                 },
                 error: function(err) {

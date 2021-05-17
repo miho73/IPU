@@ -42,7 +42,7 @@
                 <h2 id="title"><%=prob_code%>번 문제 수정</h2>
                 <div id="prob-cont">
                     <div id="top-menu">
-                        <input type="text" id="name" class="prob-name" spellcheck="false" value="<%=prob_name%>">
+                        <input type="text" id="name" class="prob-name" spellcheck="false">
                         <select id="category" class="selbox">
                             <option disabled selected>분류</option>
                             <optgroup label="수학">
@@ -164,10 +164,7 @@
         hintedit.getModule('toolbar').addHandler('image', function() {
             selectLocalImage(hintedit);
         });
-        init(contedit, `<%-prob_cont%>`);
-        init(expedit, `<%-prob_exp%>`);
-        init(ansedit, `<%-prob_ans%>`);
-        init(hintedit, `<%-prob_hint%>`);
+
         function selectLocalImage(forwhat) {
             const input = document.createElement('input');
             input.setAttribute('type', 'file');
@@ -198,42 +195,60 @@
             quill.setContents(delta, 'silent');
         }
         function onloaded() {
-            document.getElementById('hashint').checked = <%=hashint%>;
-            if(<%-hashint%>) {
-                hintSH();
-            }
-            document.getElementById('category').value = "<%=cate%>";
-            document.getElementById('diffi').value = "<%=diff%>";
-            let ext = JSON.parse(`<%-spec%>`);
-            ext.forEach(ele => {
-                const toAdd = document.getElementById('extr-edit-cont');
-                const rt_div = document.createElement('div');
-                const name = document.createElement('input');
-                const edit_div = document.createElement('div');
-                const controls_div = document.createElement('div');        
-                rt_div.id = `extr-tab-cont-${extrTabCnt}`;
-                edit_div.id = `extr-tab-edit-${extrTabCnt}`;
-                name.type = 'textfield';
-                controls_div.classList.add('extr-ctrl-div');
-                name.placeholder = '탭 이름';
-                name.classList.add('extr-tab-name');
-                name.id = `extr-tab-name-${extrTabCnt}`;
-                controls_div.appendChild(name);
-                rt_div.classList.add('extr-tab-edit-div');
-                rt_div.appendChild(controls_div);
-                rt_div.appendChild(edit_div);
-                toAdd.appendChild(rt_div);
-                var extr = new Quill(`#extr-tab-edit-${extrTabCnt}`, {
-                    placeholder: '추가 탭',
-                    modules: toolbar_conf,
-                    theme: 'snow'
-                });
-                extr.getModule('toolbar').addHandler('image', function() {
-                    selectLocalImage(extr);
-                });
-                name.value = ele.name;
-                init(extr, ele.content);
-                extrTabCnt++;
+            $.ajax({
+                type: 'POST',
+                url: '/problem/edit/getd',
+                data: {
+                    code: '<%=prob_code%>'
+                },
+                error: function(request,status,error) {
+                    alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+                },
+                success: function(apply) {
+                    init(contedit, apply.prob_cont);
+                    init(expedit, apply.prob_exp);
+                    init(ansedit, apply.prob_ans);
+                    init(hintedit, apply.prob_hint);
+
+                    document.getElementById('name').value = apply.prob_name;
+                    document.getElementById('hashint').checked = apply.hashint;
+                    if(apply.hashint) {
+                        hintSH();
+                    }
+                    document.getElementById('category').value = apply.cate;
+                    document.getElementById('diffi').value = apply.diff;
+                    let ext = JSON.parse(apply.spec);
+                    ext.forEach(ele => {
+                        const toAdd = document.getElementById('extr-edit-cont');
+                        const rt_div = document.createElement('div');
+                        const name = document.createElement('input');
+                        const edit_div = document.createElement('div');
+                        const controls_div = document.createElement('div');        
+                        rt_div.id = `extr-tab-cont-${extrTabCnt}`;
+                        edit_div.id = `extr-tab-edit-${extrTabCnt}`;
+                        name.type = 'textfield';
+                        controls_div.classList.add('extr-ctrl-div');
+                        name.placeholder = '탭 이름';
+                        name.classList.add('extr-tab-name');
+                        name.id = `extr-tab-name-${extrTabCnt}`;
+                        controls_div.appendChild(name);
+                        rt_div.classList.add('extr-tab-edit-div');
+                        rt_div.appendChild(controls_div);
+                        rt_div.appendChild(edit_div);
+                        toAdd.appendChild(rt_div);
+                        var extr = new Quill(`#extr-tab-edit-${extrTabCnt}`, {
+                            placeholder: '추가 탭',
+                            modules: toolbar_conf,
+                            theme: 'snow'
+                        });
+                        extr.getModule('toolbar').addHandler('image', function() {
+                            selectLocalImage(extr);
+                        });
+                        name.value = ele.name;
+                        init(extr, ele.content);
+                        extrTabCnt++;
+                    });
+                }
             });
         }
         function preview() {
@@ -335,6 +350,7 @@
                     extr: JSON.stringify(tabs)
                 },
                 success: function(data) {
+                    window.onbeforeunload = undefined;
                     window.location.href = data;
                 },
                 error: function(err) {

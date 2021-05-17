@@ -179,10 +179,26 @@ span#header-title {
 .welcome {
     width: fit-content;
     text-align: right;
-    font-size: 18px;
+    font-size: 1.3em;
     font-weight: 300;
     text-decoration: none;
     font-family: 'Cafe24Oneprettynight', 'Spoqa Han Sans Neo', 'sans-serif';
+}
+@media only screen and (max-device-width : 640px) {
+    .welcome {
+        font-size: 2em;
+    }
+    #user,#goto {
+        margin-top: 50px;
+    }
+}    
+@media only screen and (max-device-width: 768px) {
+    .welcome {
+        font-size: 2em;
+    }
+    #user,#goto {
+        margin-top: 50px;
+    }
 }
 .welcome:hover {
     text-decoration: underline;

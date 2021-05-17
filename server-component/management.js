@@ -6,7 +6,7 @@ const perm = require('./permission');
 module.exports = {
     manageRouter: function(app, rtp) {
         app.get('/manage', (req, res)=>{
-            perm.checkPrivilege(req, ['m'], (rex)=>{
+            perm.checkPrivilege(req, ['m', 'p'], (rex)=>{
                 if(rex) {
                     res.render('management/control.ejs');
                 }

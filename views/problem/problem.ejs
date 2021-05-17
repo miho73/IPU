@@ -27,7 +27,7 @@
                 </div>
                 <div id="prob-cont">
                     <h1 style="margin-bottom: 1em;">Problems</h1>
-                    <table class="table table-striped table-bordered">
+                    <table class="table table-striped table-bordered" id="prob-list-table">
                         <thead>
                             <tr>
                                 <th style="width: 10%">문제</th>
@@ -47,7 +47,6 @@
                     <span id="pnsep" style="user-select: none;">······</span>
                     <a id="next" class="next round">다음</a>
                 </div>
-                <a id="makenew" style="display: <%= ylog%>; font-size: 1.3rem;" href="/problem/make">문제 출제하기</a>
             </div>
             <%- include('../ejs-components/simple.ejs')%>
         </div>

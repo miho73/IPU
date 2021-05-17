@@ -22,13 +22,16 @@ body {
     background: url('/lib/auth/bg.jpg') no-repeat center fixed;
     background-size: cover;
     backdrop-filter: blur(6px) brightness(60%);
+    -webkit-backdrop-filter: blur(6px) brightness(60%);
 }
 
 section#container-h {
-    padding: 10em 0px;
+    padding: 5rem 0px;
+    padding-bottom: 0;
 }
 #container-v {
     width: 100%;
+    height: fit-content;
     padding-right: 15px;
     padding-left: 15px;
     margin-right: auto;
