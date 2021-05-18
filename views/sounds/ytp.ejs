@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title><%=name%> - IPU</title>
+        <meta charset="utf-8">
+        <meta name="title" content="<%=name%> - IPU">
+        <meta property="og:title" content="<%=name%> - IPU">
+        <meta name="twitter:title" content="<%=name%> - IPU">
+        <%- include('../ejs-components/header-comp.ejs')%>
+        <meta name="description" content="Sound for study <%=name%>">
+        <meta property="og:description" content="Sound for study <%=name%>">
+        <meta name="twitter:description" content="Sound for study <%=name%>">
+        <link rel="stylesheet" href="/lib/sounds/sndStyle.css">
+        <link rel="stylesheet" href="/lib/sounds/snds.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    </head>
+    <body>
+        <iframe id="ytp-player" width="320px" height="180px" src="https://www.youtube.com/embed/<%=code%>?controls=1&loop=1&rel=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <a href="/sounds" target="_self" style="margin: 20px 0 0 30px;" class="sndLst">&lt; Back</a>
+    </body>     
+</html>

@@ -302,12 +302,10 @@ module.exports = {
             }
         });
         app.get('/problem/:code', (req, res)=>{
-            /*
             if(!auth.checkIdentity(req)) {
                 res.redirect(`/login/?ret=problem/${req.params.code}`);
                 return;
             }
-            */
             let regex = new RegExp('^[0-9]{1,2}$');
             let code = req.params.code;
             if(!regex.test(code)) {
@@ -326,27 +324,11 @@ module.exports = {
                         hashintx = 'block';
                         hintx = row.problem_hint;
                     }
-                    /*
                     res.render('../views/problem/problem_page.ejs', {
                         ylog: "block",
                         nlog: "none",
                         userid: req.session.user.id,
                         username: req.session.user.name,
-                        problem_code: row.problem_code,
-                        problem_name: row.problem_name,
-                        prob_cont: row.problem_content,
-                        prob_exp: row.problem_solution,
-                        prob_ans: row.problem_answer,
-                        hashint: hashintx,
-                        prob_hint: hintx,
-                        spec: row.extr_tabs
-                    });
-                    */
-                    res.render('../views/problem/problem_page.ejs', {
-                        ylog: "block",
-                        nlog: "none",
-                        userid: "",
-                        username: "",
                         problem_code: row.problem_code,
                         problem_name: row.problem_name,
                         prob_cont: row.problem_content,

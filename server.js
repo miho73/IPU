@@ -15,6 +15,7 @@ const profile = require('./server-component/profile');
 const mgr = require('./server-component/management');
 const docs = require('./server-component/docs');
 const usr = require('./server-component/users');
+const etc = require('./server-component/etc');
 
 const app = express();
 app.use(favicon(__dirname + '/library/resources/favicon.ico'));
@@ -78,6 +79,7 @@ try {
     profile.profileRouter(app);
     mgr.manageRouter(app, __dirname);
     docs.docsRouter(app, __dirname);
+    etc.etcRouter(app);
     usr.usrRouter(app);
 }
 catch(error) {
