@@ -123,20 +123,13 @@ module.exports = {
                     }
                     else {
                         let jd = new Date(data.joined), ll = new Date(data.last_login), ls = new Date(data.last_solve);
-                        let emailx = '';
-                        if(data.email != '' && data.email != undefined) {
-                            const secretByte = Buffer.from(crypto.createHash('md5').update(req.session.user.pwd).digest('hex'));
-                            const cipher = crypto.createDecipheriv('aes-256-cbc', secretByte, Buffer.from(data.aes_iv, 'hex'));
-                            emailx = cipher.update(data.email, 'base64', 'utf8');
-                            emailx += cipher.final('utf8');
-                        }
                         res.render('profile/profile_settings.ejs', {
                             ylog: 'block',
                             nlog: 'none',
                             userid: req.session.user.id,
                             username: req.session.user.name,
                             bio: data.bio,
-                            email: emailx,
+                            email: data.email,
                             joined: `${jd.getFullYear()}년 ${(jd.getMonth()+1).zf(2)}월 ${jd.getDate().zf(2)}일 ${jd.getHours().zf(2)}시 ${jd.getMinutes().zf(2)}분 UTC`,
                             last_login: `${ll.getFullYear()}년 ${(ll.getMonth()+1).zf(2)}월 ${ll.getDate().zf(2)}일 ${ll.getHours().zf(2)}시 ${ll.getMinutes().zf(2)}분 UTC`,
                             last_solve: `${ls.getFullYear()}년 ${(ls.getMonth()+1).zf(2)}월 ${ls.getDate().zf(2)}일 ${ls.getHours().zf(2)}시 ${ls.getMinutes().zf(2)}분 UTC`,
@@ -199,25 +192,8 @@ module.exports = {
                                     res.status(400).send('email');
                                     return;
                                 }
-                                if(email != '') {
-                                    let secretByte;
-                                    if(req.body.pwdC == 'true') {
-                                        secretByte = Buffer.from(crypto.createHash('md5').update(req.body.npwd).digest('hex'));
-                                    }
-                                    else {
-                                        secretByte = Buffer.from(crypto.createHash('md5').update(req.body.lpwd).digest('hex'));
-                                    }
-                                    const iv = crypto.randomBytes(16);
-                                    const cipher = crypto.createCipheriv('aes-256-cbc', secretByte, iv);
-                                    let enc = cipher.update(email, 'utf8', 'base64');
-                                    enc += cipher.final('base64');
-                                    ema = enc;
-                                    IV = iv.toString('hex');
-                                }
-                                else {
-                                    ema = '';
-                                    IV = '';
-                                }
+                                ema = email;
+                                IV = '';
                                 if(req.body.pwdC == 'true') {
                                     //password regex violent
                                     if(req.body.npwd == undefined || !new RegExp('^[a-zA-Z0-9]{4,100}$').test(req.body.npwd)) {

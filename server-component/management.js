@@ -11,7 +11,7 @@ module.exports = {
                     res.render('management/control.ejs');
                 }
                 else {
-                    error.sendError(403, 'Forbidden', res);
+                    error.sendError(404, 'Not Found', res);
                 }
             });
         });
@@ -41,13 +41,19 @@ module.exports = {
                             let obj = JSON.parse(data).codes;
                             switch(parsed[0]) {
                                 case "DELETE":
-                                    key = parsed[1]+1;
-                                    obj = obj.splice(key-1, 1);
+                                    key = parsed[1]-1;
                                     if(obj.length <= key || key<0) {
                                         res.status(400).send("KeyOutOfRange");
                                         return;
                                     }
-                                    fs.writeFile(rtp+'/invites.json', JSON.stringify({codes: obj}), (err)=>{
+                                    let vil=[], cnt=0;
+                                    obj.forEach(element => {
+                                        if(cnt!=key) {
+                                            vil.push(element);
+                                            cnt++;
+                                        }
+                                    });
+                                    fs.writeFile(rtp+'/invites.json', JSON.stringify({codes: vil}), (err)=>{
                                         if(err) {
                                             res.status(500).send("CannotSaveChange");
                                             return;

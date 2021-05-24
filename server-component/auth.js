@@ -35,7 +35,7 @@ IdenDb.query('CREATE TABLE IF NOT EXISTS iden('+
              'invite_code TEXT NOT NULL,'+
              'bio TEXT,'+
              'privilege TEXT NOT NULL,'+
-             'email TEXT,'+//to be encrypted
+             'email TEXT,'+
              'joined TEXT NOT NULL,'+
              `experience INTEGER NOT NULL,`+
              `aes_iv TEXT,`+
@@ -207,7 +207,6 @@ module.exports = {
                                                 code: row[0].user_code,
                                                 id: row[0].user_id,
                                                 name: row[0].user_name,
-                                                pwd: req.body.p,
                                                 auth: true
                                             };
                                             res.redirect(`/${req.body.ret}`);

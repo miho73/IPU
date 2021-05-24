@@ -35,6 +35,7 @@ span.tag {
     margin-right: 7px;
     border-radius: 5px;
     cursor: default;
+    white-space: nowrap;
 }
 .tag-cate {
     background-color: #9b6bcc;
