@@ -35,6 +35,7 @@ function markaswa(cod) {
 
 function showAns() {
     clearInterval(timer);
+    document.getElementById('show-ans-btn').disabled = true;
     document.getElementById('prob-control').style.display = 'none';
     document.getElementById('prob-control-nd').style.display = 'block';
     document.getElementById('after-sol').style.display = 'block';
@@ -42,6 +43,8 @@ function showAns() {
 }
 
 function wa(cod) {
+    document.getElementById('ac-btn').disabled = true;
+    document.getElementById('wa-btn').disabled = true;
     $.ajax({
         type: 'POST',
         url: '/problem/api/solrep',
@@ -83,6 +86,8 @@ function wa(cod) {
 }
 
 function ac(cod) {
+    document.getElementById('ac-btn').disabled = true;
+    document.getElementById('wa-btn').disabled = true;
     $.ajax({
         type: 'POST',
         url: '/problem/api/solrep',

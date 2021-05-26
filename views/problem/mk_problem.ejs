@@ -242,6 +242,7 @@
             let proceed = confirm("문제를 등록할까요?");
             let precond = true;
             if(!proceed) return;
+            document.getElementById('confirm').disabled = true;
             content = document.getElementById('editor-cont').getElementsByClassName('ql-editor')[0].innerHTML;
             exp = document.getElementById('editor-exp').getElementsByClassName('ql-editor')[0].innerHTML;
             ans = document.getElementById('editor-ans').getElementsByClassName('ql-editor')[0].innerHTML;
@@ -284,7 +285,10 @@
             else {
                 document.getElementById('diffi').classList.remove('formthis');
             }
-            if(!precond) return;
+            if(!precond) {
+                document.getElementById('confirm').disabled = false;
+                return;
+            }
             $.ajax({
                 type: 'POST',
                 url: '/problem/make/register',
@@ -310,6 +314,7 @@
                             window.location.href = `/login/?ret=problem/make`;
                         }
                     }
+                    document.getElementById('confirm').disabled = false;
                 }
             });
         }
