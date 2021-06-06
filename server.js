@@ -91,8 +91,9 @@ app.use((req, res) => {
 });
 
 var options = {
-    key: fs.readFileSync('./cert/private.key'),
-    cert: fs.readFileSync('./cert/certificate.crt')
+    ca: fs.readFileSync('/etc/letsencrypt/live/ipu.r-e.kr/fullchain.pem'),
+    key: fs.readFileSync('/etc/letsencrypt/live/ipu.r-e.kr/privkey.pem'),
+    cert: fs.readFileSync('/etc/letsencrypt/live/ipu.r-e.kr/cert.pem')
 };
 
 app.listen(HTTP_PORT);
