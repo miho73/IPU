@@ -17,4 +17,4 @@ jobs:
           echo Action Started
           cd ${{ github.workspace }}
           pwd
-          ls
+          ls ${{ github.workspace }}
