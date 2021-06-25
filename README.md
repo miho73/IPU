@@ -43,4 +43,7 @@ Below's sql is command to make database. All tabes will be automatically created
 
 ## 2. Workflow
 
-> All commit or accepted PR will be automatically sent to IPU server. After reset or reboot the server, changes will be applied. If changes is not a server component(script) file, updates will be applied directly without rebooting.
+> * All commit to main branch will be automatically sent to IPU server and distriubuted.
+> * Most of  contents can be updated without server restart but in order to update server module, server must be restarted.
+> * Commiting incomplete server to main branch may cause severe error to ACTUAL IPU server. Make sure to make branch to commit incompleted product.
+> * Updating files that don't have any relation with server components is okay to be commited to main branch directly

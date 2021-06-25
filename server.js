@@ -74,8 +74,8 @@ app.get('/', (req, res)=>{
 app.get('/robots.txt', (req, res)=>{
     res.sendFile(__dirname+'/robots.txt');
 });
-app.get('/sitemap', (req, res)=>{
-    res.sendFile(__dirname+'/sitemap.xml');
+app.get('/sitemap.xml', (req, res)=>{
+    res.setHeader('Content-Type', 'text/xml; chatset=utf-8').sendFile(__dirname+'/sitemap.xml');
 });
 
 try {
