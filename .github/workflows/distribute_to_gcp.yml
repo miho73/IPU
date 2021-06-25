@@ -17,7 +17,7 @@ jobs:
         run: |
           echo Action Started
           ls -a
-          ls -a ..
-          ls -a /
           pwd
+          echo Archieve file
           tar -czf ipu.tar.gz views server.js server-component/ robots.txt  package.json package-lock.json  library/ invites.json
+          ls ipu.tar.gz
