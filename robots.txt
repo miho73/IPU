@@ -7,6 +7,7 @@ Allow: /signin
 Allow: /favicon.ico
 Allow: /sounds
 Allow: /docs
+Allow: /docs/*
 Allow: /problem/*
 Disallow: /manage
 Disallow: /settings
