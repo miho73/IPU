@@ -11,8 +11,18 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      ftp_dns: lucys.r-e.kr,
+      ftp_usr: ${{secrets.FTP_USER_NAME}}
+      ftp_pwd: ${{secrets.FTP_USER_PASSWORD}}
     steps:
-      - uses: actions/checkout@v2
       - name: distribute
         run: |
-          tar -czf t.tar.gz views server.js server-component/ robots.txt  package.json package-lock.json  library/ invites.json
+          tar -czf ipu.tar.gz views server.js server-component/ robots.txt  package.json package-lock.json  library/ invites.json
+          ls
+          ftp -p $ftp_dns
+          $ftp_usr
+          $ftp_pwd
+          put ipu.tar.gz
+          quit
+          echo FTP uploaded
