@@ -12,9 +12,11 @@ jobs:
   dist:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - name: Distribute
-        run: |
-          echo Action Starte
-          ls
-          pwd
-          tar -czf ipu.tar.gz views server.js server-component/ robots.txt  package.json package-lock.json  library/ invites.json
+      - run: echo Action Started
+      - run: ls -a
+      - run: ls -a ..
+      - run: ls -a /
+      - run: pwd
+      - run: tar -czf ipu.tar.gz views server.js server-component/ robots.txt  package.json package-lock.json  library/ invites.json
