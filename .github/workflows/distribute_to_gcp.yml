@@ -24,4 +24,4 @@ jobs:
           username: ${{ secrets.FTP_USER_NAME }}
           password: ${{ secrets.FTP_USER_PASSWORD }}
           local-dir: ./to_be_sync/
-          server-dir: ./ipu
+          server-dir: ./ipu/
