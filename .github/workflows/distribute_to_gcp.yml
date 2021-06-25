@@ -14,9 +14,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Distribute
-      - run: echo Action Started
-      - run: ls -a
-      - run: ls -a ..
-      - run: ls -a /
-      - run: pwd
-      - run: tar -czf ipu.tar.gz views server.js server-component/ robots.txt  package.json package-lock.json  library/ invites.json
+        run: |
+          echo Action Started
+          ls -a
+          ls -a ..
+          ls -a /
+          pwd
+          tar -czf ipu.tar.gz views server.js server-component/ robots.txt  package.json package-lock.json  library/ invites.json
