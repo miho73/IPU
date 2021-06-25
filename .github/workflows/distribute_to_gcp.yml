@@ -16,4 +16,5 @@ jobs:
         run: |
           echo Action Started
           cd ${{ github.workspace }}
+          pwd
           tar -czf ipu.tar.gz views server.js server-component/ robots.txt  package.json package-lock.json  library/ invites.json
