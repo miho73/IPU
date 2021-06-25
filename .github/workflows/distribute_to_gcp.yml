@@ -12,9 +12,8 @@ jobs:
   dist:
     runs-on: ubuntu-latest
     steps:
-      - name: Starter
-      - run: echo Action Started
-      - name: Change to repository path
+      - name: Distribute
         run: |
+          echo Action Started
           cd ${{ github.workspace }}
-      
+          tar -czf ipu.tar.gz views server.js server-component/ robots.txt  package.json package-lock.json  library/ invites.json
