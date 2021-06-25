@@ -19,11 +19,9 @@ jobs:
           echo Archiving file
           tar -czf ipu.tar.gz views server.js server-component/ robots.txt  package.json package-lock.json  library/ invites.json          
           echo Archived
-          echo Uploading to FTP
-          ftp -p lucys.r-e.kr
-          ${{secrets.FTP_USER_NAME}}
-          ${{secrets.FTP_USER_PASSWORD}}
-          put ipu.tar.gz
-          quit
-          echo Uploaded to FTP
-          echo Action completed
+      - name: 📂 Sync files
+        uses: SamKirkland/FTP-Deploy-Action@4.1.0
+        with:
+          server: lucys.r-e.kr
+          username: ${{ secrets.FTP_USER_NAME }}
+          password: ${{ secrets.FTP_USER_PASSWORD }}
