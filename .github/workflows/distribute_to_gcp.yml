@@ -23,5 +23,5 @@ jobs:
           server: lucys.r-e.kr
           username: ${{ secrets.FTP_USER_NAME }}
           password: ${{ secrets.FTP_USER_PASSWORD }}
-          local-dir: ./to_be_sync
+          local-dir: ./to_be_sync/
           server-dir: ./ipu
