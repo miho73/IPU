@@ -36,7 +36,7 @@ app.use(session({
 
 const HTTP_PORT = 8888;
 const HTTPS_PORT = 4444;
-
+/*
 app.all('*', (req, res, next) => {
     let protocol = req.headers['x-forwarded-proto'] || req.protocol;
     if (protocol == 'https') next();
@@ -45,7 +45,7 @@ app.all('*', (req, res, next) => {
         res.redirect(to); 
     }
 });
-
+*/
 app.get('/', (req, res)=>{
     if(auth.checkIdentity(req)) {
         res.render("main.ejs", {
@@ -81,6 +81,9 @@ try {
     docs.docsRouter(app, __dirname);
     etc.etcRouter(app);
     usr.usrRouter(app);
+    app.get('/noie', (req, res)=>{
+        error.sendError(412, 'IE는 지원되지 않습니다.', res);
+    })
 }
 catch(error) {
    console.log("Global Exception Catch: "+error)
@@ -90,14 +93,18 @@ app.use((req, res) => {
     error.sendError(404, 'Not Found', res);
 });
 
+/*
 var options = {
     ca: fs.readFileSync('/etc/letsencrypt/live/ipu.r-e.kr/fullchain.pem'),
     key: fs.readFileSync('/etc/letsencrypt/live/ipu.r-e.kr/privkey.pem'),
     cert: fs.readFileSync('/etc/letsencrypt/live/ipu.r-e.kr/cert.pem')
 };
+*/
 
 app.listen(HTTP_PORT);
 console.log("HTTP server listening on port " + HTTP_PORT);
+/*
 https.createServer(options, app).listen(HTTPS_PORT, function() {
     console.log("HTTPS server listening on port " + HTTPS_PORT);
 });
+*/

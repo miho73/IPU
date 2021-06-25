@@ -1,11 +1,11 @@
 @import url(//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css);
 @font-face {
     font-family: Cafe24Shiningstar;
-    src: url("/lib/fonts/Cafe24/Cafe24Shiningstar.ttf");
+    src: url("/lib/fonts/Cafe24/Cafe24Shiningstar.ttf") format('truetype');;
 }
 @font-face {
     font-family: Cafe24Oneprettynight;
-    src: url("/lib/fonts/Cafe24/Cafe24Oneprettynight.ttf");
+    src: url("/lib/fonts/Cafe24/Cafe24Oneprettynight.ttf") format('truetype');;
 }
 
 * { font-family: 'Spoqa Han Sans Neo', 'sans-serif'; }
@@ -76,24 +76,24 @@ div#display {
 }
 .showme {
     opacity: 1 !important;
-    transition: opacity .3s linear;
     -moz-transition: opacity .3s linear;
     -webkit-transition: opacity .3s linear;
     -o-transition: opacity .3s linear;
+    transition: opacity .3s linear;
 }
 .about-show-page {
     opacity: 1 !important;
-    transition: opacity .3s linear;
     -moz-transition: opacity .3s linear;
     -webkit-transition: opacity .3s linear;
     -o-transition: opacity .3s linear;
+    transition: opacity .3s linear;
 }
 .about-hide-page {
     opacity: 0 !important;
-    transition: opacity .3s linear;
     -moz-transition: opacity .3s linear;
     -webkit-transition: opacity .3s linear;
     -o-transition: opacity .3s linear;
+    transition: opacity .3s linear;
 }
 #root {
     position: absolute;
@@ -103,6 +103,7 @@ div#display {
 #user {
     position: absolute;
     text-align: right;
+    width: -moz-fit-content;
     width: fit-content;
     margin-top: 60px;
     height: 25px;
@@ -150,10 +151,10 @@ p.footer-text {
     padding: 0;
     text-align: center;
     opacity: 1;
-    transition: color .15s linear;
     -moz-transition: color .15s linear;
     -webkit-transition: color .15s linear;
     -o-transition: color .15s linear;
+    transition: color .15s linear;
 }
 .footer-text:hover {
     color: #999;
@@ -177,6 +178,7 @@ span#header-title {
     text-align: center;
 }
 .welcome {
+    width: -moz-fit-content;
     width: fit-content;
     text-align: right;
     font-size: 1.3em;
@@ -223,10 +225,10 @@ a.footer-href {
     padding: 0;
     text-align: center;
     opacity: 1;
-    transition: color .15s linear;
     -moz-transition: color .15s linear;
     -webkit-transition: color .15s linear;
     -o-transition: color .15s linear;
+    transition: color .15s linear;
 }
 #maincontents {
     margin-top: 10px;
@@ -238,11 +240,12 @@ a.footer-href {
     font-size: 1.7em;
     color: #ddd;
     display: inline-block;
+    width: -moz-fit-content;
     width: fit-content;
-    transition: background-color .15s linear;
     -moz-transition: background-color .15s linear;
     -webkit-transition: background-color .15s linear;
     -o-transition: background-color .15s linear;
+    transition: background-color .15s linear;
 }
 .cont-href:hover {
     text-decoration: none;
@@ -286,6 +289,7 @@ div#about-container {
     font-weight: 500;
     font-size: 100px;
     margin: 0;
+    width: -moz-fit-content;
     width: fit-content;
     color: #fff;
 }
@@ -310,6 +314,7 @@ img.about-close {
 }
 
 div#nloged, div#yloged {
+    width: -moz-fit-content;
     width: fit-content;
     min-width: 200px;
 }

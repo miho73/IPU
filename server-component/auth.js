@@ -3,6 +3,8 @@ const pg = require('pg');
 const fs = require('fs');
 const request = require('request');
 
+const error = require('./error');
+
 const dbconfig_json = fs.readFileSync(__dirname+'/db_config.json');
 const dbconfig = JSON.parse(dbconfig_json).auth;
 const dbconfig_solv = JSON.parse(dbconfig_json).solv;
