@@ -12,12 +12,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: distribute
+      - name: Change to repository path
         run: |
-          cd ${{github.workspace}}
+          cd ${{ github.workspace }}
           ls
-          ls ..
-          tar -czf ipu.tar.gz views server.js server-component/ robots.txt  package.json package-lock.json  library/ invites.json
+      - name: Archieve files to tar
+      - run: tar -czf ipu.tar.gz views server.js server-component/ robots.txt  package.json package-lock.json  library/ invites.json
+      - name: Upload to FTP
+        run: |
           ftp -p lucys.r-e.kr
           ${{secrets.FTP_USER_NAME}}
           ${{secrets.FTP_USER_PASSWORD}}
