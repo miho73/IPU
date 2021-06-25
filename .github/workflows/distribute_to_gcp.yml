@@ -15,5 +15,6 @@ jobs:
       - name: Change to repository path
         run: |
           cd ${{ github.workspace }}
-          ls .
-          ls ${{ github.workspace }}
+      - name: Archieve files to tar
+      - run: tar -czf ipu.tar.gz views server.js server-component/ robots.txt  package.json package-lock.json  library/ invites.json
+      
