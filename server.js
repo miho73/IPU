@@ -21,27 +21,29 @@ const app = express();
 app.use(favicon(__dirname + '/library/resources/favicon.ico'));
 app.set("view engine", "ejs");
 app.use('/lib', express.static('./library'));
+app.disable('x-powered-by');
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.use(session({
     secret: auth.randomString(20),
-    httpOnly: true,
     resave: false,
+    name: 'authIdentifier',
     saveUninitialized: true,
     cookie: {
         httpOnly: true,
-        secure: true
+        secure: true,
+        sameSite: true
     },
 }));
 
-const HTTP_PORT = 8888;
-const HTTPS_PORT = 4444;
+const HTTP_PORT = 8800;
+const HTTPS_PORT = 4400;
 /*
 app.all('*', (req, res, next) => {
     let protocol = req.headers['x-forwarded-proto'] || req.protocol;
     if (protocol == 'https') next();
     else { let from = `${protocol}://${req.hostname}${req.url}`; 
-        let to = `https://${req.hostname}${req.url}`;
+        let to = `https://ipu.r-e.kr${req.url}`;
         res.redirect(to); 
     }
 });

@@ -75,12 +75,18 @@ module.exports = {
         app.get('/problem/:code/edit', (req, res)=>{
             perm.checkPrivilege(req, ['p', 'm'], (rex)=>{
                 if(rex) {
+                    let regex = new RegExp('^[0-9]{1,4}$');
+                    let code = req.params.code;
+                    if(!regex.test(code)) {
+                        error.sendError(400, 'Bad Request', res);
+                        return;
+                    }
                     res.render('../views/problem/edit_problem.ejs', {
                         ylog: "block",
                         nlog: "none",
                         userid: req.session.user.id,
                         username: req.session.user.name,
-                        prob_code: row.problem_code,
+                        prob_code: code,
                     });
                 }
                 else {
@@ -302,18 +308,14 @@ module.exports = {
             }
         });
         app.get('/problem/:code', (req, res)=>{
-            if(!auth.checkIdentity(req)) {
-                res.redirect(`/login/?ret=problem/${req.params.code}`);
-                return;
-            }
-            let regex = new RegExp('^[0-9]{1,2}$');
+            let regex = new RegExp('^[0-9]{1,4}$');
             let code = req.params.code;
             if(!regex.test(code)) {
                 error.sendError(400, 'Bad Request', res);
                 return;
             }
             ProbDb.query('SELECT problem_code, problem_name, problem_category, problem_difficulty, answers, problem_content, problem_hint, problem_solution, problem_answer, has_hint, extr_tabs FROM prob WHERE problem_code=$1;', [code], (err, data)=>{
-            if(err || data.rowCount == 0) {
+            if(err || data.rowCount != 1) {
                 console.log("problem table query error: "+err);
                 error.sendError(500, 'Internal Server Error', res);
             }
@@ -324,20 +326,38 @@ module.exports = {
                         hashintx = 'block';
                         hintx = row.problem_hint;
                     }
-                    res.render('../views/problem/problem_page.ejs', {
-                        ylog: "block",
-                        nlog: "none",
-                        userid: req.session.user.id,
-                        username: req.session.user.name,
-                        problem_code: row.problem_code,
-                        problem_name: row.problem_name,
-                        prob_cont: row.problem_content,
-                        prob_exp: row.problem_solution,
-                        prob_ans: row.problem_answer,
-                        hashint: hashintx,
-                        prob_hint: hintx,
-                        spec: row.extr_tabs
-                    });
+                    if(!auth.checkIdentity(req)) {
+                        res.render('../views/problem/problem_page.ejs', {
+                            ylog: "none",
+                            nlog: "block",
+                            userid: '',
+                            username: '',
+                            problem_code: row.problem_code,
+                            problem_name: row.problem_name,
+                            prob_cont: row.problem_content,
+                            prob_exp: row.problem_solution,
+                            prob_ans: row.problem_answer,
+                            hashint: hashintx,
+                            prob_hint: hintx,
+                            spec: row.extr_tabs
+                        });
+                    }
+                    else {
+                        res.render('../views/problem/problem_page.ejs', {
+                            ylog: "block",
+                            nlog: "none",
+                            userid: req.session.user.id,
+                            username: req.session.user.name,
+                            problem_code: row.problem_code,
+                            problem_name: row.problem_name,
+                            prob_cont: row.problem_content,
+                            prob_exp: row.problem_solution,
+                            prob_ans: row.problem_answer,
+                            hashint: hashintx,
+                            prob_hint: hintx,
+                            spec: row.extr_tabs
+                        });
+                    }
                 }
             });
         });
