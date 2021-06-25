@@ -9,20 +9,19 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  dist:
     runs-on: ubuntu-latest
     steps:
-      - name: Change to repository path
+      - uses: actions/checkout@v2
+      - name: Prepare to sync
         run: |
-          cd ${{ github.workspace }}
-          ls
-      - name: Archieve files to tar
-      - run: tar -czf ipu.tar.gz views server.js server-component/ robots.txt  package.json package-lock.json  library/ invites.json
+          mkdir to_be_sync
+          cp -r ./{views,server.js,server-component,robots.txt,package.json,package-lock.json,library,invites.json} ./to_be_sync
       - name: Upload to FTP
-        run: |
-          ftp -p lucys.r-e.kr
-          ${{secrets.FTP_USER_NAME}}
-          ${{secrets.FTP_USER_PASSWORD}}
-          put ipu.tar.gz
-          quit
-          echo FTP uploaded
+        uses: SamKirkland/FTP-Deploy-Action@4.1.0
+        with:
+          server: lucys.r-e.kr
+          username: ${{ secrets.FTP_USER_NAME }}
+          password: ${{ secrets.FTP_USER_PASSWORD }}
+          local-dir: ./to_be_sync/
+          server-dir: ./ipu/
