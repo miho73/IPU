@@ -1,5 +1,5 @@
 # IPU
-
+[![GCP distribute](https://github.com/miho73/IPU/actions/workflows/distribute_to_gcp.yml/badge.svg?branch=main)](https://github.com/miho73/IPU/actions/workflows/distribute_to_gcp.yml)
 ## 1. PSQL Guide
 
 IPU uses postgresql as DBMS. Here's the structure and user spec for IPU.
