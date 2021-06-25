@@ -15,4 +15,5 @@ jobs:
       - name: Change to repository path
         run: |
           cd ${{ github.workspace }}
-          ls
+          ls .
+          ls ${{ github.workspace }}
