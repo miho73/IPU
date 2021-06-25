@@ -15,5 +15,7 @@ jobs:
       - name: Distribute
         run: |
           echo Action Started
-          cd ${{ github.workspace }}
-          tar -czf ipu.tar.gz ${{ github.workspace }}/views ${{ github.workspace }}/server.js ${{ github.workspace }}/server-component/ ${{ github.workspace }}/robots.txt ${{ github.workspace }}/package.json ${{ github.workspace }}/package-lock.json  ${{ github.workspace }}/library/ ${{ github.workspace }}/invites.json
+          cd /github/workspace
+          ls
+          pwd
+          tar -czf ipu.tar.gz views server.js server-component/ robots.txt  package.json package-lock.json  library/ invites.json
