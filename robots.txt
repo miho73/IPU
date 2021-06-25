@@ -10,5 +10,4 @@ Allow: /docs
 Allow: /problem/*
 Disallow: /manage
 Disallow: /settings
-Disallow: /auth/*
 Disallow: /login/*
