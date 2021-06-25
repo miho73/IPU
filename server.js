@@ -74,6 +74,9 @@ app.get('/', (req, res)=>{
 app.get('/robots.txt', (req, res)=>{
     res.sendFile(__dirname+'/robots.txt');
 });
+app.get('/sitemap', (req, res)=>{
+    res.sendFile(__dirname+'/sitemap.xml');
+});
 
 try {
     auth.authRouter(app, __dirname);
