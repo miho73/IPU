@@ -9,12 +9,13 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  dist:
     runs-on: ubuntu-latest
     steps:
       - name: Change to repository path
         run: |
           cd ${{ github.workspace }}
+
       - name: Archieve files to tar
       - run: tar -czf ipu.tar.gz views server.js server-component/ robots.txt  package.json package-lock.json  library/ invites.json
       
