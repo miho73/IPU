@@ -13,15 +13,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Distribute
+      - name: Prepare to sync
         run: |
-          echo Action Started
-          echo Archiving file
-          tar -czf ipu.tar.gz views server.js server-component/ robots.txt  package.json package-lock.json  library/ invites.json          
-          echo Archived
-      - name: 📂 Sync files
+          mkdir to_be_sync
+          cp -r ./{ipu.tar.gz,views,server.js,server-component,robots.txt,package.json,package-lock.json,library,invites.json} ./to_be_sync
+      - name: Upload to FTP
         uses: SamKirkland/FTP-Deploy-Action@4.1.0
         with:
           server: lucys.r-e.kr
           username: ${{ secrets.FTP_USER_NAME }}
           password: ${{ secrets.FTP_USER_PASSWORD }}
+          local-dir: ./to_be_sync
+          server-dir: ./ipu
