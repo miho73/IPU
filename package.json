@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/miho73/SES.git"
+    "url": "git+https://github.com/miho73/IPU.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/miho73/SES/issues"
+    "url": "https://github.com/miho73/IPU/issues"
   },
-  "homepage": "https://github.com/miho73/SES#readme",
+  "homepage": "https://github.com/miho73/IPU#readme",
   "dependencies": {
     "body-parser": "^1.19.0",
     "crypto": "^1.0.1",
