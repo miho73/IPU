@@ -1,6 +1,7 @@
 # IPU
 
 [![GCP distribute](https://github.com/miho73/IPU/actions/workflows/distribute_to_gcp.yml/badge.svg?branch=main)](https://github.com/miho73/IPU/actions/workflows/distribute_to_gcp.yml)
+[![Node.js CI](https://github.com/miho73/IPU/actions/workflows/node.js.yml/badge.svg)](https://github.com/miho73/IPU/actions/workflows/node.js.yml)
 
 ## 1. PSQL Guide
 
@@ -43,7 +44,7 @@ Below's sql is command to make database. All tabes will be automatically created
 
 ## 2. Workflow
 
-> * All commit to main branch will be automatically sent to IPU server and distriubuted.
+> * All commits to main branch will be automatically sent to IPU server and distributed.
 > * Most of  contents can be updated without server restart but in order to update server module, server must be restarted.
 > * Commiting incomplete server to main branch may cause severe error to ACTUAL IPU server. Make sure to make branch to commit incompleted product.
 > * Updating files that don't have any relation with server components is okay to be commited to main branch directly

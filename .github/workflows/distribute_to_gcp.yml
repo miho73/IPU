@@ -1,4 +1,4 @@
-name: GCP distribute
+name: Distribute to server
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  dist:
+  Distribute_to_server:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
