@@ -327,20 +327,7 @@ module.exports = {
                         hintx = row.problem_hint;
                     }
                     if(!auth.checkIdentity(req)) {
-                        res.render('../views/problem/problem_page.ejs', {
-                            ylog: "none",
-                            nlog: "block",
-                            userid: '',
-                            username: '',
-                            problem_code: row.problem_code,
-                            problem_name: row.problem_name,
-                            prob_cont: row.problem_content,
-                            prob_exp: row.problem_solution,
-                            prob_ans: row.problem_answer,
-                            hashint: hashintx,
-                            prob_hint: hintx,
-                            spec: row.extr_tabs
-                        });
+                        res.redirect(`/login/?ret=problem/${code}`)
                     }
                     else {
                         res.render('../views/problem/problem_page.ejs', {
