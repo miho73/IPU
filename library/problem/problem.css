@@ -303,6 +303,9 @@ a.previous, a.next {
         font-size: 22px;
     }
 }
+div#nav {
+    margin-bottom: 20px;
+}
 div#prob-nav {
 
 }

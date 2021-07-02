@@ -1,4 +1,4 @@
-const PROBLEM_PER_PAGE = 50;
+const PROBLEM_PER_PAGE = 40;
 
 function load(pg) {
     let getLen = -1;
