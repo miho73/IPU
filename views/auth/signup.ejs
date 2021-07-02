@@ -24,7 +24,7 @@
 			}
 		</style>
 	</head>
-	<body onload="formNxt()">
+	<body>
 		<p id="err" style="display: <%= visible%>;"><%= why_failed%></p>
 		<section id="container-h">
 			<section id="container-v">
@@ -33,7 +33,7 @@
 					<input type="text" id="name" class="input second" name="name" placeholder="Name" spellcheck="false" style="display: none;" required autocomplete="nickname">
 					<input type="text" id="id" class="input second" name="id" placeholder="ID" spellcheck="false" style="display: none;" required autocomplete="username">
 					<input type="password" id="pwd" class="input second" name="password" placeholder="Password" spellcheck="false" style="display: none;" required autocomplete="current-password">
-					<input type="text" id="invite" class="input" name="invite" placeholder="Invite code" spellcheck="false" maxlength="6" onkeypress="keyDwn()" required value="ipuauthkey">
+					<input type="text" id="invite" class="input" name="invite" placeholder="Invite code" spellcheck="false" maxlength="6" onkeypress="keyDwn()" required>
 					<label id="errdisplay" style="display: none;"></label><br>
 					<p id="eula-alert">회원가입함에 따라 <a class="href" href="/docs/eula" target="_blank">IPU의 약관</a>에 동의하는 것으로 간주됩니다.</p>
 					<button type="button" id="submit" class="input" onclick="formNxt()">Proceed</button>
