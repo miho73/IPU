@@ -7,7 +7,6 @@ const favicon = require('serve-favicon');
 const https = require('https');
 const fs = require('fs');
 const error = require('./server-component/error');
-const pg = require('pg');
 
 const auth = require('./server-component/auth');
 const problem = require('./server-component/problem');
@@ -18,12 +17,8 @@ const usr = require('./server-component/users');
 const etc = require('./server-component/etc');
 
 const app = express();
-app.use(favicon(__dirname + '/library/resources/favicon.ico'));
 app.set("view engine", "ejs");
-app.use('/lib', express.static('./library'));
-app.disable('x-powered-by');
-app.use(bodyParser.urlencoded({extended: false}));
-app.use(bodyParser.json());
+app.use(favicon(__dirname + '/lib/resources/favicon.ico'));
 app.use(session({
     secret: auth.randomString(20),
     resave: false,
@@ -31,10 +26,13 @@ app.use(session({
     saveUninitialized: true,
     cookie: {
         httpOnly: true,
-        secure: true,
+        //secure: true,
         sameSite: true
     },
 }));
+app.use('/lib', express.static('./lib'));
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json());
 
 const HTTP_PORT = 8800;
 const HTTPS_PORT = 4400;

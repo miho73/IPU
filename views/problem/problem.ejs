@@ -12,18 +12,18 @@
         <script src="/lib/univ/converter.js"></script>
         <script src="/lib/problem/pShow.js"></script>
         <%- include('../ejs-components/header-comp.ejs')%>
-        <meta property="og:title" content="IPU - 문제">
-        <meta name="twitter:title" content="IPU - 문제">
+        <meta name="title" content="IPU - 문제">
         <meta name="description" content="IPU - 문제 목록">
+        <meta property="og:title" content="IPU - 문제">
         <meta property="og:description" content="IPU - 문제 목록">
+        <meta name="twitter:title" content="IPU - 문제">
         <meta name="twitter:description" content="IPU - 문제 목록">
     </head>
     <body onload="load(<%= pg%>)">
         <div id="display" style="text-align: center;">
             <div id="root" style="height: unset; min-height: 100%;">
                 <div id="heading">
-                    <%- include('../ejs-components/goto.ejs')%>
-                    <%- include('../ejs-components/user_header.ejs')%>
+                    <%- include('../ejs-components/header.ejs')%>
                 </div>
                 <div id="prob-cont">
                     <h1 style="margin-bottom: 1em;">Problems</h1>

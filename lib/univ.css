@@ -1,0 +1,296 @@
+@import url(/lib/SpoqaHanSansNeo.css);
+@font-face {
+    font-family: Cafe24Shiningstar;
+    src: url("/lib/fonts/Cafe24/Cafe24Shiningstar.ttf") format('truetype');;
+}
+@font-face {
+    font-family: Cafe24Oneprettynight;
+    src: url("/lib/fonts/Cafe24/Cafe24Oneprettynight.ttf") format('truetype');;
+}
+
+* {
+    font-family: 'Spoqa Han Sans Neo', 'sans-serif';
+}
+*.mon-font {
+    font-family: 'Montserrat', 'Spoqa Han Sans Neo', 'sans-serif';    
+}
+
+html,body {
+    padding: env(safe-area-inset);
+    padding: 0;
+    margin: 0;
+    overflow-x: hidden;
+    background-color: #fcfcfc;
+}
+
+*.v-center {
+    position: absolute;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+*.h-center {
+    position: absolute;
+    left: 50%;
+    -ms-transform: translateX(-50%);
+    transform: translateX(-50%);
+}
+*.vh-center {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+*.full-width {
+    width: 100%;
+}
+
+a {
+    text-decoration: none;
+    color: #000;
+}
+
+@media (max-width: 800px) {
+    *.hide-on-mobile {
+        display: none !important;
+    }
+    *.block-on-mobile {
+        display: block !important;
+    }
+    *.inline-on-mobile {
+        display: inline !important;
+    }
+}
+
+/* footer */
+div.footer {
+
+    width: 100%;
+    background-color: #434a56;
+}
+div#footer-top {
+    width: 60%;
+    padding: 2vh 20%;
+}
+div#footer-top::after {
+    content: ".";
+    display: block;
+    clear: both;
+    visibility: hidden;
+    line-height: 0;
+    height: 0;
+}
+div#footer-bottom {
+    width: 60%;
+    padding: 0 20% 2vh 20%;
+}
+span.footer-info,p.footer-info {
+    color: #a0a0a0;
+    font-size: 0.8em;
+    font-weight: 400;
+    margin-bottom: 2px;
+    margin-top: 2px;
+}
+@media (max-width: 700px) {
+    div#footer-top {
+        width: 80%;
+        padding: 2vh 10%;
+    }
+    div#footer-bottom {
+        width: 80%;
+        padding: 0 10% 2vh 10%;
+    }
+}
+ul.footer-lst {
+    overflow: auto;
+}
+ul.footer-lst,li.footer-lst {
+    margin: 0;
+    list-style: none;
+    padding: 0;
+    float: left;
+    font-size: 1em;
+    font-weight: 50;
+}
+a.footer-lst {
+    color: #a0a0a0;
+    padding-right: 10px;
+    margin-left: 10px;
+    font-size: 0.8em;
+    border-width: 0 2px 0 0;
+    border-color: #a0a0a0;
+    border-style: solid;
+}
+a.footer-content {
+    color: #a0a0a0;
+    font-size: 0.8em;
+    font-weight: 400;
+    padding: 0;
+}
+
+/* Nav bar */
+div#navigation {
+    height: 60px;
+    background-color: #f6f6f6;
+    text-align: center;
+}
+ul.nav {
+    position: absolute;
+    right: 0;
+    display: inline-block;
+    height: 60px;
+}
+ul.nav,li.nav {
+    margin: 0;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    float: left;
+    font-size: 1em;
+    font-weight: 50;
+}
+li.nav:hover {
+    background-color: #d5d5d5;
+}
+p.nav {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    flex-direction: column;
+    margin: 0;
+    height: 60px;
+    padding: 0 10px;
+}
+a.nav {
+    border-width: 0 1px;
+    border-color: #fff;
+    border-style: solid;
+    text-decoration: none;
+    display: block;
+    margin: auto;
+    height: 60px;
+}
+a.nav-logo {
+    height: 60px;
+    display: inline-block;
+    margin: 0 10px 0 0;
+}
+p#title {
+    height: 60px;
+    border-width: 0;
+    font-size: 4em; 
+    margin: 0;
+    font-family: 'Cafe24Shiningstar', 'Cafe24Oneprettynight', 'Spoqa Han Sans Neo', 'sans-serif';
+}
+button.nav-ham {
+    height: 60px;
+    position: absolute;
+    right: 0;
+    display: none;
+    border: none;
+    background-color: transparent;
+    width: 5%;
+    max-width: 20px;
+    padding: 0;
+    margin-right: 10px;
+}
+div.bun {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+}
+span.patty {
+    background-color: #222;
+    display: block;
+    width: 100%;
+    height: 2px;
+    opacity: 1;
+    margin-bottom: 4px;
+}
+span.pattyc,span.patty {
+    transform-origin: center;
+    -webkit-transition: .1s ease-out;
+    -moz-transition: .1s ease-out;
+    -ms-transition: .1s ease-out;
+    -o-transition: .1s ease-out;
+    transition: .1s ease-out;
+}
+span.top-patty-active1 {
+    -webkit-transform: translate(0, 3px);
+    -moz-transform: translate(0, 3px);
+    -ms-transform: translate(0, 3px);
+    -o-transform: translate(0, 3px);
+    transform: translate(0, 3px);
+}
+span.top-patty-active2 {
+    -webkit-transform: rotateZ(45deg);
+    -moz-transform: rotateZ(45deg);
+    -ms-transform: rotateZ(45deg);
+    -o-transform: rotateZ(45deg);
+    transform: rotateZ(45deg);
+}
+span.bottom-patty-active1 {
+    -webkit-transform: translate(0, -3px);
+    -moz-transform: translate(0, -3px);
+    -ms-transform: translate(0, -3px);
+    -o-transform: translate(0, -3px);
+    transform: translate(0, -3px);
+}
+span.top-patty-active2 {
+    -webkit-transform: rotateZ(45deg);
+    -moz-transform: rotateZ(45deg);
+    -ms-transform: rotateZ(45deg);
+    -o-transform: rotateZ(45deg);
+    transform: rotateZ(45deg);
+}
+span.bottom-patty-active2 {
+    -webkit-transform: rotateZ(-45deg);
+    -moz-transform: rotateZ(-45deg);
+    -ms-transform: rotateZ(-45deg);
+    -o-transform: rotateZ(-45deg);
+    transform: rotateZ(-45deg);
+}
+p.nav-top {
+    width: 100%;
+}
+@media (max-width: 800px) {
+    a.hrefs-top {
+        width: 50%;
+    }
+}
+@media (max-width: 900px) and (orientation: landscape) {
+    div#navigation,p.nav,a.nav,a.nav-logo,ul.nav,button.nav-ham {
+        height: 10vh;
+    }
+    p#title {
+        font-size: 3em;
+    }
+    div#hrefs {
+        height: 6vh;
+    }
+    a.hrefs-top {
+        font-size: 1em;
+    }
+}
+
+/* universal design */
+h1 {
+    text-align: center;
+}
+h1.section-title {
+    margin: 0;
+}
+div.main {
+    width: 70%;
+    margin: 0 15%;
+}
+div.floating-div {
+    width: 100%;
+    background-color: #f5f4f0;
+}

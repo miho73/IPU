@@ -1,0 +1,226 @@
+@import url(//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css);
+@font-face {
+    font-family: Cafe24Shiningstar;
+    src: url("/lib/fonts/Cafe24/Cafe24Shiningstar.ttf");
+}
+@font-face {
+    font-family: Cafe24Oneprettynight;
+    src: url("/lib/fonts/Cafe24/Cafe24Oneprettynight.ttf");
+}
+
+h1#uname {
+    font-family: 'Cafe24Oneprettynight', 'Spoqa Han Sans Neo', 'sans-serif';
+    font-size: 50px;
+    margin-bottom: 0;
+}
+h3#uid {
+    font-size: 20px;
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+a {
+    text-decoration: none;
+}
+.correct {
+    color: #00b040;
+}
+.wrong {
+    color: #dd4124;
+}
+
+span.tag {
+    color: #fff;
+    padding: 4px 7px;
+    margin-right: 7px;
+    border-radius: 5px;
+    cursor: default;
+    white-space: nowrap;
+}
+.tag-cate {
+    background-color: #9b6bcc;
+}
+.tag-ac {
+    background-color: #00b040;
+}
+.tag-wa {
+    background-color: #dd4124;
+}
+
+div#settings-cont {
+    width: 100%;
+    font-size: 1.2em;
+}
+
+.input {
+    margin-left: 10px;
+    outline: none;
+    padding: 3px 5px;
+    border-radius: 5px;
+    border: 1px solid #aaa;
+    box-sizing: border-box;
+}
+.input-ta {
+    min-width: 327px;
+    min-height: 54px;
+    max-width: 700px;
+    max-height: 500px;
+}
+.input:hover {
+    border: 1px solid #77d;
+}
+.big-cont {
+    padding-left: 20px;
+}
+#pwdreg {
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform 0.25s ease;
+}
+
+p.caption {
+    color: #777;
+    font-size: 0.9em;
+    margin-left: 10px;
+}
+
+h2.big-title {
+    margin-left: -20px;
+    font-size: 1.4em;
+}
+
+button#apply {
+    padding: 7px 20px;
+    font-size: 1.2em;
+    margin-top: 20px;
+    outline: none;
+    border-radius: 5px;
+    border: 1px solid #aaa;
+    background-color: #e6e6e6;
+    transition: background-color .15s linear;
+    -moz-transition: background-color .15s linear;
+    -webkit-transition: background-color .15s linear;
+    -o-transition: background-color .15s linear;
+}
+#apply:hover {
+    background-color: #ddd;
+}
+button#changepwd {
+    padding: 7px 20px;
+    font-size: 1em;
+    outline: none;
+    border-radius: 5px;
+    border: 1px solid #aaa;
+    background-color: #fff;
+    transition: background-color .15s linear;
+    -moz-transition: background-color .15s linear;
+    -webkit-transition: background-color .15s linear;
+    -o-transition: background-color .15s linear;
+}
+#changepwd:hover {
+    background-color: #eee;
+}
+a#rmAcc {
+    padding: 7px 20px;
+    display: block;
+    width: fit-content;
+    cursor: pointer;
+    margin-top: 10px;
+    font-size: 1em;
+    font-weight: 600;
+    outline: none;
+    border-radius: 5px;
+    border: 1px solid #aaa;
+    background-color: #fff;
+    color: #f55;
+    transition: background-color .15s linear;
+    -moz-transition: background-color .15s linear;
+    -webkit-transition: background-color .15s linear;
+    -o-transition: background-color .15s linear;
+}
+#rmAcc:hover {
+    background-color: #eee;
+}
+
+*.formthis {
+    border-width: 1px;
+    border-style: solid;
+    border-color: #f00;
+    box-shadow: 0 0 3px #f00;
+}
+
+p.exp-dis {
+    font-size: 20px;
+    font-weight: 600;
+}
+.exp-dis::after {
+    content: ' EXP';
+    font-weight: 300;
+    color: #333;
+}
+p.infp {
+    margin-right: 15px;
+    width: fit-content !important;
+    display: inline-block;
+}
+span#exp-name {
+    font-size: 30px;
+}
+
+div.prog-exp {
+    height: 100%;
+    text-align: center;
+    /*Set to zero percent, safari don't expand div width*/
+    width: 0.01%;
+    max-height: 100%;
+    overflow: hidden;
+    transition: width .5s ease-in-out;
+    -moz-transition: width .5s ease-in-out;
+    -webkit-transition: width .5s ease-in-out;
+    -o-transition: width .5s ease-in-out;
+}
+div.prog-exp-unra {
+    background: linear-gradient(to right, #777, #ddd);
+}
+div.prog-exp-broz {
+    background: linear-gradient(to right, #987b43, #d4cdbd);
+}
+div.prog-exp-silv {
+    background: linear-gradient(to right, #aaa, #eee);
+}
+div.prog-exp-gold {
+    background: linear-gradient(to right, #FFD700, #e4e3de);
+}
+div.prog-exp-sapp {
+    background: linear-gradient(to right, #5787ce, #b7cdee);
+}
+div.prog-exp-ruby {
+    background: linear-gradient(to right, #e0115f, #ebabc3);
+}
+div.prog-exp-diam {
+    background: linear-gradient(to right, #7BC3D4, #d2ecf1);
+}
+/*
+div.prog-exp-redd {
+    background: red;
+    background: -webkit-linear-gradient(left, orange , yellow, green, cyan, blue, violet);
+    background: -o-linear-gradient(right, orange, yellow, green, cyan, blue, violet);
+    background: -moz-linear-gradient(right, orange, yellow, green, cyan, blue, violet);
+    background: linear-gradient(to right, orange , yellow, green, cyan, blue, violet);
+}
+*/
+.prog-exp-redd {
+    background: linear-gradient(124deg, #ff2400, #e81d1d, #e8b71d, #e3e81d, #1de840, #1ddde8, #2b1de8, #dd00f3, #dd00f3);
+    animation: rainbow_animation 6s ease-in-out infinite;
+    background-size: 400% 100%;
+}
+
+@keyframes rainbow_animation {
+    0%,100% {
+        background-position: 0 0;
+    }
+
+    50% {
+        background-position: 100% 0;
+    }
+}

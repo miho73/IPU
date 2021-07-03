@@ -7,7 +7,6 @@
 
         <link rel="stylesheet" type="text/css" href="/lib/univ.css">
         <link rel="stylesheet" type="text/css" href="/lib/problem/problem.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap.min.css">
         <link rel="stylesheet" type="text/css" href="/lib/quill/quill.bubble.css">
         <link rel="stylesheet" type="text/css" href="/lib/quill/quill.core.css">
         <link rel="stylesheet" type="text/css" href="/lib/quill/quill.snow.css">
@@ -15,10 +14,11 @@
         <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
         <script src="/lib/problem/pShowPage.js"></script>
         <%- include('../ejs-components/header-comp.ejs')%>
-        <meta property="og:title" content="IPU - <%=problem_name%>">
-        <meta name="twitter:title" content="IPU - <%=problem_name%>">
+        <meta name="title" content="IPU - <%=problem_name%>">
         <meta name="description" content="IPU - <%=problem_name%> 문제 풀기">
+        <meta property="og:title" content="IPU - <%=problem_name%>">
         <meta property="og:description" content="IPU - <%=problem_name%> 문제 풀기">
+        <meta name="twitter:title" content="IPU - <%=problem_name%>">
         <meta name="twitter:description" content="IPU - <%=problem_name%> 문제 풀기">
         <style>
             img {
@@ -43,8 +43,7 @@
         <div id="display">
             <div id="root">
                 <div id="heading">
-                    <%- include('../ejs-components/goto.ejs')%>
-                    <%- include('../ejs-components/user_header.ejs')%>
+                    <%- include('../ejs-components/header.ejs')%>
                 </div>
                 <div id="prob-cont-v" style="margin-top: 30px;">
                     <div>

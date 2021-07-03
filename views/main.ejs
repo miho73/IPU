@@ -5,44 +5,38 @@
         <meta charset="utf-8">
         <title>IPU</title>
         <link rel="stylesheet" type="text/css" href="/lib/univ.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap.min.css">
         <script src="/lib/univ.js"></script>
         <%- include('./ejs-components/header-comp.ejs')%>
+        <!--Custom meta-->
         <meta name="title" content="IPU">
+        <meta name="description" content="Think, Solve, Implove">        
+        <meta name="robots" content="INDEX,FOLLOW">
         <meta property="og:title" content="IPU">
+        <meta property="og:description" content="Think, Solve, Implove">
         <meta name="twitter:title" content="IPU">
-        <meta name="description" content="Welcome to the IPU">
-        <meta property="og:description" content="Welcome to the IPU">
-        <meta name="twitter:description" content="Welcome to the IPU">
-        <!--[if IE]>
-        <script type="text/javascript">
-            window.location = "/noie";
-        </script>
-        <![endif]-->
+        <meta name="twitter:description" content="Think, Solve, Implove">
+        <link rel="stylesheet" href="/lib/index/index.css">
+        <link rel="stylesheet" type="text/css" href="/lib/montserrat.css">
     </head>
     <body>
-        <div id="display">
-            <div id="root">
-                <div id="heading">
-                    <%- include('./ejs-components/goto.ejs')%>
-                    <%- include('./ejs-components/user_header.ejs')%>
-                </div>
-                <div style="text-align: center; height: 100%;">
-                    <div id="img-cont"></div>
-                    <div style="margin-top: 0.1em;">
-                        <span id="moving-p">Think, Solve, Improve</span><br>
-                        <span id="welcomemsg">온라인으로 문제를 공유하고, 풀어볼 수 있는 곳입니다.</span>
-                    </div>
-                    <div id="maincontents">
-                        <a class="cont-href" href="/problem">문제 목록</a>
-                        <a class="cont-href" style="display: <%= ylogi%>;" href="/profile">프로필</a>
-                        <a class="cont-href" style="display: <%= ylogi%>;" href="/sounds">음악</a>
-                        <a class="cont-href" style="display: <%= nlogi%>;" href="/login">로그인</a>
-                        <a class="cont-href" style="display: <%= nlogi%>;" href="/signup">가입</a>
-                    </div>
+        <%- include('ejs-components/header.ejs')%>
+        <div id="main">
+            <div id="show">
+                <div id="img-slide1" class="slide slide1" aria-label="IPU" style="display: block; opacity: 1;">
+                    <h1 class="slide-txt">Think, Solve, Implove</h1>
                 </div>
             </div>
-            <%- include('ejs-components/simple.ejs')%>
+            <div id="frame">
+                <div class="section-div">
+                    <h1 class="subj-title mon-font">Think. Solve. Implove</h1>
+                    <div class="statistics">
+                        <div class="problems">
+
+                        </div>
+                    </div>
+                    <hr class="section-div">
+                </div>
+            </div>
         </div>
     </body>
 </html>

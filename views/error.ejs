@@ -4,53 +4,13 @@
     <head>
         <title><%= errorCode%> Error</title>
         <%- include('./ejs-components/header-comp.ejs')%>
-        <meta name="title" content="IPU - <%=errorCode%> error">
-        <meta property="og:title" content="IPU - <%=errorCode%> error">
-        <meta name="twitter:title" content="IPU - <%=errorCode%> error">
-        <meta name="description" content="IPU - <%=errorCode%> error">
-        <meta property="og:description" content="IPU - <%=errorCode%> error">
-        <meta name="twitter:description" content="IPU - <%=errorCode%> error">
-        <link rel="stylesheet" type="text/css" href="/lib/univ.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap.min.css">
-        <script src="/lib/univ.js"></script>
-        <style>
-            @import url(//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css);
-            * {
-                font-family: 'Spoqa Han Sans Neo', 'sans-serif';
-            }
-            h1 {
-                font-weight: lighter;
-                font-size: 120px;
-                text-align: center;
-                margin-bottom: 0px;
-            }
-            h3 {
-                font-size: 30px;
-                text-align: center;
-                margin-top: 0px;
-            }
-            a {
-                text-decoration: none;
-                color: #6495ed;
-                text-align: center;
-                font-size: 25px;
-            }
-        </style>
+        <link rel="stylesheet" href="/lib/error.css">
     </head>
     <body>
-        <div id="block" style="display: none;"></div>
-        <div id="display">
-            <div id="root">
-                <div id="heading">
-                    <%- include('./ejs-components/goto.ejs')%>
-                </div>
-                <div style="margin-top: 30px;" class="prob-cont-v">
-                    <h1 style="align-self: center;"><%= errorCode%></h1>
-                    <h3><%= errorExp%></h3>
-                    <h3><a href="/">Go to home</a></h3>
-                </div>
-            </div>
-            <%- include('ejs-components/basics.ejs')%>
+        <div class="vh-center">
+            <h1><%=errorCode%></h1>
+            <h3><%=errorExp%></h3>
+            <a href="/" class="h-center">IPU 홈</a>
         </div>
     </body>
 </html>

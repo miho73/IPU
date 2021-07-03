@@ -1,0 +1,43 @@
+p#sel-acc-subt {
+    font-size: 2em;
+    font-weight: 300;
+}
+
+form {
+    margin-top: 20px;
+    text-align: center;
+}
+
+label.fl {
+    font-size: 1.4em;
+    font-weight: 500;
+}
+
+input.in {
+    font-size: 1.2em;
+    outline: none;
+    padding: 5px 10px;
+    border-radius: 10px;
+    border: 1px solid #666;
+    border-style: inset;
+    box-shadow: none;
+}
+.pwd:hover {
+    border: 1px solid rgb(21, 142, 255);
+}
+.pwd:focus {
+    border: 2px solid rgb(39, 147, 248);
+}
+button#real-del {
+    border-radius: 5px;
+    font-size: 1.3em;
+    padding: 7px 50px;
+    border: 1px solid #666;
+    background-color: #fff;
+}
+#real-del:hover {
+    background-color: #f5f5f5;
+}
+#real-del:disabled {
+    background-color: #eee !important;   
+}

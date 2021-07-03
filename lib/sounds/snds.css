@@ -1,0 +1,47 @@
+@import url(//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css);
+
+* { font-family: 'Spoqa Han Sans Neo', 'sans-serif'; }
+
+html,body {
+    background-color: #000;
+}
+
+h1,h3,li,ul {
+    color: #fff;
+}
+h1#title {
+    font-size: 3em;
+    margin-left: 3%;
+    margin-top: 2.5%;
+}
+
+ul {
+    list-style-type: none;
+    margin-left: 3%;
+}
+
+li {
+    margin-bottom: 20px;
+}
+
+a {
+    text-decoration: none;
+    color: #fff;
+    background-color: #000;
+    border: #fff 3px solid;
+    padding: 15px;
+    display: inline-block;
+    font-size: 1.5em;
+    transition: color .2s linear;
+    -moz-transition: color .2s linear;
+    -webkit-transition: color .2s linear;
+    -o-transition: color .2s linear;
+    transition: background-color .15s linear;
+    -moz-transition: background-color .15s linear;
+    -webkit-transition: background-color .15s linear;
+    -o-transition: background-color .15s linear;
+}
+a:hover {
+    color: #000;
+    background-color: #fff;
+}
