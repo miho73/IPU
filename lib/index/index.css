@@ -1,0 +1,67 @@
+/* show div - image show */
+div#main {
+    width: 100%;
+}
+div#show {
+    width: 100%;
+    overflow: hidden;
+    height: 70vh;
+}
+div.slide {
+    position: absolute;
+    width: 100%;
+    height: 70vh;
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    overflow: hidden;
+    margin: auto;
+    -webkit-transition: opacity, .5s linear;
+    -moz-transition: opacity, .5s linear;
+    -ms-transition: opacity, .5s linear;
+    -o-transition: opacity, .5s linear;
+    transition: opacity, .5s linear;
+}
+div.slide1 {
+    background-image: url("/lib/imgs/bg/1.jpg");
+}
+h1.slide-txt {
+    position: absolute;
+    font-size: 4em;
+    left: 5%;
+    top: 70%;
+    margin: 0;
+    text-shadow: 2px 2px 30px #fff;
+}
+@media (max-width: 900px) {
+    h1.slide-txt {
+        font-size: 2em;
+        top: 80%;
+    }
+}
+
+/* show div - welocome */
+div#frame {
+    width: 70%;
+    margin: 0 0 0 15%;
+}
+h1.subj-title {
+    font-size: 2.5em;
+    font-weight: 700;
+    text-align: center;
+    margin-top: 5vh;
+    margin-bottom: 10px;
+}
+@media (max-width: 900px) {
+    h1.subj-title {
+        font-size: 1.5em;
+        font-weight: 700;
+        padding: 5px;
+    }
+}
+div.section-div {
+    margin-bottom: 4vh;
+}
+div.statistics {
+    
+}
