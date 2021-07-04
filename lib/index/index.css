@@ -16,11 +16,11 @@ div.slide {
     background-repeat: no-repeat;
     overflow: hidden;
     margin: auto;
-    -webkit-transition: opacity, .5s linear;
-    -moz-transition: opacity, .5s linear;
-    -ms-transition: opacity, .5s linear;
-    -o-transition: opacity, .5s linear;
-    transition: opacity, .5s linear;
+    -webkit-transition: opacity, .15s linear;
+    -moz-transition: opacity, .15s linear;
+    -ms-transition: opacity, .15s linear;
+    -o-transition: opacity, .15s linear;
+    transition: opacity, .15s linear;
 }
 div.slide1 {
     background-image: url("/lib/imgs/bg/1.jpg");

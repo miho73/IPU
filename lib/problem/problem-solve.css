@@ -26,7 +26,7 @@ a#edit-href-title {
 img {
     width: 80%;
 }
-p,a#show-hint,li,blockquote {
+div#problem-container>p,div#problem-container>a#show-hint,div#problem-container>li,div#problem-container>blockquote {
     font-size: 1.1em;
 }
 a#show-hint {

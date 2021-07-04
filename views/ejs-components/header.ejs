@@ -54,3 +54,28 @@
         </div>
     </button>
 </div>
+<div id="hambuger-menu" onclick="hamburger()">
+    <div id="ham-content">
+        <div id="profile-display">
+            <div style="display: <%= ylog%>;">
+                <span id="ham-uname"><%= username%></span>
+                <div id="ham-usr-menu">
+                    <a href="/login/deauth" class="ham-usr-btn">로그아웃</a>
+                    <a href="/profile" class="ham-usr-btn">프로필</a>
+                    <a href="/settings" class="ham-usr-btn">설정</a>
+                </div>
+            </div>
+            <div style="display: <%= nlog%>;">
+                <a href="/login" class="ham-usr-btn">로그인</a>
+                <a href="/signup" class="ham-usr-btn">가입</a>
+            </div>
+        </div>
+        <hr style="margin-bottom: 0;">
+        <div id="ham-hrefs-list">
+            <a href="/problem" class="ham-href">문제</a>
+            <a href="/users" class="ham-href">랭킹</a>
+            <a href="/docs" class="ham-href">문서</a>
+            <a href="/sounds" class="ham-href">음악</a>
+        </div>
+    </div>
+</div>
