@@ -135,13 +135,19 @@ div#navigation {
     background-color: #f6f6f6;
     text-align: center;
 }
-ul.nav {
+ul.nav-right {
     position: absolute;
     right: 0;
     display: inline-block;
     height: 60px;
 }
-ul.nav,li.nav {
+ul.nav-left {
+    position: absolute;
+    left: 0;
+    display: inline-block;
+    height: 60px;
+}
+ul.nav-right,ul.nav-left,li.nav {
     margin: 0;
     list-style: none;
     margin: 0;
@@ -265,7 +271,7 @@ p.nav-top {
     }
 }
 @media (max-width: 900px) and (orientation: landscape) {
-    div#navigation,p.nav,a.nav,a.nav-logo,ul.nav,button.nav-ham {
+    div#navigation,p.nav,a.nav,a.nav-logo,ul.nav-right,ul.nav-left,button.nav-ham {
         height: 10vh;
     }
     p#title {
@@ -293,4 +299,26 @@ div.main {
 div.floating-div {
     width: 100%;
     background-color: #f5f4f0;
+}
+td {
+    text-align: left;
+}
+
+span.tag {
+    color: #fff;
+    padding: 4px 7px;
+    margin-right: 7px;
+    border-radius: 5px;
+    cursor: default;
+    white-space: nowrap;
+    display: inline-block;
+}
+.tag-cate {
+    background-color: #9b6bcc;
+}
+.tag-ac {
+    background-color: #00b040;
+}
+.tag-wa {
+    background-color: #dd4124;
 }

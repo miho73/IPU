@@ -29,24 +29,6 @@ a {
     color: #dd4124;
 }
 
-span.tag {
-    color: #fff;
-    padding: 4px 7px;
-    margin-right: 7px;
-    border-radius: 5px;
-    cursor: default;
-    white-space: nowrap;
-}
-.tag-cate {
-    background-color: #9b6bcc;
-}
-.tag-ac {
-    background-color: #00b040;
-}
-.tag-wa {
-    background-color: #dd4124;
-}
-
 div#settings-cont {
     width: 100%;
     font-size: 1.2em;

@@ -7,7 +7,6 @@
         <link rel="stylesheet" type="text/css" href="/lib/univ.css">
         <link rel="stylesheet" type="text/css" href="/lib/problem/problem.css">
         <link rel="stylesheet" type="text/css" href="/lib/profile/profile.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap.min.css">
         <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
         <script src="/lib/univ/converter.js"></script>
         <script src="/lib/problem/pShow.js"></script>
@@ -20,38 +19,29 @@
         <meta name="twitter:description" content="IPU - 문제 목록">
     </head>
     <body onload="load(<%= pg%>)">
-        <div id="display" style="text-align: center;">
-            <div id="root" style="height: unset; min-height: 100%;">
-                <div id="heading">
-                    <%- include('../ejs-components/header.ejs')%>
-                </div>
-                <div id="prob-cont">
-                    <h1 style="margin-bottom: 1em;">Problems</h1>
-                    <div id="prob-nav">
-
-                    </div>
-                    <table class="table table-striped table-bordered" id="prob-list-table">
-                        <thead>
-                            <tr>
-                                <th style="width: 10%">문제</th>
-                                <th style="width: 50%;">문제 제목</th>
-                                <th style="width: 30%;">정보</th>
-                                <th style="width: 10%;">분류</th>
-                            </tr>
-                        </thead>
-                        <tbody id="addProb"></tbody>
-                    </table>
-                </div>
-                <div id="not" style="display: none;">
-                    <span style="font-size: 1.4em; font-weight: 400;">여기엔 아무것도 없네요.</span>
-                </div>
-                <div id="nav">
-                    <a id="prev" class="previous round">이전</a>
-                    <span id="pnsep" style="user-select: none;">······</span>
-                    <a id="next" class="next round">다음</a>
-                </div>
-            </div>
-            <%- include('../ejs-components/simple.ejs')%>
+        <%- include('../ejs-components/header.ejs')%>
+        <h1 id="prob-title">Problems</h1>
+        <div id="problem-container">
+            <div id="prob-nav"></div>
+            <table class="problem-lst-table" id="prob-list-table">
+                <thead>
+                    <tr>
+                        <th style="width: 10%">문제</th>
+                        <th style="width: 50%;">문제 제목</th>
+                        <th style="width: 30%;">정보</th>
+                        <th style="width: 10%;">분류</th>
+                    </tr>
+                </thead>
+                <tbody id="addProb"></tbody>
+            </table>
+        </div>
+        <div id="not" style="display: none;">
+            <span style="font-size: 1.4em; font-weight: 400;">여기엔 아무것도 없네요.</span>
+        </div>
+        <div id="nav">
+            <a id="prev" class="previous round">이전</a>
+            <span id="pnsep" style="user-select: none;">······</span>
+            <a id="next" class="next round">다음</a>
         </div>
     </body>
 </html>

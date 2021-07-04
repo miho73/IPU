@@ -6,10 +6,7 @@
         <meta charset="utf-8">
         <link rel="stylesheet" type="text/css" href="/lib/univ.css">
         <link rel="stylesheet" type="text/css" href="/lib/problem/problem.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap.min.css">
-
         <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-
         <!--Quill load-->
         <link rel="stylesheet" type="text/css" href="/lib/quill/quill.bubble.css">
         <link rel="stylesheet" type="text/css" href="/lib/quill/quill.core.css">
@@ -19,7 +16,6 @@
         <script src="/lib/quill/quill.js"></script>
         <script src="/lib/quill/quill.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
-
         <%- include('../ejs-components/header-comp.ejs')%>
         <meta property="og:title" content="IPU - <%=prob_code%>번 문제 수정">
         <meta name="twitter:title" content="IPU - <%=prob_code%>번 문제 수정">
@@ -36,8 +32,7 @@
         <div id="display" style="text-align: center;">
             <div id="root">
                 <div id="heading">
-                    <%- include('../ejs-components/goto.ejs')%>
-                    <%- include('../ejs-components/user_header.ejs')%>
+                    <%- include('../ejs-components/header.ejs')%>
                 </div>
                 <h2 id="title"><%=prob_code%>번 문제 수정</h2>
                 <div id="prob-cont">
@@ -118,7 +113,6 @@
                     </div>
                 </div>
             </div>
-            <%- include('../ejs-components/simple.ejs')%>
         </div>
     </body>
     <script>

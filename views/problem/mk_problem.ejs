@@ -6,10 +6,7 @@
         <meta charset="utf-8">
         <link rel="stylesheet" type="text/css" href="/lib/univ.css">
         <link rel="stylesheet" type="text/css" href="/lib/problem/problem.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap.min.css">
-
         <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-
         <!--Quill load-->
         <link rel="stylesheet" type="text/css" href="/lib/quill/quill.bubble.css">
         <link rel="stylesheet" type="text/css" href="/lib/quill/quill.core.css">
@@ -36,8 +33,7 @@
         <div id="display" style="text-align: center;">
             <div id="root">
                 <div id="heading">
-                    <%- include('../ejs-components/goto.ejs')%>
-                    <%- include('../ejs-components/user_header.ejs')%>
+                    <%- include('../ejs-components/header.ejs')%>
                 </div>
                 <h2 id="title">문제 등록</h2>
                 <div id="prob-cont">
@@ -128,7 +124,6 @@
                     </div>
                 </div>
             </div>
-            <%- include('../ejs-components/simple.ejs')%>
         </div>
         <script>
             const toolbar_conf = 

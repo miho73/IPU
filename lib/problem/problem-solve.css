@@ -1,0 +1,127 @@
+div#problem-container {
+    width: 50%;
+    margin: 0 25%;
+    margin-bottom: 5vh;
+}
+span.prob-title {
+    font-size: 1.6em;
+    font-weight: 500;
+    border-bottom: 2px #0076C0 solid;
+    margin: 0;
+}
+hr.prob-div-hr,hr.prob-hr {
+    margin: 0 0 15px 0;
+    height: 2px;
+    background-color: #ccc;
+    border: none;
+}
+hr.prob-div-hr {
+    margin-top: 10px;
+}
+a#edit-href-title {
+    color: #000;
+    font-size: 1.3em;
+    cursor: default;
+}
+img {
+    width: 80%;
+}
+p,a#show-hint,li,blockquote {
+    font-size: 1.1em;
+}
+a#show-hint {
+    color: #0076C0;
+    cursor: pointer;
+}
+a#show-hint:hover {
+    text-decoration: underline;
+}
+div#after-sol {
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform 0.25s ease;
+}
+button#show-ans-btn,button#ac-btn {
+    background-color: #00b040;
+}
+button#show-ans-btn:hover,button#ac-btn:hover {
+    background-color: #099134;
+}
+button#show-ans-btn:disabled, button#ac-btn:disabled {
+    background-color: #085e23;
+}
+button#wa-btn {
+    background-color: #dd4124;
+}
+button#wa-btn:hover {
+    background-color: #b1230a;
+}
+button#wa-btn:disabled {
+    background-color: #8d1c08;
+}
+button.end-btn {
+    padding: 7px 12px;
+    font-size: 18px;
+    font-weight: 700;
+    border: none;
+    color: #eee;
+    cursor: pointer;
+    border-radius: 10px;
+    -webkit-transition: background-color .15s linear;
+    -moz-transition: background-color .15s linear;
+    -o-transition: background-color .15s linear;
+    transition: background-color .15s linear;
+}
+div#prob-control {
+    text-align: center;
+    margin-top: 20px;
+    padding-bottom: 20px;
+}
+div#prob-control-nd {
+    text-align: center;
+    margin-top: 20px;
+    display: none;
+    padding-bottom: 20px;
+}
+div#final-sol {
+    display: none;
+    margin-top: 40px;
+    opacity: 0;
+    -webkit-transition: opacity .2s linear;
+    -moz-transition: opacity .2s linear;
+    -o-transition: opacity .2s linear;
+    transition: opacity .2s linear;
+}
+p#sol-time-took {
+    font-size: 1.5em;
+    font-weight: 500;
+    text-align: center;
+    margin: 0;
+    display: block;
+}
+p#sol-time {
+    font-size: 3.2em;
+    font-weight: 700;
+    text-align: center;
+    margin: 0;
+}
+p#sol-time::after {
+    content: '초';
+    font-size: 0.5em;
+    font-weight: 600;
+}
+@media (max-width: 800px) {
+    div#problem-container {
+        width: 90%;
+        margin-left: 5%;
+    }
+    p,a#show-hint,li,blockquote {
+        font-size: 1em;
+    }
+    span.prob-title {
+        font-size: 1.2em;
+    }
+    a#edit-href-title {
+        font-size: 0.8em;
+    }
+}
