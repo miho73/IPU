@@ -1,0 +1,7 @@
+.rainbow {
+    background: red;
+    background: linear-gradient(to right, red, orange, yellow, lightgreen, cyan, blue, violet);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: #0008;
+}

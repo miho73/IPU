@@ -11,12 +11,19 @@
 h1#uname {
     font-family: 'Cafe24Oneprettynight', 'Spoqa Han Sans Neo', 'sans-serif';
     font-size: 50px;
+    font-weight: 300;
     margin-bottom: 0;
+    text-align: left;
 }
 h3#uid {
     font-size: 20px;
     margin-top: 0;
     margin-bottom: 20px;
+}
+blockquote {
+    border-left: 5px #ccc solid;
+    padding-left: 15px;
+    margin-left: 0;
 }
 
 a {
@@ -33,8 +40,8 @@ div#settings-cont {
     width: 100%;
     font-size: 1.2em;
 }
-
 .input {
+    padding: 7px !important;
     margin-left: 10px;
     outline: none;
     padding: 3px 5px;
@@ -42,17 +49,28 @@ div#settings-cont {
     border: 1px solid #aaa;
     box-sizing: border-box;
 }
-.input-ta {
+textarea.input-ta {
+    padding: 7px;
     min-width: 327px;
     min-height: 54px;
     max-width: 700px;
     max-height: 500px;
+    border-radius: 5px;
+    border: 1px solid #aaa;
+    outline: none;
+    box-sizing: border-box;
 }
 .input:hover {
     border: 1px solid #77d;
 }
+p.field-title {
+    margin-bottom: 3px;
+}
 .big-cont {
     padding-left: 20px;
+}
+td.t-field {
+    font-weight: 350;
 }
 #pwdreg {
     transform: scaleY(0);
@@ -69,13 +87,16 @@ p.caption {
 h2.big-title {
     margin-left: -20px;
     font-size: 1.4em;
+    font-weight: 500;
+    margin-bottom: 5px;
 }
-
+button {
+    cursor: pointer;
+}
 button#apply {
     padding: 7px 20px;
     font-size: 1.2em;
     margin-top: 20px;
-    outline: none;
     border-radius: 5px;
     border: 1px solid #aaa;
     background-color: #e6e6e6;
@@ -84,13 +105,12 @@ button#apply {
     -webkit-transition: background-color .15s linear;
     -o-transition: background-color .15s linear;
 }
-#apply:hover {
+button#apply:hover {
     background-color: #ddd;
 }
 button#changepwd {
     padding: 7px 20px;
     font-size: 1em;
-    outline: none;
     border-radius: 5px;
     border: 1px solid #aaa;
     background-color: #fff;
@@ -110,7 +130,6 @@ a#rmAcc {
     margin-top: 10px;
     font-size: 1em;
     font-weight: 600;
-    outline: none;
     border-radius: 5px;
     border: 1px solid #aaa;
     background-color: #fff;
@@ -134,6 +153,7 @@ a#rmAcc {
 p.exp-dis {
     font-size: 20px;
     font-weight: 600;
+    margin: 0;
 }
 .exp-dis::after {
     content: ' EXP';
@@ -145,8 +165,10 @@ p.infp {
     width: fit-content !important;
     display: inline-block;
 }
-span#exp-name {
+p#exp-name {
     font-size: 30px;
+    margin-bottom: 8px;
+    margin-top: 15px;
 }
 
 div.prog-exp {
@@ -156,6 +178,10 @@ div.prog-exp {
     width: 0.01%;
     max-height: 100%;
     overflow: hidden;
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    align-items: center;
     transition: width .5s ease-in-out;
     -moz-transition: width .5s ease-in-out;
     -webkit-transition: width .5s ease-in-out;
@@ -182,15 +208,6 @@ div.prog-exp-ruby {
 div.prog-exp-diam {
     background: linear-gradient(to right, #7BC3D4, #d2ecf1);
 }
-/*
-div.prog-exp-redd {
-    background: red;
-    background: -webkit-linear-gradient(left, orange , yellow, green, cyan, blue, violet);
-    background: -o-linear-gradient(right, orange, yellow, green, cyan, blue, violet);
-    background: -moz-linear-gradient(right, orange, yellow, green, cyan, blue, violet);
-    background: linear-gradient(to right, orange , yellow, green, cyan, blue, violet);
-}
-*/
 .prog-exp-redd {
     background: linear-gradient(124deg, #ff2400, #e81d1d, #e8b71d, #e3e81d, #1de840, #1ddde8, #2b1de8, #dd00f3, #dd00f3);
     animation: rainbow_animation 6s ease-in-out infinite;

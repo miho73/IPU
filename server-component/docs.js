@@ -51,7 +51,7 @@ module.exports = {
                     }
                 }
             }
-            catch {
+            catch (ee) {
                 error.sendError(404, 'Not Found', res);
             }
         });

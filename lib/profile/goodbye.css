@@ -1,16 +1,23 @@
+h1#wanna-del {
+    font-size: 2em;
+    font-weight: 600;
+    padding: 0 5vw;
+}
 p#sel-acc-subt {
     font-size: 2em;
     font-weight: 300;
+    padding: 0 5vw;
 }
 
 form {
     margin-top: 20px;
     text-align: center;
+    margin: 0 10%;
 }
 
 label.fl {
     font-size: 1.4em;
-    font-weight: 500;
+    font-weight: 400;
 }
 
 input.in {
@@ -21,6 +28,8 @@ input.in {
     border: 1px solid #666;
     border-style: inset;
     box-shadow: none;
+    width: 80%;
+    max-width: 15vw;
 }
 .pwd:hover {
     border: 1px solid rgb(21, 142, 255);
@@ -40,4 +49,16 @@ button#real-del {
 }
 #real-del:disabled {
     background-color: #eee !important;   
+}
+
+@media (max-width: 800px) {
+    p#sel-acc-subt,label.fl {
+        font-size: 1.1em;
+    }
+    input.in {
+        max-width: 90vw;
+    }
+    h1#wanna-del {
+        font-size: 1.5em;
+    }
 }

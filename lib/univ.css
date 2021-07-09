@@ -1,11 +1,11 @@
-@import url(/lib/SpoqaHanSansNeo.css);
+@import url(/lib/fonts/SpoqaHanSansNeo.css);
 @font-face {
     font-family: Cafe24Shiningstar;
-    src: url("/lib/fonts/Cafe24/Cafe24Shiningstar.ttf") format('truetype');;
+    src: url("/lib/fonts/Cafe24/Cafe24Shiningstar.ttf") format('truetype');
 }
 @font-face {
     font-family: Cafe24Oneprettynight;
-    src: url("/lib/fonts/Cafe24/Cafe24Oneprettynight.ttf") format('truetype');;
+    src: url("/lib/fonts/Cafe24/Cafe24Oneprettynight.ttf") format('truetype');
 }
 
 * {
@@ -377,4 +377,20 @@ a.ham-href {
 }
 a.ham-href:hover {
     background-color: #ccc;
+}
+
+div#container{
+    width: 50%;
+    margin: 0 25%;
+    margin-bottom: 5vh;
+}
+@media (max-width: 800px) {
+    h1#title {
+        font-size: 1.3em;
+    }
+    div#container {
+        width: 90%;
+        margin-left: 5%;
+        overflow-x: scroll;
+    }
 }

@@ -2,7 +2,7 @@
 
 <html>
     <head>
-        <title>안녕히 가세요 - IPU</title>
+        <title>탈퇴 완료 - IPU</title>
         <%- include('../ejs-components/header-comp.ejs')%>
         <meta name="title" content="IPU - Goodbye">
         <meta property="og:title" content="IPU - Goodbye">
@@ -19,12 +19,12 @@
             }
             h1 {
                 font-weight: lighter;
-                font-size: 120px;
+                font-size: 5em;
                 text-align: center;
                 margin-bottom: 0px;
             }
             h3 {
-                font-size: 30px;
+                font-size: 1.5em;
                 text-align: center;
                 margin-top: 0px;
             }
@@ -38,18 +38,8 @@
     </head>
     <body>
         <div id="block" style="display: none;"></div>
-        <div id="display">
-            <div id="root">
-                <div id="heading">
-                    <%- include('../ejs-components/goto.ejs')%>
-                </div>
-                <div style="margin-top: 30px;" class="prob-cont-v">
-                    <h1 style="align-self: center;">Goodbye</h1>
-                    <h3>계정이 삭제되었습니다. IPU를 사용해주셔서 감사합니다.</h3>
-                    <h3><a href="/">Go to home</a></h3>
-                </div>
-            </div>
-            <%- include('../ejs-components/basics.ejs')%>
-        </div>
+            <h1 style="align-self: center;">Goodbye</h1>
+            <h3>계정이 삭제되었습니다.</h3>
+            <h3><a href="/">Go to home</a></h3>
     </body>
 </html>

@@ -5,8 +5,8 @@
         <title>문제 - IPU</title>
         <meta charset="utf-8">
         <link rel="stylesheet" type="text/css" href="/lib/univ.css">
-        <link rel="stylesheet" type="text/css" href="/lib/problem/problem.css">
         <link rel="stylesheet" type="text/css" href="/lib/profile/profile.css">
+        <link rel="stylesheet" type="text/css" href="/lib/table.css">
         <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
         <script src="/lib/univ/converter.js"></script>
         <script src="/lib/problem/pShow.js"></script>
@@ -20,8 +20,8 @@
     </head>
     <body onload="load(<%= pg%>)">
         <%- include('../ejs-components/header.ejs')%>
-        <h1 id="prob-title">Problems</h1>
-        <div id="problem-container">
+        <h1 id="title">Problems</h1>
+        <div id="container">
             <div id="prob-nav"></div>
             <table class="problem-lst-table" id="prob-list-table">
                 <thead>
@@ -35,12 +35,10 @@
                 <tbody id="addProb"></tbody>
             </table>
         </div>
-        <div id="not" style="display: none;">
-            <span style="font-size: 1.4em; font-weight: 400;">여기엔 아무것도 없네요.</span>
-        </div>
+        <p id="not">이 페이지는 비어있습니다.</p>
         <div id="nav">
             <a id="prev" class="previous round">이전</a>
-            <span id="pnsep" style="user-select: none;">······</span>
+            <span id="pnsep">······</span>
             <a id="next" class="next round">다음</a>
         </div>
     </body>

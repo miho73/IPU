@@ -4,17 +4,12 @@ const profile = require('./profile');
 module.exports = {
     usrRouter: function(app) {
         app.get('/users', (req, res)=>{
-            let page = 0;
-            if(req.query.page != undefined && req.query.page >= 0) {
-                page = req.query.page;
-            }
             if(auth.checkIdentity(req)) {
                 res.render('../views/users/users.ejs', {
                     ylog: "block",
                     nlog: "none",
                     userid: req.session.user.id,
-                    username: req.session.user.name,
-                    pg: page
+                    username: req.session.user.name
                 });
             }
             else {
@@ -22,16 +17,14 @@ module.exports = {
                     ylog: "none",
                     nlog: "block",
                     userid: '',
-                    username: '',
-                    pg: page
+                    username: ''
                 });
             }
         });
-        let apirank =   app.post('/users/api/rank', (req, res)=>{
-            let from = req.body.frm;
+        app.post('/users/api/rank', (req, res)=>{
             let length = req.body.len;
             let regex = new RegExp('^[0-9]{1,2}$');
-            if(from <= 0 || length<=0 || length>100 || !regex.test(from) || !regex.test(length)) {
+            if(length<=0 || length>100 || !regex.test(length)) {
                 error.sendError(400, 'Bad Request', res);
                 return;
             }

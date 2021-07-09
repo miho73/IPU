@@ -5,10 +5,8 @@
         <title>IPU - <%= username%> 설정</title>
         <meta charset="utf-8">
         <link rel="stylesheet" type="text/css" href="/lib/univ.css">
-        <link rel="stylesheet" type="text/css" href="/lib/problem/problem.css">
         <link rel="stylesheet" type="text/css" href="/lib/profile/profile.css">
         <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
         <script src="/lib/profile/settings.js"></script>
         <%- include('../ejs-components/header-comp.ejs')%>
         <meta property="og:title" content="IPU - 프로필 설정">
@@ -18,94 +16,87 @@
         <meta name="twitter:description" content="<%= username%>의 프로필 설정">
     </head>
     <body>
-        <div id="block" style="display: none;"></div>
-        <div id="display">
-            <div id="root">
-                <div id="heading">
-                    <%- include('../ejs-components/header.ejs')%>
-                </div>
-                <div id="prob-cont-v" style="margin-top: 50px;">
-                    <div id="headerup">
-                        <h1 id="uname"><%=username%></h1>
-                        <h3 id="uid"><%=userid%></h3>
-                        <blockquote><%= bio%></blockquote>
-                    </div>
-                    <hr style="border-top: 1px solid #ccc;">
-                    <span style="display: none; font-size: 1.5em; color: #f00" id="errdis"></span>
-                    <div id="settings-cont">
-                        <div class="big-cont">
-                            <h2 class="big-title">일반</h2>
-                            <div class="set-cont">
-                                <span class="config-label">
-                                    <p style="margin: 0;">이름:</p>
-                                    <input type="text" class="input" value="<%= username%>" id="name" name="name" autocomplete="nickname" placeholder="이름">
-                                    <p class="caption">이 이름은 모두에게 공개됩니다. 언제든 변경할 수 있습니다.</p>
-                                </span>
-                            </div>
-                            <div class="set-cont">
-                                <span class="config-label">
-                                    <p style="margin: 0;">상태메시지:</p>
-                                    <textarea type="text" class="input input-ta" id="bios" name="bios" placeholder="상태메시지"><%= bio%></textarea>
-                                    <p class="caption">여러분의 느낌과 감정을 표현하세요. 프로필 페이지에 뜨게 되며, 언제든 변경할 수 있습니다.</p>
-                                </span>
-                            </div>
-                            <div class="set-cont">
-                                <span class="config-label">
-                                    <p style="margin: 0;">이메일:</p>
-                                    <input type="text" class="input" value="<%= email%>" id="email" name="email" autocomplete="email" placeholder="이메일">
-                                    <!--
-                                    <p class="caption" style="text-decoration: line-through;">이메일을 설정하면 IPU에서 여러가지 알림을 보내드릴 수 있게 됩니다.<br>암호복구, 휴면계정 알림등은 이메일로 보내드립니다.</p>
-                                    -->
-                                    <p class="caption">이 버전의 IPU는 메일링을 지원하지 않습니다. 이 필드는 호환성 필드입니다.</p>
-                                </span>
-                            </div>
-                        </div>
-                        <div class="big-cont">
-                            <h2 class="big-title">보안</h2>
-                            <button type="button" id="changepwd" onclick="activePwd()">암호 변경</button>
-                            <input type="checkbox" style="display: none;" id="pwdChange" name="hasPwdChange">
-                            <div id="pwdreg" style="display: none;">
-                                <div class="set-cont">
-                                    <span class="config-label">
-                                        새 암호:<br>
-                                        <input type="password" class="input" id="npwd" name="npwd" autocomplete="new-password" placeholder="새 암호">
-                                        <p class="caption">암호를 충분히 복잡하고 어렵게 설정하세요.</p>
-                                    </span>
-                                </div>
-                            </div>
-                            <br>
-                            <a type="button" id="rmAcc" href="/settings/gbye">계정 삭제</a>
-                        </div>
-                        <div class="big-cont">
-                            <h2 class="big-title">정보</h2>
-                            <table>
-                                <tr>
-                                    <td style="padding: 0 7px">가입일</td>
-                                    <td style="padding: 0 7px"><%= joined%></td>
-                                </tr>
-                                <tr>
-                                    <td style="padding: 0 7px">최종 로그인 시각</td>
-                                    <td style="padding: 0 7px"><%= last_login%></td>
-                                </tr>
-                                <tr>
-                                    <td style="padding: 0 7px">최종 풀이 제출 시각</td>
-                                    <td style="padding: 0 7px"><%= last_solve%></td>
-                                </tr>
-                                <tr>
-                                    <td style="padding: 0 7px">사용자 UID</td>
-                                    <td style="padding: 0 7px"><%= usr_cd%></td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="big-cont">
-                        <h2 class="big-title">설정을 저장하려면 기존 암호를 입력하세요:</h2>
-                        <span class="config-label" style="margin-top: 20px;">
-                        <input type="password" class="input" id="lpwd" name="lpwd" style="margin: 0;" autocomplete="current-password" placeholder="기존 암호">
-                    </span>
-                    </div>
-                <button type="button" onclick="upload()" id="apply" style="margin-bottom: 20px">적용</button>
+        <%- include('../ejs-components/header.ejs')%>
+        <div id="container">
+            <div id="headerup">
+                <h1 id="uname"><%=username%></h1>
+                <h3 id="uid"><%=userid%></h3>
+                <blockquote><%= bio%></blockquote>
             </div>
+            <hr style="border-top: 1px solid #ccc;">
+            <span style="display: none; font-size: 1.5em; color: #f00" id="errdis"></span>
+            <div id="settings-cont">
+                <div class="big-cont">
+                    <h2 class="big-title">일반</h2>
+                    <div class="set-cont">
+                        <span class="config-label">
+                            <p class="field-title" style="margin-top: 0;">이름:</p>
+                            <input type="text" class="input" value="<%= username%>" id="name" name="name" autocomplete="nickname" placeholder="이름">
+                            <p class="caption">이 이름은 모두에게 공개됩니다. 언제든 변경할 수 있습니다.</p>
+                        </span>
+                    </div>
+                    <div class="set-cont">
+                        <span class="config-label">
+                            <p  class="field-title">상태메시지:</p>
+                            <textarea type="text" class="input input-ta" id="bios" name="bios" placeholder="상태메시지"><%= bio%></textarea>
+                            <p class="caption">여러분의 느낌과 감정을 표현하세요. 프로필 페이지에 뜨게 되며, 언제든 변경할 수 있습니다.</p>
+                        </span>
+                    </div>
+                    <div class="set-cont">
+                        <span class="config-label">
+                            <p  class="field-title">이메일:</p>
+                            <input type="text" class="input" value="<%= email%>" id="email" name="email" autocomplete="email" placeholder="이메일">
+                            <!--
+                            <p class="caption" style="text-decoration: line-through;">이메일을 설정하면 IPU에서 여러가지 알림을 보내드릴 수 있게 됩니다.<br>암호복구, 휴면계정 알림등은 이메일로 보내드립니다.</p>
+                            -->
+                            <p class="caption">이 버전의 IPU는 메일링을 지원하지 않습니다. 이 필드는 호환성 필드입니다.</p>
+                        </span>
+                    </div>
+                </div>
+                <div class="big-cont">
+                    <h2 class="big-title">보안</h2>
+                    <button type="button" id="changepwd" onclick="activePwd()">암호 변경</button>
+                    <input type="checkbox" style="display: none;" id="pwdChange" name="hasPwdChange">
+                    <div id="pwdreg" style="display: none;">
+                        <div class="set-cont">
+                            <span class="config-label">
+                                새 암호:<br>
+                                <input type="password" class="input" id="npwd" name="npwd" autocomplete="new-password" placeholder="새 암호">
+                                <p class="caption" style="margin-bottom: 0;">암호를 충분히 복잡하고 어렵게 설정하세요.</p>
+                            </span>
+                        </div>
+                    </div>
+                    <br>
+                    <a type="button" id="rmAcc" href="/settings/gbye">계정 삭제</a>
+                </div>
+                <div class="big-cont">
+                    <h2 class="big-title">정보</h2>
+                    <table>
+                        <tr>
+                            <td class="t-field">가입일</td>
+                            <td class="t-field"><%= joined%></td>
+                        </tr>
+                        <tr>
+                            <td class="t-field">최종 로그인 시각</td>
+                            <td class="t-field"><%= last_login%></td>
+                        </tr>
+                        <tr>
+                            <td class="t-field">최종 풀이 제출 시각</td>
+                            <td class="t-field"><%= last_solve%></td>
+                        </tr>
+                        <tr>
+                            <td class="t-field">사용자 UID</td>
+                            <td class="t-field"><%= usr_cd%></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="big-cont">
+                <h2 class="big-title">설정을 저장하려면 기존 암호를 입력하세요:</h2>
+                <span class="config-label" style="margin-top: 20px;">
+                <input type="password" class="input" id="lpwd" name="lpwd" style="margin: 0;" autocomplete="current-password" placeholder="기존 암호">
+            </span>
         </div>
+        <button type="button" onclick="upload()" id="apply" style="margin-bottom: 20px">적용</button>
     </body>
 </html>
