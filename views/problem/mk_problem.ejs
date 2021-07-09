@@ -5,7 +5,7 @@
         <title>문제 만들기 - IPU</title>
         <meta charset="utf-8">
         <link rel="stylesheet" type="text/css" href="/lib/univ.css">
-        <link rel="stylesheet" type="text/css" href="/lib/problem/problem.css">
+        <link rel="stylesheet" type="text/css" href="/lib/problem/nproblem.css">
         <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
         <!--Quill load-->
         <link rel="stylesheet" type="text/css" href="/lib/quill/quill.bubble.css">
@@ -30,172 +30,167 @@
         </style>
     </head>
     <body class="no-mathjax">
-        <div id="display" style="text-align: center;">
-            <div id="root">
-                <div id="heading">
-                    <%- include('../ejs-components/header.ejs')%>
+        <%- include('../ejs-components/header.ejs')%>
+        <h1 id="title">문제 등록</h1>
+        <div id="container">
+            <div id="top-menu">
+                <input type="text" id="name" class="prob-name" spellcheck="false">
+                <select id="category" class="selbox">
+                    <option disabled selected>분류</option>
+                    <optgroup label="수학">
+                        <option value="alge">대수</option>
+                        <option value="numb">정수</option>
+                        <option value="comb">조합</option>
+                        <option value="geom">기하</option>
+                    </optgroup>
+                    <optgroup label="과학">
+                        <option value="phys">물리</option>
+                        <option value="chem">화학</option>
+                        <option value="biol">생물</option>
+                        <option value="eart">지구</option>
+                    </optgroup>
+                    <option value="etc">기타</option>
+                </select>
+                <select id="diffi" class="selbox">
+                    <option disabled selected>난이도</option>
+                    <option value="unra">Unrated</option>
+                    <option value="broz">Bronze</option>
+                    <option value="silv">Silver</option>
+                    <option value="gold">Gold</option>
+                    <option value="sapp">Sapphire</option>
+                    <option value="ruby">Ruby</option>
+                    <option value="diam">Diamond</option>
+                </select>
+            </div>
+            <h3 id="pro-cont" class="sub-title">문제 내용*</h3>
+            <div class="editor-container">
+                <div id="editor-cont"></div>
+            </div>
+            <h3 id="pro-exp" class="sub-title">풀이*</h3>
+            <div class="editor-container">
+                <div id="editor-exp"></div>
+            </div>
+            <h3 id="pro-ans" class="sub-title">정답*</h3>
+            <div class="editor-container">
+                <div id="editor-ans"></div>
+            </div>
+            <div id="hint-edit-container" class="expand-height" style="display: none; max-height: 0;">
+                <h3 id="pro-hint" class="sub-title">힌트</h3>
+                <div class="editor-container" style="margin-bottom: 5px;">
+                    <div id="editor-hint"></div>
                 </div>
-                <h2 id="title">문제 등록</h2>
-                <div id="prob-cont">
-                    <div id="top-menu">
-                        <input type="text" id="name" class="prob-name" spellcheck="false">
-                        <select id="category" class="selbox">
-                            <option disabled selected>분류</option>
-                            <optgroup label="수학">
-                                <option value="alge">대수</option>
-                                <option value="numb">정수</option>
-                                <option value="comb">조합</option>
-                                <option value="geom">기하</option>
-                            </optgroup>
-                            <optgroup label="과학">
-                                <option value="phys">물리</option>
-                                <option value="chem">화학</option>
-                                <option value="biol">생물</option>
-                                <option value="eart">지구</option>
-                            </optgroup>
-                            <option value="etc">기타</option>
-                        </select>
-                        <select id="diffi" class="selbox">
-                            <option disabled selected>난이도</option>
-                            <option value="unra">Unrated</option>
-                            <option value="broz">Bronze</option>
-                            <option value="silv">Silver</option>
-                            <option value="gold">Gold</option>
-                            <option value="sapp">Sapphire</option>
-                            <option value="ruby">Ruby</option>
-                            <option value="diam">Diamond</option>
-                        </select>
+            </div>
+            <div style="text-align: left; margin-bottom: 20px;">
+                <label><input type="checkbox" id="hashint" onchange="hintSH()">이 문제에 힌트를 추가합니다.</label>
+            </div>
+            <h3 id="pro-extr" class="sub-title" style="margin-bottom: 10px;">추가 탭</h3>
+            <div id="extr-tab-cont">
+                <div id="extr-edit-cont"></div>
+                <button id="extr-add" onclick="addExtr()" style="margin-top: 10px;">+ 추가</button>
+            </div>
+            <div style="text-align: center;">
+                <button id="preview" onclick="preview()">Preview</button>
+            </div>
+            <div id="preview-container" style="display: none; text-align: left !important; padding: 0;">
+                <div style="margin: 0 5%; width: 90%;">
+                    <h1 style="margin-bottom: 1em;" id="preview-name"></h1>
+                    <span class="prob-title">문제</span>
+                    <hr class="prob-hr">
+                    <div id="preview-content" class="mathjax"></div>
+                    <hr class="prob-div-hr">
+                    <div id="hint-prev" class="expand-height" style="display: none; max-height: 0;">
+                        <span class="prob-title">힌트</span>
+                        <hr class="prob-hr">
+                        <div id="preview-hint" class="mathjax"></div>
+                        <hr class="prob-div-hr">
                     </div>
-                    <h3 id="pro-cont" class="sub-title">문제 내용*</h3>
-                    <div class="editor-container">
-                        <div id="editor-cont"></div>
-                    </div>
-                    <h3 id="pro-exp" class="sub-title">풀이*</h3>
-                    <div class="editor-container">
-                        <div id="editor-exp"></div>
-                    </div>
-                    <h3 id="pro-ans" class="sub-title">정답*</h3>
-                    <div class="editor-container">
-                        <div id="editor-ans"></div>
-                    </div>
-                    <div id="hint-edit-container" class="expand-height" style="display: none; max-height: 0;">
-                        <h3 id="pro-hint" class="sub-title">힌트</h3>
-                        <div class="editor-container" style="margin-bottom: 5px;">
-                            <div id="editor-hint"></div>
-                        </div>
-                    </div>
-                    <div style="text-align: left; margin-bottom: 20px;">
-                        <label><input type="checkbox" id="hashint" onchange="hintSH()">이 문제에 힌트를 추가합니다.</label>
-                    </div>
-                    <h3 id="pro-extr" class="sub-title" style="margin-bottom: 10px;">추가 탭</h3>
-                    <div id="extr-tab-cont">
-                        <div id="extr-edit-cont"></div>
-                        <button id="extr-add" onclick="addExtr()" style="margin-top: 10px;">+ 추가</button>
-                    </div>
-                    <button id="preview" onclick="preview()">Preview</button>
-                    <div id="preview-container" style="display: none; text-align: left !important; padding: 0;">
-                        <div id="prob-cont-v" style="padding: 0 20px 0 20px; margin: 0; width: 100%;">
-                            <h1 style="margin-bottom: 1em;" id="preview-name"></h1>
-                            <span class="prob-title">문제</span>
-                            <hr class="prob-hr">
-                            <div id="preview-content" class="mathjax"></div>
-                            <hr class="prob-div-hr">
-                            <div id="hint-prev" class="expand-height" style="display: none; max-height: 0;">
-                                <span class="prob-title">힌트</span>
-                                <hr class="prob-hr">
-                                <div id="preview-hint" class="mathjax"></div>
-                                <hr class="prob-div-hr">
-                            </div>
-                            <span class="prob-title">풀이</span>
-                            <hr class="prob-hr">
-                            <div id="preview-exp" class="mathjax"></div>
-                            <hr class="prob-div-hr">
-                            <span class="prob-title">정답</span>
-                            <hr class="prob-hr">
-                            <div id="preview-ans" class="mathjax"></div>
-                            <hr class="prob-div-hr">
-                            <div id="custon-tabs">
-
-                            </div>
-                        </div>                        
-                        <div id="prev-tool" style="text-align: center;">
-                            <button id="confirm" onclick="confirme()">Confirm</button>
-                        </div>
-                    </div>
+                    <span class="prob-title">풀이</span>
+                    <hr class="prob-hr">
+                    <div id="preview-exp" class="mathjax"></div>
+                    <hr class="prob-div-hr">
+                    <span class="prob-title">정답</span>
+                    <hr class="prob-hr">
+                    <div id="preview-ans" class="mathjax"></div>
+                    <hr class="prob-div-hr">
+                    <div id="custon-tabs">
+                 </div>
+                </div>                        
+                <div style="text-align: center;">
+                    <button id="confirm" onclick="confirme()">Confirm</button>
                 </div>
             </div>
         </div>
-        <script>
-            const toolbar_conf = 
-            {
-                toolbar: [
-                    ['bold', 'italic', 'underline', 'strike'],
-                    [{ 'script': 'sub'}, { 'script': 'super' }],
-                    [{'header': '1'}, {'header': '2'}, 'blockquote'],
-                    ['link', 'image'],
-                    [{ list: 'ordered' }, { list: 'bullet' }],
-                    [{ color: [] }, { background: [] }],
-                ]
-            };
-            var contedit = new Quill('#editor-cont', {
-                placeholder: '문제 내용',
-                modules: toolbar_conf,
-                theme: 'snow'
-            });
-            var expedit = new Quill('#editor-exp', {
-                placeholder: '문제 풀이',
-                modules: toolbar_conf,
-                theme: 'snow'
-            });
-            var ansedit = new Quill('#editor-ans', {
-                placeholder: '정답',
-                modules: toolbar_conf,
-                theme: 'snow'
-            });
-            var hintedit = new Quill('#editor-hint', {
-                placeholder: '힌트',
-                modules: toolbar_conf,
-                theme: 'snow'
-            });
-            contedit.getModule('toolbar').addHandler('image', function() {
-                selectLocalImage(contedit);
-            });
-            expedit.getModule('toolbar').addHandler('image', function() {
-                selectLocalImage(expedit);
-            });
-            ansedit.getModule('toolbar').addHandler('image', function() {
-                selectLocalImage(ansedit);
-            });
-            hintedit.getModule('toolbar').addHandler('image', function() {
-                selectLocalImage(hintedit);
-            });
-            function selectLocalImage(forwhat) {
-                const input = document.createElement('input');
-                input.setAttribute('type', 'file');
-                input.click();
-                input.onchange = function() {
-                    const fd = new FormData();
-                    const file = $(this)[0].files[0];
-                    fd.append('img', file);
-                    $.ajax({
-                        type: 'POST',
-                        enctype: 'multipart/form-data',
-                        url: '/problem/make/upload',
-                        data: fd,
-                        processData: false,
-                        contentType: false,
-                        success: function(data) {
-                            const range = forwhat.getSelection();
-                            forwhat.insertEmbed(range.index, 'image', 'https://ipu.r-e.kr/problem/lib/'+data);
-                        },
-                        error: function(err) {
-                            console.error("Error: "+err);
-                        }
-                    });
-                };
-            }
-        </script>
     </body>
+    <script>
+        const toolbar_conf = 
+        {
+            toolbar: [
+                ['bold', 'italic', 'underline', 'strike'],
+                [{ 'script': 'sub'}, { 'script': 'super' }],
+                [{'header': '1'}, {'header': '2'}, 'blockquote'],
+                ['link', 'image'],
+                [{ list: 'ordered' }, { list: 'bullet' }],
+                [{ color: [] }, { background: [] }],
+            ]
+        };
+        var contedit = new Quill('#editor-cont', {
+            placeholder: '문제 내용',
+            modules: toolbar_conf,
+            theme: 'snow'
+        });
+        var expedit = new Quill('#editor-exp', {
+            placeholder: '문제 풀이',
+            modules: toolbar_conf,
+            theme: 'snow'
+        });
+        var ansedit = new Quill('#editor-ans', {
+            placeholder: '정답',
+            modules: toolbar_conf,
+            theme: 'snow'
+        });
+        var hintedit = new Quill('#editor-hint', {
+            placeholder: '힌트',
+            modules: toolbar_conf,
+            theme: 'snow'
+        });
+        contedit.getModule('toolbar').addHandler('image', function() {
+            selectLocalImage(contedit);
+        });
+        expedit.getModule('toolbar').addHandler('image', function() {
+            selectLocalImage(expedit);
+        });
+        ansedit.getModule('toolbar').addHandler('image', function() {
+            selectLocalImage(ansedit);
+        });
+        hintedit.getModule('toolbar').addHandler('image', function() {
+            selectLocalImage(hintedit);
+        });
+        function selectLocalImage(forwhat) {
+            const input = document.createElement('input');
+            input.setAttribute('type', 'file');
+            input.click();
+            input.onchange = function() {
+                const fd = new FormData();
+                const file = $(this)[0].files[0];
+                fd.append('img', file);
+                $.ajax({
+                    type: 'POST',
+                    enctype: 'multipart/form-data',
+                    url: '/problem/make/upload',
+                    data: fd,
+                    processData: false,
+                    contentType: false,
+                    success: function(data) {
+                        const range = forwhat.getSelection();
+                        forwhat.insertEmbed(range.index, 'image', 'https://ipu.r-e.kr/problem/lib/'+data);
+                    },
+                    error: function(err) {
+                        console.error("Error: "+err);
+                    }
+                });
+            };
+        }
+    </script>
     <script>
         function preview() {
             namex = document.getElementById('name').value;

@@ -8,7 +8,12 @@ module.exports = {
         app.get('/manage', (req, res)=>{
             perm.checkPrivilege(req, ['m', 'p'], (rex)=>{
                 if(rex) {
-                    res.render('management/control.ejs');
+                    res.render('management/control.ejs', {
+                        nlog: 'none',
+                        ylog: 'block',
+                        userid: req.session.user.id,
+                        username: req.session.user.name
+                    });
                 }
                 else {
                     error.sendError(404, 'Not Found', res);

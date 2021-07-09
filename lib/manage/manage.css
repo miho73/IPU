@@ -1,4 +1,4 @@
-div.control {
+ div.control {
     text-align: left;
     margin-top: 10px;
     font-size: 1.2em;
@@ -23,10 +23,15 @@ button.commit {
     border-radius: 5px;
     height: 100%;
     padding: 3px 5px;
+    padding: 7px;
 }
 
 p.ctrl-exp {
     font-size: 0.7em;
     color: #777;
     margin-bottom: 0;
+    margin-top: 5px;
+}
+th {
+    font-size: 0.8em !important;
 }
