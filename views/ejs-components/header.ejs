@@ -58,7 +58,11 @@
     <div id="ham-content">
         <div id="profile-display">
             <div style="display: <%= ylog%>;">
-                <span id="ham-uname"><%= username%></span>
+                <span id="ham-uname">
+                    <a href="/profile">
+                        <%= username%>
+                    </a>
+                </span>
                 <div id="ham-usr-menu">
                     <a href="/login/deauth" class="ham-usr-btn">로그아웃</a>
                     <a href="/profile" class="ham-usr-btn">프로필</a>

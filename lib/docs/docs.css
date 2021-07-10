@@ -1,0 +1,22 @@
+h1.title {
+    font-size: 2em;
+    font-weight: 600;
+}
+h3.head-pt {
+    font-size: 1.2em;
+    font-weight: 500;
+}
+p {
+    margin: 7px 0;
+}
+
+@media (max-device-width : 900px) {
+    h1.title {
+        font-size: 2em;
+        font-weight: 400;
+    }
+    h3.head-pt {
+        font-size: 1em;
+        font-weight: 500;
+    }
+}

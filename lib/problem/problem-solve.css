@@ -1,3 +1,7 @@
+h1#prob-title {
+    text-align: left;
+    font-size: 2em;
+}
 div#problem-container {
     width: 50%;
     margin: 0 25%;
@@ -110,7 +114,10 @@ p#sol-time::after {
     font-size: 0.5em;
     font-weight: 600;
 }
-@media (max-width: 800px) {
+@media (max-width: 900px) {
+    h1#prob-title {
+        font-size: 1.9em;
+    }
     div#problem-container {
         width: 90%;
         margin-left: 5%;
@@ -123,5 +130,8 @@ p#sol-time::after {
     }
     a#edit-href-title {
         font-size: 0.8em;
+    }
+    div#problem-container>p,div#problem-container>a#show-hint,div#problem-container>li,div#problem-container>blockquote {
+        font-size: 0.95em;
     }
 }

@@ -32,14 +32,14 @@ a {
     padding: 15px;
     display: inline-block;
     font-size: 1.5em;
-    transition: color .2s linear;
-    -moz-transition: color .2s linear;
     -webkit-transition: color .2s linear;
+    -moz-transition: color .2s linear;
     -o-transition: color .2s linear;
-    transition: background-color .15s linear;
-    -moz-transition: background-color .15s linear;
+    transition: color .2s linear;
     -webkit-transition: background-color .15s linear;
+    -moz-transition: background-color .15s linear;
     -o-transition: background-color .15s linear;
+    transition: background-color .15s linear;
 }
 a:hover {
     color: #000;
