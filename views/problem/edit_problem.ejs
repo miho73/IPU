@@ -4,31 +4,24 @@
     <head>
         <title>문제 수정 - IPU</title>
         <meta charset="utf-8">
-        <link rel="stylesheet" type="text/css" href="/lib/univ.css">
-        <link rel="stylesheet" type="text/css" href="/lib/problem/nproblem.css">
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-        <!--Quill load-->
-        <link rel="stylesheet" type="text/css" href="/lib/quill/quill.bubble.css">
-        <link rel="stylesheet" type="text/css" href="/lib/quill/quill.core.css">
-        <link rel="stylesheet" type="text/css" href="/lib/quill/quill.snow.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/monokai-sublime.min.css">
-        <script src="/lib/quill/quill.core.js"></script>
-        <script src="/lib/quill/quill.js"></script>
-        <script src="/lib/quill/quill.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
         <%- include('../ejs-components/header-comp.ejs')%>
         <meta property="og:title" content="IPU - <%=prob_code%>번 문제 수정">
         <meta name="twitter:title" content="IPU - <%=prob_code%>번 문제 수정">
         <meta name="description" content="<%=prob_code%>번 문제 수정">
         <meta property="og:description" content="<%=prob_code%>번 문제 수정">
         <meta name="twitter:description" content="<%=prob_code%>번 문제 수정">
+        <link rel="stylesheet" type="text/css" href="/lib/univ.css">
+        <link rel="stylesheet" type="text/css" href="/lib/problem/nproblem.css">
+        <link rel="stylesheet" type="text/css" href="/lib/problem/problem-solve.css">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/quill/2.0.0-dev.3/quill.snow.min.css" rel="stylesheet">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/quill/2.0.0-dev.3/quill.min.js" type="text/javascript"></script>
         <style>
             img {
                 width: 100% !important;
             }
         </style>
     </head>
-    <body class="no-mathjax" onload="onloaded()">
+    <body class="no-mathjax" onload="loaded()">
         <%- include('../ejs-components/header.ejs')%>
         <h1 id="title"><%=prob_code%>번 문제 수정</h1>
         <div id="container">
@@ -64,22 +57,74 @@
             <h3 id="pro-cont" class="sub-title">문제 내용*</h3>
             <div class="editor-container">
                 <div id="editor-cont"></div>
+                <div class="table-controller">
+                    <button id="tbtn-1" class="ctrl-table" onclick="ctrlTable(1)">&#62; Open table editor</button>
+                    <div class="table-menu" id="tab-1">
+                        <button class="table-btn"  onclick="addTable      (conttable)">테이블 추가</button>
+                        <button class="table-btn"  onclick="addColumnLeft (conttable)">왼쪽 행 추가</button>
+                        <button class="table-btn"  onclick="addColumnRight(conttable)">오른쪽 행 추가</button>
+                        <button class="table-btn"  onclick="addRowAbove   (conttable)">위에 열 추가</button>
+                        <button class="table-btn"  onclick="addRowBelow   (conttable)">아래 열 추가</button>
+                        <button class="table-btn"  onclick="deleteColumn  (conttable)">행 삭제</button>
+                        <button class="table-btn"  onclick="deleteRow     (conttable)">열 삭제</button>
+                        <button class="table-btn"  onclick="deleteTable   (conttable)">테이블 삭제</button>
+                    </div>
+                </div>
             </div>
             <h3 id="pro-exp" class="sub-title">풀이*</h3>
             <div class="editor-container">
                 <div id="editor-exp"></div>
+                <div class="table-controller">
+                    <button id="tbtn-2" class="ctrl-table" onclick="ctrlTable(2)">&#62; Open table editor</button>
+                    <div class="table-menu" id="tab-2">
+                        <button class="table-btn"  onclick="addTable      (exptable)">테이블 추가</button>
+                        <button class="table-btn"  onclick="addColumnLeft (exptable)">왼쪽 행 추가</button>
+                        <button class="table-btn"  onclick="addColumnRight(exptable)">오른쪽 행 추가</button>
+                        <button class="table-btn"  onclick="addRowAbove   (exptable)">위에 열 추가</button>
+                        <button class="table-btn"  onclick="addRowBelow   (exptable)">아래 열 추가</button>
+                        <button class="table-btn"  onclick="deleteColumn  (exptable)">행 삭제</button>
+                        <button class="table-btn"  onclick="deleteRow     (exptable)">열 삭제</button>
+                        <button class="table-btn"  onclick="deleteTable   (exptable)">테이블 삭제</button>
+                    </div>
+                </div>
             </div>
             <h3 id="pro-ans" class="sub-title">정답*</h3>
             <div class="editor-container">
                 <div id="editor-ans"></div>
+                <div class="table-controller">
+                    <button id="tbtn-3" class="ctrl-table" onclick="ctrlTable(3)">&#62; Open table editor</button>
+                    <div class="table-menu" id="tab-3">
+                        <button class="table-btn"  onclick="addTable      (anstable)">테이블 추가</button>
+                        <button class="table-btn"  onclick="addColumnLeft (anstable)">왼쪽 행 추가</button>
+                        <button class="table-btn"  onclick="addColumnRight(anstable)">오른쪽 행 추가</button>
+                        <button class="table-btn"  onclick="addRowAbove   (anstable)">위에 열 추가</button>
+                        <button class="table-btn"  onclick="addRowBelow   (anstable)">아래 열 추가</button>
+                        <button class="table-btn"  onclick="deleteColumn  (anstable)">행 삭제</button>
+                        <button class="table-btn"  onclick="deleteRow     (anstable)">열 삭제</button>
+                        <button class="table-btn"  onclick="deleteTable   (anstable)">테이블 삭제</button>
+                    </div>
+                </div>
             </div>
             <div id="hint-edit-container" class="expand-height" style="display: none; max-height: 0;">
                 <h3 id="pro-hint" class="sub-title">힌트</h3>
                 <div class="editor-container" style="margin-bottom: 5px;">
                     <div id="editor-hint"></div>
+                    <div class="table-controller">
+                        <button id="tbtn-4" class="ctrl-table" onclick="ctrlTable(4)">&#62; Open table editor</button>
+                        <div class="table-menu" id="tab-4">
+                            <button class="table-btn"  onclick="addTable      (hinttable)">테이블 추가</button>
+                            <button class="table-btn"  onclick="addColumnLeft (hinttable)">왼쪽 행 추가</button>
+                            <button class="table-btn"  onclick="addColumnRight(hinttable)">오른쪽 행 추가</button>
+                            <button class="table-btn"  onclick="addRowAbove   (hinttable)">위에 열 추가</button>
+                            <button class="table-btn"  onclick="addRowBelow   (hinttable)">아래 열 추가</button>
+                            <button class="table-btn"  onclick="deleteColumn  (hinttable)">행 삭제</button>
+                            <button class="table-btn"  onclick="deleteRow     (hinttable)">열 삭제</button>
+                            <button class="table-btn"  onclick="deleteTable   (hinttable)">테이블 삭제</button>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div style="text-align: left; margin-bottom: 20px;">
+            <div style="text-align: left; margin-bottom: 20px; margin-top: 20px;">
                 <label><input type="checkbox" id="hashint" onchange="hintSH()">이 문제에 힌트를 추가합니다.</label>
             </div>
             <h3 id="pro-extr" class="sub-title" style="margin-bottom: 10px;">추가 탭</h3>
@@ -95,105 +140,34 @@
                     <h1 style="margin-bottom: 1em;" id="preview-name"></h1>
                     <span class="prob-title">문제</span>
                     <hr class="prob-hr">
-                    <div id="preview-content" class="mathjax"></div>
+                    <div id="preview-content" class="mathjax prob-appl ql-editor ql-shower"></div>
                     <hr class="prob-div-hr">
                     <div id="hint-prev" class="expand-height" style="display: none; max-height: 0;">
                         <span class="prob-title">힌트</span>
                         <hr class="prob-hr">
-                        <div id="preview-hint" class="mathjax"></div>
+                        <div id="preview-hint" class="mathjax prob-appl ql-editor ql-shower"></div>
                         <hr class="prob-div-hr">
                     </div>
                     <span class="prob-title">풀이</span>
                     <hr class="prob-hr">
-                    <div id="preview-exp" class="mathjax"></div>
+                    <div id="preview-exp" class="mathjax prob-appl ql-editor ql-shower"></div>
                     <hr class="prob-div-hr">
                     <span class="prob-title">정답</span>
                     <hr class="prob-hr">
-                    <div id="preview-ans" class="mathjax"></div>
+                    <div id="preview-ans" class="mathjax prob-appl ql-editor ql-shower"></div>
                     <hr class="prob-div-hr">
                     <div id="custon-tabs">
                  </div>
                 </div>                        
                 <div style="text-align: center;">
-                    <button id="confirm" onclick="confirme()">Confirm</button>
+                    <button id="confirm" onclick="confirmex()">Confirm</button>
                 </div>
             </div>
         </div>
     </body>
+    <script src="/lib/problem/mkProblem.js"></script>
     <script>
-        const toolbar_conf = {
-            toolbar: [
-                ['bold', 'italic', 'underline', 'strike'],
-                [{ 'script': 'sub'}, { 'script': 'super' }],
-                [{'header': '1'}, {'header': '2'}, 'blockquote'],
-                ['link', 'image'],
-                [{ list: 'ordered' }, { list: 'bullet' }],
-                [{ color: [] }, { background: [] }],
-            ]
-        };
-        var contedit = new Quill('#editor-cont', {
-            placeholder: '문제 내용',
-            modules: toolbar_conf,
-            theme: 'snow'
-        });
-        var expedit = new Quill('#editor-exp', {
-            placeholder: '문제 풀이',
-            modules: toolbar_conf,
-            theme: 'snow'
-        });
-        var ansedit = new Quill('#editor-ans', {
-            placeholder: '정답',
-            modules: toolbar_conf,
-            theme: 'snow'
-        });
-        var hintedit = new Quill('#editor-hint', {
-            placeholder: '힌트',
-            modules: toolbar_conf,
-            theme: 'snow'
-        });
-        contedit.getModule('toolbar').addHandler('image', function() {
-            selectLocalImage(contedit);
-        });
-        expedit.getModule('toolbar').addHandler('image', function() {
-            selectLocalImage(expedit);
-        });
-        ansedit.getModule('toolbar').addHandler('image', function() {
-            selectLocalImage(ansedit);
-        });
-        hintedit.getModule('toolbar').addHandler('image', function() {
-            selectLocalImage(hintedit);
-        });
-
-        function selectLocalImage(forwhat) {
-            const input = document.createElement('input');
-            input.setAttribute('type', 'file');
-            input.click();
-            input.onchange = function() {
-                const fd = new FormData();
-                const file = $(this)[0].files[0];
-                fd.append('img', file);
-                $.ajax({
-                    type: 'POST',
-                    enctype: 'multipart/form-data',
-                    url: '/problem/make/upload',
-                    data: fd,
-                    processData: false,
-                    contentType: false,
-                    success: function(data) {
-                        const range = forwhat.getSelection();
-                        forwhat.insertEmbed(range.index, 'image', 'https://ipu.r-e.kr/problem/lib/'+data);
-                    },
-                    error: function(err) {
-                        console.error("Error: "+err);
-                    }
-                });
-            };
-        }
-        function init(quill, html) {
-            var delta = quill.clipboard.convert(html);
-            quill.setContents(delta, 'silent');
-        }
-        function onloaded() {
+        function loaded() {
             $.ajax({
                 type: 'POST',
                 url: '/problem/edit/getd',
@@ -208,7 +182,6 @@
                     init(expedit, apply.prob_exp);
                     init(ansedit, apply.prob_ans);
                     init(hintedit, apply.prob_hint);
-
                     document.getElementById('name').value = apply.prob_name;
                     document.getElementById('hashint').checked = apply.hashint;
                     if(apply.hashint) {
@@ -219,10 +192,20 @@
                     let ext = JSON.parse(apply.spec);
                     ext.forEach(ele => {
                         const toAdd = document.getElementById('extr-edit-cont');
-                        const rt_div = document.createElement('div');
                         const name = document.createElement('input');
+                        const rt_div = document.createElement('div');
                         const edit_div = document.createElement('div');
-                        const controls_div = document.createElement('div');        
+                        const controls_div = document.createElement('div'); 
+                        const table_control = document.createElement('div');
+                        const open_table_ctrl = document.createElement('button');
+                        const table_menu = document.createElement('div');
+                        const button = [];
+                        for(let i=0; i<8; i++) {
+                            button.push(document.createElement('button'));
+                            button[i].classList.add('table-btn');
+                            table_menu.appendChild(button[i]);
+                        }
+                        let priCode = extrTabCnt+5;
                         rt_div.id = `extr-tab-cont-${extrTabCnt}`;
                         edit_div.id = `extr-tab-edit-${extrTabCnt}`;
                         name.type = 'textfield';
@@ -230,10 +213,20 @@
                         name.placeholder = '탭 이름';
                         name.classList.add('extr-tab-name');
                         name.id = `extr-tab-name-${extrTabCnt}`;
+                        table_control.classList.add('table-controller');
                         controls_div.appendChild(name);
+                        open_table_ctrl.id = `tbtn-${priCode}`;
+                        open_table_ctrl.classList.add('ctrl-table');
+                        open_table_ctrl.setAttribute('onclick',`ctrlTable(${priCode})`);
+                        open_table_ctrl.innerText='> Open table editor'
+                        table_menu.classList.add('table-menu');
+                        table_menu.id = `tab-${priCode}`;
+                        table_control.appendChild(open_table_ctrl);
+                        table_control.appendChild(table_menu);
                         rt_div.classList.add('extr-tab-edit-div');
                         rt_div.appendChild(controls_div);
                         rt_div.appendChild(edit_div);
+                        rt_div.append(table_control);
                         toAdd.appendChild(rt_div);
                         var extr = new Quill(`#extr-tab-edit-${extrTabCnt}`, {
                             placeholder: '추가 탭',
@@ -243,6 +236,15 @@
                         extr.getModule('toolbar').addHandler('image', function() {
                             selectLocalImage(extr);
                         });
+                        extrTableArr.push(extr.getModule('table'));
+                        button[0].setAttribute('onclick', `addTable      (extrTableArr[${extrTabCnt}])`); button[0].innerText='테이블 추가';
+                        button[1].setAttribute('onclick', `addColumnLeft (extrTableArr[${extrTabCnt}])`); button[1].innerText='왼쪽 행 추가';
+                        button[2].setAttribute('onclick', `addColumnRight(extrTableArr[${extrTabCnt}])`); button[2].innerText='오른쪽 행 추가';
+                        button[3].setAttribute('onclick', `addRowAbove   (extrTableArr[${extrTabCnt}])`); button[3].innerText='위에 열 추가';
+                        button[4].setAttribute('onclick', `addRowBelow   (extrTableArr[${extrTabCnt}])`); button[4].innerText='아래 열 추가';
+                        button[5].setAttribute('onclick', `deleteColumn  (extrTableArr[${extrTabCnt}])`); button[5].innerText='행 삭제';
+                        button[6].setAttribute('onclick', `deleteRow     (extrTableArr[${extrTabCnt}])`); button[6].innerText='열 삭제';
+                        button[7].setAttribute('onclick', `deleteTable   (extrTableArr[${extrTabCnt}])`); button[7].innerText='테이블 삭제';
                         name.value = ele.name;
                         init(extr, ele.content);
                         extrTabCnt++;
@@ -250,43 +252,13 @@
                 }
             });
         }
-        function preview() {
-            namex = document.getElementById('name').value;
-            content = document.getElementById('editor-cont').getElementsByClassName('ql-editor')[0].innerHTML;
-            exp = document.getElementById('editor-exp').getElementsByClassName('ql-editor')[0].innerHTML;
-            ans = document.getElementById('editor-ans').getElementsByClassName('ql-editor')[0].innerHTML;
-            hint = document.getElementById('editor-hint').getElementsByClassName('ql-editor')[0].innerHTML;
-            document.getElementById('preview-container').style.display = "block";
-            setTimeout(()=>{
-                document.getElementById('preview-container').style.opacity = 1;
-            }, 10);
-            $('#preview-name').text(namex);
-            $('#preview-content').html(content);
-            $('#preview-exp').html(exp);
-            $('#preview-ans').html(ans);
-            $('#preview-hint').html(hint);
-            let toAdd = document.getElementById('custon-tabs');
-            let div = document.createElement('hr');
-            div.classList.add('prob-hr');
-            let divProb = document.createElement('hr');
-            divProb.classList.add('prob-div-hr');
-            toAdd.innerHTML = '';
-            for(let i=0; i<extrTabCnt; i++) {
-                let title = document.createElement('span');
-                let cont = document.createElement('div');
-                title.classList.add('prob-title');
-                title.innerText = document.getElementById(`extr-tab-name-${i}`).value;
-                cont.classList.add('mathjax');
-                cont.innerHTML = document.getElementById(`extr-tab-edit-${i}`).getElementsByClassName('ql-editor')[0].innerHTML;
-                toAdd.appendChild(title);
-                toAdd.appendChild(div);
-                toAdd.appendChild(cont);
-                toAdd.appendChild(divProb);
-            }
-            MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
-            location.href = '#confirm'
+        function init(quill, html) {
+            let delta = quill.clipboard.convert({
+                html: html
+            });
+            quill.setContents(delta, 'silent');
         }
-        function confirme() {
+        function confirmex() {
             let proceed = confirm("문제를 업데이트할까요?");
             let precond = true;
             if(!proceed) return;
@@ -361,59 +333,6 @@
                     }
                 }
             });
-        }
-        function hintSH() {
-            if(document.getElementById('hashint').checked) {
-                document.getElementById('hint-edit-container').style.display = "block";
-                setTimeout(()=>{
-                    document.getElementById('hint-edit-container').style.maxHeight = "500px"
-                }, 5);
-                document.getElementById('hint-prev').style.display = "block";
-                setTimeout(()=>{
-                    document.getElementById('hint-prev').style.maxHeight = "500px"
-                }, 5);
-            }
-            else {
-                document.getElementById('hint-edit-container').style.maxHeight = "0"
-                setTimeout(()=>{
-                    document.getElementById('hint-edit-container').style.display = "none";
-                }, 500);
-                document.getElementById('hint-prev').style.maxHeight = "0"
-                setTimeout(()=>{
-                    document.getElementById('hint-prev').style.display = "none";
-                }, 500);
-            }
-        }
-        var extrTabCnt = 0;
-        function addExtr() {
-            let conf = confirm('새 탭을 추가할까요?');
-            if(!conf) return;
-            const toAdd = document.getElementById('extr-edit-cont');
-            const rt_div = document.createElement('div');
-            const name = document.createElement('input');
-            const edit_div = document.createElement('div');
-            const controls_div = document.createElement('div');        
-            rt_div.id = `extr-tab-cont-${extrTabCnt}`;
-            edit_div.id = `extr-tab-edit-${extrTabCnt}`;
-            name.type = 'textfield';
-            controls_div.classList.add('extr-ctrl-div');
-            name.placeholder = '탭 이름';
-            name.classList.add('extr-tab-name');
-            name.id = `extr-tab-name-${extrTabCnt}`;
-            controls_div.appendChild(name);
-            rt_div.classList.add('extr-tab-edit-div');
-            rt_div.appendChild(controls_div);
-            rt_div.appendChild(edit_div);
-            toAdd.appendChild(rt_div);
-            var extr = new Quill(`#extr-tab-edit-${extrTabCnt}`, {
-                placeholder: '추가 탭',
-                modules: toolbar_conf,
-                theme: 'snow'
-            });
-            extr.getModule('toolbar').addHandler('image', function() {
-                selectLocalImage(extr);
-            });
-            extrTabCnt++;
         }
     </script>
     <script type="text/x-mathjax-config">

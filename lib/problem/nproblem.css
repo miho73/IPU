@@ -174,6 +174,7 @@ button {
     font-size: 1.2em;
     border-radius: 24.4px;
     background-color: #ff7f50;
+    color: #222;
     outline: none;
     border: none;
     cursor: pointer;
@@ -190,4 +191,34 @@ button {
 }
 #preview:disabled, #confirm:disabled {
     background-color: #b3441c;
+}
+
+div.table-menu {
+    display: none;
+    justify-content: left;
+    flex-direction: row;
+    gap: 0;
+    flex-wrap: wrap;
+}
+button.ctrl-table {
+    color: #222;
+    margin: 0;
+    background-color: transparent;
+    border: none;
+    padding: 0;
+}
+button.ctrl-table:hover {
+    color: #444;
+}
+button.table-btn {
+    background-color: #eee;
+    border: none;
+    padding: 4px;
+    -webkit-transition: background-color .1s linear;
+    -moz-transition: background-color .1s linear;
+    -o-transition: background-color .1s linear;
+    transition: background-color .1s linear;
+}
+button.table-btn:hover {
+    background-color: #ccc;
 }

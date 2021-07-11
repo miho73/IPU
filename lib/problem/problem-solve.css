@@ -30,8 +30,14 @@ a#edit-href-title {
 img {
     width: 80%;
 }
-div#problem-container>p,div#problem-container>a#show-hint,div#problem-container>li,div#problem-container>blockquote {
+div.prob-appl>p,div.prob-appl>a#show-hint,div.prob-appl>li,div.prob-appl>blockquote {
     font-size: 1.1em;
+    margin: 5px 0;
+}
+div.ql-shower {
+    white-space: normal !important;
+    padding: 0 !important;
+    line-height: normal;
 }
 a#show-hint {
     color: #0076C0;
@@ -131,7 +137,7 @@ p#sol-time::after {
     a#edit-href-title {
         font-size: 0.8em;
     }
-    div#problem-container>p,div#problem-container>a#show-hint,div#problem-container>li,div#problem-container>blockquote {
+    div.prob-appl>p,div.prob-appl>a#show-hint,div.prob-appl>li,div.prob-appl>blockquote {
         font-size: 0.95em;
     }
 }
