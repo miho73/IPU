@@ -1,6 +1,6 @@
 # IPU
 
-[![Server Distribution](https://github.com/miho73/IPU/actions/workflows/distribute_gcp.yml/badge.svg)](https://github.com/miho73/IPU/actions/workflows/distribute_gcp.yml)distribute_to_gcp.yml)
+[![Distribute to server](https://github.com/miho73/IPU/actions/workflows/distribute_to_server.yml/badge.svg)](https://github.com/miho73/IPU/actions/workflows/distribute_to_server.yml)
 [![Node.js CI](https://github.com/miho73/IPU/actions/workflows/nodejs.yml/badge.svg)](https://github.com/miho73/IPU/actions/workflows/nodejs.yml)
 
 ## 1. PSQL Guide
