@@ -30,9 +30,10 @@ a#edit-href-title {
 img {
     width: 80%;
 }
-div.prob-appl>p,div.prob-appl>a#show-hint,div.prob-appl>li,div.prob-appl>blockquote {
+div.prob-appl>p,div.prob-appl>a#show-hint,div.prob-appl>li,div.prob-appl>blockquote,div.prob-appl>ol>li,div.prob-appl>ul>li {
     font-size: 1.1em;
     margin: 5px 0;
+    font-weight: 390;
 }
 div.ql-shower {
     white-space: normal !important;
@@ -137,7 +138,7 @@ p#sol-time::after {
     a#edit-href-title {
         font-size: 0.8em;
     }
-    div.prob-appl>p,div.prob-appl>a#show-hint,div.prob-appl>li,div.prob-appl>blockquote {
+    div.prob-appl>p,div.prob-appl>a#show-hint,div.prob-appl>li,div.prob-appl>blockquote,div.prob-appl>ol>li,div.prob-appl>ul>li {
         font-size: 0.95em;
     }
 }
