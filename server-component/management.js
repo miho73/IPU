@@ -68,7 +68,7 @@ module.exports = {
                                     break;
                                 case "APPEND":
                                     code = parsed[1];
-                                    if(!new RegExp('^[a-zA-Z0-9]{1,50}$').test(code)) {
+                                    if(!new RegExp('^[a-zA-Z0-9]{1,10}$').test(code)) {
                                         res.status(400).send("InviteCodeNotInFormat");
                                         return;
                                     }

@@ -32,17 +32,17 @@ SolveDb.connect(err => {
 });
 ProbDb.query('CREATE TABLE IF NOT EXISTS prob('+
              'problem_code BIGSERIAL NOT NULL PRIMARY KEY,'+
-             'problem_name TEXT NOT NULL,'+
-             'problem_category TEXT NOT NULL,'+
-             'problem_difficulty TEXT NOT NULL,'+
+             'problem_name VARCHAR(100) NOT NULL,'+
+             'problem_category CHAR(4) NOT NULL,'+
+             'problem_difficulty CHAR(4) NOT NULL,'+
              'problem_content TEXT NOT NULL,'+
              'problem_solution TEXT NOT NULL,'+
              'problem_answer TEXT NOT NULL,'+
              'problem_hint TEXT,'+
              'has_hint INTEGER NOT NULL,'+
-             'author_name TEXT NOT NULL,'+
-             'added_at TEXT NOT NULL,'+
-             'last_modified TEXT NOT NULL,'+
+             'author_name VARCHAR(150) NOT NULL,'+
+             'added_at VARCHAR NOT NULL,'+
+             'last_modified VARCHAR NOT NULL,'+
              'answers INTEGER NOT NULL,'+
              'extr_tabs TEXT NOT NULL);', (err, data)=>{
                 if(err) {

@@ -30,19 +30,19 @@ SolveDb.connect(err => {
 
 IdenDb.query('CREATE TABLE IF NOT EXISTS iden('+
              'user_code BIGSERIAL NOT NULL PRIMARY KEY,'+
-             'user_id TEXT NOT NULL,'+
-             'user_name TEXT NOT NULL,'+
-             'user_password TEXT NOT NULL,'+//to be hashed
-             'user_salt TEXT NOT NULL,'+//to be hashed
-             'invite_code TEXT NOT NULL,'+
-             'bio TEXT,'+
-             'privilege TEXT NOT NULL,'+
-             'email TEXT,'+
-             'joined TEXT NOT NULL,'+
+             'user_id VARCHAR(150) NOT NULL,'+
+             'user_name VARCHAR(100) NOT NULL,'+
+             'user_password CHAR(88) NOT NULL,'+
+             'user_salt CHAR(88) NOT NULL,'+
+             'invite_code VARCHAR(10) NOT NULL,'+
+             'bio VARCHAR(300),'+
+             'privilege CHAR(1) NOT NULL,'+
+             'email VARCHAR(100),'+
+             'joined CHAR(24) NOT NULL,'+
              `experience INTEGER NOT NULL,`+
-             `aes_iv TEXT,`+
-             `last_solve TEXT,`+
-             `last_login TEXT);`, (err, data)=>{
+             `aes_iv VARCHAR,`+ // todo: change to char
+             `last_solve CHAR(24),`+
+             `last_login CHAR(24));`, (err, data)=>{
                 if(err) {
                     console.log('Failed to create table to identification database: '+err);
                 }
@@ -341,8 +341,8 @@ module.exports = {
                                                     SolveDb.query(`CREATE TABLE IF NOT EXISTS u${datre}(`+
                                                                   'code BIGSERIAL NOT NULL PRIMARY KEY,'+
                                                                   'problem_code INTEGER NOT NULL,'+
-                                                                  'solved_time TEXT NOT NULL,'+
-                                                                  'solving_time TEXT NOT NULL,'+
+                                                                  'solved_time VARCHAR NOT NULL,'+
+                                                                  'solving_time VARCHAR NOT NULL,'+
                                                                   'correct BOOLEAN NOT NULL);', (errp, resx)=>{
                                                         if(errp) {
                                                             console.log('Failed to create solves table for user id: '+req.session.user.code+'. '+err);
