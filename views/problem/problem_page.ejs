@@ -3,14 +3,11 @@
 <html>
     <head>
         <title><%= problem_name%> - IPU <%= problem_code%>번</title>
-        <meta charset="utf-8">
-
-        <link rel="stylesheet" type="text/css" href="/lib/univ.css">
+        <%- include('../ejs-components/header-comp.ejs')%>
         <link rel="stylesheet" type="text/css" href="/lib/problem/problem-solve.css">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/quill/2.0.0-dev.3/quill.snow.min.css" rel="stylesheet">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/quill/2.0.0-dev.3/quill.min.js" type="text/javascript"></script>
         <script src="/lib/problem/pShowPage.js"></script>
-        <%- include('../ejs-components/header-comp.ejs')%>
         <meta name="title" content="IPU - <%=problem_name%>">
         <meta name="description" content="IPU - <%=problem_name%> 문제 풀기">
         <meta property="og:title" content="IPU - <%=problem_name%>">

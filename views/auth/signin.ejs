@@ -3,10 +3,9 @@
 <html>
 	<head>
 		<title>로그인 - IPU</title>
-		<meta charset="utf-8">
+		<%- include('../ejs-components/header-comp.ejs')%>
 		<link rel="stylesheet" type="text/css" href="/lib/auth/signin.css">
 		<script src="https://www.google.com/recaptcha/api.js?render=<%= capt_site%>"></script>
-		<%- include('../ejs-components/header-comp.ejs')%>
 		<style>
 			div.grecaptcha-badge { 
     			visibility: hidden;
