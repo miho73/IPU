@@ -35,6 +35,13 @@ div.prob-appl>p,div.prob-appl>a#show-hint,div.prob-appl>li,div.prob-appl>blockqu
     margin: 5px 0;
     font-weight: 390;
 }
+div.prob-appl>p>a {
+    color: #0076C0 !important;
+    font-weight: 400;
+}
+div.prob-appl>p>a:hover {
+    text-decoration: underline;
+}
 div.ql-shower {
     white-space: normal !important;
     padding: 0 !important;

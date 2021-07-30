@@ -44,6 +44,7 @@ ProbDb.query('CREATE TABLE IF NOT EXISTS prob('+
              'added_at VARCHAR NOT NULL,'+
              'last_modified VARCHAR NOT NULL,'+
              'answers INTEGER NOT NULL,'+
+             'tags VARCHAR(500) NOT NULL,'+
              'extr_tabs TEXT NOT NULL);', (err, data)=>{
                 if(err) {
                     console.log('Failed to create table to problem database: '+err);
@@ -121,7 +122,8 @@ module.exports = {
                     cate: row.problem_category,
                     diff: row.problem_difficulty,
                     hashint: hashintx,
-                    spec: row.extr_tabs
+                    spec: row.extr_tabs,
+                    tags: row.tags
                 });
             });
         });
@@ -140,9 +142,9 @@ module.exports = {
                     if(!req.body.hashint) {
                         hint = undefined;
                     }
-                    ProbDb.query(`INSERT INTO prob(problem_name, problem_category, problem_difficulty, problem_content, problem_solution, problem_answer, problem_hint, author_name, added_at, last_modified, answers, extr_tabs, has_hint) `+
-                                 `values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 0, $11, $12)`,
-                                [req.body.title, req.body.cate, req.body.difficult, req.body.cont, req.body.expl, req.body.answ, hint, req.session.user.id, now.toISOString(), now.toISOString(), req.body.extr, (req.body.hashint=="true" ? 1 : 0)], (err, resx)=>{
+                    ProbDb.query(`INSERT INTO prob(problem_name, problem_category, problem_difficulty, problem_content, problem_solution, problem_answer, problem_hint, author_name, added_at, last_modified, answers, extr_tabs, has_hint, tags) `+
+                                 `values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 0, $11, $12, $13)`,
+                                [req.body.title, req.body.cate, req.body.difficult, req.body.cont, req.body.expl, req.body.answ, hint, req.session.user.id, now.toISOString(), now.toISOString(), req.body.extr, (req.body.hashint=="true" ? 1 : 0), req.body.tags], (err, resx)=>{
                         if(err) {
                             console.log('Problem insert sql failure: '+err);
                             error.sendError(500, 'Internal Server Error', res);
@@ -169,8 +171,8 @@ module.exports = {
                     if(!req.body.hashint) {
                         hint = undefined;
                     }
-                    ProbDb.query(`UPDATE prob SET problem_name=$1, problem_category=$2, problem_difficulty=$3, problem_content=$4, problem_solution=$5, problem_answer=$6, problem_hint=$7, author_name=$8, last_modified=$9, extr_tabs=$10, has_hint=$11 WHERE problem_code=$12`,
-                                [req.body.title, req.body.cate, req.body.difficult, req.body.cont, req.body.expl, req.body.answ, hint, req.session.user.id, now.toISOString(), req.body.extr, (req.body.hashint=="true" ? 1 : 0), req.body.codex], (err, resx)=>{
+                    ProbDb.query(`UPDATE prob SET problem_name=$1, problem_category=$2, problem_difficulty=$3, problem_content=$4, problem_solution=$5, problem_answer=$6, problem_hint=$7, author_name=$8, last_modified=$9, extr_tabs=$10, has_hint=$11, tags=$12 WHERE problem_code=$13`,
+                                [req.body.title, req.body.cate, req.body.difficult, req.body.cont, req.body.expl, req.body.answ, hint, req.session.user.id, now.toISOString(), req.body.extr, (req.body.hashint=="true" ? 1 : 0), req.body.tags, req.body.codex], (err, resx)=>{
                         if(err) {
                             console.log('problem/make/update sql failure: '+err);
                             error.sendError(500, 'Internal Server Error', res);
@@ -193,7 +195,7 @@ module.exports = {
                 error.sendError(400, 'Bad Request', res);
                 return;
             }
-            ProbDb.query('SELECT problem_code, problem_name, problem_category, problem_difficulty, answers FROM prob WHERE problem_code>=$1 ORDER BY problem_code LIMIT $2;', [from, length], (err, data)=>{
+            ProbDb.query('SELECT problem_code, problem_name, problem_category, problem_difficulty, answers, tags FROM prob WHERE problem_code>=$1 ORDER BY problem_code LIMIT $2;', [from, length], (err, data)=>{
                 if(err) {
                     console.log("problem table query error: "+err);
                     error.sendError(500, 'Internal Server Error', res);
@@ -202,21 +204,23 @@ module.exports = {
                     rows = data.rows;
                     let ret = [];
                     rows.forEach(row => {
+                        let tags = JSON.parse(row.tags);
+                        tags.unshift(
+                            {
+                                key:"cate",
+                                content: row.problem_category
+                            },
+                            {
+                                key:"diff",
+                                content: row.problem_difficulty
+                            }
+                        );
                         ret.push({
                             code: row.problem_code,
                             name: row.problem_name,
                             cate: row.problem_category,
                             diff: row.problem_difficulty,
-                            tags: [
-                                {
-                                    key:"cate",
-                                    content: row.problem_category
-                                },
-                                {
-                                    key:"diff",
-                                    content: row.problem_difficulty
-                                }
-                            ]
+                            tags: tags
                         });
                     });
                     res.send(ret);
