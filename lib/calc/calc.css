@@ -1,0 +1,73 @@
+html, body {
+    background-color: #000 !important;
+}
+
+h1 {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+}
+
+h1,h2,h3,span,p,input {
+    color: #fff;
+}
+
+input {
+    background-color: #666;
+}
+input.calin {
+    outline: none;
+    padding: 5px 10px;
+    font-size: 1.2em;
+    border-radius: 10px;
+    border: 1px #666 solid;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+div.result {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+span.result-label {
+    font-size: 1.3em;
+}
+
+div.result-label {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: left;
+    gap: 5px;
+}
+
+div.result-res {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 5px;
+}
+
+span.passed {
+    color: rgb(8, 214, 8);
+    text-shadow: rgb(106, 231, 106) 0px 0px 10px;
+}
+
+span.skipped {
+    color: rgb(204, 207, 0);
+    text-shadow: 2px 2px 7px rgb(230, 245, 92);
+}
+
+span.failed {
+    color: rgb(207, 0, 0);
+    text-shadow: 2px 2px 7px rgb(221, 74, 74);
+}

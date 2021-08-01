@@ -9,6 +9,7 @@ const fs = require('fs');
 const error = require('./server-component/error');
 
 const auth = require('./server-component/auth');
+const calc = require('./server-component/calc');
 const problem = require('./server-component/problem');
 const profile = require('./server-component/profile');
 const mgr = require('./server-component/management');
@@ -84,6 +85,7 @@ try {
     docs.docsRouter(app, __dirname);
     etc.etcRouter(app);
     usr.usrRouter(app);
+    calc.calcRouter(app, __dirname);
     app.get('/noie', (req, res)=>{
         error.sendError(412, 'IE는 지원되지 않습니다.', res);
     })
@@ -92,9 +94,12 @@ catch(error) {
    console.log("Global Exception Catch: "+error)
 }
 
-app.use((req, res) => {
+app.get((req, res)=>{
     error.sendError(404, 'Not Found', res);
 });
+app.post((req, res)=>{
+    res.sendStatus(404);
+})
 
 /*
 var options = {

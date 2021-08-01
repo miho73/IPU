@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+
+<htm lang="ko">
+    <head>
+        <title>소수판별</title>
+        <link rel="stylesheet" type="text/css" href="/lib/calc/calc.css">
+        <link rel="stylesheet" type="text/css" href="/lib/univ.css">
+        <script src="/lib/calc/math.js"></script>
+    </head>
+    <body>
+        <div class="vh-center">
+            <h1>소수판별</h1>
+            <input id="n" type="number" class="calin" onkeyup="prime()">
+            <hr>
+            <div class="result">
+                <div class="result-label">
+                    <span class="result-label">페르마 소정리 테스트</span>
+                    <span class="result-label">나머지 테스트</span>
+                </div>
+                <div class="result-res">
+                    <span class="result-label skipped" id="fermat">PENDING</span>
+                    <span class="result-label skipped" id="mod">PENDING</span>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script>
+        async function prime() {
+            let n = document.getElementById('n').value;
+            if(n=='' || n<2) {
+                document.getElementById('fermat').innerText = 'PENDING';
+                document.getElementById('fermat').classList = 'result-label skipped';
+                document.getElementById('mod').innerText = 'PENDING';
+                document.getElementById('mod').classList = 'result-label skipped';
+                return;
+            }
+            await fermat(n);
+            await mod(n);
+        }
+        async function fermat(n) {
+            /*
+            if(n%2==0) {
+                document.getElementById('fermat').innerText = 'SKIPPED';
+                document.getElementById('fermat').classList = 'result-label skipped';
+                return;
+            }
+            */
+            document.getElementById('fermat').innerText = 'CALCULATING';
+            document.getElementById('fermat').classList = 'result-label skipped';
+            let m = powerMod(2, n-1, n);
+            console.log(m);
+            if(m == 1) {
+                document.getElementById('fermat').innerText = 'PASSED';
+                document.getElementById('fermat').classList = 'result-label passed';
+            }
+            else {
+                document.getElementById('fermat').innerText = 'FAILED';
+                document.getElementById('fermat').classList = 'result-label failed';
+            }
+        }
+        async function mod(n) {
+            if(n==2 ) {
+                document.getElementById('mod').innerText = 'PASSED';
+                document.getElementById('mod').classList = 'result-label passed';
+                return;
+            }
+            document.getElementById('mod').innerText = 'CALCULATING';
+            document.getElementById('mod').classList = 'result-label skipped';
+            let to = Math.sqrt(n), flag=true;
+            for(let i=2; i<=to; i++) {
+                if(n%i==0) {
+                    flag=false;
+                    break;
+                }
+            }
+            if(flag) {
+                document.getElementById('mod').innerText = 'PASSED';
+                document.getElementById('mod').classList = 'result-label passed';
+            }
+            else {
+                document.getElementById('mod').innerText = 'FAILED';
+                document.getElementById('mod').classList = 'result-label failed';
+            }
+        }
+    </script>
+</html>
