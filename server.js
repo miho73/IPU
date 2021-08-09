@@ -94,10 +94,10 @@ catch(error) {
    console.log("Global Exception Catch: "+error)
 }
 
-app.get((req, res)=>{
+app.get('*', (req, res)=>{
     error.sendError(404, 'Not Found', res);
 });
-app.post((req, res)=>{
+app.post('*', (req, res)=>{
     res.sendStatus(404);
 })
 

@@ -25,5 +25,25 @@ module.exports = {
                 code: cd
             });
         });
+        app.get('/etc/dday/:path', (req, res, next)=>{
+            let dd, tit;
+            switch(req.params.path) {
+                case 'shs':
+                    dd=1628913600;
+                    tit='영재고 3차 캠프';
+                    break;
+                case 'sat':
+                    dd=1637190000;
+                    tit='2022학년도 대학수학능력평가';
+                    break;
+                default:
+                    next();
+                    return;
+            }
+            res.render('etc/dday/dday.ejs', {
+                dd:dd,
+                tit:tit
+            });
+        });
     }
 }

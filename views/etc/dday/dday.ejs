@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+
+<html lang="ko" class="backdrop-blur">
+    <head>
+        <title>D-Day</title>
+        <%- include('../../ejs-components/header-comp.ejs')%>
+        <!--Custom meta-->
+        <meta name="title" content="D-Day">
+        <meta name="description" content="<%=dd%>까지">
+        <meta property="og:title" content="D-Day">
+        <meta property="og:description" content="<%=dd%>까지">
+        <meta name="twitter:title" content="D-Day">
+        <meta name="twitter:description" content="<%=dd%>까지">
+        <link rel="stylesheet" type="text/css" href="/lib/etc/dday/dday.css">
+        <script>
+            let dday_posix = <%=dd%>*1000;
+            setInterval(()=>{
+                let now = Date.now();
+                let dif = dday_posix-now;
+                let date = Math.round(dif/1000);
+                document.getElementById('tm').innerText = secondsToDhms(date);
+            }, 10);
+            function lp(c) {
+                if(c/10<1) return '0'+c;
+                else return c;
+            }
+            function secondsToDhms(secondsx) {
+
+                seconds = Math.abs(Number(secondsx));
+                var d = Math.floor(seconds / (3600*24));
+                var h = Math.floor(seconds % (3600*24) / 3600);
+                var m = Math.floor(seconds % 3600 / 60);
+                var s = Math.floor(seconds % 60);
+                d=proc(d);
+                h=proc(h);
+                m=proc(m);
+                s=proc(s);
+
+                if(d==0) d='DAY';
+                if(secondsx < 0) return 'D+'+d+"   "+h+":"+m+":"+s;
+                else return 'D-'+d+"   "+h+":"+m+":"+s;
+            }
+            function proc(x) {
+                return (x/10)<1 ? '0'+x : x
+            }
+        </script>
+    </head>
+    <body>
+        <div class="vh-center">
+            <p id="to-what"><%=tit%></p>
+            <p id="tm">D-DAY</p>
+        </div>
+    </body>
+</html>
