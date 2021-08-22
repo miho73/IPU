@@ -130,9 +130,9 @@ module.exports = {
                             username: req.session.user.name,
                             bio: data.bio,
                             email: data.email,
-                            joined: `${jd.getFullYear()}년 ${(jd.getMonth()+1).zf(2)}월 ${jd.getDate().zf(2)}일 ${jd.getHours().zf(2)}시 ${jd.getMinutes().zf(2)}분 UTC`,
-                            last_login: `${ll.getFullYear()}년 ${(ll.getMonth()+1).zf(2)}월 ${ll.getDate().zf(2)}일 ${ll.getHours().zf(2)}시 ${ll.getMinutes().zf(2)}분 UTC`,
-                            last_solve: `${ls.getFullYear()}년 ${(ls.getMonth()+1).zf(2)}월 ${ls.getDate().zf(2)}일 ${ls.getHours().zf(2)}시 ${ls.getMinutes().zf(2)}분 UTC`,
+                            joined: `${jd.getFullYear()}년 ${(jd.getMonth()+1).zf(2)}월 ${jd.getDate().zf(2)}일 ${jd.getHours().zf(2)}시 ${jd.getMinutes().zf(2)}분 KST`,
+                            last_login: `${ll.getFullYear()}년 ${(ll.getMonth()+1).zf(2)}월 ${ll.getDate().zf(2)}일 ${ll.getHours().zf(2)}시 ${ll.getMinutes().zf(2)}분 KST`,
+                            last_solve: `${ls.getFullYear()}년 ${(ls.getMonth()+1).zf(2)}월 ${ls.getDate().zf(2)}일 ${ls.getHours().zf(2)}시 ${ls.getMinutes().zf(2)}분 KST`,
                             usr_cd : req.session.user.code,
                         });
                     }

@@ -16,7 +16,7 @@
     </head>
     <body onload="load(<%= pg%>)">
         <%- include('../ejs-components/header.ejs')%>
-        <div id="container">
+        <div class="non-container">
             <div id="headerup">
                 <h1 id="uname"><%=usernameT%></h1>
                 <h3 id="uid"><%=useridT%></h3>
@@ -33,18 +33,20 @@
                 <p class="exp-dis infp" id="next-lv" style="margin-top: 10px; margin-bottom: 30px;"><%= experience%></p>
             </div>
         </div>
-        <table id="prob-list-table">
-            <thead>
-                <tr>
-                    <th style="width: 6%">번호</th>
-                    <th style="width: 39%;">문제 제목</th>
-                    <th style="width: 25%;">정보</th>
-                    <th style="width: 7%;">풀이 시간</th>
-                    <th style="width: 23%;">푼 시각</th>
-                </tr>
-            </thead>
-            <tbody id="solveds"></tbody>
-        </table>
+        <div class="container-in">
+            <table id="prob-list-table">
+                <thead>
+                    <tr>
+                        <th style="width: 6%">번호</th>
+                        <th style="width: 39%;">문제 제목</th>
+                        <th style="width: 25%;">정보</th>
+                        <th style="width: 7%;">풀이 시간</th>
+                        <th style="width: 23%;">푼 시각</th>
+                    </tr>
+                </thead>
+                <tbody id="solveds"></tbody>
+            </table>
+        </div>
         <div id="nav">
             <p id="not">이 페이지는 비어있습니다.</p>
             <div id="nav">

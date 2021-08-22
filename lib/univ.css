@@ -388,7 +388,7 @@ a.ham-href:hover {
     background-color: #ccc;
 }
 
-div#container{
+div.non-container,div.container {
     width: 50%;
     margin: 0 25%;
     margin-bottom: 5vh;
@@ -397,9 +397,11 @@ div#container{
     h1#title {
         font-size: 1.3em;
     }
-    div#container {
+    div.container,div.non-container {
         width: 90%;
         margin-left: 5%;
+    }
+    div.container, div.container-in {
         overflow-x: scroll;
     }
 }
