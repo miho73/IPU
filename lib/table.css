@@ -61,3 +61,11 @@ p#not {
     font-size: 1.4em;
     font-weight: 400;
 }
+
+td.tag-con>div {
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    gap: 5px;
+    flex-wrap: wrap;
+}
