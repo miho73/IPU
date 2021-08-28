@@ -314,6 +314,18 @@ module.exports = {
         app.get('/problem/:code', (req, res)=>{
             let regex = new RegExp('^[0-9]{1,4}$');
             let code = req.params.code;
+            if(code == 'latest') {
+                ProbDb.query('SELECT COUNT(*) AS cnt FROM prob;', (err, lres)=>{
+                    if(err || lres.rowCount != 1) {
+                        error.sendError(500, 'Internal Server Error', res);
+                        return;
+                    }
+                    let len = lres.rows[0].cnt;
+                    let pg = (len-(len%30))/30;
+                    res.redirect(`/problem/?page=${pg}`);
+                });
+                return;
+            }
             if(!regex.test(code)) {
                 error.sendError(400, 'Bad Request', res);
                 return;
