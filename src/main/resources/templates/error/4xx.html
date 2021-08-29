@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+
+<html lang="ko" xmlns:th="https://www.thymeleaf.org">
+    <head>
+        <title th:text="${error + ' Error'}"></title>
+        <th:block th:replace="fragments/header-comp.html :: header-comp"></th:block>
+        <link rel="stylesheet" href="/lib/error.css">
+    </head>
+    <body>
+        <div class="vh-center">
+            <h1 th:text="${status}"></h1>
+            <h3 th:text="${error}"></h3>
+            <a href="/" class="h-center">IPU 홈</a>
+        </div>
+    </body>
+</html>
