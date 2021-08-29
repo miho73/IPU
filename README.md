@@ -3,6 +3,8 @@
 [![Distribute to server](https://github.com/miho73/IPU/actions/workflows/distribute_to_server.yml/badge.svg)](https://github.com/miho73/IPU/actions/workflows/distribute_to_server.yml)
 [![Node.js CI](https://github.com/miho73/IPU/actions/workflows/nodejs.yml/badge.svg)](https://github.com/miho73/IPU/actions/workflows/nodejs.yml)
 
+### *Backend migration is in progress! DO NOT UPDATE server of NodeJS version which is in the main branch. Please commit in spring-server branch instead.*
+
 ## 1. PSQL Guide
 
 IPU uses postgresql as DBMS. Here's the structure and user spec for IPU.
