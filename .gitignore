@@ -1,8 +1,8 @@
-/problem
 /src/main/resources/properties/secret.properties
 .gradle
 /build
 /logs
+/out
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/

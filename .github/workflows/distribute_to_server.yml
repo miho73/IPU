@@ -2,7 +2,7 @@ name: Distribute to server
 
 on:
   push:
-    branches: [ main ]
+    branches: [  ]
 
   workflow_dispatch:
 

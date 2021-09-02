@@ -1,9 +1,9 @@
 # IPU
 
 [![Distribute to server](https://github.com/miho73/IPU/actions/workflows/distribute_to_server.yml/badge.svg)](https://github.com/miho73/IPU/actions/workflows/distribute_to_server.yml)
-[![Node.js CI](https://github.com/miho73/IPU/actions/workflows/nodejs.yml/badge.svg)](https://github.com/miho73/IPU/actions/workflows/nodejs.yml)
+[![Java CI with Gradle](https://github.com/miho73/IPU/actions/workflows/gradle.yml/badge.svg)](https://github.com/miho73/IPU/actions/workflows/gradle.yml)
 
-### *Backend migration is in progress! DO NOT UPDATE server of NodeJS version which is in the main branch. Please commit in spring-server branch instead.*
+### *Backend migration is in progress! DO NOT UPDATE frontend!*
 
 ## 1. PSQL Guide
 
