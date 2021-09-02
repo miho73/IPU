@@ -34,3 +34,7 @@ function hamburger() {
     }
     isBurgerOpen = !isBurgerOpen;
 }
+
+function gei(id) {
+    return document.getElementById(id);
+}

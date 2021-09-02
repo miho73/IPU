@@ -1,0 +1,10 @@
+{
+  "captcha_secret": {
+    "v3":"abc",
+    "v2": "sddd"
+  },
+  "db": {
+    "username": "miho",
+    "password": "973245"
+  }
+}
