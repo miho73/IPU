@@ -1,22 +1,35 @@
 package com.github.miho73.ipu.domain;
 
-public class Member {
+public class User {
     private long code;
     private String id;
     private String name;
     private String pwd, salt;
+    private String privilege;
+    private String last_solve;
 
-    public Member(long code, String id, String name) {
+    // General purpose
+    public User(long code, String id, String name, String privilege, String last_solve) {
         this.code = code;
         this.id = id;
         this.name = name;
+        this.privilege = privilege;
+        this.last_solve = last_solve;
     }
 
-    public Member(long code, String id, String pwd, String salt) {
+    // Authentication purpose
+    public User(long code, String id, String pwd, String salt) {
         this.code = code;
         this.id = id;
         this.pwd = pwd;
         this.salt = salt;
+    }
+
+    // Session purpose
+    public User(String id, String name, String privilege) {
+        this.id = id;
+        this.name = name;
+        this.privilege = privilege;
     }
 
     public String getPwd() {
@@ -52,5 +65,12 @@ public class Member {
     }
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String  getPrivilege() {
+        return privilege;
+    }
+    public void setPrivilege(String  privilege) {
+        this.privilege = privilege;
     }
 }

@@ -1,6 +1,6 @@
-package com.github.miho73.ipu.library;
+package com.github.miho73.ipu.library.security;
 
-import com.github.miho73.ipu.repositories.MemberRepository;
+import com.github.miho73.ipu.repositories.UserRepository;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +24,7 @@ public class Captcha {
     private final String VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify";
     private final String USER_AGENT = "Mozilla/5.0";
 
-    private final Logger LOGGER = LoggerFactory.getLogger(MemberRepository.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(UserRepository.class);
 
     public boolean getV3Result(String token) throws IOException {
         return getResult(CAPTCHA_V3_SECRET, token);
@@ -54,8 +54,6 @@ public class Captcha {
         BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
         String inputLine;
         StringBuilder response = new StringBuilder();
-
-        LOGGER.debug("reCAPTCHA verification: "+ response);
 
         while ((inputLine = in.readLine()) != null) {
             response.append(inputLine);

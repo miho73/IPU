@@ -1,6 +1,7 @@
-package com.github.miho73.ipu.library;
+package com.github.miho73.ipu.library.security;
 
 import com.github.miho73.ipu.exceptions.InvalidInputException;
+import com.github.miho73.ipu.library.Operations;
 import org.springframework.stereotype.Component;
 
 import java.util.Base64;
