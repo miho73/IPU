@@ -6,6 +6,11 @@
 		<th:block th:replace="fragments/header-comp.html :: header-comp"></th:block>
 		<link rel="stylesheet" type="text/css" href="/lib/auth/signin.css">
 		<script th:src="${'https://www.google.com/recaptcha/api.js?render=' + capt_site}"></script>
+		<meta property="og:title" content="IPU - 로그인">
+		<meta name="twitter:title" content="IPU - 로그인">
+		<meta name="description" content="IPU - 로그인">
+		<meta property="og:description" content="IPU - 로그인">
+		<meta name="twitter:description" content="IPU - 로그인">
 		<style>
 			div.grecaptcha-badge { 
     			visibility: hidden;
@@ -18,9 +23,9 @@
 		</style>
 	</head>
 	<body>
-		<p id="err" th:style="${'display: ' + error_visible}" th:text="${error_text}">다시 시도해주세요.</p>
+		<p id="err" th:text="${error_text}"></p>
 		<div class="vh-center">
-			<form id="login-form" onsubmit="login()" th:action="${'/login?ret='+return}" method="POST">
+			<form method="POST" onsubmit="return login()" th:action="${'/login?ret='+return}">
 				<label id="title">로그인</label>
 				<input type="text" id="id" class="input" name="id" placeholder="ID" spellcheck="false" required autocomplete="username">
 				<input type="password" id="pwd" class="input" name="password" placeholder="Password" spellcheck="false" required autocomplete="current-password">
@@ -38,5 +43,30 @@
 				document.getElementById('gtoken').value = token;
 		  	});
 		});
+	</script>
+	<script>
+		const idValidator = new RegExp('^(?=.*[A-Za-z])[A-Za-z0-9]{0,50}$');
+		const pwdValidator = new RegExp('^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d!"#$%&\'()*+,\\-./:;<=>?@\\[\\]^_`{|}~\\\\\\)]{6,}$');
+
+		function login() {
+			let id = gei("id").value, pwd = gei("pwd").value;
+			let ret = true;
+			console.log(id+ " "+pwd);
+			if(!idValidator.test(id)) {
+				gei("id").classList.add("wrong-form");
+				ret = false;
+			}
+			else {
+				gei("id").classList.remove("wrong-form");
+			}
+			if(!pwdValidator.test(pwd)) {
+				gei("pwd").classList.add("wrong-form");
+				ret = false;
+			}
+			else {
+				gei("pwd").classList.remove("wrong-form");
+			}
+			return ret;
+		}
 	</script>
 </html>

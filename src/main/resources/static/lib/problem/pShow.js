@@ -13,7 +13,7 @@ function load(pg) {
         success: function(data) {
             getLen = data.length
             if(getLen == 0) {
-                document.getElementById('not').style.display = 'block';
+                gei('not').style.display = 'block';
                 return;
             }
             data.forEach(datum => {
@@ -49,7 +49,7 @@ function load(pg) {
                     }
                     info.appendChild(tag);
                 });
-                document.getElementById('addProb').appendChild(tr);
+                gei('addProb').appendChild(tr);
             });
         },
         error: function(error) {
@@ -58,18 +58,18 @@ function load(pg) {
         complete: function() {
             if(getLen == -1) return;
             if(pg==0) {
-                document.getElementById('prev').style.display = 'none';
-                document.getElementById('pnsep').style.display = 'none';
+                gei('prev').style.display = 'none';
+                gei('pnsep').style.display = 'none';
             }
             else {
-                document.getElementById('prev').setAttribute('href', `/problem/?page=${pg-1}`);
+                gei('prev').setAttribute('href', `/problem/?page=${pg-1}`);
             }
             if(getLen < PROBLEM_PER_PAGE) {
-                document.getElementById('next').style.display = 'none';
-                document.getElementById('pnsep').style.display = 'none';
+                gei('next').style.display = 'none';
+                gei('pnsep').style.display = 'none';
             }
             else {
-                document.getElementById('next').setAttribute('href', `/problem/?page=${pg+1}`)
+                gei('next').setAttribute('href', `/problem/?page=${pg+1}`)
             }
         }
     });

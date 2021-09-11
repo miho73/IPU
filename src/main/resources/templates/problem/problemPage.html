@@ -15,7 +15,7 @@
         <meta name="twitter:title" th:content="${'IPU - '+pName}">
         <meta name="twitter:description" th:content="${'IPU - '+pName}">
     </head>
-    <body onload="onload([[${extrTabs}]])">
+    <body th:onload="onload([[${extrTabs}]])">
     <div th:replace="/fragments/header.html :: navigation"></div>
         <div id="problem-container">
             <div>
@@ -55,8 +55,8 @@
         </div>
         <div id="prob-control-nd">
             <div th:if="${logged}">
-                <button id="wa-btn" class="end-btn" style="margin-right: 7px;" onclick="wa([[${pCode}]])">틀렸다고 표시</button>
-                <button id="ac-btn" class="end-btn" style="margin-left: 7px;" onclick="ac([[${pCode]])">맞았다고 표시</button>
+                <button id="wa-btn" class="end-btn" style="margin-right: 7px;" th:onclick="wa([[${pCode}]])">틀렸다고 표시</button>
+                <button id="ac-btn" class="end-btn" style="margin-left: 7px;" th:onclick="ac([[${pCode}]])">맞았다고 표시</button>
             </div>
         </div>
     </body>

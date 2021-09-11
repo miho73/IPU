@@ -26,10 +26,10 @@ label#title {
     color: #ddd;
 }
 #errdisplay {
-    font-family: 'Spoqa Han Sans Neo', 'sans-serif';
     font-weight: 400;
     font-size: 1.3em;
     color: #f00;
+    margin-top: 5px;
 }
 input,button.input {
     background-color: #0004;
@@ -56,6 +56,14 @@ input,button.input {
 }
 .input:hover {
     background-color: #0006;
+}
+.wrong-form {
+    box-shadow: 0px 0px 7px #f00;
+}
+label.form-error {
+    color: #f00;
+    font-size: 1.2em;
+    margin-top: 5px;
 }
 #name,#invite {
     margin-top: 30px;
@@ -138,6 +146,18 @@ div#captcha {
     }
     div#capt-show {
         font-size: 0.8em;
+    }
+    p#err {
+        font-size: 1em;
+        font-weight: 720;
+    }
+    #errdisplay {
+        font-weight: 500;
+        font-size: 1em;
+    }
+    label.form-error {
+        font-size: 0.9em;
+        font-weight: 500;
     }
 }
 

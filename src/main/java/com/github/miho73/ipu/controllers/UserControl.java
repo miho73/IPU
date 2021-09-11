@@ -1,6 +1,9 @@
 package com.github.miho73.ipu.controllers;
 
 import com.github.miho73.ipu.domain.LoginForm;
+import com.github.miho73.ipu.domain.SignupForm;
+import com.github.miho73.ipu.services.InviteService;
+import com.github.miho73.ipu.services.SessionService;
 import com.github.miho73.ipu.services.UserService;
 import com.github.miho73.ipu.exceptions.InvalidInputException;
 import org.slf4j.Logger;
@@ -17,47 +20,58 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 @Controller("UserControl")
-@RequestMapping("/login")
 @PropertySource("classpath:/properties/secret.properties")
 public class UserControl {
     @Value("${captcha.v3.sitekey}") private String CAPTCHA_V3_SITE_KEY;
     @Value("${captcha.v2.sitekey}") private String CAPTCHA_V2_SITE_KEY;
 
     private final UserService userService;
+    private final SessionService sessionService;
+    private final InviteService inviteService;
     private final Logger LOGGER = LoggerFactory.getLogger(UserControl.class);
 
+    private final Pattern IdNameValidator = Pattern.compile("^(?=.*[A-Za-z])[A-Za-z0-9]{0,50}$");
+    private final Pattern PasswordValidator = Pattern.compile("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d!\"#$%&'()*+,\\-./:;<=>?@\\[\\]^_`{|}~\\\\\\)]{6,}$");
+
     @Autowired
-    public UserControl(UserService userService) {
+    public UserControl(UserService userService, SessionService sessionService, InviteService inviteService) {
         this.userService = userService;
+        this.sessionService = sessionService;
+        this.inviteService = inviteService;
     }
 
-    @GetMapping("")
+    @GetMapping("/login")
     public String getLogin(@RequestParam(value = "ret", required = false, defaultValue = "/") String ret, Model model) {
-        model.addAttribute("capt_site", CAPTCHA_V3_SITE_KEY);
-        model.addAttribute("captcha_version", "v3");
-        model.addAttribute("error_visible", "none");
-        model.addAttribute("return", ret);
-        model.addAttribute("error_text", "");
+        model.addAllAttributes(Map.of(
+                "capt_site", CAPTCHA_V3_SITE_KEY,
+                "captcha_version", "v3",
+                "return", ret,
+                "error_text", ""
+        ));
         return "auth/signin";
     }
 
-    @PostMapping("")
+    @PostMapping("/login")
     public String postLogin(@RequestParam(value = "ret", required = false, defaultValue = "/") String ret,
                             @ModelAttribute LoginForm loginForm,
                             Model model,
                             HttpSession session) throws IOException {
+        if(sessionService.checkLogin(session)) {
+            return "redirect:"+ret;
+        }
         model.addAllAttributes(Map.of(
                 "capt_site", CAPTCHA_V3_SITE_KEY,
                 "captcha_version", "v3",
-                "error_visible", "true",
                 "return", ret
         ));
 
         // Login form validator
-        if(loginForm.getId().equals("") || loginForm.getPassword().equals("")) {
-            model.addAttribute("error_text", "서버에서 처리를 거부했습니다.");
+        if(!IdNameValidator.matcher(loginForm.getId()).matches() || !PasswordValidator.matcher(loginForm.getPassword()).matches()) {
+            LOGGER.debug("Invalid login form: id="+loginForm.getId());
+            model.addAttribute("error_text", "ID 또는 암호가 형식에 맞지 않습니다.");
             return "auth/signin";
         }
 
@@ -88,5 +102,62 @@ public class UserControl {
         }
         model.addAttribute("error_text", "문제가 발생했습니다. 잠시 후에 다시 시도해주세요.");
         return "auth/signin";
+    }
+
+    @GetMapping("/login/deauth")
+    public String invalidSession(HttpSession session) {
+        sessionService.invalidSession(session);
+        LOGGER.debug("Invalidated session "+session.getId());
+        return "redirect:/";
+    }
+
+    @GetMapping("/signup")
+    public String getSignup(Model model) {
+        model.addAllAttributes(Map.of(
+                "capt_site", CAPTCHA_V2_SITE_KEY,
+                "error_text", ""
+        ));
+        return "auth/signup";
+    }
+
+    @PostMapping("/signup")
+    public String signup(@ModelAttribute SignupForm form,
+                         Model model,
+                         HttpSession session) {
+        boolean wasError = false;
+        StringBuilder errTxt = new StringBuilder();
+
+        model.addAttribute("capt_site", CAPTCHA_V2_SITE_KEY);
+        if(!IdNameValidator.matcher(form.getId()).matches()) {
+            errTxt.append("ID는 50자 이내의 알파벳이나 숫자여야 합니다.<br/>");
+            LOGGER.debug("Signup id regex failure: "+form.getId());
+            wasError = true;
+        }
+        if(!IdNameValidator.matcher(form.getId()).matches()) {
+            errTxt.append("이름은 50자 이내의 알파벳이나 숫자여야 합니다.<br/>");
+            LOGGER.debug("Signup name regex failure: "+form.getName());
+            wasError = true;
+        }
+        if(!PasswordValidator.matcher(form.getPassword()).matches()) {
+            errTxt.append("암호는 6글자 이상에 영어, 숫자 한 글자 이상을 가져야 합니다.<br/>");
+            LOGGER.debug("Signup password regex failure");
+            wasError = true;
+        }
+        if(wasError) {
+            model.addAttribute("error_text", errTxt.toString());
+            return "auth/signup";
+        }
+        return "redirect:/";
+    }
+
+    @PostMapping("/api/invite-check")
+    @ResponseBody
+    public String inviteCheck(@RequestBody String code) throws SQLException {
+        boolean ok = false;
+        if(code.length()>=4){
+            ok = inviteService.checkExists(code.substring(code.length() - 4));
+        }
+        LOGGER.debug("Invite code challenge. "+code+": "+(ok?"succeed":"failed"));
+        return Boolean.toString(ok);
     }
 }

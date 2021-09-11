@@ -1,6 +1,9 @@
 package com.github.miho73.ipu.services;
 
+import com.github.miho73.ipu.controllers.UserControl;
 import com.github.miho73.ipu.domain.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
@@ -44,5 +47,9 @@ public class SessionService {
                     "logged", false
             ));
         }
+    }
+
+    public void invalidSession(HttpSession session) {
+        session.invalidate();;
     }
 }
