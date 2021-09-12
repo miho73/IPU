@@ -40,7 +40,7 @@
 	<script th:inline="javascript">
 		grecaptcha.ready(function() {
 			grecaptcha.execute([[${capt_site}]], {action: 'signin'}).then(function(token) {
-				document.getElementById('gtoken').value = token;
+				gei('gtoken').value = token;
 		  	});
 		});
 	</script>
@@ -51,7 +51,6 @@
 		function login() {
 			let id = gei("id").value, pwd = gei("pwd").value;
 			let ret = true;
-			console.log(id+ " "+pwd);
 			if(!idValidator.test(id)) {
 				gei("id").classList.add("wrong-form");
 				ret = false;
@@ -65,6 +64,10 @@
 			}
 			else {
 				gei("pwd").classList.remove("wrong-form");
+			}
+			if(gei('gVers').value == 'v2') {
+				gei('gtoken').value = gei('g-recaptcha-response').value;
+				gei('g-recaptcha-response').remove();
 			}
 			return ret;
 		}

@@ -28,10 +28,10 @@
 			<form method="POST" action="/signup" onsubmit="return beforeSignup()">
 				<label id="title">가입</label>
 				<input type="text" id="name" class="input second" name="name" placeholder="Name" spellcheck="false" style="display: none;" required autocomplete="nickname">
-				<label id="ni" for="name" class="form-error" style="display: none;">이름은 50자 이내의 알파벳이나 숫자여야 합니다.</label>
+				<label id="ni" for="name" class="form-error" style="display: none;">이름은 50자 이내여야 합니다.</label>
 				<input type="text" id="id" class="input second" name="id" placeholder="ID" spellcheck="false" style="display: none;" required autocomplete="username">
 				<label id="ii" for="id" class="form-error" style="display: none;">ID는 50자 이내의 알파벳이나 숫자여야 합니다.</label>
-				<input type="password" id="pwd" class="input second" name="password" placeholder="Password" spellcheck="false" style="display: none;" required autocomplete="current-password">
+				<input type="password" id="pwd" class="input second" name="password" placeholder="Password" spellcheck="false" style="display: none;" required autocomplete="new-password">
 				<label id="pi" for="pwd" class="form-error" style="display: none;">암호는 6글자 이상에 영어, 숫자 한 글자 이상을 가져야 합니다.</label>
 				<input type="text" id="invite" class="input" name="invite" placeholder="Invite code" spellcheck="false" maxlength="4" onkeypress="keyDwn()" required>
 				<input type="text" id="gtoken" style="display: none;" name="gToken" readonly required>
@@ -112,7 +112,7 @@
 				gei("id").classList.remove("wrong-form");
 				gei("ii").style.display="none";
 			}
-			if(!idValidator.test(name)) {
+			if(name.length>50) {
 				gei("name").classList.add("wrong-form");
 				gei("ni").style.display="block";
 				ret = false;
@@ -130,13 +130,15 @@
 				gei("pwd").classList.remove("wrong-form");
 				gei("pi").style.display="none";
 			}
+			gei('gtoken').value = gei('g-recaptcha-response').value;
+			gei('g-recaptcha-response').remove();
 			return ret;
 		}
 	</script>
-	<script>
+	<script th:inline="javascript">
 		grecaptcha.ready(function() {
 			grecaptcha.execute([[${capt_site}]], {action: 'signup'}).then(function(token) {
-				document.getElementById('gtoken').value = token;
+				gei('gtoken').value = token;
 		  	});
 		});
 	</script>

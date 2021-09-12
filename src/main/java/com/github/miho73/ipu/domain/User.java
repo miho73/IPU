@@ -8,6 +8,8 @@ public class User {
     private String privilege;
     private String last_solve;
 
+    private String inviteCode;
+
     // General purpose
     public User(long code, String id, String name, String privilege, String last_solve) {
         this.code = code;
@@ -30,6 +32,13 @@ public class User {
         this.id = id;
         this.name = name;
         this.privilege = privilege;
+    }
+
+    public User(String id, String name, String pwd, String inviteCode) {
+        this.id = id;
+        this.name = name;
+        this.pwd = pwd;
+        this.inviteCode = inviteCode;
     }
 
     public String getPwd() {
@@ -72,5 +81,19 @@ public class User {
     }
     public void setPrivilege(String  privilege) {
         this.privilege = privilege;
+    }
+
+    public String getLast_solve() {
+        return last_solve;
+    }
+    public void setLast_solve(String last_solve) {
+        this.last_solve = last_solve;
+    }
+
+    public String getInviteCode() {
+        return inviteCode;
+    }
+    public void setInviteCode(String inviteCode) {
+        this.inviteCode = inviteCode;
     }
 }

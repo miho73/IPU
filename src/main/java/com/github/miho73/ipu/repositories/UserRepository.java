@@ -10,10 +10,9 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 
 @Repository("UserRepository")
 @PropertySources({
@@ -88,10 +87,34 @@ public class UserRepository {
         return rs.getObject(column);
     }
 
+    public void addUser(User user) throws SQLException {
+        String sql = "INSERT INTO iden" +
+                "(user_id, user_name, user_password, user_salt, invite_code, bio, privilege, joined, experience) VALUES " +
+                "(?, ?, ?, ?, ?, '', 'u', ? , 0);";
+
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
+        PreparedStatement psmt = conn.prepareStatement(sql);
+        psmt.setString(1, user.getId());
+        psmt.setString(2, user.getName());
+        psmt.setString(3, user.getPwd());
+        psmt.setString(4, user.getSalt());
+        psmt.setString(5, user.getInviteCode());
+        psmt.setTimestamp(6, timestamp);
+        psmt.execute();
+    }
+
     public void updateUserStringById(String id, String column, String newValue) throws SQLException {
         String sql = "UPDATE iden SET "+column+"=? WHERE user_id=?;";
         PreparedStatement psmt = conn.prepareStatement(sql);
         psmt.setString(1, newValue);
+        psmt.setString(2, id);
+        psmt.execute();
+    }
+    public void updateUserTSById(String id, String column, Timestamp timestamp) throws SQLException {
+        String sql = "UPDATE iden SET "+column+"=? WHERE user_id=?;";
+        PreparedStatement psmt = conn.prepareStatement(sql);
+        psmt.setTimestamp(1, timestamp);
         psmt.setString(2, id);
         psmt.execute();
     }

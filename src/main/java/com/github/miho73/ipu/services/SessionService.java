@@ -49,7 +49,26 @@ public class SessionService {
         }
     }
 
+    public enum PRIVILEGES {
+        USER,
+        PROBLEM_MAKE,
+        INVITE_CODES,
+        SUPERUSER
+    }
+    public boolean hasPrivilege(PRIVILEGES p, HttpSession session) {
+        String priv = (String)session.getAttribute("privilege");
+        if(priv == null) return false;
+        System.out.println(priv);
+        if(priv.contains("s")) return true;
+        return switch (p) {
+            case USER -> priv.contains("u");
+            case PROBLEM_MAKE -> priv.contains("p");
+            case INVITE_CODES -> priv.contains("m");
+            default -> false;
+        };
+    }
+
     public void invalidSession(HttpSession session) {
-        session.invalidate();;
+        session.invalidate();
     }
 }

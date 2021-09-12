@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 
-<html>
+<html lang="ko" xmlns:th="https://www.thymeleaf.org">
     <head>
         <title>문제 만들기 - IPU</title>
-        <%- include('../ejs-components/header-comp.ejs')%>
+        <th:block th:replace="fragments/header-comp.html :: header-comp"></th:block>
         <meta property="og:title" content="IPU - 문제 제작">
         <meta name="twitter:title" content="IPU - 문제 제작">
         <meta name="description" content="새 문제 만들기">
@@ -20,7 +20,7 @@
         </style>
     </head>
     <body class="no-mathjax">
-        <%- include('../ejs-components/header.ejs')%>
+        <div th:replace="/fragments/header.html :: navigation"></div>
         <h1 id="title">문제 등록</h1>
         <div class="container">
             <div id="top-menu">

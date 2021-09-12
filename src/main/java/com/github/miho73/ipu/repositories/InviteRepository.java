@@ -53,6 +53,5 @@ public class InviteRepository {
     }
 
     public void runNonQuery() {
-
     }
 }

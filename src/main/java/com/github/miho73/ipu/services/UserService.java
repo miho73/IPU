@@ -5,6 +5,7 @@ import com.github.miho73.ipu.domain.User;
 import com.github.miho73.ipu.exceptions.InvalidInputException;
 import com.github.miho73.ipu.library.security.Captcha;
 import com.github.miho73.ipu.library.security.SHA;
+import com.github.miho73.ipu.library.security.SecureTools;
 import com.github.miho73.ipu.repositories.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,8 +16,10 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Base64;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -25,18 +28,20 @@ public class UserService {
     private final UserRepository userRepository;
     private final SHA sha;
     private final Captcha captcha;
-    private SessionService sessionService;
+    private final SessionService sessionService;
+    private final InviteService inviteService;
 
     private final Logger LOGGER = LoggerFactory.getLogger(UserRepository.class);
     private TimeZone tz = TimeZone.getTimeZone("UTC");
-    private DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+    private final DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
 
     @Autowired
-    public UserService(UserRepository userRepository, SHA sha, Captcha captcha, SessionService sessionService) {
+    public UserService(UserRepository userRepository, SHA sha, Captcha captcha, SessionService sessionService, InviteService inviteService) {
         this.userRepository = userRepository;
         this.sha = sha;
         this.captcha = captcha;
         this.sessionService = sessionService;
+        this.inviteService = inviteService;
 
         df.setTimeZone(tz);
     }
@@ -62,7 +67,7 @@ public class UserService {
 
         boolean captchaFlag = false;
         if(form.getgVers().equals("v3") && captcha.getV3Result(form.getgToken())) captchaFlag = true;
-        else if(form.getgToken().equals("v2") && captcha.getV2Result(form.getgToken())) captchaFlag = true;
+        else if(form.getgVers().equals("v2") && captcha.getV2Result(form.getgToken())) captchaFlag = true;
 
         if (captchaFlag) {
             User user = userRepository.getUserForAuthentication(form.getId());
@@ -75,7 +80,7 @@ public class UserService {
                 LOGGER.debug("Login attempt: id=" + form.getId() + ", result=ok");
                 user = userRepository.getUserById(form.getId());
                 LOGGER.debug("Queried user data to set session. id "+form.getId());
-                userRepository.updateUserStringById(form.getId(), "last_login", df.format(new Date()));
+                userRepository.updateUserTSById(form.getId(), "last_login", new Timestamp(System.currentTimeMillis()));
                 LOGGER.debug("Updated last login. id "+form.getId());
                 sessionService.setAttribute(session, "isLoggedIn", true);
                 sessionService.setUserSession(session, user);
@@ -88,6 +93,31 @@ public class UserService {
             LOGGER.debug("Login attempt: id=" + form.getId() + ", result=CAPTCHA failed");
             return LOGIN_RESULT.CAPTCHA_FAILED;
         }
+    }
+
+    public enum SIGNUP_RESULT {
+        OK,
+        CAPTCHA_FAILED,
+        INVALID_INVITE
+    }
+    public SIGNUP_RESULT addUser(User user, String captchaToken) throws SQLException, NoSuchAlgorithmException, InvalidInputException, IOException {
+        if(!captcha.getV2Result(captchaToken)) {
+            LOGGER.debug("Signup request: id="+user.getId()+", name="+user.getName()+", result=CAPTCHA failed");
+            return SIGNUP_RESULT.CAPTCHA_FAILED;
+        }
+
+        if(!inviteService.checkExists(user.getInviteCode())) {
+            LOGGER.debug("Signup request: id="+user.getId()+", name="+user.getName()+", result=Invalid invite");
+            return SIGNUP_RESULT.INVALID_INVITE;
+        }
+
+        byte[] salt = SecureTools.getSecureRandom(64);
+        String hash = sha.SHA512(user.getPwd(), salt);
+        user.setPwd(hash);
+        user.setSalt(Base64.getEncoder().encodeToString(salt));
+        userRepository.addUser(user);
+        LOGGER.debug("Signup request: id="+user.getId()+", name="+user.getName()+", result=ok");
+        return SIGNUP_RESULT.OK;
     }
 }
 

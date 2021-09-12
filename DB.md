@@ -26,13 +26,13 @@ Below's sql is command to make database. All tabes will be automatically created
 > user_salt CHAR(88) NOT NULL,
 > invite_code CHAR(4) NOT NULL,
 > bio VARCHAR(500) NOT NULL,
-> privilege CHAR(1) NOT NULL,
-> email VARCHAR(20) NOT NULL,
-> joined CHAR(24) NOT NULL,
+> privilege CHAR(5) NOT NULL,
+> email VARCHAR(50),
+> joined TIMESTAMP WITH TIME ZONE NOT NULL,
 > experience INTEGER NOT NULL,
-> aes_iv CHAR(16) NOT NULL,
-> last_solve CHAR(24) NOT NULL,
-> last_login CHAR(24) NOT NULL
+> aes_iv CHAR(16),
+> last_solve TIMESTAMP WITH TIME ZONE,
+> last_login TIMESTAMP WITH TIME ZONE
 > );
 > ```
 
@@ -45,7 +45,7 @@ Below's sql is command to make database. All tabes will be automatically created
 > CREATE TABLE IF NOT EXISTS u<usercode>(
 > code SERIAL NOT NULL,
 > problem_code INTEGER NOT NULL,
-> solved_time CHAR(24) NOT NULL,
+> solved_time TIMESTAMP WITH TIME ZONE NOT NULL,
 > solving_time INTEGER NOT NULL,
 > correct BOOLEAN NOT NULL
 > );
@@ -68,8 +68,8 @@ Below's sql is command to make database. All tabes will be automatically created
 > problem_hint TEXT NOT NULL,
 > has_hint BOOLEAN NOT NULL,
 > auther_name VARCHAR(50) NOT NULL,
-> added_at CHAR(24) NOT NULL,
-> last_modified CHAR(24) NOT NULL,
+> added_at TIMESTAMP WITH TIME ZONE NOT NULL,
+> last_modified TIMESTAMP WITH TIME ZONE NOT NULL,
 > tags TEXT NOT NULL
 > );
 > ```
@@ -81,8 +81,6 @@ Below's sql is command to make database. All tabes will be automatically created
 > `CREATE DATABASE invite OWNER <USERNAME>;`
 > ```sql
 > CREATE TABLE IF NOT EXISTS codes (
-> code CHAR(5) NOT NULL,
-> added_by VARCHAR(50),
-> added_at CHAR(24)
+> code CHAR(5) NOT NULL
 > );
 > ```

@@ -2,6 +2,8 @@ package com.github.miho73.ipu.controllers;
 
 import com.github.miho73.ipu.domain.LoginForm;
 import com.github.miho73.ipu.domain.SignupForm;
+import com.github.miho73.ipu.domain.User;
+import com.github.miho73.ipu.library.security.Captcha;
 import com.github.miho73.ipu.services.InviteService;
 import com.github.miho73.ipu.services.SessionService;
 import com.github.miho73.ipu.services.UserService;
@@ -92,7 +94,7 @@ public class UserControl {
             model.addAllAttributes(Map.of(
                     "capt_site", CAPTCHA_V2_SITE_KEY,
                     "captcha_version", "v2",
-                    "error_text", "CAPTCHA 인증에 실패했습니다."
+                    "error_text", "CAPTCHA 인증에 실패했습니다. 다시 시도해주세요."
             ));
             return "auth/signin";
         }
@@ -123,7 +125,7 @@ public class UserControl {
     @PostMapping("/signup")
     public String signup(@ModelAttribute SignupForm form,
                          Model model,
-                         HttpSession session) {
+                         HttpSession session) throws SQLException, InvalidInputException, NoSuchAlgorithmException, IOException {
         boolean wasError = false;
         StringBuilder errTxt = new StringBuilder();
 
@@ -145,6 +147,16 @@ public class UserControl {
         }
         if(wasError) {
             model.addAttribute("error_text", errTxt.toString());
+            return "auth/signup";
+        }
+
+        UserService.SIGNUP_RESULT result = userService.addUser(new User(form.getId(), form.getName(), form.getPassword(), form.getInvite()), form.getgToken());
+        if(result == UserService.SIGNUP_RESULT.CAPTCHA_FAILED) {
+            model.addAttribute("error_text", "CAPTCHA 인증에 실패했습니다. 다시 시도해주세요.");
+            return "auth/signup";
+        }
+        if(result == UserService.SIGNUP_RESULT.INVALID_INVITE) {
+            model.addAttribute("error_text", "유효하지 않은 초대코드입니다. 다시 시도해주세요.");
             return "auth/signup";
         }
         return "redirect:/";

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Map;
 
@@ -44,7 +45,6 @@ public class ProblemControl {
 
     @GetMapping("/{pCode}")
     public String getProblem(@PathVariable("pCode") String code, Model model, HttpSession session) throws SQLException {
-        System.out.println(code);
         Problem problem = problemService.getProblem(Integer.parseInt(code));
         sessionService.loadSessionToModel(session, model);
         model.addAllAttributes(Map.of(
@@ -58,5 +58,13 @@ public class ProblemControl {
                 "extrTabs", problem.getExtrTabs()
         ));
         return "problem/problemPage";
+    }
+
+    @GetMapping("/make")
+    public String problemMake(Model model, HttpSession session, HttpServletResponse response) throws IOException {
+        if(!sessionService.hasPrivilege(SessionService.PRIVILEGES.PROBLEM_MAKE, session)) {
+            return "redirect:/problem";
+        }
+        return "problem/mkProblem";
     }
 }

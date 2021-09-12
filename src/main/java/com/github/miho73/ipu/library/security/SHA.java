@@ -16,8 +16,15 @@ public class SHA {
     private final int HASH_REPEAT = 12345;
 
     public String SHA512(String msg, String salt) throws NoSuchAlgorithmException, InvalidInputException {
-        byte[] msgByte = Base64.getDecoder().decode(msg);
         byte[] saltByte = Base64.getDecoder().decode(salt);
+        return doHash(msg, saltByte);
+    }
+    public String SHA512(String msg, byte[] salt) throws NoSuchAlgorithmException, InvalidInputException {
+        return doHash(msg, salt);
+    }
+
+    private String doHash(String msg, byte[] saltByte) throws NoSuchAlgorithmException, InvalidInputException {
+        byte[] msgByte = Base64.getDecoder().decode(msg);
 
         MessageDigest md = MessageDigest.getInstance("SHA-512");
         md.reset();
