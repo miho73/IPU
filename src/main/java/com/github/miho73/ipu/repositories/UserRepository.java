@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Repository;
 
@@ -77,6 +78,16 @@ public class UserRepository {
         );
     }
 
+    // Those two methods return user object for general purpose
+    public Object getUserDataById(String id, String column) throws SQLException {
+        String sql = "SELECT "+column+" FROM iden WHERE user_id=?";
+        PreparedStatement psmt = conn.prepareStatement(sql);
+        psmt.setString(1, id);
+        ResultSet rs = psmt.executeQuery();
+
+        if(!rs.next()) return null;
+        return rs.getObject(column);
+    }
     public Object queryUserById(String id, String column) throws SQLException {
         String sql = "SELECT ? FROM iden WHERE user_id=?;";
         PreparedStatement psmt = conn.prepareStatement(sql);
@@ -87,6 +98,7 @@ public class UserRepository {
         return rs.getObject(column);
     }
 
+    // Add user data to identification database
     public void addUser(User user) throws SQLException {
         String sql = "INSERT INTO iden" +
                 "(user_id, user_name, user_password, user_salt, invite_code, bio, privilege, joined, experience) VALUES " +
@@ -104,6 +116,7 @@ public class UserRepository {
         psmt.execute();
     }
 
+    // Update user data type of string
     public void updateUserStringById(String id, String column, String newValue) throws SQLException {
         String sql = "UPDATE iden SET "+column+"=? WHERE user_id=?;";
         PreparedStatement psmt = conn.prepareStatement(sql);
@@ -111,6 +124,8 @@ public class UserRepository {
         psmt.setString(2, id);
         psmt.execute();
     }
+
+    // Update user data type of timestamp
     public void updateUserTSById(String id, String column, Timestamp timestamp) throws SQLException {
         String sql = "UPDATE iden SET "+column+"=? WHERE user_id=?;";
         PreparedStatement psmt = conn.prepareStatement(sql);
@@ -119,6 +134,7 @@ public class UserRepository {
         psmt.execute();
     }
 
+    // Get user data required to do login
     public User getUserForAuthentication(String id) throws SQLException {
         String sql = "SELECT * FROM iden WHERE user_id=?;";
         PreparedStatement psmt = conn.prepareStatement(sql);

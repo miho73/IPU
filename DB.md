@@ -67,10 +67,11 @@ Below's sql is command to make database. All tabes will be automatically created
 > problem_answer TEXT NOT NULL,
 > problem_hint TEXT NOT NULL,
 > has_hint BOOLEAN NOT NULL,
-> auther_name VARCHAR(50) NOT NULL,
+> author_name VARCHAR(50) NOT NULL,
 > added_at TIMESTAMP WITH TIME ZONE NOT NULL,
 > last_modified TIMESTAMP WITH TIME ZONE NOT NULL,
-> tags TEXT NOT NULL
+> tags TEXT NOT NULL,
+> extr_tabs TEXT NOT NULL
 > );
 > ```
 

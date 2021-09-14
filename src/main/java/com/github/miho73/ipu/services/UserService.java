@@ -6,11 +6,13 @@ import com.github.miho73.ipu.exceptions.InvalidInputException;
 import com.github.miho73.ipu.library.security.Captcha;
 import com.github.miho73.ipu.library.security.SHA;
 import com.github.miho73.ipu.library.security.SecureTools;
+import com.github.miho73.ipu.repositories.SolutionRepository;
 import com.github.miho73.ipu.repositories.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
@@ -26,6 +28,7 @@ import java.util.TimeZone;
 @Service("UserService")
 public class UserService {
     private final UserRepository userRepository;
+    private final SolutionRepository solutionRepository;
     private final SHA sha;
     private final Captcha captcha;
     private final SessionService sessionService;
@@ -36,12 +39,13 @@ public class UserService {
     private final DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
 
     @Autowired
-    public UserService(UserRepository userRepository, SHA sha, Captcha captcha, SessionService sessionService, InviteService inviteService) {
+    public UserService(UserRepository userRepository, SHA sha, Captcha captcha, SessionService sessionService, InviteService inviteService, SolutionRepository solutionRepository) {
         this.userRepository = userRepository;
         this.sha = sha;
         this.captcha = captcha;
         this.sessionService = sessionService;
         this.inviteService = inviteService;
+        this.solutionRepository = solutionRepository;
 
         df.setTimeZone(tz);
     }
@@ -95,20 +99,32 @@ public class UserService {
         }
     }
 
+    private boolean IdDuplicationTest(String id) throws SQLException {
+        Object code = userRepository.getUserDataById(id, "user_code");
+        return code==null;
+    }
+
     public enum SIGNUP_RESULT {
         OK,
         CAPTCHA_FAILED,
-        INVALID_INVITE
+        INVALID_INVITE,
+        DUPLICATED_ID
     }
+
+    @Transactional
+    //TODO: If one of entire user-add procedure makes error? Transaction required.
     public SIGNUP_RESULT addUser(User user, String captchaToken) throws SQLException, NoSuchAlgorithmException, InvalidInputException, IOException {
         if(!captcha.getV2Result(captchaToken)) {
             LOGGER.debug("Signup request: id="+user.getId()+", name="+user.getName()+", result=CAPTCHA failed");
             return SIGNUP_RESULT.CAPTCHA_FAILED;
         }
-
         if(!inviteService.checkExists(user.getInviteCode())) {
             LOGGER.debug("Signup request: id="+user.getId()+", name="+user.getName()+", result=Invalid invite");
             return SIGNUP_RESULT.INVALID_INVITE;
+        }
+        if(!IdDuplicationTest(user.getId())) {
+            LOGGER.debug("Signup request: id="+user.getId()+", name="+user.getName()+", result=ID Duplicated");
+            return SIGNUP_RESULT.DUPLICATED_ID;
         }
 
         byte[] salt = SecureTools.getSecureRandom(64);
@@ -116,6 +132,8 @@ public class UserService {
         user.setPwd(hash);
         user.setSalt(Base64.getEncoder().encodeToString(salt));
         userRepository.addUser(user);
+        long code = (long) userRepository.getUserDataById(user.getId(), "user_code");
+        solutionRepository.addUser(code);
         LOGGER.debug("Signup request: id="+user.getId()+", name="+user.getName()+", result=ok");
         return SIGNUP_RESULT.OK;
     }

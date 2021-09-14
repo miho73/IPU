@@ -65,17 +65,8 @@ function wa(cod) {
                 case "trans":
                     ec = "문제가 발생했습니다."+suf;
                     break;
-                case "forbidden":
+                case "forb":
                     ec = "권한이 없습니다."+suf;
-                    break;
-                case "sdb":
-                    ec = "풀이를 기록하지 못했습니다."+suf;
-                    break;
-                case "expUpd":
-                    ec = "경험치를 업데이하지 못했습니다."+suf;
-                    break;
-                case "usrQ":
-                    ec = "사용자 정보를 불러오지 못했습니다."+suf;
                     break;
                 case "time":
                     ec = "제출은 1분마다 할 수 있습니다.";
@@ -108,17 +99,8 @@ function ac(cod) {
                 case "trans":
                     ec = "문제가 발생했습니다."+suf;
                     break;
-                case "forbidden":
+                case "forb":
                     ec = "권한이 없습니다."+suf;
-                    break;
-                case "sdb":
-                    ec = "풀이를 기록하지 못했습니다."+suf;
-                    break;
-                case "expUpd":
-                    ec = "경험치를 업데이하지 못했습니다."+suf;
-                    break;
-                case "usrQ":
-                    ec = "사용자 정보를 불러오지 못했습니다."+suf;
                     break;
                 case "time":
                     ec = "제출은 1분마다 할 수 있습니다.";

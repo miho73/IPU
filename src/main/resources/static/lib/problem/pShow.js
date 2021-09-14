@@ -23,7 +23,7 @@ function load(pg) {
                 name.innerHTML = `<a class="prob-href" href="/problem/${datum.code}">${datum.name}</a>`;
                 let infox = document.createElement('td'); infox.classList.add('tag-con');
                 let info = document.createElement('div'); infox.appendChild(info);
-                let cate = document.createElement('td'); cate.innerText = convertSubj(datum.cate);
+                let cate = document.createElement('td');
                 tr.appendChild(number);
                 tr.appendChild(name);
                 tr.appendChild(infox);
@@ -39,6 +39,7 @@ function load(pg) {
                             break;
                         case "cate":
                             tag.innerText = convertSubj(ele.content);
+                            cate.innerText = convertSubj(ele.content);
                             break;
                         default:
                             tag.innerText = ele.content;

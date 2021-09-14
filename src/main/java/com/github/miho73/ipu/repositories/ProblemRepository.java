@@ -10,10 +10,7 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.List;
 import java.util.Vector;
 
@@ -57,7 +54,13 @@ public class ProblemRepository {
 
         List<Problem> pList = new Vector<>();
         while (rs.next()) {
-            pList.add(new Problem(rs.getLong("problem_code"), rs.getString("problem_name"), rs.getString("problem_category"), rs.getString("problem_difficulty"), rs.getString("tags")));
+            Problem problem = new Problem();
+            problem.setCode(rs.getLong("problem_code"));
+            problem.setName(rs.getString("problem_name"));
+            problem.setCategory(rs.getString("problem_category"));
+            problem.setDifficulty(rs.getString("problem_difficulty"));
+            problem.setTags(rs.getString("tags"));
+            pList.add(problem);
         }
         return pList;
     }
@@ -70,15 +73,40 @@ public class ProblemRepository {
 
         if(!rs.next()) return null;
 
-        return new Problem(
-                rs.getLong("problem_code"),
-                rs.getString("problem_name"),
-                rs.getString("problem_content"),
-                rs.getString("problem_solution"),
-                rs.getString("problem_answer"),
-                rs.getString("problem_hint"),
-                rs.getString("extr_tabs"),
-                rs.getBoolean("has_hint")
-        );
+        Problem problem = new Problem();
+        problem.setCode(rs.getLong("problem_code"));
+        problem.setName(rs.getString("problem_name"));
+        problem.setContent(rs.getString("problem_content"));
+        problem.setSolution(rs.getString("problem_solution"));
+        problem.setAnswer(rs.getString("problem_answer"));
+        problem.setHint(rs.getString("problem_hint"));
+        problem.setExternalTabs(rs.getString("extr_tabs"));
+        problem.setHasHint(rs.getBoolean("has_hint"));
+        return problem;
+    }
+
+    public void registerProblem(Problem problem, String auther) throws SQLException {
+        String sql = "INSERT INTO prob" +
+                "(problem_name, problem_category, problem_difficulty, problem_content, problem_solution, problem_answer, problem_hint, author_name, added_at, last_modified, extr_tabs, has_hint, tags) VALUES " +
+                "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
+        PreparedStatement psmt = conn.prepareStatement(sql);
+        psmt.setString(1, problem.getName());
+        psmt.setString(2, problem.getCategoryCode());
+        psmt.setString(3, problem.getDifficultyCode());
+        psmt.setString(4, problem.getContent());
+        psmt.setString(5, problem.getSolution());
+        psmt.setString(6, problem.getAnswer());
+        psmt.setString(7, problem.getHint());
+        psmt.setString(8, auther);
+        psmt.setTimestamp(9, timestamp);
+        psmt.setTimestamp(10, timestamp);
+        psmt.setString(11, problem.getExternalTabs());
+        psmt.setBoolean(12, problem.isHasHint());
+        psmt.setString(13, problem.getTags());
+
+        psmt.execute();
     }
 }

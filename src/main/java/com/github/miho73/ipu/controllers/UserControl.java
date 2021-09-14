@@ -159,6 +159,10 @@ public class UserControl {
             model.addAttribute("error_text", "유효하지 않은 초대코드입니다. 다시 시도해주세요.");
             return "auth/signup";
         }
+        if(result == UserService.SIGNUP_RESULT.DUPLICATED_ID) {
+            model.addAttribute("error_text", "이미 사용중인 ID 입니다. 다른 ID를 골라주세요.");
+            return "auth/signup";
+        }
         return "redirect:/";
     }
 

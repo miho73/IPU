@@ -2,8 +2,10 @@ package com.github.miho73.ipu.library.security;
 
 import com.github.miho73.ipu.exceptions.InvalidInputException;
 import com.github.miho73.ipu.library.Operations;
+import org.apache.tomcat.util.buf.Utf8Decoder;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Base64.Encoder;
 import java.util.Base64.Decoder;
@@ -24,7 +26,7 @@ public class SHA {
     }
 
     private String doHash(String msg, byte[] saltByte) throws NoSuchAlgorithmException, InvalidInputException {
-        byte[] msgByte = Base64.getDecoder().decode(msg);
+        byte[] msgByte = msg.getBytes(StandardCharsets.UTF_8);
 
         MessageDigest md = MessageDigest.getInstance("SHA-512");
         md.reset();

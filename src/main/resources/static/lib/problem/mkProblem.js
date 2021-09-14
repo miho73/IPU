@@ -197,22 +197,22 @@ function confirme() {
     }
     $.ajax({
         type: 'POST',
-        url: '/problem/make/register',
+        url: '/problem/register',
         data: {
-            title: namep,
+            name: namep,
             cate: cat.value,
-            difficult: dif.value,
+            diff: dif.value,
             cont: content,
-            expl: exp,
+            solu: exp,
             answ: ans,
             hint: hintx,
-            hashint: document.getElementById('hashint').checked,
+            hasH: document.getElementById('hashint').checked,
             extr: JSON.stringify(tabs),
             tags: JSON.stringify(tag)
         },
         success: function(data) {
             window.onbeforeunload = undefined;
-            window.location.href = "/problem/latest";
+            window.location.href = "/problem";
         },
         error: function(err) {
             if(err.status == 403) {

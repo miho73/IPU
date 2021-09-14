@@ -1,28 +1,32 @@
 package com.github.miho73.ipu.domain;
 
 public class Problem {
+    public enum PROBLEM_DIFFICULTY {
+        UNRATED,
+        BRONZE,
+        SILVER,
+        GOLD,
+        SAPPHIRE,
+        RUBY,
+        DIAMOND
+    }
+    public enum PROBLEM_CATEGORY {
+        ALGEBRA,
+        NUMERIC_THEORY,
+        COMBINATORICS,
+        GEOMETRY,
+        PHYSICS,
+        CHEMISTRY,
+        BIOLOGY,
+        EARTH_SCIENCE
+    }
     private long code;
-    private String name, category, difficulty, content, solution, answer, hint, extrTabs, tags;
+    private String name;
+    private PROBLEM_DIFFICULTY difficulty;
+    private PROBLEM_CATEGORY category;
+    private String content, solution, answer, hint;
     private boolean hasHint;
-
-    public Problem(long code, String name, String category, String difficulty, String tags) {
-        this.code = code;
-        this.name = name;
-        this.category = category;
-        this.difficulty = difficulty;
-        this.tags = tags;
-    }
-
-    public Problem(long code, String name, String content, String solution, String answer, String hint, String extrTabs, boolean hasHint) {
-        this.code = code;
-        this.name = name;
-        this.content = content;
-        this.solution = solution;
-        this.answer = answer;
-        this.hint = hint;
-        this.extrTabs = extrTabs;
-        this.hasHint = hasHint;
-    }
+    private String externalTabs, tags;
 
     public long getCode() {
         return code;
@@ -38,18 +42,64 @@ public class Problem {
         this.name = name;
     }
 
-    public String getCategory() {
-        return category;
-    }
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public String getDifficulty() {
+    public PROBLEM_DIFFICULTY getDifficulty() {
         return difficulty;
     }
-    public void setDifficulty(String difficulty) {
+    public String getDifficultyCode() {
+        return switch (difficulty) {
+            case UNRATED  -> "unra";
+            case BRONZE   -> "broz";
+            case SILVER   -> "silv";
+            case GOLD     -> "gold";
+            case SAPPHIRE -> "sapp";
+            case RUBY     -> "ruby";
+            case DIAMOND  -> "diam";
+        };
+    }
+    public void setDifficulty(PROBLEM_DIFFICULTY difficulty) {
         this.difficulty = difficulty;
+    }
+    public void setDifficulty(String difficulty) {
+        switch (difficulty) {
+            case "unra" -> setDifficulty(PROBLEM_DIFFICULTY.UNRATED);
+            case "broz" -> setDifficulty(PROBLEM_DIFFICULTY.BRONZE);
+            case "silv" -> setDifficulty(PROBLEM_DIFFICULTY.SILVER);
+            case "gold" -> setDifficulty(PROBLEM_DIFFICULTY.GOLD);
+            case "sapp" -> setDifficulty(PROBLEM_DIFFICULTY.SAPPHIRE);
+            case "ruby" -> setDifficulty(PROBLEM_DIFFICULTY.RUBY);
+            case "diam" -> setDifficulty(PROBLEM_DIFFICULTY.DIAMOND);
+        }
+    }
+
+    public PROBLEM_CATEGORY getCategory() {
+        return category;
+    }
+    public String getCategoryCode() {
+        return switch (category) {
+            case ALGEBRA        -> "alge";
+            case NUMERIC_THEORY -> "numb";
+            case COMBINATORICS  -> "comb";
+            case GEOMETRY       -> "geom";
+            case PHYSICS        -> "phys";
+            case CHEMISTRY      -> "chem";
+            case BIOLOGY        -> "biol";
+            case EARTH_SCIENCE  -> "eart";
+        };
+    }
+    public void setCategory(PROBLEM_CATEGORY category) {
+        this.category = category;
+    }
+    public void setCategory(String category) {
+        switch (category) {
+            case "alge" -> setCategory(PROBLEM_CATEGORY.ALGEBRA);
+            case "numb" -> setCategory(PROBLEM_CATEGORY.NUMERIC_THEORY);
+            case "comb" -> setCategory(PROBLEM_CATEGORY.COMBINATORICS);
+            case "geom" -> setCategory(PROBLEM_CATEGORY.GEOMETRY);
+            case "phys" -> setCategory(PROBLEM_CATEGORY.PHYSICS);
+            case "chem" -> setCategory(PROBLEM_CATEGORY.CHEMISTRY);
+            case "biol" -> setCategory(PROBLEM_CATEGORY.BIOLOGY);
+            case "eart" -> setCategory(PROBLEM_CATEGORY.EARTH_SCIENCE);
+        }
     }
 
     public String getContent() {
@@ -80,18 +130,18 @@ public class Problem {
         this.hint = hint;
     }
 
-    public String getExtrTabs() {
-        return extrTabs;
-    }
-    public void setExtrTabs(String extrTabs) {
-        this.extrTabs = extrTabs;
-    }
-
     public boolean isHasHint() {
         return hasHint;
     }
     public void setHasHint(boolean hasHint) {
         this.hasHint = hasHint;
+    }
+
+    public String getExternalTabs() {
+        return externalTabs;
+    }
+    public void setExternalTabs(String externalTabs) {
+        this.externalTabs = externalTabs;
     }
 
     public String getTags() {

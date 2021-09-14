@@ -12,8 +12,13 @@ import java.util.Map;
 
 @Service("SessionService")
 public class SessionService {
+    /**
+     * Check login
+     * @param session session of user to check login.
+     * @return true if logged in. Otherwise, false.
+     */
     public boolean checkLogin(HttpSession session) {
-        if(session == null) return true;
+        if(session == null) return false;
         Object logged = session.getAttribute("isLoggedIn");
         if(logged == null) return false;
         return (boolean)logged;
@@ -29,9 +34,18 @@ public class SessionService {
         session.setAttribute("code", user.getCode());
         session.setAttribute("name", user.getName());
     }
-
     public User getUserData(HttpSession session) {
         return new User((String)session.getAttribute("id"), (String)session.getAttribute("name"), (String)session.getAttribute("privilege"));
+    }
+
+    public String getName(HttpSession session) {
+        return (String)session.getAttribute("name");
+    }
+    public String getId(HttpSession session) {
+        return (String)session.getAttribute("id");
+    }
+    public long getCode(HttpSession session) {
+        return (long)session.getAttribute("code");
     }
 
     public void loadSessionToModel(HttpSession session, Model model) {
@@ -58,7 +72,6 @@ public class SessionService {
     public boolean hasPrivilege(PRIVILEGES p, HttpSession session) {
         String priv = (String)session.getAttribute("privilege");
         if(priv == null) return false;
-        System.out.println(priv);
         if(priv.contains("s")) return true;
         return switch (p) {
             case USER -> priv.contains("u");
