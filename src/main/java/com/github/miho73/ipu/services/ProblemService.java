@@ -39,11 +39,17 @@ public class ProblemService {
         return root;
     }
 
-    public Problem getProblem(int code) throws SQLException {
+    public Problem getProblem(long code) throws SQLException {
         return problemRepository.getProblem(code);
+    }
+    public Problem getFullProblem(long code) throws SQLException {
+        return problemRepository.getFullProblem(code);
     }
 
     public void registerProblem(Problem problem, HttpSession session) throws SQLException {
         problemRepository.registerProblem(problem, sessionService.getName(session));
+    }
+    public void updateProblem(Problem problem) throws SQLException {
+        problemRepository.updateProblem(problem);
     }
 }

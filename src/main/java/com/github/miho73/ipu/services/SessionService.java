@@ -12,6 +12,8 @@ import java.util.Map;
 
 @Service("SessionService")
 public class SessionService {
+    private final Logger LOGGER = LoggerFactory.getLogger(UserControl.class);
+
     /**
      * Check login
      * @param session session of user to check login.
@@ -69,11 +71,19 @@ public class SessionService {
         INVITE_CODES,
         SUPERUSER
     }
+
+    /**
+     * Check privilege of user via session privilege
+     * @param p required privilege
+     * @param session session of user want to check
+     * @return True if user don't have sufficient privilege. If user have access, return false
+     */
     public boolean hasPrivilege(PRIVILEGES p, HttpSession session) {
         String priv = (String)session.getAttribute("privilege");
-        if(priv == null) return false;
-        if(priv.contains("s")) return true;
-        return switch (p) {
+        LOGGER.debug("Privilege check: \""+priv+"\". "+p+" required to access.");
+        if(priv == null) return true;
+        if(priv.contains("s")) return false;
+        return !switch (p) {
             case USER -> priv.contains("u");
             case PROBLEM_MAKE -> priv.contains("p");
             case INVITE_CODES -> priv.contains("m");

@@ -65,10 +65,10 @@ public class ProblemRepository {
         return pList;
     }
 
-    public Problem getProblem(int code) throws SQLException {
+    public Problem getProblem(long code) throws SQLException {
         String sql = "SELECT problem_code, problem_name, problem_content, problem_solution, problem_answer, problem_hint, extr_tabs, has_hint FROM prob WHERE problem_code=?;";
         PreparedStatement psmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-        psmt.setInt(1, code);
+        psmt.setLong(1, code);
         ResultSet rs = psmt.executeQuery();
 
         if(!rs.next()) return null;
@@ -81,6 +81,29 @@ public class ProblemRepository {
         problem.setAnswer(rs.getString("problem_answer"));
         problem.setHint(rs.getString("problem_hint"));
         problem.setExternalTabs(rs.getString("extr_tabs"));
+        problem.setHasHint(rs.getBoolean("has_hint"));
+        return problem;
+    }
+
+    public Problem getFullProblem(long code) throws SQLException {
+        String sql = "SELECT * FROM prob WHERE problem_code=?;";
+        PreparedStatement psmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        psmt.setLong(1, code);
+        ResultSet rs = psmt.executeQuery();
+
+        if(!rs.next()) return null;
+
+        Problem problem = new Problem();
+        problem.setCode(rs.getLong("problem_code"));
+        problem.setName(rs.getString("problem_name"));
+        problem.setDifficulty(rs.getString("problem_difficulty"));
+        problem.setCategory(rs.getString("problem_category"));
+        problem.setContent(rs.getString("problem_content"));
+        problem.setSolution(rs.getString("problem_solution"));
+        problem.setAnswer(rs.getString("problem_answer"));
+        problem.setHint(rs.getString("problem_hint"));
+        problem.setExternalTabs(rs.getString("extr_tabs"));
+        problem.setTags(rs.getString("tags"));
         problem.setHasHint(rs.getBoolean("has_hint"));
         return problem;
     }
@@ -106,6 +129,39 @@ public class ProblemRepository {
         psmt.setString(11, problem.getExternalTabs());
         psmt.setBoolean(12, problem.isHasHint());
         psmt.setString(13, problem.getTags());
+
+        psmt.execute();
+    }
+    public void updateProblem(Problem problem) throws SQLException {
+        String sql = "UPDATE prob SET " +
+                "problem_name=?,"+
+                "problem_category=?,"+
+                "problem_difficulty=?,"+
+                "problem_content=?,"+
+                "problem_solution=?,"+
+                "problem_answer=?,"+
+                "problem_hint=?,"+
+                "last_modified=?," +
+                "extr_tabs=?," +
+                "has_hint=?," +
+                "tags=?" +
+                " WHERE problem_code=?;";
+
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
+        PreparedStatement psmt = conn.prepareStatement(sql);
+        psmt.setString(1, problem.getName());
+        psmt.setString(2, problem.getCategoryCode());
+        psmt.setString(3, problem.getDifficultyCode());
+        psmt.setString(4, problem.getContent());
+        psmt.setString(5, problem.getSolution());
+        psmt.setString(6, problem.getAnswer());
+        psmt.setString(7, problem.getHint());
+        psmt.setTimestamp(8, timestamp);
+        psmt.setString(9, problem.getExternalTabs());
+        psmt.setBoolean(10, problem.isHasHint());
+        psmt.setString(11, problem.getTags());
+        psmt.setLong(12, problem.getCode());
 
         psmt.execute();
     }

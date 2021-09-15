@@ -7,6 +7,7 @@ import com.github.miho73.ipu.repositories.UserRepository;
 import com.github.miho73.ipu.services.ProblemService;
 import com.github.miho73.ipu.services.SessionService;
 import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,7 +55,7 @@ public class ProblemControl {
 
     @GetMapping("/{pCode}")
     public String getProblem(@PathVariable("pCode") String code, Model model, HttpSession session) throws SQLException {
-        Problem problem = problemService.getProblem(Integer.parseInt(code));
+        Problem problem = problemService.getProblem(Long.parseLong(code));
         sessionService.loadSessionToModel(session, model);
         model.addAllAttributes(Map.of(
                 "pCode", problem.getCode(),
@@ -72,7 +73,7 @@ public class ProblemControl {
     @GetMapping("/make")
     public String problemMake(Model model, HttpSession session, HttpServletResponse response) throws IOException {
         sessionService.loadSessionToModel(session, model);
-        if(!sessionService.hasPrivilege(SessionService.PRIVILEGES.PROBLEM_MAKE, session)) {
+        if(sessionService.hasPrivilege(SessionService.PRIVILEGES.PROBLEM_MAKE, session)) {
             response.sendError(404);
             return null;
         }
@@ -80,7 +81,7 @@ public class ProblemControl {
     }
     @PostMapping("/register")
     public String problemRegister(HttpServletRequest request, Model model, HttpSession session, HttpServletResponse response) throws SQLException, IOException {
-        if(!sessionService.hasPrivilege(SessionService.PRIVILEGES.PROBLEM_MAKE, session)) {
+        if(sessionService.hasPrivilege(SessionService.PRIVILEGES.PROBLEM_MAKE, session)) {
             response.sendError(404);
             return null;
         }
@@ -99,12 +100,66 @@ public class ProblemControl {
         return "redirect:/problem";
     }
 
+    @GetMapping("/edit/{pCode}")
+    public String editProblem(@PathVariable("pCode") String code, Model model, HttpSession session, HttpServletResponse response) throws IOException {
+        sessionService.loadSessionToModel(session, model);
+        if(sessionService.hasPrivilege(SessionService.PRIVILEGES.PROBLEM_MAKE, session)) {
+            response.sendError(404);
+            return null;
+        }
+        long pCode = Long.parseLong(code);
+        model.addAttribute("prob_code", code);
+        return "problem/editProblem";
+    }
+
+    @PostMapping(value = "/api/get-detail", produces = "application/json; charset=utf-8")
+    @ResponseBody
+    public String problemDetail(HttpServletRequest request, HttpServletResponse response) throws SQLException {
+        long code = Long.parseLong(request.getParameter("code"));
+        JSONObject detail = new JSONObject();
+        Problem problem = problemService.getFullProblem(code);
+        detail.put("cate", problem.getCategoryCode());
+        detail.put("diff", problem.getDifficultyCode());
+        detail.put("hashint", problem.isHasHint());
+        detail.put("prob_ans", problem.getAnswer());
+        detail.put("prob_cont", problem.getContent());
+        detail.put("prob_exp", problem.getSolution());
+        detail.put("prob_hint", problem.getHint());
+        detail.put("prob_name", problem.getName());
+        detail.put("spec", problem.getExternalTabs());
+        detail.put("tags", problem.getTags());
+        return detail.toString();
+    }
+
+    @PostMapping("/update")
+    @ResponseBody
+    public String problemUpdate(HttpServletRequest request, Model model, HttpSession session, HttpServletResponse response) throws SQLException, IOException {
+        if(sessionService.hasPrivilege(SessionService.PRIVILEGES.PROBLEM_MAKE, session)) {
+            response.sendError(404);
+            return null;
+        }
+        Problem problem = new Problem();
+        problem.setCode        (Long.parseLong(request.getParameter("code")));
+        problem.setName        (request.getParameter("name"));
+        problem.setCategory    (request.getParameter("cate"));
+        problem.setDifficulty  (request.getParameter("diff"));
+        problem.setContent     (request.getParameter("cont"));
+        problem.setSolution    (request.getParameter("solu"));
+        problem.setAnswer      (request.getParameter("answ"));
+        problem.setHint        (request.getParameter("hint"));
+        problem.setHasHint     (request.getParameter("hasH").equals("true"));
+        problem.setExternalTabs(request.getParameter("extr"));
+        problem.setTags        (request.getParameter("tags"));
+        problemService.updateProblem(problem);
+        return "/problem/"+problem.getCode();
+    }
+
     @PostMapping("/api/solrep")
     @Transactional
     @ResponseBody
     //TODO: Implement transaction
     public String registerSolve(HttpServletRequest request, HttpSession session, HttpServletResponse response) throws SQLException {
-        if(!sessionService.checkLogin(session) || !sessionService.hasPrivilege(SessionService.PRIVILEGES.USER, session)) {
+        if(!sessionService.checkLogin(session) || sessionService.hasPrivilege(SessionService.PRIVILEGES.USER, session)) {
             return "forb";
         }
 

@@ -1,12 +1,13 @@
 var timex = 0;
 var timer;
 
-function onload(spec) {
+function onload(specx) {
     let toAdd = gei('custom-tabs');
     let div = document.createElement('hr');
     div.classList.add('prob-hr');
     let divProb = document.createElement('hr');
     divProb.classList.add('prob-div-hr');
+    spec = JSON.parse(specx);
     spec.forEach(spe => {
         let title = document.createElement('span');
         let cont = document.createElement('div');

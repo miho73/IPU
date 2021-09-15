@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="ko" xmlns:th="https://www.thymeleaf.org">
+<html lang="ko" xmlns:th="https://www.thymel    eaf.org">
     <head>
         <title th:text="${pName+' - IPU '+pCode+'번'}"></title>
         <th:block th:replace="fragments/header-comp.html :: header-comp"></th:block>
@@ -19,7 +19,7 @@
     <div th:replace="/fragments/header.html :: navigation"></div>
         <div id="problem-container">
             <div>
-                <a th:href="${'/problem/'+pCode+'/edit'}" id="edit-href-title">
+                <a th:href="${'/problem/edit/'+pCode}" id="edit-href-title">
                     <h1 id="prob-title" th:text="${pName}"></h1>
                 </a>
             </div>
