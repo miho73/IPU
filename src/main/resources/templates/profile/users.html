@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 
-<html>
+<html lang="ko" xmlns:th="https://www.thymeleaf.org">
     <head>
         <title>랭킹 - IPU</title>
-        <%- include('../ejs-components/header-comp.ejs')%>
+        <th:block th:replace="fragments/header-comp.html :: header-comp"></th:block>
         <meta property="og:title" content="IPU - 랭킹">
         <meta name="twitter:title" content="IPU - 랭킹">
         <meta name="description" content="IPU - 랭킹">
@@ -15,7 +15,7 @@
         <script src="/lib/users/usr.js"></script>
     </head>
     <body onload="load()">
-        <%- include('../ejs-components/header.ejs')%>
+        <th:block th:replace="/fragments/header.html :: navigation"></th:block>
         <div class="non-container">
             <h1 id="title">랭킹</h1>
         </div>

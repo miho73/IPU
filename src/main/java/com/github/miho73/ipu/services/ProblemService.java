@@ -1,7 +1,10 @@
 package com.github.miho73.ipu.services;
 
+import com.github.miho73.ipu.library.ExperienceSystem;
 import com.github.miho73.ipu.repositories.ProblemRepository;
 import com.github.miho73.ipu.domain.Problem;
+import com.github.miho73.ipu.repositories.SolutionRepository;
+import com.github.miho73.ipu.repositories.UserRepository;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,15 +18,21 @@ import java.util.Map;
 @Service("ProblemService")
 public class ProblemService {
     private final ProblemRepository problemRepository;
+    private final SolutionRepository solutionRepository;
+    private final UserRepository userRepository;
     private final SessionService sessionService;
+    private final ExperienceSystem experienceSystem;
 
     @Autowired
-    public ProblemService(ProblemRepository problemRepository, SessionService sessionService) {
+    public ProblemService(ProblemRepository problemRepository, SessionService sessionService, SolutionRepository solutionRepository, UserRepository userRepository, ExperienceSystem experienceSystem) {
         this.problemRepository = problemRepository;
         this.sessionService = sessionService;
+        this.solutionRepository = solutionRepository;
+        this.userRepository = userRepository;
+        this.experienceSystem = experienceSystem;
     }
 
-    public JSONArray getProblemList(int from, int length) throws SQLException {
+    public JSONArray getProblemList(long from, long length) throws SQLException {
         JSONArray root = new JSONArray();
         List<Problem> problems = problemRepository.getProblemBriefly(from, length);
         for(Problem problem : problems) {
@@ -51,5 +60,14 @@ public class ProblemService {
     }
     public void updateProblem(Problem problem) throws SQLException {
         problemRepository.updateProblem(problem);
+    }
+
+    public void registerSolution(long code, long time, boolean result, long userCode) throws SQLException {
+        solutionRepository.addSolution(code, time, result, userCode);
+        Problem.PROBLEM_DIFFICULTY difficulty = problemRepository.getProblemSimple(code).getDifficulty();
+        long solves = solutionRepository.getNumberOfSolves(userCode, code);
+        long exp = experienceSystem.getExp(difficulty, solves);
+        if(!result) exp=experienceSystem.toWa(exp, difficulty);
+        userRepository.addExperience(exp, userCode);
     }
 }

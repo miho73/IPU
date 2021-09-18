@@ -1,53 +1,35 @@
 package com.github.miho73.ipu.services;
 
-import com.github.miho73.ipu.domain.LoginForm;
+import com.github.miho73.ipu.domain.Problem;
 import com.github.miho73.ipu.domain.User;
-import com.github.miho73.ipu.exceptions.InvalidInputException;
-import com.github.miho73.ipu.library.security.Captcha;
-import com.github.miho73.ipu.library.security.SHA;
-import com.github.miho73.ipu.library.security.SecureTools;
+import com.github.miho73.ipu.repositories.ProblemRepository;
 import com.github.miho73.ipu.repositories.SolutionRepository;
 import com.github.miho73.ipu.repositories.UserRepository;
+import org.apache.tomcat.util.json.JSONParser;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Base64;
-import java.util.Date;
-import java.util.TimeZone;
+import java.util.List;
+import java.util.Map;
 
 @Service("UserService")
 public class UserService {
     private final UserRepository userRepository;
+    private final ProblemRepository problemRepository;
     private final SolutionRepository solutionRepository;
-    private final SHA sha;
-    private final Captcha captcha;
-    private final SessionService sessionService;
-    private final InviteService inviteService;
 
     private final Logger LOGGER = LoggerFactory.getLogger(UserRepository.class);
-    private TimeZone tz = TimeZone.getTimeZone("UTC");
-    private final DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
 
     @Autowired
-    public UserService(UserRepository userRepository, SHA sha, Captcha captcha, SessionService sessionService, InviteService inviteService, SolutionRepository solutionRepository) {
+    public UserService(UserRepository userRepository, SolutionRepository solutionRepository, ProblemRepository problemRepository) {
         this.userRepository = userRepository;
-        this.sha = sha;
-        this.captcha = captcha;
-        this.sessionService = sessionService;
-        this.inviteService = inviteService;
         this.solutionRepository = solutionRepository;
-
-        df.setTimeZone(tz);
+        this.problemRepository = problemRepository;
     }
 
     public User getUserByCode(long code) throws SQLException {
@@ -58,84 +40,50 @@ public class UserService {
         return userRepository.getUserById(id);
     }
 
-    public enum LOGIN_RESULT {
-        OK,
-        BAD_PASSWORD,
-        ID_NOT_FOUND,
-        INVALID_INPUT,
-        CAPTCHA_FAILED,
+    public String getUserRanking(long len) throws SQLException {
+        List<User> users =  userRepository.getUserRanking(len);
+        JSONArray uLst = new JSONArray();
+        users.forEach((user)->{
+            JSONObject usr = new JSONObject();
+            usr.put("uname", user.getName());
+            usr.put("bio", user.getBio());
+            usr.put("exp", user.getExperience());
+            usr.put("id", user.getId());
+            uLst.put(usr);
+        });
+        return uLst.toString();
     }
 
-    public LOGIN_RESULT checkLogin(LoginForm form, HttpSession session) throws SQLException, NoSuchAlgorithmException, InvalidInputException, IOException {
-        if(form.getId().equals("") || form.getPassword().equals("")) throw new InvalidInputException("");
+    public User getProfileById(String id) throws SQLException {
+        return userRepository.getProfileById(id);
+    }
 
-        boolean captchaFlag = false;
-        if(form.getgVers().equals("v3") && captcha.getV3Result(form.getgToken())) captchaFlag = true;
-        else if(form.getgVers().equals("v2") && captcha.getV2Result(form.getgToken())) captchaFlag = true;
-
-        if (captchaFlag) {
-            User user = userRepository.getUserForAuthentication(form.getId());
-            if (user == null) {
-                LOGGER.debug("Login attempt: id=" + form.getId() + ", result=id not found");
-                return LOGIN_RESULT.ID_NOT_FOUND;
+    public String getSolved(long frm, long len, String id) throws SQLException {
+        long uCode = (long) userRepository.getUserDataById(id, "user_code");
+        JSONArray arr = solutionRepository.getSolved(frm, len, uCode);
+        JSONArray cpy = new JSONArray();
+        arr.forEach((con)->{
+            Problem problem = null;
+            long pCode = ((JSONObject)con).getLong("code");
+            try {
+                problem = problemRepository.getProblemSimple(pCode);
+            } catch (SQLException e) {
+                LOGGER.debug("Fail to get problem data from solve history. pCode="+pCode);
             }
-            String hash = sha.SHA512(form.getPassword(), user.getSalt());
-            if (user.getPwd().equals(hash)) {
-                LOGGER.debug("Login attempt: id=" + form.getId() + ", result=ok");
-                user = userRepository.getUserById(form.getId());
-                LOGGER.debug("Queried user data to set session. id "+form.getId());
-                userRepository.updateUserTSById(form.getId(), "last_login", new Timestamp(System.currentTimeMillis()));
-                LOGGER.debug("Updated last login. id "+form.getId());
-                sessionService.setAttribute(session, "isLoggedIn", true);
-                sessionService.setUserSession(session, user);
-                LOGGER.debug("Set session for session id "+session.getId());
-                return LOGIN_RESULT.OK;
-            }
-            LOGGER.debug("Login attempt: id=" + form.getId() + ", result=wrong password");
-            return LOGIN_RESULT.BAD_PASSWORD;
-        } else {
-            LOGGER.debug("Login attempt: id=" + form.getId() + ", result=CAPTCHA failed");
-            return LOGIN_RESULT.CAPTCHA_FAILED;
-        }
-    }
-
-    private boolean IdDuplicationTest(String id) throws SQLException {
-        Object code = userRepository.getUserDataById(id, "user_code");
-        return code==null;
-    }
-
-    public enum SIGNUP_RESULT {
-        OK,
-        CAPTCHA_FAILED,
-        INVALID_INVITE,
-        DUPLICATED_ID
-    }
-
-    @Transactional
-    //TODO: If one of entire user-add procedure makes error? Transaction required.
-    public SIGNUP_RESULT addUser(User user, String captchaToken) throws SQLException, NoSuchAlgorithmException, InvalidInputException, IOException {
-        if(!captcha.getV2Result(captchaToken)) {
-            LOGGER.debug("Signup request: id="+user.getId()+", name="+user.getName()+", result=CAPTCHA failed");
-            return SIGNUP_RESULT.CAPTCHA_FAILED;
-        }
-        if(!inviteService.checkExists(user.getInviteCode())) {
-            LOGGER.debug("Signup request: id="+user.getId()+", name="+user.getName()+", result=Invalid invite");
-            return SIGNUP_RESULT.INVALID_INVITE;
-        }
-        if(!IdDuplicationTest(user.getId())) {
-            LOGGER.debug("Signup request: id="+user.getId()+", name="+user.getName()+", result=ID Duplicated");
-            return SIGNUP_RESULT.DUPLICATED_ID;
-        }
-
-        byte[] salt = SecureTools.getSecureRandom(64);
-        String hash = sha.SHA512(user.getPwd(), salt);
-        user.setPwd(hash);
-        user.setSalt(Base64.getEncoder().encodeToString(salt));
-        userRepository.addUser(user);
-        long code = (long) userRepository.getUserDataById(user.getId(), "user_code");
-        solutionRepository.addUser(code);
-        LOGGER.debug("Signup request: id="+user.getId()+", name="+user.getName()+", result=ok");
-        return SIGNUP_RESULT.OK;
+            assert problem != null;
+            JSONArray tags = new JSONArray(problem.getTags());
+            tags.put(new JSONObject(Map.of(
+                    "key", "cate",
+                    "content", problem.getCategoryCode()
+            )));
+            tags.put(new JSONObject(Map.of(
+                    "key", "diff",
+                    "content", problem.getDifficultyCode()
+            )));
+            ((JSONObject)con).put("name", problem.getName());
+            ((JSONObject)con).put("tags", tags);
+            cpy.put(con);
+        });
+        return cpy.toString();
     }
 }
-

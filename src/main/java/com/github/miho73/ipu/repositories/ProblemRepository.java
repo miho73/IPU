@@ -45,11 +45,27 @@ public class ProblemRepository {
         conn.close();
     }
 
-    public List<Problem> getProblemBriefly(int from, int len) throws SQLException {
+    public Problem getProblemSimple(long pCode) throws SQLException {
+        String sql = "SELECT problem_name, problem_category, problem_difficulty, tags FROM prob WHERE problem_code=?;";
+        PreparedStatement psmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        psmt.setLong(1, pCode);
+        ResultSet rs = psmt.executeQuery();
+
+        if(!rs.next()) return null;
+
+        Problem ret = new Problem();
+        ret.setName(rs.getString("problem_name"));
+        ret.setCategory(rs.getString("problem_category"));
+        ret.setDifficulty(rs.getString("problem_difficulty"));
+        ret.setTags(rs.getString("tags"));
+        return ret;
+    }
+
+    public List<Problem> getProblemBriefly(long from, long len) throws SQLException {
         String sql = "SELECT problem_code, problem_name, problem_category, problem_difficulty, tags FROM prob WHERE problem_code>=? ORDER BY problem_code LIMIT ?;";
         PreparedStatement psmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-        psmt.setInt(1, from);
-        psmt.setInt(2, len);
+        psmt.setLong(1, from);
+        psmt.setLong(2, len);
         ResultSet rs = psmt.executeQuery();
 
         List<Problem> pList = new Vector<>();

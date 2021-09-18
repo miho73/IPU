@@ -2,6 +2,7 @@ package com.github.miho73.ipu.domain;
 
 public class Problem {
     public enum PROBLEM_DIFFICULTY {
+        UNSET,
         UNRATED,
         BRONZE,
         SILVER,
@@ -11,6 +12,7 @@ public class Problem {
         DIAMOND
     }
     public enum PROBLEM_CATEGORY {
+        MULTIPLE,
         ALGEBRA,
         NUMERIC_THEORY,
         COMBINATORICS,
@@ -47,6 +49,7 @@ public class Problem {
     }
     public String getDifficultyCode() {
         return switch (difficulty) {
+            case UNSET    -> "unse";
             case UNRATED  -> "unra";
             case BRONZE   -> "broz";
             case SILVER   -> "silv";
@@ -61,6 +64,7 @@ public class Problem {
     }
     public void setDifficulty(String difficulty) {
         switch (difficulty) {
+            case "unse" -> setDifficulty(PROBLEM_DIFFICULTY.UNSET);
             case "unra" -> setDifficulty(PROBLEM_DIFFICULTY.UNRATED);
             case "broz" -> setDifficulty(PROBLEM_DIFFICULTY.BRONZE);
             case "silv" -> setDifficulty(PROBLEM_DIFFICULTY.SILVER);
@@ -76,6 +80,7 @@ public class Problem {
     }
     public String getCategoryCode() {
         return switch (category) {
+            case MULTIPLE       -> "mult";
             case ALGEBRA        -> "alge";
             case NUMERIC_THEORY -> "numb";
             case COMBINATORICS  -> "comb";
@@ -91,6 +96,7 @@ public class Problem {
     }
     public void setCategory(String category) {
         switch (category) {
+            case "mult" -> setCategory(PROBLEM_CATEGORY.MULTIPLE);
             case "alge" -> setCategory(PROBLEM_CATEGORY.ALGEBRA);
             case "numb" -> setCategory(PROBLEM_CATEGORY.NUMERIC_THEORY);
             case "comb" -> setCategory(PROBLEM_CATEGORY.COMBINATORICS);

@@ -1,7 +1,6 @@
 package com.github.miho73.ipu.controllers;
 
 import com.github.miho73.ipu.domain.Problem;
-import com.github.miho73.ipu.domain.ProblemListAPI;
 import com.github.miho73.ipu.repositories.SolutionRepository;
 import com.github.miho73.ipu.repositories.UserRepository;
 import com.github.miho73.ipu.services.ProblemService;
@@ -21,20 +20,19 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Map;
+import java.util.logging.Logger;
 
 @Controller("ProblemControl")
 @RequestMapping("/problem")
 public class ProblemControl {
     private final ProblemService problemService;
     private final SessionService sessionService;
-    private final SolutionRepository solutionRepository;
     private final UserRepository userRepository;
 
     @Autowired
-    public ProblemControl(ProblemService problemService, SessionService sessionService, SolutionRepository solutionRepository, UserRepository userRepository) {
+    public ProblemControl(ProblemService problemService, SessionService sessionService, UserRepository userRepository) {
         this.problemService = problemService;
         this.sessionService = sessionService;
-        this.solutionRepository = solutionRepository;
         this.userRepository = userRepository;
     }
 
@@ -45,11 +43,16 @@ public class ProblemControl {
         return "problem/problemList";
     }
 
-    @PostMapping("/api/get")
+    @PostMapping(value = "/api/get", produces = "application/json; charset=utf-8")
     @ResponseBody
-    public String getProblemList(@ModelAttribute ProblemListAPI pla, HttpServletResponse response) throws SQLException {
-        response.setContentType("application/json");
-        JSONArray list = problemService.getProblemList(pla.frm, pla.len);
+    public String getProblemList(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
+        long frm = Long.parseLong(request.getParameter("frm"));
+        long len = Long.parseLong(request.getParameter("len"));
+        if(frm<=0 || len<=0 || len>=60) {
+            response.sendError(400);
+            return null;
+        }
+        JSONArray list = problemService.getProblemList(frm, len);
         return list.toString();
     }
 
@@ -160,6 +163,7 @@ public class ProblemControl {
     //TODO: Implement transaction
     public String registerSolve(HttpServletRequest request, HttpSession session, HttpServletResponse response) throws SQLException {
         if(!sessionService.checkLogin(session) || sessionService.hasPrivilege(SessionService.PRIVILEGES.USER, session)) {
+            response.setStatus(403);
             return "forb";
         }
 
@@ -178,8 +182,7 @@ public class ProblemControl {
         long time = Long.parseLong(request.getParameter("time"));
         boolean result = request.getParameter("res").equals("1");
         long userCode = sessionService.getCode(session);
-
-        solutionRepository.addSolution(code, time, result, userCode);
+        problemService.registerSolution(code, time, result, userCode);
         return "ok";
     }
 }

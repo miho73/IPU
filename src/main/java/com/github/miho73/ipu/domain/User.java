@@ -7,8 +7,12 @@ public class User {
     private String pwd, salt;
     private String privilege;
     private String last_solve;
+    private String bio;
+    private long experience;
 
     private String inviteCode;
+
+    public User() {}
 
     // General purpose
     public User(long code, String id, String name, String privilege, String last_solve) {
@@ -95,5 +99,19 @@ public class User {
     }
     public void setInviteCode(String inviteCode) {
         this.inviteCode = inviteCode;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
+    public long getExperience() {
+        return experience;
+    }
+    public void setExperience(long experience) {
+        this.experience = experience;
     }
 }

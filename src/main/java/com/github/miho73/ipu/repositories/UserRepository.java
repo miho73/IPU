@@ -1,6 +1,8 @@
 package com.github.miho73.ipu.repositories;
 
 import com.github.miho73.ipu.domain.User;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,7 +15,9 @@ import org.springframework.stereotype.Repository;
 import javax.annotation.PostConstruct;
 import java.sql.*;
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.TimeZone;
+import java.util.Vector;
 
 @Repository("UserRepository")
 @PropertySources({
@@ -76,6 +80,21 @@ public class UserRepository {
                 rs.getString("privilege"),
                 rs.getString("last_solve")
         );
+    }
+
+    public User getProfileById(String id) throws SQLException {
+        String sql = "SELECT * FROM iden WHERE user_id=?;";
+        PreparedStatement psmt = conn.prepareStatement(sql);
+        psmt.setString(1, id);
+        ResultSet rs = psmt.executeQuery();
+
+        if(!rs.next()) return null;
+        User user = new User();
+        user.setId(rs.getString("user_id"));
+        user.setName(rs.getString("user_name"));
+        user.setBio(rs.getString("bio"));
+        user.setExperience(rs.getLong("experience"));
+        return user;
     }
 
     // Those two methods return user object for general purpose
@@ -143,5 +162,33 @@ public class UserRepository {
 
         if(!rs.next()) return null;
         return new User(rs.getLong("user_code"), rs.getString("user_id"), rs.getString("user_password"), rs.getString("user_salt"));
+    }
+
+    public List<User> getUserRanking(long len) throws SQLException {
+        String sql = "SELECT user_id, user_name, bio, experience FROM iden ORDER BY experience DESC LIMIT ?;";
+        PreparedStatement psmt = conn.prepareStatement(sql);
+        psmt.setLong(1, len);
+        ResultSet rs = psmt.executeQuery();
+
+        List<User> ret = new Vector<>();
+        while(rs.next()) {
+            User user = new User();
+            user.setId(rs.getString("user_id"));
+            user.setName(rs.getString("user_name"));
+            user.setBio(rs.getString("bio"));
+            user.setExperience(rs.getLong("experience"));
+            ret.add(user);
+        }
+        return ret;
+    }
+
+    public void addExperience(long exp, long userCode) throws SQLException {
+        LOGGER.debug("Add exp to "+userCode+" amount of "+exp);
+        String sql = "UPDATE iden SET experience=((SELECT experience FROM iden WHERE user_code=?)+?) WHERE user_code=?;";
+        PreparedStatement psmt = conn.prepareStatement(sql);
+        psmt.setLong(1, userCode);
+        psmt.setLong(2, exp);
+        psmt.setLong(3, userCode);
+        psmt.execute();
     }
 }

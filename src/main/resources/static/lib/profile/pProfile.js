@@ -4,7 +4,7 @@ function load(pg) {
     let getLen = -1;
     $.ajax({
         type: 'POST',
-        url: '/profile/api/get-solved',
+        url: '/api/get-solved',
         dataType: 'json',
         data: {
             frm: pg*PROBLEM_PER_PAGE+1,

@@ -4,7 +4,7 @@ function load() {
     let getLen = -1;
     $.ajax({
         type: 'POST',
-        url: '/users/api/rank',
+        url: '/api/users',
         dataType: 'json',
         data: {
             len: ACC_PER_PAGE

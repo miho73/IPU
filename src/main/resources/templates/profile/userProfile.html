@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 
-<html>
+<html lang="ko" xmlns:th="https://www.thymeleaf.org">
     <head>
         <title>IPU</title>
-        <%- include('../ejs-components/header-comp.ejs')%>
+        <th:block th:replace="fragments/header-comp.html :: header-comp"></th:block>
         <link rel="stylesheet" type="text/css" href="/lib/profile/profile.css">
         <link rel="stylesheet" type="text/css" href="/lib/table.css">
         <script src="/lib/univ/converter.js"></script>
@@ -14,23 +14,23 @@
         <meta property="og:description" content="<%= username%>의 프로필">
         <meta name="twitter:description" content="<%= username%>의 프로필">
     </head>
-    <body onload="load(<%= pg%>)">
-        <%- include('../ejs-components/header.ejs')%>
+    <body th:onload="load([[${pg}]])">
+        <th:block th:replace="/fragments/header.html :: navigation"></th:block>
         <div class="non-container">
             <div id="headerup">
-                <h1 id="uname"><%=usernameT%></h1>
-                <h3 id="uid"><%=useridT%></h3>
-                <blockquote><%= bioT%></blockquote>
+                <h1 id="uname" th:text="${username}"></h1>
+                <h3 id="uid" th:text="${userId}"></h3>
+                <blockquote th:text="${bio}"></blockquote>
                 <div id="experience-div">
                     <p id="exp-name"></p>
                     <div id="experience" style="background: #000; width: 100%; height: 30px; margin: 0;">
                         <div id="experi-visib" class="prog-exp">
-                            <p class="exp-dis"><%= experience%></p>
+                            <p class="exp-dis" th:text="${experience}"></p>
                         </div>
                     </div>
                     <div id="infp">
-                <p class="exp-dis infp" style="margin-top: 10px; margin-bottom: 30px;"><%= experience%></p>
-                <p class="exp-dis infp" id="next-lv" style="margin-top: 10px; margin-bottom: 30px;"><%= experience%></p>
+                <p class="exp-dis infp" style="margin-top: 10px; margin-bottom: 30px;" th:text="${experience}"></p>
+                <p class="exp-dis infp" id="next-lv" style="margin-top: 10px; margin-bottom: 30px;" th:text="${experience}"></p>
             </div>
         </div>
         <div class="container-in">

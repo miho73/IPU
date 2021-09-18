@@ -1,7 +1,11 @@
 package com.github.miho73.ipu.repositories;
 
+import com.github.miho73.ipu.domain.Problem;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
@@ -9,10 +13,8 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import javax.security.auth.kerberos.KerberosTicket;
+import java.sql.*;
 
 @Repository("SolutionRepository")
 @PropertySources({
@@ -71,5 +73,39 @@ public class SolutionRepository {
         psmt.setLong(3, solveTime);
         psmt.setBoolean(4, correct);
         psmt.execute();
+    }
+
+    public JSONArray getSolved(long frm, long len, long uCode) throws SQLException {
+        String sql = "SELECT code, problem_code, solved_time, solving_time, correct " +
+                "FROM u"+uCode+" " +
+                "WHERE code<=((SELECT code FROM u"+uCode+" ORDER BY code DESC LIMIT 1)-?) " +
+                "ORDER BY code DESC LIMIT ?;";
+        PreparedStatement psmt = conn.prepareStatement(sql);
+        psmt.setLong(1, frm-1);
+        psmt.setLong(2, len);
+        ResultSet rs = psmt.executeQuery();
+
+        JSONArray probs = new JSONArray();
+        while (rs.next()) {
+            JSONObject toPut = new JSONObject();
+            toPut.put("code", rs.getLong("problem_code"));
+            toPut.put("cor", rs.getBoolean("correct"));
+            toPut.put("sol", rs.getString("solved_time"));
+            toPut.put("solt", rs.getString("solving_time"));
+            probs.put(toPut);
+        }
+        return probs;
+    }
+
+    public long getNumberOfSolves(long uCode, long pCode) throws SQLException {
+        LOGGER.debug("Get Number of Solves request for user "+uCode+" pCode="+pCode);
+        String sql = "SELECT COUNT(*) AS count FROM u"+uCode+" WHERE problem_code=?;";
+
+        PreparedStatement psmt = conn.prepareStatement(sql);
+        psmt.setLong(1, pCode);
+        ResultSet rs = psmt.executeQuery();
+
+        if(!rs.next()) return -1;
+        return rs.getLong("count");
     }
 }

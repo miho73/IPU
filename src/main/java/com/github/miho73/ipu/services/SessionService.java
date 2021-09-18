@@ -1,6 +1,6 @@
 package com.github.miho73.ipu.services;
 
-import com.github.miho73.ipu.controllers.UserControl;
+import com.github.miho73.ipu.controllers.AuthControl;
 import com.github.miho73.ipu.domain.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +12,7 @@ import java.util.Map;
 
 @Service("SessionService")
 public class SessionService {
-    private final Logger LOGGER = LoggerFactory.getLogger(UserControl.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(AuthControl.class);
 
     /**
      * Check login
@@ -35,6 +35,7 @@ public class SessionService {
         session.setAttribute("id", user.getId());
         session.setAttribute("code", user.getCode());
         session.setAttribute("name", user.getName());
+        LOGGER.debug("Set user to session: "+user.getCode()+": "+user.getId()+"("+user.getName()+") "+user.getPrivilege());
     }
     public User getUserData(HttpSession session) {
         return new User((String)session.getAttribute("id"), (String)session.getAttribute("name"), (String)session.getAttribute("privilege"));
