@@ -108,4 +108,11 @@ public class SolutionRepository {
         if(!rs.next()) return -1;
         return rs.getLong("count");
     }
+
+    public void dropSolves(long uCode) throws SQLException {
+        String sql = "DROP TABLE u"+uCode+";";
+
+        PreparedStatement psmt = conn.prepareStatement(sql);
+        psmt.execute();
+    }
 }

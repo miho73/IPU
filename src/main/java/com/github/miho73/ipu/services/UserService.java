@@ -86,4 +86,13 @@ public class UserService {
         });
         return cpy.toString();
     }
+
+    public void updateProfile(String name, String bio, long code) throws SQLException {
+        userRepository.updateProfile(name, bio, code);
+    }
+
+    public void deleteUesr(long uCode) throws SQLException {
+        userRepository.deleteUser(uCode);
+        solutionRepository.dropSolves(uCode);
+    }
 }

@@ -44,6 +44,9 @@ public class SessionService {
     public String getName(HttpSession session) {
         return (String)session.getAttribute("name");
     }
+    public void setName(HttpSession session, String name) {
+        session.setAttribute("name", name);
+    }
     public String getId(HttpSession session) {
         return (String)session.getAttribute("id");
     }

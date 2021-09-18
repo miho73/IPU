@@ -1,14 +1,17 @@
 package com.github.miho73.ipu.domain;
 
+import java.sql.Timestamp;
+
 public class User {
     private long code;
     private String id;
     private String name;
     private String pwd, salt;
     private String privilege;
-    private String last_solve;
     private String bio;
     private long experience;
+    private String email;
+    private Timestamp joined, lastLogin, lastSolve;
 
     private String inviteCode;
 
@@ -20,7 +23,6 @@ public class User {
         this.id = id;
         this.name = name;
         this.privilege = privilege;
-        this.last_solve = last_solve;
     }
 
     // Authentication purpose
@@ -87,13 +89,6 @@ public class User {
         this.privilege = privilege;
     }
 
-    public String getLast_solve() {
-        return last_solve;
-    }
-    public void setLast_solve(String last_solve) {
-        this.last_solve = last_solve;
-    }
-
     public String getInviteCode() {
         return inviteCode;
     }
@@ -113,5 +108,33 @@ public class User {
     }
     public void setExperience(long experience) {
         this.experience = experience;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Timestamp getJoined() {
+        return joined;
+    }
+    public void setJoined(Timestamp joined) {
+        this.joined = joined;
+    }
+
+    public Timestamp getLastLogin() {
+        return lastLogin;
+    }
+    public void setLastLogin(Timestamp lastLogin) {
+        this.lastLogin = lastLogin;
+    }
+
+    public Timestamp getLastSolve() {
+        return lastSolve;
+    }
+    public void setLastSolve(Timestamp lastSolve) {
+        this.lastSolve = lastSolve;
     }
 }

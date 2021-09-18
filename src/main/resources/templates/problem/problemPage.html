@@ -16,7 +16,7 @@
         <meta name="twitter:description" th:content="${'IPU - '+pName}">
     </head>
     <body th:onload="onload([[${extrTabs}]])">
-    <div th:replace="/fragments/header.html :: navigation"></div>
+        <th:block th:replace="fragments/header.html :: navigation"></th:block>
         <div id="problem-container">
             <div>
                 <a th:href="${'/problem/edit/'+pCode}" id="edit-href-title">

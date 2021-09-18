@@ -57,13 +57,17 @@ public class UserRepository {
         ResultSet rs = psmt.executeQuery();
 
         if(!rs.next()) return null;
-        return new User(
-                rs.getLong("user_code"),
-                rs.getString("user_id"),
-                rs.getString("user_name"),
-                rs.getString("privilege"),
-                rs.getString("last_solve")
-        );
+        User user = new User();
+        user.setCode(rs.getLong("user_code"));
+        user.setId(rs.getString("user_id"));
+        user.setName(rs.getString("user_name"));
+        user.setEmail(rs.getString("email"));
+        user.setExperience(rs.getLong("experience"));
+        user.setBio(rs.getString("bio"));
+        user.setJoined(rs.getTimestamp("joined"));
+        user.setLastLogin(rs.getTimestamp("last_login"));
+        user.setLastSolve(rs.getTimestamp("last_solve"));
+        return user;
     }
 
     public User getUserById(String id) throws SQLException {
@@ -97,7 +101,6 @@ public class UserRepository {
         return user;
     }
 
-    // Those two methods return user object for general purpose
     public Object getUserDataById(String id, String column) throws SQLException {
         String sql = "SELECT "+column+" FROM iden WHERE user_id=?";
         PreparedStatement psmt = conn.prepareStatement(sql);
@@ -183,12 +186,39 @@ public class UserRepository {
     }
 
     public void addExperience(long exp, long userCode) throws SQLException {
-        LOGGER.debug("Add exp to "+userCode+" amount of "+exp);
         String sql = "UPDATE iden SET experience=((SELECT experience FROM iden WHERE user_code=?)+?) WHERE user_code=?;";
         PreparedStatement psmt = conn.prepareStatement(sql);
         psmt.setLong(1, userCode);
         psmt.setLong(2, exp);
         psmt.setLong(3, userCode);
+        psmt.execute();
+    }
+
+    public void updateProfile(String name, String bio, long code) throws SQLException {
+        String sql = "UPDATE iden SET user_name=?, bio=? WHERE user_code=?;";
+
+        PreparedStatement psmt = conn.prepareStatement(sql);
+        psmt.setString(1, name);
+        psmt.setString(2, bio);
+        psmt.setLong(3, code);
+        psmt.execute();
+    }
+
+    public void updatePassword(String nPwd, String nSalt, long code) throws SQLException {
+        String sql = "UPDATE iden SET user_password=?, user_salt=? WHERE user_code=?;";
+
+        PreparedStatement psmt = conn.prepareStatement(sql);
+        psmt.setString(1, nPwd);
+        psmt.setString(2, nSalt);
+        psmt.setLong(3, code);
+        psmt.execute();
+    }
+
+    public void deleteUser(long uCode) throws SQLException {
+        String sql = "DELETE FROM iden WHERE user_code=?;";
+
+        PreparedStatement psmt = conn.prepareStatement(sql);
+        psmt.setLong(1, uCode);
         psmt.execute();
     }
 }

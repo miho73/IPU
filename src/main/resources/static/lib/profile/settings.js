@@ -5,36 +5,39 @@ function activePwd() {
     setTimeout(()=>document.getElementById('pwdreg').style.transform = 'scaleY(1)', 2);
 }
 
+const idValidator = new RegExp('^(?=.*[A-Za-z])[A-Za-z0-9]{0,50}$');
+const pwdValidator = new RegExp('^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d!"#$%&\'()*+,\\-./:;<=>?@\\[\\]^_`{|}~\\\\\\)]{6,}$');
+
 function upload() {
     let uname = document.getElementById('name').value;
     let bio = document.getElementById('bios').value;
     let ema = document.getElementById('email').value;
     let lpwd = document.getElementById('lpwd').value;
     let success = true;
-    if(uname.length >= 50 || uname == '') {
-        document.getElementById('name').classList.add('formthis');
+    if(uname.length > 50 || uname == "") {
+        gei('name').classList.add('formthis');
         window.location.hash = "name";
         success = false;
     }
-    else document.getElementById('name').classList.remove('formthis');
+    else gei('name').classList.remove('formthis');
     if(bio.length >= 500) {
-        document.getElementById('bios').classList.add('formthis');
+        gei('bios').classList.add('formthis');
         window.location.hash = "bios";
         success = false;
     }
-    else document.getElementById('bios').classList.remove('formthis');
+    else gei('bios').classList.remove('formthis');
     if(!validateEmail(ema) && ema != '') {
-        document.getElementById('email').classList.add('formthis');
+        gei('email').classList.add('formthis');
         window.location.hash = "email";
         success = false;
     }
-    else document.getElementById('email').classList.remove('formthis');
-    if(lpwd == '') {
-        document.getElementById('lpwd').classList.add('formthis');
+    else gei('email').classList.remove('formthis');
+    if(!pwdValidator.test(lpwd)) {
+        gei('lpwd').classList.add('formthis');
         window.location.hash = "lpwd";
         success = false;
     }
-    else document.getElementById('lpwd').classList.remove('formthis');
+    else gei('lpwd').classList.remove('formthis');
     if(!success) return;
     $.ajax({
         type: 'POST',
@@ -55,26 +58,15 @@ function upload() {
             switch(err.responseText) {
                 case "pwd":
                     document.getElementById('errdis').innerText = "인증 실패";
-                    return;
-                case "pwdf":
-                    document.getElementById('errdis').innerText = "암호는 4자리 이상, 100자리 이하여야 하며, 글자(a-z, A-Z)와 숫자(0-9)로 만 이루어져 있어야 합니다.";
-                    return;
-                case "name":
-                    document.getElementById('errdis').innerText = "이름은 50자 이내이여야 합니다.";
-                    return;
-                case "bio":
-                    document.getElementById('errdis').innerText = "상태메시지는 최대 500자입니다.";
-                    return;
-                case "email":
-                    document.getElementById('errdis').innerText = "올바른 이메일을 입력하세요.";
-                    return;
-                case "dbupdate-pwd":
-                    document.getElementById('errdis').innerText = "업데이트할 수 없습니다.";
-                    return;
-                case "dbupdate-pwd":
-                    document.getElementById('errdis').innerText = "업데이트할 수 없습니다.ㄴ";
-                    return;
+                    break;
+                case "form":
+                    document.getElementById('errdis').innerText = "알맞지 않은 형식입니다.";
+                    break;
+                case "fpwd":
+                    document.getElementById('errdis').innerText = "프로필은 업데이트되었지만 암호는 바꾸지 못했습니다.";
+                    break;
             }
+            window.location.hash = "errdis";
         }
     });
 }

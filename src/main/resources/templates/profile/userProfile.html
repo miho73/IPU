@@ -15,7 +15,7 @@
         <meta name="twitter:description" content="<%= username%>의 프로필">
     </head>
     <body th:onload="load([[${pg}]])">
-        <th:block th:replace="/fragments/header.html :: navigation"></th:block>
+        <th:block th:replace="fragments/header.html :: navigation"></th:block>
         <div class="non-container">
             <div id="headerup">
                 <h1 id="uname" th:text="${username}"></h1>
@@ -29,30 +29,32 @@
                         </div>
                     </div>
                     <div id="infp">
-                <p class="exp-dis infp" style="margin-top: 10px; margin-bottom: 30px;" th:text="${experience}"></p>
-                <p class="exp-dis infp" id="next-lv" style="margin-top: 10px; margin-bottom: 30px;" th:text="${experience}"></p>
+                        <p class="exp-dis infp" style="margin-top: 10px; margin-bottom: 30px;" th:text="${experience}"></p>
+                        <p class="exp-dis infp" id="next-lv" style="margin-top: 10px; margin-bottom: 30px;" th:text="${experience}"></p>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="container-in">
-            <table id="prob-list-table">
-                <thead>
-                    <tr>
-                        <th style="width: 6%">번호</th>
-                        <th style="width: 39%;">문제 제목</th>
-                        <th style="width: 25%;">정보</th>
-                        <th style="width: 7%;">풀이 시간</th>
-                        <th style="width: 23%;">푼 시각</th>
-                    </tr>
-                </thead>
-                <tbody id="solveds"></tbody>
-            </table>
-        </div>
-        <div id="nav">
-            <p id="not">이 페이지는 비어있습니다.</p>
+            <div class="container-in">
+                <table id="prob-list-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 6%">번호</th>
+                            <th style="width: 39%;">문제 제목</th>
+                            <th style="width: 25%;">정보</th>
+                            <th style="width: 7%;">풀이 시간</th>
+                            <th style="width: 23%;">푼 시각</th>
+                        </tr>
+                    </thead>
+                    <tbody id="solveds"></tbody>
+                </table>
+            </div>
             <div id="nav">
-                <a id="prev" class="previous round">이전</a>
-                <span id="pnsep" style="user-select: none;">······</span>
-                <a id="next" class="next round">다음</a>
+                <p id="not">이 페이지는 비어있습니다.</p>
+                <div id="nav">
+                    <a id="prev" class="previous round">이전</a>
+                    <span id="pnsep" style="user-select: none;">······</span>
+                    <a id="next" class="next round">다음</a>
+                </div>
             </div>
         </div>
     </body>

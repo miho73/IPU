@@ -91,6 +91,21 @@ public class AuthService {
         }
     }
 
+    public boolean auth(String id, String pwd) throws SQLException, InvalidInputException, NoSuchAlgorithmException {
+        User user = userRepository.getUserForAuthentication(id);
+        if (user == null) {
+            LOGGER.debug("Authentication attempt: id=" + id + ", result=id not found");
+            return false;
+        }
+        String hash = sha.SHA512(pwd, user.getSalt());
+        if (user.getPwd().equals(hash)) {
+            LOGGER.debug("Authentication attempt: id=" + id + ", result=ok");
+            return true;
+        }
+        LOGGER.debug("Authentication: id=" + id + ", result=wrong password");
+        return false;
+    }
+
     private boolean IdDuplicationTest(String id) throws SQLException {
         Object code = userRepository.getUserDataById(id, "user_code");
         return code==null;
@@ -128,6 +143,12 @@ public class AuthService {
         solutionRepository.addUser(code);
         LOGGER.debug("Signup request: id="+user.getId()+", name="+user.getName()+", result=ok");
         return SIGNUP_RESULT.OK;
+    }
+
+    public void updatePassword(String nPwd, long uCode) throws NoSuchAlgorithmException, InvalidInputException, SQLException {
+        byte[] salt = SecureTools.getSecureRandom(64);
+        String hash = sha.SHA512(nPwd, salt);
+        userRepository.updatePassword(hash, Base64.getEncoder().encodeToString(salt), uCode);
     }
 }
 

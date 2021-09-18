@@ -16,7 +16,7 @@
         <meta name="twitter:description" content="IPU - 문제 목록">
     </head>
     <body th:onload="load([[${page}]])">
-        <div th:replace="/fragments/header.html :: navigation"></div>
+        <th:block th:replace="fragments/header.html :: navigation"></th:block>
         <h1 id="title">Problems</h1>
         <div class="container">
             <div id="prob-nav"></div>
