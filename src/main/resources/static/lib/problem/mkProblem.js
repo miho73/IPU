@@ -66,10 +66,13 @@ function selectLocalImage(forwhat) {
             contentType: false,
             success: function(data) {
                 const range = forwhat.getSelection();
-                forwhat.insertEmbed(range.index, 'image', 'https://ipu.r-e.kr/problem/lib/'+data);
+                forwhat.insertEmbed(range.index, 'image', '/problem/lib/'+data);
             },
             error: function(err) {
-                console.error("Error: "+err);
+                switch(err.responseText) {
+                    case "size":
+                        alert("최대 5MB까지 올릴 수 있습니다.");
+                }
             }
         });
     };

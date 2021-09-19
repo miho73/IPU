@@ -19,7 +19,7 @@ Below's sql is command to make database. All tabes will be automatically created
 > `CREATE DATABASE identification OWNER <USERNAME>;`
 > ```sql
 > CREATE TABLE IF NOT EXISTS iden(
-> user_code BIGSERIAL NOT NULL,
+> user_code SERIAL PRIMARY KEY NOT NULL,
 > user_id VARCHAR(50) NOT NULL,
 > user_name VARCHAR(50) NOT NULL,
 > user_password CHAR(88) NOT NULL,
@@ -43,7 +43,7 @@ Below's sql is command to make database. All tabes will be automatically created
 > `CREATE DATABASE solves OWNER <USERNAME>;`
 > ```sql
 > CREATE TABLE IF NOT EXISTS u<usercode>(
-> code SERIAL NOT NULL,
+> code SERIAL PRIMARY KEY NOT NULL,
 > problem_code INTEGER NOT NULL,
 > solved_time TIMESTAMP WITH TIME ZONE NOT NULL,
 > solving_time INTEGER NOT NULL,
@@ -55,10 +55,12 @@ Below's sql is command to make database. All tabes will be automatically created
 
 > Database name: problem   
 > Table name: prob   
-> `CREATE DATABASE problem OWNER <USERNAME>;`
+> `CREATE DATABASE problem OWNER <USERNAME>;`   
+>
+> Problem content db
 > ```sql
 > CREATE TABLE IF NOT EXISTS prob(
-> problem_code SERIAL NOT NULL,
+> problem_code SERIAL PRIMARY KEY NOT NULL,
 > problem_name VARCHAR(50) NOT NULL,
 > problem_category CHAR(4) NOT NULL,
 > problem_difficulty CHAR(4) NOT NULL,
@@ -74,6 +76,15 @@ Below's sql is command to make database. All tabes will be automatically created
 > extr_tabs TEXT NOT NULL
 > );
 > ```
+> Problem resources db
+> ```sql
+> CREATE TABLE IF NOT EXISTS resources(
+> resource_code CHAR(88) PRIMARY KEY,
+> resource BYTEA NOT NULL,
+> registered TIMESTAMP WITH TIME ZONE NOT NULL,
+> registered_by VARCHAR(50) NOT NULL
+> );
+> ```
 
 ### 1.5 INVITE CODE DB
 
@@ -82,6 +93,6 @@ Below's sql is command to make database. All tabes will be automatically created
 > `CREATE DATABASE invite OWNER <USERNAME>;`
 > ```sql
 > CREATE TABLE IF NOT EXISTS codes (
-> code CHAR(5) NOT NULL
+> code CHAR(5) PRIMARY KEY NOT NULL
 > );
 > ```

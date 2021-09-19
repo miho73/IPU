@@ -24,6 +24,15 @@ public class SHA {
     public String SHA512(String msg, byte[] salt) throws NoSuchAlgorithmException, InvalidInputException {
         return doHash(msg, salt);
     }
+    public String MD5(byte[] data) throws NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance("SHA-512");
+        md.reset();
+        md.update(data);
+        String preHash = Base64.getEncoder().encodeToString(md.digest());
+        preHash = preHash.replace('/', '-');
+        preHash = preHash.replace('+', '_');
+        return preHash;
+    }
 
     private String doHash(String msg, byte[] saltByte) throws NoSuchAlgorithmException, InvalidInputException {
         byte[] msgByte = msg.getBytes(StandardCharsets.UTF_8);

@@ -67,7 +67,7 @@ function wa(cod) {
                     ec = "문제가 발생했습니다."+suf;
                     break;
                 case "forb":
-                    ec = "권한이 없습니다."+suf;
+                    ec = "권한이 없습니다.";
                     break;
                 case "time":
                     ec = "제출은 1분마다 할 수 있습니다.";
@@ -76,6 +76,8 @@ function wa(cod) {
                     ec = "문제가 발생했습니다."+suf;
             }
             alert(ec);
+            gei('ac-btn').disabled = false;
+            gei('wa-btn').disabled = false;
         }
     });
 }
@@ -101,7 +103,7 @@ function ac(cod) {
                     ec = "문제가 발생했습니다."+suf;
                     break;
                 case "forb":
-                    ec = "권한이 없습니다."+suf;
+                    ec = "권한이 없습니다.";
                     break;
                 case "time":
                     ec = "제출은 1분마다 할 수 있습니다.";

@@ -1,9 +1,11 @@
 package com.github.miho73.ipu.controllers;
 
 import com.github.miho73.ipu.domain.Problem;
+import com.github.miho73.ipu.library.security.SHA;
 import com.github.miho73.ipu.repositories.SolutionRepository;
 import com.github.miho73.ipu.repositories.UserRepository;
 import com.github.miho73.ipu.services.ProblemService;
+import com.github.miho73.ipu.services.ResourceService;
 import com.github.miho73.ipu.services.SessionService;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -12,11 +14,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.File;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Map;
@@ -28,12 +33,15 @@ public class ProblemControl {
     private final ProblemService problemService;
     private final SessionService sessionService;
     private final UserRepository userRepository;
+    private final ResourceService resourceService;
+    private final SHA sha = new SHA();
 
     @Autowired
-    public ProblemControl(ProblemService problemService, SessionService sessionService, UserRepository userRepository) {
+    public ProblemControl(ProblemService problemService, SessionService sessionService, UserRepository userRepository, ResourceService resourceService) {
         this.problemService = problemService;
         this.sessionService = sessionService;
         this.userRepository = userRepository;
+        this.resourceService = resourceService;
     }
 
     @GetMapping("")
@@ -81,6 +89,27 @@ public class ProblemControl {
             return null;
         }
         return "problem/mkProblem";
+    }
+    @PostMapping(value = "/make/upload", produces = "text/plain; charset=utf-8")
+    @ResponseBody
+    public String imageUpload(@RequestParam(value = "img")MultipartFile resource, HttpSession session) throws IOException, NoSuchAlgorithmException, SQLException {
+        if(resource.getSize() > 5000000) {
+            return "size";
+        }
+        byte[] res = resource.getBytes();
+        String hash = sha.MD5(res);
+        resourceService.addResource(res, hash, sessionService.getId(session));
+        return hash;
+    }
+    @GetMapping(value = "/lib/{src}", produces = "application/octet-stream; charset=utf-8")
+    @ResponseBody
+    public byte[] resourceRequest(HttpServletResponse response, @PathVariable("src")String hash) throws SQLException, IOException {
+        byte[] resource = resourceService.getResource(hash);
+        if(resource == null) {
+            response.sendError(404);
+            return null;
+        }
+        return resource;
     }
     @PostMapping("/register")
     public String problemRegister(HttpServletRequest request, Model model, HttpSession session, HttpServletResponse response) throws SQLException, IOException {
