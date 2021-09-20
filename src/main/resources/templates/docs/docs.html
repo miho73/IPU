@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 
-<html>
+<html lang="ko" xmlns:th="https://www.thymeleaf.org">
     <head>
         <title>문서 - IPU</title>
-        <%- include('../ejs-components/header-comp.ejs')%>
+        <th:block th:replace="fragments/header-comp.html :: header-comp"></th:block>
         <link rel="stylesheet" type="text/css" href="/lib/table.css">
         <script src="/lib/univ/converter.js"></script>
         <script src="/lib/problem/pShow.js"></script>
@@ -14,7 +14,7 @@
         <meta name="twitter:description" content="IPU - 문서">
     </head>
     <body>
-        <%- include('../ejs-components/header.ejs')%>
+        <th:block th:replace="fragments/header.html :: navigation"></th:block>
         <h1 style="margin-bottom: 1em;">IPU 문서</h1>
             <div class="container">
                 <table>
