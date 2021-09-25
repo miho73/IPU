@@ -45,10 +45,10 @@ public class ProblemRepository {
         conn.close();
     }
 
-    public Problem getProblemSimple(long pCode) throws SQLException {
+    public Problem getProblemSimple(int pCode) throws SQLException {
         String sql = "SELECT problem_name, problem_category, problem_difficulty, tags FROM prob WHERE problem_code=?;";
         PreparedStatement psmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-        psmt.setLong(1, pCode);
+        psmt.setInt(1, pCode);
         ResultSet rs = psmt.executeQuery();
 
         if(!rs.next()) return null;
@@ -61,17 +61,17 @@ public class ProblemRepository {
         return ret;
     }
 
-    public List<Problem> getProblemBriefly(long from, long len) throws SQLException {
+    public List<Problem> getProblemBriefly(int from, int len) throws SQLException {
         String sql = "SELECT problem_code, problem_name, problem_category, problem_difficulty, tags FROM prob WHERE problem_code>=? ORDER BY problem_code LIMIT ?;";
         PreparedStatement psmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-        psmt.setLong(1, from);
-        psmt.setLong(2, len);
+        psmt.setInt(1, from);
+        psmt.setInt(2, len);
         ResultSet rs = psmt.executeQuery();
 
         List<Problem> pList = new Vector<>();
         while (rs.next()) {
             Problem problem = new Problem();
-            problem.setCode(rs.getLong("problem_code"));
+            problem.setCode(rs.getInt("problem_code"));
             problem.setName(rs.getString("problem_name"));
             problem.setCategory(rs.getString("problem_category"));
             problem.setDifficulty(rs.getString("problem_difficulty"));
@@ -81,16 +81,16 @@ public class ProblemRepository {
         return pList;
     }
 
-    public Problem getProblem(long code) throws SQLException {
+    public Problem getProblem(int code) throws SQLException {
         String sql = "SELECT problem_code, problem_name, problem_content, problem_solution, problem_answer, problem_hint, extr_tabs, has_hint FROM prob WHERE problem_code=?;";
         PreparedStatement psmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-        psmt.setLong(1, code);
+        psmt.setInt(1, code);
         ResultSet rs = psmt.executeQuery();
 
         if(!rs.next()) return null;
 
         Problem problem = new Problem();
-        problem.setCode(rs.getLong("problem_code"));
+        problem.setCode(rs.getInt("problem_code"));
         problem.setName(rs.getString("problem_name"));
         problem.setContent(rs.getString("problem_content"));
         problem.setSolution(rs.getString("problem_solution"));
@@ -101,16 +101,16 @@ public class ProblemRepository {
         return problem;
     }
 
-    public Problem getFullProblem(long code) throws SQLException {
+    public Problem getFullProblem(int code) throws SQLException {
         String sql = "SELECT * FROM prob WHERE problem_code=?;";
         PreparedStatement psmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-        psmt.setLong(1, code);
+        psmt.setInt(1, code);
         ResultSet rs = psmt.executeQuery();
 
         if(!rs.next()) return null;
 
         Problem problem = new Problem();
-        problem.setCode(rs.getLong("problem_code"));
+        problem.setCode(rs.getInt("problem_code"));
         problem.setName(rs.getString("problem_name"));
         problem.setDifficulty(rs.getString("problem_difficulty"));
         problem.setCategory(rs.getString("problem_category"));
@@ -177,7 +177,7 @@ public class ProblemRepository {
         psmt.setString(9, problem.getExternalTabs());
         psmt.setBoolean(10, problem.isHasHint());
         psmt.setString(11, problem.getTags());
-        psmt.setLong(12, problem.getCode());
+        psmt.setInt(12, problem.getCode());
 
         psmt.execute();
     }

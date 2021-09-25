@@ -44,7 +44,7 @@ public class ResourceRepository {
 
     public void addResource(byte[] resource, String hash, String adder) throws SQLException {
         LOGGER.debug("Add resource to DB. HASH="+hash+". Added_by="+adder);
-        String sql = "INSERT INTO resources (resource_code, resource, registered, registered_by) VALUES (?, ?, ?, ?);";
+        String sql = "INSERT INTO resources (resource_code, resource, registered, registered_by, resource_name) VALUES (?, ?, ?, ?, '');";
 
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 

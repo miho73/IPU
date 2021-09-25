@@ -56,6 +56,7 @@ public class AuthService {
         ID_NOT_FOUND,
         INVALID_INPUT,
         CAPTCHA_FAILED,
+        BLOCKED
     }
 
     public LOGIN_RESULT checkLogin(LoginForm form, HttpSession session) throws SQLException, NoSuchAlgorithmException, InvalidInputException, IOException {
@@ -70,6 +71,10 @@ public class AuthService {
             if (user == null) {
                 LOGGER.debug("Login attempt: id=" + form.getId() + ", result=id not found");
                 return LOGIN_RESULT.ID_NOT_FOUND;
+            }
+            if (!user.getPrivilege().contains("u")) {
+                LOGGER.debug("Login attempt: id=" + form.getId() + ", result=blocked");
+                return LOGIN_RESULT.BLOCKED;
             }
             String hash = sha.SHA512(form.getPassword(), user.getSalt());
             if (user.getPwd().equals(hash)) {
@@ -139,13 +144,13 @@ public class AuthService {
         user.setPwd(hash);
         user.setSalt(Base64.getEncoder().encodeToString(salt));
         userRepository.addUser(user);
-        long code = (long) userRepository.getUserDataById(user.getId(), "user_code");
+        int code = (int) userRepository.getUserDataById(user.getId(), "user_code");
         solutionRepository.addUser(code);
         LOGGER.debug("Signup request: id="+user.getId()+", name="+user.getName()+", result=ok");
         return SIGNUP_RESULT.OK;
     }
 
-    public void updatePassword(String nPwd, long uCode) throws NoSuchAlgorithmException, InvalidInputException, SQLException {
+    public void updatePassword(String nPwd, int uCode) throws NoSuchAlgorithmException, InvalidInputException, SQLException {
         byte[] salt = SecureTools.getSecureRandom(64);
         String hash = sha.SHA512(nPwd, salt);
         userRepository.updatePassword(hash, Base64.getEncoder().encodeToString(salt), uCode);

@@ -47,7 +47,7 @@ public class SolutionRepository {
         conn.close();
     }
 
-    public void addUser(long usercode) throws SQLException {
+    public void addUser(int usercode) throws SQLException {
         String sql = "CREATE TABLE IF NOT EXISTS u" + usercode +
                 "(code SERIAL NOT NULL," +
                 "problem_code INTEGER NOT NULL," +
@@ -62,33 +62,33 @@ public class SolutionRepository {
         psmt.execute();
     }
 
-    public void addSolution(long problemCode, long solveTime, boolean correct, long userCode) throws SQLException {
+    public void addSolution(int problemCode, int solveTime, boolean correct, int userCode) throws SQLException {
         String sql = "INSERT INTO u"+userCode+" (problem_code, solved_time, solving_time, correct) VALUES (?, ?, ?, ?)";
 
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
         PreparedStatement psmt = conn.prepareStatement(sql);
-        psmt.setLong(1, problemCode);
+        psmt.setInt(1, problemCode);
         psmt.setTimestamp(2, timestamp);
-        psmt.setLong(3, solveTime);
+        psmt.setInt(3, solveTime);
         psmt.setBoolean(4, correct);
         psmt.execute();
     }
 
-    public JSONArray getSolved(long frm, long len, long uCode) throws SQLException {
+    public JSONArray getSolved(int frm, int len, int uCode) throws SQLException {
         String sql = "SELECT code, problem_code, solved_time, solving_time, correct " +
                 "FROM u"+uCode+" " +
                 "WHERE code<=((SELECT code FROM u"+uCode+" ORDER BY code DESC LIMIT 1)-?) " +
                 "ORDER BY code DESC LIMIT ?;";
         PreparedStatement psmt = conn.prepareStatement(sql);
-        psmt.setLong(1, frm-1);
-        psmt.setLong(2, len);
+        psmt.setInt(1, frm-1);
+        psmt.setInt(2, len);
         ResultSet rs = psmt.executeQuery();
 
         JSONArray probs = new JSONArray();
         while (rs.next()) {
             JSONObject toPut = new JSONObject();
-            toPut.put("code", rs.getLong("problem_code"));
+            toPut.put("code", rs.getInt("problem_code"));
             toPut.put("cor", rs.getBoolean("correct"));
             toPut.put("sol", rs.getString("solved_time"));
             toPut.put("solt", rs.getString("solving_time"));
@@ -97,19 +97,19 @@ public class SolutionRepository {
         return probs;
     }
 
-    public long getNumberOfSolves(long uCode, long pCode) throws SQLException {
+    public int getNumberOfSolves(int uCode, int pCode) throws SQLException {
         LOGGER.debug("Get Number of Solves request for user "+uCode+" pCode="+pCode);
         String sql = "SELECT COUNT(*) AS count FROM u"+uCode+" WHERE problem_code=?;";
 
         PreparedStatement psmt = conn.prepareStatement(sql);
-        psmt.setLong(1, pCode);
+        psmt.setInt(1, pCode);
         ResultSet rs = psmt.executeQuery();
 
         if(!rs.next()) return -1;
-        return rs.getLong("count");
+        return rs.getInt("count");
     }
 
-    public void dropSolves(long uCode) throws SQLException {
+    public void dropSolves(int uCode) throws SQLException {
         String sql = "DROP TABLE u"+uCode+";";
 
         PreparedStatement psmt = conn.prepareStatement(sql);

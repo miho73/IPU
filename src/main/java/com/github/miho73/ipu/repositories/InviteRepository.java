@@ -15,6 +15,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.Vector;
 
 @Repository("InviteRepository")
 @PropertySources({
@@ -52,6 +54,35 @@ public class InviteRepository {
         return rs.next();
     }
 
-    public void runNonQuery() {
+    public List<String> getList() throws SQLException {
+        String sql = "SELECT code FROM codes;";
+        PreparedStatement psmt = conn.prepareStatement(sql);
+        ResultSet rs = psmt.executeQuery();
+
+        List<String> code = new Vector<>();
+        while (rs.next()) {
+            code.add(rs.getString("code"));
+        }
+        return code;
+    }
+
+    public void insertCode(String nCode) throws SQLException {
+        String sql = "INSERT INTO codes (code) VALUES (?);";
+        PreparedStatement psmt = conn.prepareStatement(sql);
+        psmt.setString(1, nCode);
+        psmt.execute();
+    }
+    public void updateCode(String prev, String nCode) throws SQLException {
+        String sql = "UPDATE codes SET code=? WHERE code=?;";
+        PreparedStatement psmt = conn.prepareStatement(sql);
+        psmt.setString(1, nCode);
+        psmt.setString(2, prev);
+        psmt.execute();
+    }
+    public void deleteCode(String prev) throws SQLException {
+        String sql = "DELETE FROM codes WHERE code=?;";
+        PreparedStatement psmt = conn.prepareStatement(sql);
+        psmt.setString(1, prev);
+        psmt.execute();
     }
 }

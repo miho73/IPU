@@ -32,15 +32,20 @@ public class UserService {
         this.problemRepository = problemRepository;
     }
 
-    public User getUserByCode(long code) throws SQLException {
+    public User getUserByCode(int code) throws SQLException {
         return userRepository.getUserByCode(code);
     }
-
     public User getUserById(String id) throws SQLException {
         return userRepository.getUserById(id);
     }
+    public Object getUserDataById(String id, String column) throws SQLException {
+        return userRepository.getUserDataById(id, column);
+    }
+    public void updateStringById(String id, String column, String nData) throws SQLException {
+        userRepository.updateUserStringById(id, column, nData);
+    }
 
-    public String getUserRanking(long len) throws SQLException {
+    public String getUserRanking(int len) throws SQLException {
         List<User> users =  userRepository.getUserRanking(len);
         JSONArray uLst = new JSONArray();
         users.forEach((user)->{
@@ -58,13 +63,13 @@ public class UserService {
         return userRepository.getProfileById(id);
     }
 
-    public String getSolved(long frm, long len, String id) throws SQLException {
-        long uCode = (long) userRepository.getUserDataById(id, "user_code");
+    public String getSolved(int frm, int len, String id) throws SQLException {
+        int uCode = (int) userRepository.getUserDataById(id, "user_code");
         JSONArray arr = solutionRepository.getSolved(frm, len, uCode);
         JSONArray cpy = new JSONArray();
         arr.forEach((con)->{
             Problem problem = null;
-            long pCode = ((JSONObject)con).getLong("code");
+            int pCode = ((JSONObject)con).getInt("code");
             try {
                 problem = problemRepository.getProblemSimple(pCode);
             } catch (SQLException e) {
@@ -87,11 +92,11 @@ public class UserService {
         return cpy.toString();
     }
 
-    public void updateProfile(String name, String bio, long code) throws SQLException {
+    public void updateProfile(String name, String bio, int code) throws SQLException {
         userRepository.updateProfile(name, bio, code);
     }
 
-    public void deleteUesr(long uCode) throws SQLException {
+    public void deleteUesr(int uCode) throws SQLException {
         userRepository.deleteUser(uCode);
         solutionRepository.dropSolves(uCode);
     }

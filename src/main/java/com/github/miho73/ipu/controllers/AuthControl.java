@@ -97,6 +97,10 @@ public class AuthControl {
             ));
             return "auth/signin";
         }
+        else if (result == AuthService.LOGIN_RESULT.BLOCKED) {
+            model.addAttribute("error_text", "이 계정으로는 로그인할 수 없습니다.");
+            return "auth/signin";
+        }
         else if(result == AuthService.LOGIN_RESULT.BAD_PASSWORD || result == AuthService.LOGIN_RESULT.ID_NOT_FOUND) {
             model.addAttribute("error_text", "다시 시도해주세요.");
             return "auth/signin";

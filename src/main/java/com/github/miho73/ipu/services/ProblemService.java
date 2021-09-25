@@ -32,7 +32,7 @@ public class ProblemService {
         this.experienceSystem = experienceSystem;
     }
 
-    public JSONArray getProblemList(long from, long length) throws SQLException {
+    public JSONArray getProblemList(int from, int length) throws SQLException {
         JSONArray root = new JSONArray();
         List<Problem> problems = problemRepository.getProblemBriefly(from, length);
         for(Problem problem : problems) {
@@ -48,10 +48,10 @@ public class ProblemService {
         return root;
     }
 
-    public Problem getProblem(long code) throws SQLException {
+    public Problem getProblem(int code) throws SQLException {
         return problemRepository.getProblem(code);
     }
-    public Problem getFullProblem(long code) throws SQLException {
+    public Problem getFullProblem(int code) throws SQLException {
         return problemRepository.getFullProblem(code);
     }
 
@@ -62,11 +62,11 @@ public class ProblemService {
         problemRepository.updateProblem(problem);
     }
 
-    public void registerSolution(long code, long time, boolean result, long userCode) throws SQLException {
+    public void registerSolution(int code, int time, boolean result, int userCode) throws SQLException {
         solutionRepository.addSolution(code, time, result, userCode);
         Problem.PROBLEM_DIFFICULTY difficulty = problemRepository.getProblemSimple(code).getDifficulty();
-        long solves = solutionRepository.getNumberOfSolves(userCode, code);
-        long exp = experienceSystem.getExp(difficulty, solves);
+        int solves = solutionRepository.getNumberOfSolves(userCode, code);
+        int exp = experienceSystem.getExp(difficulty, solves);
         if(!result) exp=experienceSystem.toWa(exp, difficulty);
         userRepository.addExperience(exp, userCode);
     }

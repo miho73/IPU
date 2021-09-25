@@ -3,13 +3,13 @@ package com.github.miho73.ipu.domain;
 import java.sql.Timestamp;
 
 public class User {
-    private long code;
+    private int code;
     private String id;
     private String name;
     private String pwd, salt;
     private String privilege;
     private String bio;
-    private long experience;
+    private int experience;
     private String email;
     private Timestamp joined, lastLogin, lastSolve;
 
@@ -18,7 +18,7 @@ public class User {
     public User() {}
 
     // General purpose
-    public User(long code, String id, String name, String privilege, String last_solve) {
+    public User(int code, String id, String name, String privilege, String last_solve) {
         this.code = code;
         this.id = id;
         this.name = name;
@@ -26,7 +26,7 @@ public class User {
     }
 
     // Authentication purpose
-    public User(long code, String id, String pwd, String salt) {
+    public User(int code, String id, String pwd, String salt) {
         this.code = code;
         this.id = id;
         this.pwd = pwd;
@@ -61,10 +61,10 @@ public class User {
         this.salt = salt;
     }
 
-    public long getCode() {
+    public int getCode() {
         return code;
     }
-    public void setCode(long code) {
+    public void setCode(int code) {
         this.code = code;
     }
 
@@ -103,10 +103,10 @@ public class User {
         this.bio = bio;
     }
 
-    public long getExperience() {
+    public int getExperience() {
         return experience;
     }
-    public void setExperience(long experience) {
+    public void setExperience(int experience) {
         this.experience = experience;
     }
 

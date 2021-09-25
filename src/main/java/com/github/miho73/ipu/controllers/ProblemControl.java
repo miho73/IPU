@@ -54,8 +54,8 @@ public class ProblemControl {
     @PostMapping(value = "/api/get", produces = "application/json; charset=utf-8")
     @ResponseBody
     public String getProblemList(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
-        long frm = Long.parseLong(request.getParameter("frm"));
-        long len = Long.parseLong(request.getParameter("len"));
+        int frm = Integer.parseInt(request.getParameter("frm"));
+        int len = Integer.parseInt(request.getParameter("len"));
         if(frm<=0 || len<=0 || len>=60) {
             response.sendError(400);
             return null;
@@ -66,7 +66,7 @@ public class ProblemControl {
 
     @GetMapping("/{pCode}")
     public String getProblem(@PathVariable("pCode") String code, Model model, HttpSession session) throws SQLException {
-        Problem problem = problemService.getProblem(Long.parseLong(code));
+        Problem problem = problemService.getProblem(Integer.parseInt(code));
         sessionService.loadSessionToModel(session, model);
         model.addAllAttributes(Map.of(
                 "pCode", problem.getCode(),
@@ -139,7 +139,7 @@ public class ProblemControl {
             response.sendError(404);
             return null;
         }
-        long pCode = Long.parseLong(code);
+        int pCode = Integer.parseInt(code);
         model.addAttribute("prob_code", code);
         return "problem/editProblem";
     }
@@ -147,7 +147,7 @@ public class ProblemControl {
     @PostMapping(value = "/api/get-detail", produces = "application/json; charset=utf-8")
     @ResponseBody
     public String problemDetail(HttpServletRequest request, HttpServletResponse response) throws SQLException {
-        long code = Long.parseLong(request.getParameter("code"));
+        int code = Integer.parseInt(request.getParameter("code"));
         JSONObject detail = new JSONObject();
         Problem problem = problemService.getFullProblem(code);
         detail.put("cate", problem.getCategoryCode());
@@ -171,7 +171,7 @@ public class ProblemControl {
             return null;
         }
         Problem problem = new Problem();
-        problem.setCode        (Long.parseLong(request.getParameter("code")));
+        problem.setCode        (Integer.parseInt(request.getParameter("code")));
         problem.setName        (request.getParameter("name"));
         problem.setCategory    (request.getParameter("cate"));
         problem.setDifficulty  (request.getParameter("diff"));
@@ -207,10 +207,10 @@ public class ProblemControl {
         }
         userRepository.updateUserTSById(uid, "last_solve", now);
 
-        long code = Long.parseLong(request.getParameter("code"));
-        long time = Long.parseLong(request.getParameter("time"));
+        int code = Integer.parseInt(request.getParameter("code"));
+        int time = Integer.parseInt(request.getParameter("time"));
         boolean result = request.getParameter("res").equals("1");
-        long userCode = sessionService.getCode(session);
+        int userCode = sessionService.getCode(session);
         problemService.registerSolution(code, time, result, userCode);
         return "ok";
     }

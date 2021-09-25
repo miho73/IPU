@@ -49,7 +49,7 @@ public class UserControl {
     @PostMapping(value = "/api/users", produces = "application/json; charset=utf-8")
     @ResponseBody
     public String userRanking(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
-        long len = Long.parseLong(request.getParameter("len"));
+        int len = Integer.parseInt(request.getParameter("len"));
         if(len<=0 || len>100) {
             response.sendError(400);
             return null;
@@ -92,8 +92,8 @@ public class UserControl {
     @PostMapping(value = "/api/get-solved", produces = "application/json; charset=utf-8")
     @ResponseBody
     public String getSolved(HttpServletRequest request) throws SQLException {
-        long frm = Long.parseLong(request.getParameter("frm"));
-        long len = Long.parseLong(request.getParameter("len"));
+        int frm = Integer.parseInt(request.getParameter("frm"));
+        int len = Integer.parseInt(request.getParameter("len"));
         String id = request.getParameter("id");
         return userService.getSolved(frm, len, id);
     }
@@ -136,7 +136,7 @@ public class UserControl {
         String bio = request.getParameter("bio");
         boolean pwdC = Boolean.parseBoolean(request.getParameter("pwdC"));
         String nPwd = request.getParameter("npwd"), lPwd = request.getParameter("lpwd");
-        long uCode = sessionService.getCode(session);
+        int uCode = sessionService.getCode(session);
 
         if(!PasswordValidator.matcher(lPwd).matches()) {
             response.setStatus(400);
@@ -186,7 +186,7 @@ public class UserControl {
         }
         String pwd = request.getParameter("pwd");
         if(authService.auth(sessionService.getId(session), pwd)) {
-            long uCode = sessionService.getCode(session);
+            int uCode = sessionService.getCode(session);
             userService.deleteUesr(uCode);
             sessionService.invalidSession(session);
             return "profile/realbye";

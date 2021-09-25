@@ -50,19 +50,19 @@ public class UserRepository {
         conn.close();
     }
 
-    public User getUserByCode(long code) throws SQLException {
+    public User getUserByCode(int code) throws SQLException {
         String sql = "SELECT * FROM iden WHERE user_code=?;";
         PreparedStatement psmt = conn.prepareStatement(sql);
-        psmt.setLong(1, code);
+        psmt.setInt(1, code);
         ResultSet rs = psmt.executeQuery();
 
         if(!rs.next()) return null;
         User user = new User();
-        user.setCode(rs.getLong("user_code"));
+        user.setCode(rs.getInt("user_code"));
         user.setId(rs.getString("user_id"));
         user.setName(rs.getString("user_name"));
         user.setEmail(rs.getString("email"));
-        user.setExperience(rs.getLong("experience"));
+        user.setExperience(rs.getInt("experience"));
         user.setBio(rs.getString("bio"));
         user.setJoined(rs.getTimestamp("joined"));
         user.setLastLogin(rs.getTimestamp("last_login"));
@@ -78,7 +78,7 @@ public class UserRepository {
 
         if(!rs.next()) return null;
         return new User(
-                rs.getLong("user_code"),
+                rs.getInt("user_code"),
                 rs.getString("user_id"),
                 rs.getString("user_name"),
                 rs.getString("privilege"),
@@ -97,7 +97,7 @@ public class UserRepository {
         user.setId(rs.getString("user_id"));
         user.setName(rs.getString("user_name"));
         user.setBio(rs.getString("bio"));
-        user.setExperience(rs.getLong("experience"));
+        user.setExperience(rs.getInt("experience"));
         return user;
     }
 
@@ -164,13 +164,19 @@ public class UserRepository {
         ResultSet rs = psmt.executeQuery();
 
         if(!rs.next()) return null;
-        return new User(rs.getLong("user_code"), rs.getString("user_id"), rs.getString("user_password"), rs.getString("user_salt"));
+        User user = new User();
+        user.setCode(rs.getInt("user_code"));
+        user.setId(rs.getString("user_id"));
+        user.setPwd(rs.getString("user_password"));
+        user.setSalt(rs.getString("user_salt"));
+        user.setPrivilege(rs.getString("privilege"));
+        return user;
     }
 
-    public List<User> getUserRanking(long len) throws SQLException {
+    public List<User> getUserRanking(int len) throws SQLException {
         String sql = "SELECT user_id, user_name, bio, experience FROM iden ORDER BY experience DESC LIMIT ?;";
         PreparedStatement psmt = conn.prepareStatement(sql);
-        psmt.setLong(1, len);
+        psmt.setInt(1, len);
         ResultSet rs = psmt.executeQuery();
 
         List<User> ret = new Vector<>();
@@ -179,46 +185,46 @@ public class UserRepository {
             user.setId(rs.getString("user_id"));
             user.setName(rs.getString("user_name"));
             user.setBio(rs.getString("bio"));
-            user.setExperience(rs.getLong("experience"));
+            user.setExperience(rs.getInt("experience"));
             ret.add(user);
         }
         return ret;
     }
 
-    public void addExperience(long exp, long userCode) throws SQLException {
+    public void addExperience(int exp, int userCode) throws SQLException {
         String sql = "UPDATE iden SET experience=((SELECT experience FROM iden WHERE user_code=?)+?) WHERE user_code=?;";
         PreparedStatement psmt = conn.prepareStatement(sql);
-        psmt.setLong(1, userCode);
-        psmt.setLong(2, exp);
-        psmt.setLong(3, userCode);
+        psmt.setInt(1, userCode);
+        psmt.setInt(2, exp);
+        psmt.setInt(3, userCode);
         psmt.execute();
     }
 
-    public void updateProfile(String name, String bio, long code) throws SQLException {
+    public void updateProfile(String name, String bio, int code) throws SQLException {
         String sql = "UPDATE iden SET user_name=?, bio=? WHERE user_code=?;";
 
         PreparedStatement psmt = conn.prepareStatement(sql);
         psmt.setString(1, name);
         psmt.setString(2, bio);
-        psmt.setLong(3, code);
+        psmt.setInt(3, code);
         psmt.execute();
     }
 
-    public void updatePassword(String nPwd, String nSalt, long code) throws SQLException {
+    public void updatePassword(String nPwd, String nSalt, int code) throws SQLException {
         String sql = "UPDATE iden SET user_password=?, user_salt=? WHERE user_code=?;";
 
         PreparedStatement psmt = conn.prepareStatement(sql);
         psmt.setString(1, nPwd);
         psmt.setString(2, nSalt);
-        psmt.setLong(3, code);
+        psmt.setInt(3, code);
         psmt.execute();
     }
 
-    public void deleteUser(long uCode) throws SQLException {
+    public void deleteUser(int uCode) throws SQLException {
         String sql = "DELETE FROM iden WHERE user_code=?;";
 
         PreparedStatement psmt = conn.prepareStatement(sql);
-        psmt.setLong(1, uCode);
+        psmt.setInt(1, uCode);
         psmt.execute();
     }
 }

@@ -22,7 +22,7 @@ public class Problem {
         BIOLOGY,
         EARTH_SCIENCE
     }
-    private long code;
+    private int code;
     private String name;
     private PROBLEM_DIFFICULTY difficulty;
     private PROBLEM_CATEGORY category;
@@ -30,10 +30,10 @@ public class Problem {
     private boolean hasHint;
     private String externalTabs, tags;
 
-    public long getCode() {
+    public int getCode() {
         return code;
     }
-    public void setCode(long code) {
+    public void setCode(int code) {
         this.code = code;
     }
 

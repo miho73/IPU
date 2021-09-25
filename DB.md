@@ -82,7 +82,8 @@ Below's sql is command to make database. All tabes will be automatically created
 > resource_code CHAR(88) PRIMARY KEY,
 > resource BYTEA NOT NULL,
 > registered TIMESTAMP WITH TIME ZONE NOT NULL,
-> registered_by VARCHAR(50) NOT NULL
+> registered_by VARCHAR(50) NOT NULL,
+> resource_name VARCHAR(100) NOT NULL
 > );
 > ```
 

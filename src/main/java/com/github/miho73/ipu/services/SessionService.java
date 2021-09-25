@@ -2,6 +2,7 @@ package com.github.miho73.ipu.services;
 
 import com.github.miho73.ipu.controllers.AuthControl;
 import com.github.miho73.ipu.domain.User;
+import com.github.miho73.ipu.repositories.SessionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import java.util.Map;
 @Service("SessionService")
 public class SessionService {
     private final Logger LOGGER = LoggerFactory.getLogger(AuthControl.class);
+    private final SessionRepository sessionRepository = new SessionRepository();
 
     /**
      * Check login
@@ -23,6 +25,7 @@ public class SessionService {
         if(session == null) return false;
         Object logged = session.getAttribute("isLoggedIn");
         if(logged == null) return false;
+        if(!sessionRepository.exists(getId(session))) return false;
         return (boolean)logged;
     }
 
@@ -36,6 +39,12 @@ public class SessionService {
         session.setAttribute("code", user.getCode());
         session.setAttribute("name", user.getName());
         LOGGER.debug("Set user to session: "+user.getCode()+": "+user.getId()+"("+user.getName()+") "+user.getPrivilege());
+        if(sessionRepository.exists(user.getId())) {
+            invalidSession(sessionRepository.get(user.getId()));
+            sessionRepository.remove(user.getId());
+        }
+        LOGGER.debug("Registering session to table. ID="+user.getId());
+        sessionRepository.add(session, user.getId());
     }
     public User getUserData(HttpSession session) {
         return new User((String)session.getAttribute("id"), (String)session.getAttribute("name"), (String)session.getAttribute("privilege"));
@@ -50,8 +59,8 @@ public class SessionService {
     public String getId(HttpSession session) {
         return (String)session.getAttribute("id");
     }
-    public long getCode(HttpSession session) {
-        return (long)session.getAttribute("code");
+    public int getCode(HttpSession session) {
+        return (int)session.getAttribute("code");
     }
 
     public void loadSessionToModel(HttpSession session, Model model) {
@@ -90,12 +99,18 @@ public class SessionService {
         return !switch (p) {
             case USER -> priv.contains("u");
             case PROBLEM_MAKE -> priv.contains("p");
-            case INVITE_CODES -> priv.contains("m");
+            case INVITE_CODES -> priv.contains("i");
             default -> false;
         };
     }
 
     public void invalidSession(HttpSession session) {
+        LOGGER.debug("Invalidated session ID="+getId(session)+". Drop from table");
+        sessionRepository.remove(getId(session));
         session.invalidate();
+    }
+
+    public HttpSession getSessonById(String id) {
+        return sessionRepository.get(id);
     }
 }

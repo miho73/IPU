@@ -3,12 +3,12 @@ function loaded() {
 }
 
 function invRef(query) {
-    pascal = document.getElementById('addInv');
+    pascal = gei('addInv');
     pascal.innerHTML = "";
     $.ajax({
         method: "POST",
         dataType: "json",
-        url: "/mgr/api/get/inv",
+        url: "/root/api/inv",
         data: {
             q: query
         },
@@ -32,12 +32,15 @@ function invRef(query) {
             tr.appendChild(number);
             tr.appendChild(code);
             pascal.appendChild(tr);
+        },
+        complete: function() {
+            gei('invQuery').value = "";
         }
     });
 }
 
 function invSend() {
-    cmd = document.getElementById('invQuery').value;
+    cmd = gei('invQuery').value;
     invRef(cmd);
 }
 
@@ -45,7 +48,7 @@ function sendPermQuery() {
     $.ajax({
         method: "POST",
         dataType: "text",
-        url: "/mgr/api/perm",
+        url: "/root/api/perm",
         data: {
             q: document.getElementById('usrQuery').value
         },
@@ -53,19 +56,19 @@ function sendPermQuery() {
             document.getElementById('usrRes').innerText = data;
         },
         error: function(err) {
-            let txt = "Response: Unknown"
+            let txt = "예기치 못한 오류"
             switch(err.responseText) {
                 case "dbquery":
                     txt = "DB 쿼리 오류"
                     break;
-                case "unk":
+                case "uk":
                     txt = "알 수 없는 명령"
+                    break;
+                case "unc":
+                    txt = "불완전한 명령"
                     break;
                 case "perm":
                     txt = "권한 거부"
-                    break;
-                case "perm":
-                    txt = "예기지 못한 오류 발생"
                     break;
                 case "permFormat":
                     txt = "권한코드 형식 오류"
@@ -75,6 +78,29 @@ function sendPermQuery() {
                     break;
             }
             document.getElementById('usrRes').innerText = txt;
+        }
+    });
+}
+
+function sendUlogQuery() {
+    $.ajax({
+        method: "POST",
+        dataType: "text",
+        url: "/root/api/deauth",
+        data: {
+            id: gei('usrUnlog').value
+        },
+        success: function(data) {
+            gei('uLogRes').innerText = data;
+        },
+        error: function(err) {
+            let txt = "예기치 못한 오류"
+            switch(err.responseText) {
+                case "perm":
+                    txt="권한 거부";
+                    break;
+            }
+            document.getElementById('uLogRes').innerText = txt;
         }
     });
 }
