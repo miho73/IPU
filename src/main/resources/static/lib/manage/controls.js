@@ -99,6 +99,9 @@ function sendUlogQuery() {
                 case "perm":
                     txt="권한 거부";
                     break;
+                case "usr":
+                    txt="세션을 찾을 수 없음";
+                    break;
             }
             document.getElementById('uLogRes').innerText = txt;
         }
