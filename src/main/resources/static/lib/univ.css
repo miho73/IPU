@@ -46,6 +46,10 @@ html,body {
     width: 100%;
 }
 
+*.nout {
+    outline: none;
+}
+
 a {
     text-decoration: none;
     color: #000;
@@ -391,6 +395,9 @@ div.non-container,div.container {
     width: 50%;
     margin: 0 25%;
     margin-bottom: 5vh;
+}
+div.container {
+    margin-top: 5vh;
 }
 @media (max-width: 900px) {
     h1#title {

@@ -1,6 +1,9 @@
 package com.github.miho73.ipu.services;
 
+import com.github.miho73.ipu.controllers.CommonControl;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
@@ -13,9 +16,10 @@ import java.io.IOException;
 import java.util.Scanner;
 
 @Service("DocsService")
-
-@PropertySource("classpath:/properties/application.properties")
+@PropertySource("classpath:/application.properties")
 public class DocsService {
+    private final Logger LOGGER = LoggerFactory.getLogger(CommonControl.class);
+
     @Value("${docs.mappingFile}") String mappingFile;
 
     private JSONObject mapping;
@@ -23,6 +27,7 @@ public class DocsService {
 
     @PostConstruct
     public void initDocsService() throws IOException {
+        LOGGER.debug("Read docs mapping from \""+mappingFile+"\"");
         File read = new File(mappingFile);
         Scanner reader = new Scanner(read);
         StringBuilder mappingJson = new StringBuilder();

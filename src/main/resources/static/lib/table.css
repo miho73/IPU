@@ -26,10 +26,13 @@ td > a {
 td > a:hover {
     text-decoration: underline;
 }
-tr:nth-child(even) {
+thead > tr {
+    background-color: #fff;
+}
+tbody > tr:nth-child(odd) {
     background-color: #eee;
 }
-tr:nth-child(odd) {
+tbody > tr:nth-child(even) {
     background-color: #fff;
 }
 @media (max-width: 800px) {

@@ -25,7 +25,7 @@ public class SolutionRepository {
     private DriverManagerDataSource dataSource;
     private Connection conn;
 
-    private final Logger LOGGER = LoggerFactory.getLogger(UserRepository.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(SolutionRepository.class);
 
     @Value("${db.solution.url}") private String DB_URL;
     @Value("${db.solution.username}") private String DB_USERNAME;

@@ -34,7 +34,7 @@ public class AuthService {
     private final SessionService sessionService;
     private final InviteService inviteService;
 
-    private final Logger LOGGER = LoggerFactory.getLogger(UserRepository.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(AuthService.class);
     private TimeZone tz = TimeZone.getTimeZone("UTC");
     private final DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
 

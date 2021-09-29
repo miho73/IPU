@@ -6,6 +6,7 @@
         <th:block th:replace="fragments/header-comp.html :: header-comp"></th:block>
         <link rel="stylesheet" type="text/css" href="/lib/profile/profile.css">
         <link rel="stylesheet" type="text/css" href="/lib/table.css">
+        <link rel="stylesheet" type="text/css" href="/lib/problem/problemList.css">
         <script src="/lib/univ/converter.js"></script>
         <script src="/lib/problem/pShow.js"></script>
         <meta name="title" content="IPU - 문제">
@@ -17,17 +18,26 @@
     </head>
     <body th:onload="load([[${page}]])">
         <th:block th:replace="fragments/header.html :: navigation"></th:block>
-        <h1 id="title">Problems</h1>
         <div class="container">
-            <div id="prob-nav"></div>
+            <div id="prob-nav">
+                <div id="prob-viewin">
+                    <a class="viewin-element viewin-selected">전체</a>
+                    <a class="viewin-element">분류</a>
+                    <a class="viewin-element">난이도</a>
+                    <a class="viewin-element">랜덤</a>
+                </div>
+                <form action="/problem/api/search" method="POST" id="search-form">
+                    <input type="text" spellcheck="false" placeholder="검색" id="search" class="nout">
+                    <button type="submit" id="submit-search" class="nout">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M23.809 21.646l-6.205-6.205c1.167-1.605 1.857-3.579 1.857-5.711 0-5.365-4.365-9.73-9.731-9.73-5.365 0-9.73 4.365-9.73 9.73 0 5.366 4.365 9.73 9.73 9.73 2.034 0 3.923-.627 5.487-1.698l6.238 6.238 2.354-2.354zm-20.955-11.916c0-3.792 3.085-6.877 6.877-6.877s6.877 3.085 6.877 6.877-3.085 6.877-6.877 6.877c-3.793 0-6.877-3.085-6.877-6.877z"/></svg>
+                    </button>
+                </form>
+            </div>
             <table class="problem-lst-table" id="prob-list-table">
                 <thead>
-                    <tr>
-                        <th style="width: 10%">문제</th>
-                        <th style="width: 50%;">문제 제목</th>
-                        <th style="width: 30%;">정보</th>
-                        <th style="width: 10%;">분류</th>
-                    </tr>
+                    <th style="width: 6%">문제</th>
+                    <th style="width: 57%;">문제 제목</th>
+                    <th style="width: 37%;">정보</th>
                 </thead>
                 <tbody id="addProb"></tbody>
             </table>

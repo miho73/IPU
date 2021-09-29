@@ -1,25 +1,37 @@
 package com.github.miho73.ipu.controllers;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 @Controller("CommonControl")
+@PropertySource("classpath:/application.properties")
 public class CommonControl {
-    private final String sitemap;
-    private final String robotTxt;
+    private String sitemap;
+    private String robotTxt;
+    private final Logger LOGGER = LoggerFactory.getLogger(CommonControl.class);
 
-    @Value("${config.sitemap.path}") private String sitemapPath;
-    @Value("${config.robot.path}") private String robotTxtPath;
+    @Value("${config.sitemap.path}") String sitemapPath;
+    @Value("${config.robot.path}") String robotTxtPath;
 
-    public CommonControl() throws FileNotFoundException {
+    @PostConstruct
+    public void initCommonControl() throws FileNotFoundException {
+        LOGGER.debug("Read sitemap file from \""+sitemapPath+"\"");
+        LOGGER.debug("Read robot.txt file from \""+robotTxtPath+"\"");
         sitemap = readFromFile(sitemapPath);
+        LOGGER.debug("sitemap loaded");
         robotTxt = readFromFile(robotTxtPath);
+        LOGGER.debug("robot.txt loaded");
     }
 
     private String readFromFile(String path) throws FileNotFoundException {

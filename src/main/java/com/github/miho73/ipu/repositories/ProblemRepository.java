@@ -23,7 +23,7 @@ public class ProblemRepository {
     private DriverManagerDataSource dataSource;
     private Connection conn;
 
-    private final Logger LOGGER = LoggerFactory.getLogger(UserRepository.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(ProblemRepository.class);
 
     @Value("${db.problem.url}") private String DB_URL;
     @Value("${db.problem.username}") private String DB_USERNAME;

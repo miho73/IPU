@@ -1,5 +1,7 @@
 const PROBLEM_PER_PAGE = 30;
 
+EXCLUDE_LIST = ["cate"]
+
 function load(pg) {
     let getLen = -1;
     $.ajax({
@@ -16,6 +18,7 @@ function load(pg) {
                 gei('not').style.display = 'block';
                 return;
             }
+            const ppr = gei('addProb');
             data.forEach(datum => {
                 let tr = document.createElement('tr');
                 let number = document.createElement('td'); number.innerText = datum.code;
@@ -23,12 +26,11 @@ function load(pg) {
                 name.innerHTML = `<a class="prob-href" href="/problem/${datum.code}">${datum.name}</a>`;
                 let infox = document.createElement('td'); infox.classList.add('tag-con');
                 let info = document.createElement('div'); infox.appendChild(info);
-                let cate = document.createElement('td');
                 tr.appendChild(number);
                 tr.appendChild(name);
                 tr.appendChild(infox);
-                tr.appendChild(cate);
                 datum.tags.forEach(ele=>{
+                    if(EXCLUDE_LIST.includes(ele.key)) return;
                     let tag = document.createElement('span');
                     tag.classList.add('tag');
                     tag.classList.add(`tag-${ele.key}`);
@@ -36,10 +38,6 @@ function load(pg) {
                         case "diff":
                             tag.innerText = convertDiff(ele.content);
                             tag.style.backgroundColor = convertDiffColor(ele.content);
-                            break;
-                        case "cate":
-                            tag.innerText = convertSubj(ele.content);
-                            cate.innerText = convertSubj(ele.content);
                             break;
                         default:
                             tag.innerText = ele.content;
@@ -50,7 +48,7 @@ function load(pg) {
                     }
                     info.appendChild(tag);
                 });
-                gei('addProb').appendChild(tr);
+                ppr.appendChild(tr);
             });
         },
         error: function(error) {

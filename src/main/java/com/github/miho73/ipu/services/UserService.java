@@ -23,7 +23,7 @@ public class UserService {
     private final ProblemRepository problemRepository;
     private final SolutionRepository solutionRepository;
 
-    private final Logger LOGGER = LoggerFactory.getLogger(UserRepository.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
     @Autowired
     public UserService(UserRepository userRepository, SolutionRepository solutionRepository, ProblemRepository problemRepository) {
