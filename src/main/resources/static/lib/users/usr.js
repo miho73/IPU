@@ -12,7 +12,7 @@ function load() {
         success: function(data) {
             getLen = data.length
             if(getLen == 0) {
-                document.getElementById('not').style.display = 'block';
+                gei('not').style.display = 'block';
                 return;
             }
             let cnt = 1;
@@ -32,11 +32,11 @@ function load() {
                 tr.appendChild(name);
                 tr.appendChild(bio);
                 tr.appendChild(exp);
-                document.getElementById('addUsr').appendChild(tr);
+                gei('addUsr').appendChild(tr);
             });
         },
         error: function(error) {
             console.log(error);
-        }
+        },
     });
 }

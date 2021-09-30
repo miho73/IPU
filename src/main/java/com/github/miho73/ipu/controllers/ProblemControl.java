@@ -50,6 +50,24 @@ public class ProblemControl {
         model.addAttribute("page", Integer.parseInt(page));
         return "problem/problemList";
     }
+    @GetMapping("/category")
+    public String getProblemCategoryPage(@RequestParam(value = "page", required = false, defaultValue = "0") String page, Model model, HttpSession session) {
+        sessionService.loadSessionToModel(session, model);
+        model.addAttribute("page", Integer.parseInt(page));
+        return "problem/problemCategory";
+    }
+    @GetMapping("/difficulty")
+    public String getProblemDifficultyPage(@RequestParam(value = "page", required = false, defaultValue = "0") String page, Model model, HttpSession session) {
+        sessionService.loadSessionToModel(session, model);
+        model.addAttribute("page", Integer.parseInt(page));
+        return "problem/problemCategory";
+    }
+    //TODO: make random
+    @GetMapping("/random")
+    public void getRandomProblem(Model model, HttpSession session, HttpServletResponse response) throws IOException {
+        sessionService.loadSessionToModel(session, model);
+        response.sendRedirect("/problem/5");
+    }
 
     @PostMapping(value = "/api/get", produces = "application/json; charset=utf-8")
     @ResponseBody

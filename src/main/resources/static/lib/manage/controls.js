@@ -50,10 +50,10 @@ function sendPermQuery() {
         dataType: "text",
         url: "/root/api/perm",
         data: {
-            q: document.getElementById('usrQuery').value
+            q: gei('usrQuery').value
         },
         success: function(data) {
-            document.getElementById('usrRes').innerText = data;
+            gei('usrRes').innerText = data;
         },
         error: function(err) {
             let txt = "예기치 못한 오류"
@@ -77,7 +77,7 @@ function sendPermQuery() {
                     txt = "자기 자신의 권한은 수정할 수 없습니다.";
                     break;
             }
-            document.getElementById('usrRes').innerText = txt;
+            gei('usrRes').innerText = txt;
         }
     });
 }
@@ -103,7 +103,7 @@ function sendUlogQuery() {
                     txt="세션을 찾을 수 없음";
                     break;
             }
-            document.getElementById('uLogRes').innerText = txt;
+            gei('uLogRes').innerText = txt;
         }
     });
 }

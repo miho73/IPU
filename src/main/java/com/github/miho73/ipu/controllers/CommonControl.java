@@ -45,13 +45,13 @@ public class CommonControl {
         return content.toString();
     }
 
-    @GetMapping(value = "sitemap.xml", produces = "text/plain; charset=utf-8")
+    @GetMapping(value = "sitemap.xml", produces = "text/xml; charset=utf-8")
     @ResponseBody
     public String sitemap() {
         return sitemap;
     }
 
-    @GetMapping(value = "robots.txt", produces = "text/xml; charset=utf-8")
+    @GetMapping(value = "robots.txt", produces = "text/plain; charset=utf-8")
     @ResponseBody
     public String robot() {
         return robotTxt;

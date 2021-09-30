@@ -9,12 +9,12 @@ function load(pg) {
         data: {
             frm: pg*PROBLEM_PER_PAGE+1,
             len: PROBLEM_PER_PAGE,
-            id: document.getElementById('uid').innerText
+            id: gei('uid').innerText
         },
         success: function(data) {
             getLen = data.length;
             if(getLen == 0) {
-                document.getElementById('not').style.display = 'block';
+                gei('not').style.display = 'block';
                 return;
             }
             let cnt = 0;
@@ -67,7 +67,7 @@ function load(pg) {
                     }
                     info.appendChild(tag);
                 });
-                document.getElementById('solveds').appendChild(tr);
+                gei('solveds').appendChild(tr);
             });
         },
         error: function(error) {
@@ -76,41 +76,41 @@ function load(pg) {
         complete: function() {
             if(getLen == -1) return;
             if(pg==0) {
-                document.getElementById('prev').style.display = 'none';
-                document.getElementById('pnsep').style.display = 'none';
+                gei('prev').style.display = 'none';
+                gei('pnsep').style.display = 'none';
             }
             else {
-                document.getElementById('prev').setAttribute('href', `/profile/${document.getElementById('uid').innerText}/?page=${pg-1}`);
+                gei('prev').setAttribute('href', `/profile/${gei('uid').innerText}/?page=${pg-1}`);
             }
             if(getLen < PROBLEM_PER_PAGE) {
-                document.getElementById('next').style.display = 'none';
-                document.getElementById('pnsep').style.display = 'none';
+                gei('next').style.display = 'none';
+                gei('pnsep').style.display = 'none';
             }
             else {
-                document.getElementById('next').setAttribute('href', `/profile/${document.getElementById('uid').innerText}/?page=${pg+1}`)
+                gei('next').setAttribute('href', `/profile/${gei('uid').innerText}/?page=${pg+1}`)
             }
-            let exp = document.getElementById('experi-visib').innerText;
+            let exp = gei('experi-visib').innerText;
             let levelCode = getLevelCode(exp);
             let lv_name = codeTable[levelCode];
-            document.getElementById('exp-name').innerText = codeTableRl[levelCode];
+            gei('exp-name').innerText = codeTableRl[levelCode];
             if(levelCode == 8) {
-                document.getElementById('next-lv').innerText = `YOU HAVE THE HIGHEST`;
+                gei('next-lv').innerText = `YOU HAVE THE HIGHEST`;
             }
             else {
                 if(levelCode == 7) {
-                    document.getElementById('next-lv').innerText = `Ultimate 승급까지 ${cutTable[levelCode]-exp}`;
+                    gei('next-lv').innerText = `Ultimate 승급까지 ${cutTable[levelCode]-exp}`;
                 }
                 else {
-                    document.getElementById('next-lv').innerText = `${codeTableRl[levelCode+1]} 승급까지 ${cutTable[levelCode]-exp}`;
+                    gei('next-lv').innerText = `${codeTableRl[levelCode+1]} 승급까지 ${cutTable[levelCode]-exp}`;
                 }
             }
             setTimeout(()=>{
                 if(levelCode == 8) {
-                    document.getElementById('experi-visib').style.width = `100%`;
+                    gei('experi-visib').style.width = `100%`;
                 }
-                else document.getElementById('experi-visib').style.width = `${(exp-cutTable[levelCode-1])/(cutTable[levelCode]-cutTable[levelCode-1])*100}%`;
+                else gei('experi-visib').style.width = `${(exp-cutTable[levelCode-1])/(cutTable[levelCode]-cutTable[levelCode-1])*100}%`;
             }, 200);
-            document.getElementById('experi-visib').classList.add(`prog-exp-${lv_name}`);
+            gei('experi-visib').classList.add(`prog-exp-${lv_name}`);
         }
     });
 }

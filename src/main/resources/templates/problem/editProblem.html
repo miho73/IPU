@@ -200,16 +200,16 @@
                     init(expedit, apply.prob_exp);
                     init(ansedit, apply.prob_ans);
                     init(hintedit, apply.prob_hint);
-                    document.getElementById('name').value = apply.prob_name;
-                    document.getElementById('hashint').checked = apply.hashint;
+                    gei('name').value = apply.prob_name;
+                    gei('hashint').checked = apply.hashint;
                     if(apply.hashint) {
                         hintSH();
                     }
-                    document.getElementById('category').value = apply.cate;
-                    document.getElementById('diffi').value = apply.diff;
+                    gei('category').value = apply.cate;
+                    gei('diffi').value = apply.diff;
                     let ext = JSON.parse(apply.spec);
                     ext.forEach(ele => {
-                        const toAdd = document.getElementById('extr-edit-cont');
+                        const toAdd = gei('extr-edit-cont');
                         const name = document.createElement('input');
                         const rt_div = document.createElement('div');
                         const edit_div = document.createElement('div');
@@ -282,7 +282,7 @@
                         ntag.innerText = ne.content;
                         ntag.style.backgroundColor = `#${ne.back}`;
                         ntag.style.color = `#${ne.color}`;
-                        document.getElementById('tags-cont').appendChild(ntag);
+                        gei('tags-cont').appendChild(ntag);
                     });
                 }
             });
@@ -297,47 +297,47 @@
             let proceed = confirm("문제를 업데이트할까요?");
             let precond = true;
             if(!proceed) return;
-            content = document.getElementById('editor-cont').getElementsByClassName('ql-editor')[0].innerHTML;
-            exp = document.getElementById('editor-exp').getElementsByClassName('ql-editor')[0].innerHTML;
-            ans = document.getElementById('editor-ans').getElementsByClassName('ql-editor')[0].innerHTML;
-            hintx = document.getElementById('editor-hint').getElementsByClassName('ql-editor')[0].innerHTML;
-            namep = document.getElementById('name').value;
+            content = gei('editor-cont').getElementsByClassName('ql-editor')[0].innerHTML;
+            exp = gei('editor-exp').getElementsByClassName('ql-editor')[0].innerHTML;
+            ans = gei('editor-ans').getElementsByClassName('ql-editor')[0].innerHTML;
+            hintx = gei('editor-hint').getElementsByClassName('ql-editor')[0].innerHTML;
+            namep = gei('name').value;
             tabs = Array(extrTabCnt);
             for(let i=0; i<extrTabCnt; i++) {
-                if(document.getElementById(`extr-tab-name-${i}`) == '') {
+                if(gei(`extr-tab-name-${i}`) == '') {
                     proceed = false;
                     break;
                 }
                 tabs[i] = {
-                    name: document.getElementById(`extr-tab-name-${i}`).value,
-                    content: document.getElementById(`extr-tab-edit-${i}`).getElementsByClassName('ql-editor')[0].innerHTML
+                    name: gei(`extr-tab-name-${i}`).value,
+                    content: gei(`extr-tab-edit-${i}`).getElementsByClassName('ql-editor')[0].innerHTML
                 };
             }
             if(namep == "" || namep == undefined) {
-                document.getElementById('name').classList.add('formthis');
+                gei('name').classList.add('formthis');
                 location.href = "#name";
                 precond = false;
             }
             else {
-                document.getElementById('name').classList.remove('formthis');
+                gei('name').classList.remove('formthis');
             }
-            cat = document.getElementById('category');
+            cat = gei('category');
             if(cat.selectedIndex == 0) {
-                document.getElementById('category').classList.add('formthis');
+                gei('category').classList.add('formthis');
                 location.href = "#category";
                 precond = false;
             }
             else {
-                document.getElementById('category').classList.remove('formthis');
+                gei('category').classList.remove('formthis');
             }
-            dif = document.getElementById('diffi');
+            dif = gei('diffi');
             if(dif.selectedIndex == 0) {
-                document.getElementById('diffi').classList.add('formthis');
+                gei('diffi').classList.add('formthis');
                 location.href = "#diffi";
                 precond = false;
             }
             else {
-                document.getElementById('diffi').classList.remove('formthis');
+                gei('diffi').classList.remove('formthis');
             }
             if(!precond) return;
             $.ajax({
@@ -352,7 +352,7 @@
                     solu: exp,
                     answ: ans,
                     hint: hintx,
-                    hasH: document.getElementById('hashint').checked,
+                    hasH: gei('hashint').checked,
                     extr: JSON.stringify(tabs),
                     tags: JSON.stringify(tag)
                 },

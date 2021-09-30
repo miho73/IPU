@@ -1,18 +1,18 @@
 function activePwd() {
-    document.getElementById('changepwd').style.display = 'none';
-    document.getElementById('pwdreg').style.display = 'block';
-    document.getElementById('pwdChange').checked = true;
-    setTimeout(()=>document.getElementById('pwdreg').style.transform = 'scaleY(1)', 2);
+    gei('changepwd').style.display = 'none';
+    gei('pwdreg').style.display = 'block';
+    gei('pwdChange').checked = true;
+    setTimeout(()=>gei('pwdreg').style.transform = 'scaleY(1)', 2);
 }
 
 const idValidator = new RegExp('^(?=.*[A-Za-z])[A-Za-z0-9]{0,50}$');
 const pwdValidator = new RegExp('^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d!"#$%&\'()*+,\\-./:;<=>?@\\[\\]^_`{|}~\\\\\\)]{6,}$');
 
 function upload() {
-    let uname = document.getElementById('name').value;
-    let bio = document.getElementById('bios').value;
-    let ema = document.getElementById('email').value;
-    let lpwd = document.getElementById('lpwd').value;
+    let uname = gei('name').value;
+    let bio = gei('bios').value;
+    let ema = gei('email').value;
+    let lpwd = gei('lpwd').value;
     let success = true;
     if(uname.length > 50 || uname == "") {
         gei('name').classList.add('formthis');
@@ -46,24 +46,24 @@ function upload() {
             name: uname,
             bio: bio,
             email: ema,
-            pwdC: document.getElementById('pwdChange').checked,
-            npwd: document.getElementById('npwd').value,
+            pwdC: gei('pwdChange').checked,
+            npwd: gei('npwd').value,
             lpwd: lpwd
         },
         success: function(data) {
             window.location.reload();
         },
         error: function(err) {
-            document.getElementById('errdis').style.display = "block";
+            gei('errdis').style.display = "block";
             switch(err.responseText) {
                 case "pwd":
-                    document.getElementById('errdis').innerText = "인증 실패";
+                    gei('errdis').innerText = "인증 실패";
                     break;
                 case "form":
-                    document.getElementById('errdis').innerText = "알맞지 않은 형식입니다.";
+                    gei('errdis').innerText = "알맞지 않은 형식입니다.";
                     break;
                 case "fpwd":
-                    document.getElementById('errdis').innerText = "프로필은 업데이트되었지만 암호는 바꾸지 못했습니다.";
+                    gei('errdis').innerText = "프로필은 업데이트되었지만 암호는 바꾸지 못했습니다.";
                     break;
             }
             window.location.hash = "errdis";

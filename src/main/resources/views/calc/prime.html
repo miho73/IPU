@@ -26,12 +26,12 @@
     </body>
     <script>
         async function prime() {
-            let n = document.getElementById('n').value;
+            let n = gei('n').value;
             if(n=='' || n<2) {
-                document.getElementById('fermat').innerText = 'PENDING';
-                document.getElementById('fermat').classList = 'result-label skipped';
-                document.getElementById('mod').innerText = 'PENDING';
-                document.getElementById('mod').classList = 'result-label skipped';
+                gei('fermat').innerText = 'PENDING';
+                gei('fermat').classList = 'result-label skipped';
+                gei('mod').innerText = 'PENDING';
+                gei('mod').classList = 'result-label skipped';
                 return;
             }
             await fermat(n);
@@ -40,32 +40,32 @@
         async function fermat(n) {
             /*
             if(n%2==0) {
-                document.getElementById('fermat').innerText = 'SKIPPED';
-                document.getElementById('fermat').classList = 'result-label skipped';
+                gei('fermat').innerText = 'SKIPPED';
+                gei('fermat').classList = 'result-label skipped';
                 return;
             }
             */
-            document.getElementById('fermat').innerText = 'CALCULATING';
-            document.getElementById('fermat').classList = 'result-label skipped';
+            gei('fermat').innerText = 'CALCULATING';
+            gei('fermat').classList = 'result-label skipped';
             let m = powerMod(2, n-1, n);
             console.log(m);
             if(m == 1) {
-                document.getElementById('fermat').innerText = 'PASSED';
-                document.getElementById('fermat').classList = 'result-label passed';
+                gei('fermat').innerText = 'PASSED';
+                gei('fermat').classList = 'result-label passed';
             }
             else {
-                document.getElementById('fermat').innerText = 'FAILED';
-                document.getElementById('fermat').classList = 'result-label failed';
+                gei('fermat').innerText = 'FAILED';
+                gei('fermat').classList = 'result-label failed';
             }
         }
         async function mod(n) {
             if(n==2 ) {
-                document.getElementById('mod').innerText = 'PASSED';
-                document.getElementById('mod').classList = 'result-label passed';
+                gei('mod').innerText = 'PASSED';
+                gei('mod').classList = 'result-label passed';
                 return;
             }
-            document.getElementById('mod').innerText = 'CALCULATING';
-            document.getElementById('mod').classList = 'result-label skipped';
+            gei('mod').innerText = 'CALCULATING';
+            gei('mod').classList = 'result-label skipped';
             let to = Math.sqrt(n), flag=true;
             for(let i=2; i<=to; i++) {
                 if(n%i==0) {
@@ -74,12 +74,12 @@
                 }
             }
             if(flag) {
-                document.getElementById('mod').innerText = 'PASSED';
-                document.getElementById('mod').classList = 'result-label passed';
+                gei('mod').innerText = 'PASSED';
+                gei('mod').classList = 'result-label passed';
             }
             else {
-                document.getElementById('mod').innerText = 'FAILED';
-                document.getElementById('mod').classList = 'result-label failed';
+                gei('mod').innerText = 'FAILED';
+                gei('mod').classList = 'result-label failed';
             }
         }
     </script>

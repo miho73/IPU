@@ -34,14 +34,14 @@
     </body>
     <script>
         function changed() {
-            let t = document.getElementById('check').value;
+            let t = gei('check').value;
             if(t == 'I Promise U') {
-                document.getElementById('check').style.boxShadow = "0 0 5px #0f0";
-                document.getElementById('real-del').disabled = false;
+                gei('check').style.boxShadow = "0 0 5px #0f0";
+                gei('real-del').disabled = false;
             }
             else {
-                document.getElementById('check').style.boxShadow = "0 0 5px #f00";
-                document.getElementById('real-del').disabled = true;
+                gei('check').style.boxShadow = "0 0 5px #f00";
+                gei('real-del').disabled = true;
             }
         }
     </script>

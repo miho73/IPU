@@ -79,8 +79,8 @@ function selectLocalImage(forwhat) {
 }
 
 function ctrlTable(code) {
-    document.getElementById(`tab-${code}`).style.display = 'flex';
-    document.getElementById(`tbtn-${code}`).style.display = 'none';
+    gei(`tab-${code}`).style.display = 'flex';
+    gei(`tbtn-${code}`).style.display = 'none';
 }
 
 function addTable(table) {
@@ -109,21 +109,21 @@ function deleteColumn(table) {
 }
 
 function preview() {
-    namex = document.getElementById('name').value;
-    content = document.getElementById('editor-cont').getElementsByClassName('ql-editor')[0].innerHTML;
-    exp = document.getElementById('editor-exp').getElementsByClassName('ql-editor')[0].innerHTML;
-    ans = document.getElementById('editor-ans').getElementsByClassName('ql-editor')[0].innerHTML;
-    hint = document.getElementById('editor-hint').getElementsByClassName('ql-editor')[0].innerHTML;
-    document.getElementById('preview-container').style.display = "block";
+    namex = gei('name').value;
+    content = gei('editor-cont').getElementsByClassName('ql-editor')[0].innerHTML;
+    exp = gei('editor-exp').getElementsByClassName('ql-editor')[0].innerHTML;
+    ans = gei('editor-ans').getElementsByClassName('ql-editor')[0].innerHTML;
+    hint = gei('editor-hint').getElementsByClassName('ql-editor')[0].innerHTML;
+    gei('preview-container').style.display = "block";
     setTimeout(()=>{
-        document.getElementById('preview-container').style.opacity = 1;
+        gei('preview-container').style.opacity = 1;
     }, 10);
     $('#preview-name').text(namex);
     $('#preview-content').html(content);
     $('#preview-exp').html(exp);
     $('#preview-ans').html(ans);
     $('#preview-hint').html(hint);
-    let toAdd = document.getElementById('custon-tabs');
+    let toAdd = gei('custon-tabs');
     let div = document.createElement('hr');
     div.classList.add('prob-hr');
     let divProb = document.createElement('hr');
@@ -133,12 +133,12 @@ function preview() {
         let title = document.createElement('span');
         let cont = document.createElement('div');
         title.classList.add('prob-title');
-        title.innerText = document.getElementById(`extr-tab-name-${i}`).value;
+        title.innerText = gei(`extr-tab-name-${i}`).value;
         cont.classList.add('mathjax');
         cont.classList.add('prob-appl');
         cont.classList.add('ql-editor');
         cont.classList.add('ql-shower');
-        cont.innerHTML = document.getElementById(`extr-tab-edit-${i}`).getElementsByClassName('ql-editor')[0].innerHTML;
+        cont.innerHTML = gei(`extr-tab-edit-${i}`).getElementsByClassName('ql-editor')[0].innerHTML;
         toAdd.appendChild(title);
         toAdd.appendChild(div);
         toAdd.appendChild(cont);
@@ -151,51 +151,51 @@ function confirme() {
     let proceed = confirm("문제를 등록할까요?");
     let precond = true;
     if(!proceed) return;
-    document.getElementById('confirm').disabled = true;
-    content = document.getElementById('editor-cont').getElementsByClassName('ql-editor')[0].innerHTML;
-    exp = document.getElementById('editor-exp').getElementsByClassName('ql-editor')[0].innerHTML;
-    ans = document.getElementById('editor-ans').getElementsByClassName('ql-editor')[0].innerHTML;
-    hintx = document.getElementById('editor-hint').getElementsByClassName('ql-editor')[0].innerHTML;
-    namep = document.getElementById('name').value;
+    gei('confirm').disabled = true;
+    content = gei('editor-cont').getElementsByClassName('ql-editor')[0].innerHTML;
+    exp = gei('editor-exp').getElementsByClassName('ql-editor')[0].innerHTML;
+    ans = gei('editor-ans').getElementsByClassName('ql-editor')[0].innerHTML;
+    hintx = gei('editor-hint').getElementsByClassName('ql-editor')[0].innerHTML;
+    namep = gei('name').value;
     tabs = Array(extrTabCnt);
     for(let i=0; i<extrTabCnt; i++) {
-        if(document.getElementById(`extr-tab-name-${i}`) == '') {
+        if(gei(`extr-tab-name-${i}`) == '') {
             proceed = false;
             break;
         }
         tabs[i] = {
-            name: document.getElementById(`extr-tab-name-${i}`).value,
-            content: document.getElementById(`extr-tab-edit-${i}`).getElementsByClassName('ql-editor')[0].innerHTML
+            name: gei(`extr-tab-name-${i}`).value,
+            content: gei(`extr-tab-edit-${i}`).getElementsByClassName('ql-editor')[0].innerHTML
         };
     }
     if(namep == "" || namep == undefined) {
-        document.getElementById('name').classList.add('formthis');
+        gei('name').classList.add('formthis');
         location.href = "#name";
         precond = false;
     }
     else {
-        document.getElementById('name').classList.remove('formthis');
+        gei('name').classList.remove('formthis');
     }
-    cat = document.getElementById('category');
+    cat = gei('category');
     if(cat.selectedIndex == 0) {
-        document.getElementById('category').classList.add('formthis');
+        gei('category').classList.add('formthis');
         location.href = "#category";
         precond = false;
     }
     else {
-        document.getElementById('category').classList.remove('formthis');
+        gei('category').classList.remove('formthis');
     }
-    dif = document.getElementById('diffi');
+    dif = gei('diffi');
     if(dif.selectedIndex == 0) {
-        document.getElementById('diffi').classList.add('formthis');
+        gei('diffi').classList.add('formthis');
         location.href = "#diffi";
         precond = false;
     }
     else {
-        document.getElementById('diffi').classList.remove('formthis');
+        gei('diffi').classList.remove('formthis');
     }
     if(!precond) {
-        document.getElementById('confirm').disabled = false;
+        gei('confirm').disabled = false;
         return;
     }
     $.ajax({
@@ -209,7 +209,7 @@ function confirme() {
             solu: exp,
             answ: ans,
             hint: hintx,
-            hasH: document.getElementById('hashint').checked,
+            hasH: gei('hashint').checked,
             extr: JSON.stringify(tabs),
             tags: JSON.stringify(tag)
         },
@@ -224,29 +224,29 @@ function confirme() {
                     window.location.href = `/login/?ret=problem/make`;
                 }
             }
-            document.getElementById('confirm').disabled = false;
+            gei('confirm').disabled = false;
         }
     });
 }
 function hintSH() {
-    if(document.getElementById('hashint').checked) {
-        document.getElementById('hint-edit-container').style.display = "block";
+    if(gei('hashint').checked) {
+        gei('hint-edit-container').style.display = "block";
         setTimeout(()=>{
-            document.getElementById('hint-edit-container').style.maxHeight = "500px"
+            gei('hint-edit-container').style.maxHeight = "500px"
         }, 5);
-        document.getElementById('hint-prev').style.display = "block";
+        gei('hint-prev').style.display = "block";
         setTimeout(()=>{
-            document.getElementById('hint-prev').style.maxHeight = "500px"
+            gei('hint-prev').style.maxHeight = "500px"
         }, 5);
     }
     else {
-        document.getElementById('hint-edit-container').style.maxHeight = "0"
+        gei('hint-edit-container').style.maxHeight = "0"
         setTimeout(()=>{
-            document.getElementById('hint-edit-container').style.display = "none";
+            gei('hint-edit-container').style.display = "none";
         }, 500);
-        document.getElementById('hint-prev').style.maxHeight = "0"
+        gei('hint-prev').style.maxHeight = "0"
         setTimeout(()=>{
-            document.getElementById('hint-prev').style.display = "none";
+            gei('hint-prev').style.display = "none";
         }, 500);
     }
 }
@@ -255,7 +255,7 @@ var extrTableArr = [];
 function addExtr() {
     let conf = confirm('새 탭을 추가할까요?');
     if(!conf) return;
-    const toAdd = document.getElementById('extr-edit-cont');
+    const toAdd = gei('extr-edit-cont');
     const rt_div = document.createElement('div');
     const name = document.createElement('input');
     const edit_div = document.createElement('div');
@@ -318,11 +318,11 @@ function tagHandle() {
     if(!c) return;
     let ne = {
         key: "custom",
-        content: document.getElementById('tag-input').value,
-        color: document.getElementById('tag-fore').value,
-        back: document.getElementById('tag-back').value
+        content: gei('tag-input').value,
+        color: gei('tag-fore').value,
+        back: gei('tag-back').value
     };
-    document.getElementById('tag-input').value = '';
+    gei('tag-input').value = '';
     tag.push(ne);
     let ntag = document.createElement('span');
     ntag.classList.add('tag');
@@ -330,11 +330,11 @@ function tagHandle() {
     ntag.innerText = ne.content;
     ntag.style.backgroundColor = `#${ne.back}`;
     ntag.style.color = `#${ne.color}`;
-    document.getElementById('tags-cont').appendChild(ntag);
+    gei('tags-cont').appendChild(ntag);
 }
 
 function updateColor(id) {
-    document.getElementById(id).style.backgroundColor = `#${document.getElementById(id).value}`;
+    gei(id).style.backgroundColor = `#${gei(id).value}`;
 }
 
 window.onbeforeunload = function (e) {
