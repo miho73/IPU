@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  Distribute_to_server:
+  Build_and_distribute:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -25,7 +25,7 @@ jobs:
         run: |
           mkdir to_be_sync
           cp -r ./{serves,docsMapping.json,build/libs/IPU-3.0.0.jar} ./to_be_sync
-          mv to_be_sync/IPU-3.0.0.jar IPU.jar
+          mv to_be_sync/IPU-3.0.0.jar to_be_sync/IPU.jar
       - name: Upload to FTP
         uses: SamKirkland/FTP-Deploy-Action@4.1.0
         with:
