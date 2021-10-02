@@ -59,7 +59,7 @@ button#submit-search {
         flex-direction: column;
         gap: 7px;
     }
-    div#prob-viewin {
+    div#prob-vi {
         flex-direction: row;
         justify-content: left;
         gap: 0.1%;

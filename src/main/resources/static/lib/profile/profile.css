@@ -12,7 +12,7 @@ h1#uname {
     font-family: 'Cafe24Oneprettynight', 'Spoqa Han Sans Neo', 'sans-serif';
     font-size: 50px;
     font-weight: 300;
-    margin-bottom: 0;
+    margin: 0;
     text-align: left;
 }
 h3#uid {
