@@ -1,5 +1,3 @@
-/src/main/resources/properties/secret.properties
-/src/main/resources/application.properties
 .gradle
 /build
 /logs

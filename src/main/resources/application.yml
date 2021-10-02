@@ -1,0 +1,48 @@
+server:
+  servlet:
+    session:
+      timeoutL: 12h
+      cookie:
+        name: Promisesd
+        http-only: true
+        secure: true
+  ssl:
+    enabled: true
+    key-store: keystore.p12
+    store-type: PKCS12
+    key-store-password: ENC(KDwwPa2O5brW2wkhJQAuNL7+kH/JVan7tiaS0is2/dLNb4fiefGzI85QDJcZZWLbpTlZX08wLjkg5ny7ihNqSz/YHDHBbKtym0xzuotZ0nk5Oak4KQnMWA8jNoUWPK2yRCFH3Gkh++DoWR26Bu1Gug==)
+  port: 4400
+  http-port: 8800
+
+config.sitemap.path: serves/sitemap.xml
+config.robot.path: serves/robots.txt
+docs.mappingFile: docsMapping.json
+
+db:
+  identification:
+    url: jdbc:postgresql://localhost:5432/identification
+    username: ENC(8JJa8Qvdz73lsBbIIyqRUDTuCHCNMnA7vnIaPfJEMTIfLfBI+pBXo0xoKKOnghMS)
+    password: ENC(Bb8r12oO6ocXV8vQsJlGpQxsQgKIf6gnS5rL/xDTqfechjk7iybCZczT00vV0Eg2)
+  problem:
+    url: jdbc:postgresql://localhost:5432/problem
+    username: ENC(8JJa8Qvdz73lsBbIIyqRUDTuCHCNMnA7vnIaPfJEMTIfLfBI+pBXo0xoKKOnghMS)
+    password: ENC(Bb8r12oO6ocXV8vQsJlGpQxsQgKIf6gnS5rL/xDTqfechjk7iybCZczT00vV0Eg2)
+  invite:
+    url: jdbc:postgresql://localhost:5432/invite
+    username: ENC(8JJa8Qvdz73lsBbIIyqRUDTuCHCNMnA7vnIaPfJEMTIfLfBI+pBXo0xoKKOnghMS)
+    password: ENC(Bb8r12oO6ocXV8vQsJlGpQxsQgKIf6gnS5rL/xDTqfechjk7iybCZczT00vV0Eg2)
+  solution:
+    url: jdbc:postgresql://localhost:5432/solves
+    username: ENC(8JJa8Qvdz73lsBbIIyqRUDTuCHCNMnA7vnIaPfJEMTIfLfBI+pBXo0xoKKOnghMS)
+    password: ENC(Bb8r12oO6ocXV8vQsJlGpQxsQgKIf6gnS5rL/xDTqfechjk7iybCZczT00vV0Eg2)
+
+captcha:
+  v3:
+    sitekey: 6LdcHUAcAAAAANVctCmNgQ1w9ZIbHl5wv-N6EYGE
+    secret: ENC(ZLUKnyVfUgYnNiL2FGb4t52C3U+Rhy6B9O+wtcku0fWAVmfXogfLhikYRTFxRgbsvj5zRziZP4ZvoSDtaGC8wXVuJy9eQo8CJPeVvoFA1FI=)
+  v2:
+    sitekey: 6LcEQUAcAAAAAAYOVwrByX_OZs6-fyZbGV46nkoK
+    secret: ENC(Bq+4is0NfuOtjcONleLLQ2A9DyDALUSSwnkLlhgeNPOP+1lh/wMMlxCL5s7HsamSQa5C1kpKPiZfVptGgwBOV77/hmbl2oTGdgolfjSCZzs=)
+
+# Debug
+spring.thymeleaf.cache: false

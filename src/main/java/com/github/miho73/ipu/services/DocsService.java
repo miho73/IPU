@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.util.Scanner;
 
 @Service("DocsService")
-@PropertySource("classpath:/application.properties")
 public class DocsService {
     private final Logger LOGGER = LoggerFactory.getLogger(CommonControl.class);
 

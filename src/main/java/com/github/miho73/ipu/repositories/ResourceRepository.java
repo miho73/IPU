@@ -12,10 +12,6 @@ import javax.annotation.PostConstruct;
 import java.sql.*;
 
 @Repository("ResourceRepository")
-@PropertySources({
-        @PropertySource("classpath:/properties/secret.properties"),
-        @PropertySource("classpath:/properties/datasource.properties")
-})
 public class ResourceRepository {
     private DriverManagerDataSource dataSource;
     private Connection conn;

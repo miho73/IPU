@@ -19,10 +19,6 @@ import java.util.List;
 import java.util.Vector;
 
 @Repository("InviteRepository")
-@PropertySources({
-        @PropertySource("classpath:/properties/secret.properties"),
-        @PropertySource("classpath:/properties/datasource.properties")
-})
 public class InviteRepository {
     private DriverManagerDataSource dataSource;
     private Connection conn;

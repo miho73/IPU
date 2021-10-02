@@ -16,7 +16,6 @@ import java.io.InputStreamReader;
 import java.net.URL;
 
 @Component
-@PropertySource("classpath:/properties/secret.properties")
 public class Captcha {
     @Value("${captcha.v3.secret}") private String CAPTCHA_V3_SECRET;
     @Value("${captcha.v2.secret}") private String CAPTCHA_V2_SECRET;

@@ -17,10 +17,6 @@ import javax.security.auth.kerberos.KerberosTicket;
 import java.sql.*;
 
 @Repository("SolutionRepository")
-@PropertySources({
-        @PropertySource("classpath:/properties/secret.properties"),
-        @PropertySource("classpath:/properties/datasource.properties")
-})
 public class SolutionRepository {
     private DriverManagerDataSource dataSource;
     private Connection conn;

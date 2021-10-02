@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 @Controller("AuthControl")
-@PropertySource("classpath:/properties/secret.properties")
 public class AuthControl {
     @Value("${captcha.v3.sitekey}") private String CAPTCHA_V3_SITE_KEY;
     @Value("${captcha.v2.sitekey}") private String CAPTCHA_V2_SITE_KEY;

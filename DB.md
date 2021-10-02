@@ -1,7 +1,6 @@
 ## 1. PSQL Guide
 
 IPU uses postgresql as DBMS. Here's the structure and user spec for IPU.
-Below's sql is command to make database. All tabes will be automatically created when needed.
 
 ### 1.1. PostgreSQL Setup
 
@@ -9,8 +8,9 @@ Below's sql is command to make database. All tabes will be automatically created
 > `sudo apt-get update`   
 > `sudo apt-get install postgresql postgresql-contrib`
 
-### 1.2 USER settings
-> `CREATE USER <USERNAME> WITH SUPERUSER;`
+### 1.2 USER setup
+> `CREATE USER <USERNAME> WITH ENCRYPTED PASSWORD '<Password>'';`
+> And, execute below command in order to grant all privileges to IPU databases
 
 ### 1.3 IDENTIFICATION DB
 

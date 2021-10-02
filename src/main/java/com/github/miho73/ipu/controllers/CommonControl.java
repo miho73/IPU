@@ -15,7 +15,6 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 @Controller("CommonControl")
-@PropertySource("classpath:/application.properties")
 public class CommonControl {
     private String sitemap;
     private String robotTxt;

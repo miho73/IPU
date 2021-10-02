@@ -15,10 +15,6 @@ import java.util.List;
 import java.util.Vector;
 
 @Repository("ProblemRepository")
-@PropertySources({
-        @PropertySource("classpath:/properties/secret.properties"),
-        @PropertySource("classpath:/properties/datasource.properties")
-})
 public class ProblemRepository {
     private DriverManagerDataSource dataSource;
     private Connection conn;

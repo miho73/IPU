@@ -20,10 +20,6 @@ import java.util.TimeZone;
 import java.util.Vector;
 
 @Repository("UserRepository")
-@PropertySources({
-        @PropertySource("classpath:/properties/secret.properties"),
-        @PropertySource("classpath:/properties/datasource.properties")
-})
 public class UserRepository {
     private DriverManagerDataSource dataSource;
     private Connection conn;
