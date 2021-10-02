@@ -3,7 +3,7 @@
 [![Distribute to server](https://github.com/miho73/IPU/actions/workflows/distribute_to_server.yml/badge.svg)](https://github.com/miho73/IPU/actions/workflows/distribute_to_server.yml)
 [![Java CI with Gradle](https://github.com/miho73/IPU/actions/workflows/gradle.yml/badge.svg)](https://github.com/miho73/IPU/actions/workflows/gradle.yml)
 
-### *Backend migration is in progress! DO NOT UPDATE frontend!*
+## Think, Solve, Improve
 
 <!---
 ## 2. Workflow
