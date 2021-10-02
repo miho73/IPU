@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <script src="ipuac.js"></script>
+        <link rel="stylesheet" type="text/css" href="ipuac.css">
+        <link rel="stylesheet" type="text/css" href="../src/main/resources/static/lib/problem/problem-solve.css">
+    </head>
+    <body onload="update()">
+        <div id="editor">
+            <textarea id="ipuac" onkeyup="update()">
+==문제==
+</textarea>
+        </div>
+        <div id="problem-container" style="margin-top: 15px; border: 1px #000 solid; padding: 10px;">
+            <div id="render" class="prob-appl"></div>
+        </div>
+    </body>
+    <style>
+        @import url(https://spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css);
+        * {
+            font-family: 'Spoqa Han Sans Neo', 'sans-serif';
+        }
+    </style>
+</html>

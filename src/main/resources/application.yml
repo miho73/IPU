@@ -14,9 +14,9 @@ server:
   port: 4400
   http-port: 8800
 
-config.sitemap.path: serves/sitemap.xml
-config.robot.path: serves/robots.txt
-docs.mappingFile: docsMapping.json
+config.sitemap.path: resources/serves/sitemap.xml
+config.robot.path: resources/serves/robots.txt
+docs.mappingFile: resources/docsMapping.json
 
 db:
   identification:

@@ -1,0 +1,14 @@
+textarea {
+    width: 80%;
+    height: 500px;
+    font-size: 1.3em;
+}
+
+p.error {
+    color: #f00;
+}
+
+iframe {
+    width: 60%;
+    height: 300px;
+}
