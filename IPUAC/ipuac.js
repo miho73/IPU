@@ -27,9 +27,31 @@ function render(renderRoot, content) {
 
     let finalDOM = '';
 
+    let definitions = {};
+
     lines.forEach(line => {
         let html = '';
         const len = line.length;
+
+        // Preprocessor
+        if(line[0] == '#') {
+            if(line == '#') {
+                html=html+"<br>";
+                finalDOM=finalDOM+html;
+                return;
+            }
+            const inst = line.substr(1, 3);
+            const prop = line.substr(5, len-5).split('=');
+            switch(inst) {
+                case 'def':
+                    definitions[prop[0]] = prop[1];
+                    break;
+                default:
+                    html=`<p class="error">IPUAC parsing error: Preprocessor ${inst} is not defined`;
+                    break;
+            }
+            return;
+        }
 
         // If line is paragraph
         if(section.test(line)) {
@@ -40,15 +62,52 @@ function render(renderRoot, content) {
             html = '<hr class="prob-hr">'
         }
         else if(line == '') {
-            html = "<br>"
+            return;
         }
         // If line is content
         else {
-            html = '<p>';
-
             let escapeFlag = false;
             let lastBrac = '-1';
-            for(let i=0; i<len; i++) {
+            let start = 0;
+
+            if(line.substr(0, 2)=='\\1') {
+                html = '<p class="ac-left">';
+                start = 2;
+            }
+            else if(line.substr(0, 2)=='\\2') {
+                html = '<p class="ac-center">';
+                start = 2;
+            }
+            else if(line.substr(0, 2)=='\\3') {
+                html = '<p class="ac-right">';
+                start = 2;
+            }
+            else if(line.substr(0, 2)=='\\4') {
+                html = '<p class="ac-stretch">';
+                start = 2;
+            }
+            else html = '<p>';
+
+            if(definitions.hasOwnProperty('text-alignment')) {
+                switch(definitions['text-alignment']) {
+                    case '1':
+                        html = '<p class="ac-left">';
+                        break;
+                    case '2':
+                        html = '<p class="ac-center">';
+                        break;
+                    case '3':
+                        html = '<p class="ac-right">';
+                        break;
+                    case '4':
+                        html = '<p class="ac-stretch">';
+                        break;
+                    default:
+                        html = '<p>';
+                }
+            }
+
+            for(let i=start; i<len; i++) {
                 if(line[i]=='[') {
                     if(escapeFlag) html=html+"[";
                     else {
@@ -96,6 +155,20 @@ function render(renderRoot, content) {
                                     html=`<p class="error">IPUAC parsing error: function 'embed web' takes one or three argument(s).`;
                                 }
                                 break;
+                            case '@':
+                                if(args.length == 1) {
+                                    html = html+`<img src="https://ipu.r-e.kr/problem/lib/${param}">`;
+                                }
+                                else if(args.length == 2) {
+                                    html = html+`<img src="https://ipu.r-e.kr/problem/lib/${args[0]}" alt="${args[1]}">`;
+                                }
+                                else if(args.length == 4) {
+                                    html = html+`<img src="https://ipu.r-e.kr/problem/lib/${args[0]}" alt="${args[1]}" style="width: ${args[2]}; height: ${args[3]};">`;
+                                }
+                                else {
+                                    html=`<p class="error">IPUAC parsing error: function 'image' takes one, two or four argument(s).`;
+                                }
+                                break;
                             default:
                                 html=`<p class="error">IPUAC parsing error: function is not defined.`;
                         }
@@ -103,7 +176,16 @@ function render(renderRoot, content) {
                     }
                 }
                 else if(line[i]!='\\' && lastBrac<0) {
-                    html=html+line[i];
+                    if(line[i]=='<') {
+                        html=html+'&lt;';
+                    }
+                    else if(line[i]=='>') {
+                        html=html+'&gt;';
+                    }
+                    else if(line[i]=='&') {
+                        html=html+'&amp;';
+                    }
+                    else html=html+line[i];
                 }
                 if(line[i]=='\\') {
                     // Insert if two escape in a row

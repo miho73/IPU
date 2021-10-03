@@ -4,6 +4,10 @@ textarea {
     font-size: 1.3em;
 }
 
+p {
+    line-break: anywhere;
+}
+
 p.error {
     color: #f00;
 }
@@ -11,4 +15,17 @@ p.error {
 iframe {
     width: 60%;
     height: 300px;
+}
+
+p.ac-left {
+    text-align: left;
+}
+p.ac-center {
+    text-align: center;
+}
+p.ac-right {
+    text-align: right;
+}
+p.ac-stretch {
+    text-align: justify;
 }
