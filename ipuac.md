@@ -1,112 +1,129 @@
 # Standard of IPUAC
 
-IPUAC is language to write content in IPU.
+IPUAC는 IPU에서 문제등의 작성에 사용하는 문법입니다.
 
-## 1. Organize text
+## 1. 글 구조화
 
-* ### Section
+* ### 섹션
 
-    `==Section name==`  
-    Problem content, explain, answer, and more can be separated in section.
-    This syntax must be written in a line alone.
+    `==섹션명==`  
+    문제 내용, 답, 해설 등 섹션을 나눌 때 사용합니다.
 
-* ### Text alignment
+* ### 텍스트 정렬
 
     `\1`, `\2`, `\3`, `\4`  
-    Put one of above in fron of a line. These will set text alignmnet of line.
-    |IPUAC|Alignment|
+    위 4가지 문자중 하나를 매 줄의 가장 첫 줄에 넣으세요. 각각이 의미하는 바는 다음과 같습니다.
+    |입력|정렬|
     |-|-|
-    |`\1`|left|
-    |`\2`|center|
-    |`\3`|right|
-    |`\4`|Justify|
+    |`\1`|왼쪽|
+    |`\2`|가운데|
+    |`\3`|오른쪽|
+    |`\4`|양쪽에 맞추기|
 
-    Or, you can set default text alignment. Put below at the top.  
+    혹은 문서의 가장 윗부분에 다음 내용을 추가해서 문서의 기본 정렬을 정할 수 있습니다.  
     `#def text-alignment=[alignment number]`  
-    For example, next set default alignment to *justify*  
+    예를 들어 다음은 기본 정렬을 가운데 정렬로 설정합니다.  
     `#def text-alignment=4`  
 
-* ## New line
+## 2. 글
 
-    As default, all new line(Enter) is ignored. To put a new line put next in a line alone.  
-    `#`
+* ### 스타일
 
-## 2. Content
+  |입력|출력|설명|
+  |-|-|-|
+  |''굵게''|**굵게**|작은 따옴표 2개|
+  |'''기울임'''|*기울임*|작은 따옴표 3개|
+  |''''굵게 기울임''''|***굵게 기울임***|작은 따옴표 4개|
+  |\_\_밑줄\_\_|<u>밑줄</u>|언더바 2개|
+  |--취소선--|~~취소선~~|빼기 기호 2개|
+  |a^^b|a<sup>b</sup>|첨자의 텍스트 크기는 일부 작아집니다.|
+  |a..b..|a<sub>b</sub>|첨자의 텍스트 크기는 일부 작아집니다.|
 
-* ### Plain text
+* ### 텍스트 크기
 
-    `Plain text`  
-    Write text anywhere you want. Text will be rendered as it looks like.  
-    This can be combined with other content syntax.
+    텍스트 크기는 -5부터 +5 사이의 실수가 가능하며 각각의 크기는 다음과 같습니다.  
+    `크기=1.1+0.2(크기 숫자)`  
+    예를 들어 +5는 2.1, -5는 0.1을 뜻합니다.
 
-* ### Hyperlink
+* ### 텍스트 색
 
-    `[=(URL|explain)]`
-    Make hyperlink to URL. For example, `[https://google.com|Google]` makes next.
-    > [Google](https://google.com)
+    CSS 색상 표기법을 사용합니다.
+    `{{{색상 텍스트}}}`  
+    예를 들어 다음은 빨간색 "Hello"를 보여줍니다.  
+    `{{{#f00 Hello}}}`
 
-    If URL and explain text is same, you can simplify like this.
-    `[=(URL)]]`
-    > [https://google.com](https://google.com)
+* ### 링크
+  
+    다음 방법으로 링크를 보여줄 수 있습니다.
+    |입력|출력|
+    |-|-|
+    |[[URL]]|[URL](URL)|
+    |[URL\|Go to URL]|[Go to URL](URL)|
 
-    This can be combined with other content syntax.
+* ### 이미지 표시
 
-* ### Mathmetic expressions
+    다음 명령은 이미지를 지정한 URL, 또는 경로에서 가져옵니다.
+    |입력|출력|설명|
+    |-|-|-|
+    |[[img:이미지 코드]]|지정한 이미지|IPU 리소스 센터에서 이미지를 가져왑니다.|
+    |[[이미지 URL]]|지정한 이미지|지정한 URL에서 이미지를 받아옵니다.|
+    |[[img:이미지 코드\|매개변수]]|지정한 이미지|매개변수에는 HTML `img` 태그의 `alt`, `width`, `height`등의 값이 속성=값의 형태로 &로 구분되어 들어갑니다. 예를 들어 `[[img: abcd\|alt="이미지"&width="500"]]`입니다. 이 속성은 외부 이미지를 사용할 때도 그대로 사용 가능합니다.|
 
-    `[$(LaTeX)]`  
-    Write [LaTeX](https://www.latex-project.org/) command. It will be rendered as mathmetic expression.  
-    This can be combined with other content syntax.
+* ### 외부 참조
 
-* ### Image
+    다음 명령을 통해 외부 웹페이지를 임베딩할 수 있습니다.
+    |입력|설명|
+    |-|-|
+    |[ytp(jNQXAC9IVRw)]|YouTube에서 해당 재생 ID를 가진 동영상을 재생합니다.|
+    |[embed(URL)]|URL의 웹페이지를 임베딩하여 추가합니다.|
+    |[embed(URL,매개변수)]|매개변수는 속성=값의 형태로 콤마로 구분됩니다. 이 구문은 YouTube 임베딩에서도 사용할 수 있습니다.|
 
-    `[@(Image code)]`  
-    `[@(Image code|Image alternative)]`  
-    `[@(Image code|Image alternative|width|heigth)]`  
-    Put ImageCode between '[@[' and ']]'.
+* ### 인용
 
-* ### Table
+    `> 인용문`  
+    인용문을 입력합니다. 여러 줄로 인용문을 작성하려면 여러줄에 작성하면 됩니다.
 
+    ```md
+    > 인용1
+
+    > 인용2
+    >
+    > 인용3
     ```
+
+    > 인용1
+
+    > 인용2
+    >
+    > 인용3
+
+* ### 테이블
+
+    `||`으로 셀의 각 칸을 나눕니다.
+    ```md
+    ||1||2||3||
+    ||4||5||6||
+    ```
+
+    ||||
+    |-|-|-|
     |1|2|3|
     |4|5|6|
-    |7|8|9|
-    ```
 
-    Use '|' character to put table. To merge cells, for example merge cell 4 and 5, use next.
+* ### 수식
 
-    ```
-    |1|2|3|
-    |4/5|6|
-    |7|8|9|
-    ```
+    `[math(LaTeX)]`  
+    LaTeX 구문으로 수식을 입력합니다.
 
-    This syntax must be written in a line alone.
+## 3. 매크로
 
-* ### Embeded web view
+* ### 줄바꿈
 
-    `[*(URL)]`  
-    `[*(URL|alternative text|width|height)]`  
-    Embed web page using `iframe`.  
-    height is css property.
+    `[lf]`
 
-* ### Escape character
+## 4. 기타
 
-    `\(Special)`  
-    Use '\' to express reserved word like '==, [[, | ...'  
-    This can be combined with other content syntax.
-
-    |Usage|Rendered|
-    |-|-|
-    |\=|==|
-    |\\\||\||
-    |\\\\ |\\ |
-    |\\[|[|
-    |\\]|]|
-    |\\#|#|
-
-## 3. Etc
-
-* ## Divide line
+* ## 구분선
 
     `---`  
-    Put divide line.
+    구분선을 삽입힙니다.

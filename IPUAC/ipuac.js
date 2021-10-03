@@ -12,9 +12,9 @@ function tps(text, len) {
     return text.substr(2, len-4);
 }
 
-function getInF(text) {
+function getInF(text, fN) {
     const len = text.length;
-    return sub = text.substr(2, len-3);
+    return sub = text.substr(fN+1, len-3);
 }
 
 function argsF(text) {
@@ -69,6 +69,18 @@ function render(renderRoot, content) {
             let escapeFlag = false;
             let lastBrac = '-1';
             let start = 0;
+
+            // Preprocess blocks and apply
+            let shouldApply = false;
+            if(line[start] == '>') {
+                const cont = line.substr(start+1, len-1-start);
+                html = `<blockquote>${cont}</blockquote>`;
+                shouldApply = true;
+            }
+            if(shouldApply) {
+                finalDOM=finalDOM+html;
+                return;
+            }
 
             if(line.substr(0, 2)=='\\1') {
                 html = '<p class="ac-left">';
@@ -126,10 +138,22 @@ function render(renderRoot, content) {
                             break;
                         }
                         const f = line.substr(lastBrac+1, i-lastBrac-1);
-                        const inst = f[0];
-                        const param = getInF(f);
+                        const fNameEnd = f.indexOf('(');
+                        const inst = f.substr(0, fNameEnd);
+                        const param = getInF(f, fNameEnd);
+                        console.log(inst+"  "+param);
                         const args = argsF(param);
                         switch(inst) {
+                            case '.':
+                                if(args.length != 2) html=`<p class="error">IPUAC parsing error: function 'text style' takes two arguments.`;
+                                else {
+                                    const styles = args[0].replace('\s+', '').split('&');
+                                    let classes = `ac-f-size${styles[0]} `;
+                                    if(styles.includes('bold')) classes = classes+"ac-bold";
+                                    html = html.substr(0, html.length-1)+` class="${classes}"`
+                                }
+                                break;
+                            case '':
                             case '=':
                                 if(args.length == 2) {
                                     html = html+`<a href="${args[0]}" target="_blank">${args[1]}</a>`;
@@ -156,14 +180,19 @@ function render(renderRoot, content) {
                                 }
                                 break;
                             case '@':
+                                if(args.length == 0 || args[0].length < 4) {
+                                    html=`<p class="error">IPUAC parsing error: Unrecognized image path`;
+                                    break;
+                                }
+                                const url = (args[0].substr(0, 4).toLowerCase()=='http' ? args[0] : `https://ipu.r-e.kr/problem/lib/${param}`)
                                 if(args.length == 1) {
-                                    html = html+`<img src="https://ipu.r-e.kr/problem/lib/${param}">`;
+                                    html = html+`<img src="${url}">`;
                                 }
                                 else if(args.length == 2) {
-                                    html = html+`<img src="https://ipu.r-e.kr/problem/lib/${args[0]}" alt="${args[1]}">`;
+                                    html = html+`<img src="${url}" alt="${args[1]}">`;
                                 }
                                 else if(args.length == 4) {
-                                    html = html+`<img src="https://ipu.r-e.kr/problem/lib/${args[0]}" alt="${args[1]}" style="width: ${args[2]}; height: ${args[3]};">`;
+                                    html = html+`<img src="${url}" alt="${args[1]}" style="width: ${args[2]}; height: ${args[3]};">`;
                                 }
                                 else {
                                     html=`<p class="error">IPUAC parsing error: function 'image' takes one, two or four argument(s).`;

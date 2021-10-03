@@ -29,3 +29,9 @@ p.ac-right {
 p.ac-stretch {
     text-align: justify;
 }
+
+blockquote {
+    border-left: 3px solid #cacaca;
+    padding: 5px 15px;
+    border-radius: 0;
+}
