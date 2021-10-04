@@ -6,6 +6,10 @@ textarea {
 
 p {
     line-break: anywhere;
+    font-weight: 400;
+    font-size: 1em;
+    color: #444;
+    margin: 0 0 7px;
 }
 
 p.error {
@@ -30,7 +34,55 @@ p.ac-stretch {
     text-align: justify;
 }
 
-blockquote {
+
+a#edit-href-title {
+    color: #111;
+    font-size: 1.3em;
+    cursor: default;
+}
+span.prob-title {
+    font-size: 1.6em;
+    font-weight: 500;
+    border-bottom: 2px #0076C0 solid;
+    margin: 0;
+    color: #333;
+}
+hr.prob-div-hr,hr.prob-hr {
+    margin: 0 0 15px 0;
+    height: 2px;
+    background-color: #ccc;
+    border: none;
+}
+hr.prob-div-hr {
+    margin-top: 10px;
+}
+
+
+span.ac-bold {
+    font-weight: 750;
+}
+span.ac-italic {
+    font-style: italic;
+}
+span.ac-underline {
+    text-decoration: underline;
+}
+span.ac-strike {
+    text-decoration: line-through;
+}
+a.ac-link {
+    color: #0076C0;
+    text-decoration: none;
+}
+a.ac-link:hover {
+    text-decoration: underline;
+}
+
+img.ac-img {
+    width: 100%;
+}
+
+blockquote.ac-quote {
     border-left: 3px solid #cacaca;
     padding: 5px 15px;
     border-radius: 0;
