@@ -5,6 +5,7 @@
 
 # Think, Solve, Improve
 
+---
 <!---
 ## 2. Workflow
 

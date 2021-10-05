@@ -1,6 +1,5 @@
 package com.github.miho73.ipu.services;
 
-import com.github.miho73.ipu.repositories.ProblemRepository;
 import com.github.miho73.ipu.repositories.ResourceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

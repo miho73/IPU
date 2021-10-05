@@ -2,7 +2,6 @@ package com.github.miho73.ipu.controllers;
 
 import com.github.miho73.ipu.domain.Problem;
 import com.github.miho73.ipu.library.security.SHA;
-import com.github.miho73.ipu.repositories.SolutionRepository;
 import com.github.miho73.ipu.repositories.UserRepository;
 import com.github.miho73.ipu.services.ProblemService;
 import com.github.miho73.ipu.services.ResourceService;
@@ -19,13 +18,11 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.File;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Map;
-import java.util.logging.Logger;
 
 @Controller("ProblemControl")
 @RequestMapping("/problem")
@@ -88,16 +85,23 @@ public class ProblemControl {
         sessionService.loadSessionToModel(session, model);
         model.addAllAttributes(Map.of(
                 "pCode", problem.getCode(),
-                "pName", problem.getName(),
-                "content", problem.getContent(),
-                "solution", problem.getSolution(),
-                "answer", problem.getAnswer(),
-                "hint", problem.getHint(),
-                "hasHint", problem.isHasHint(),
-                "extrTabs", problem.getExternalTabs()
+                "pName", problem.getName()
         ));
         return "problem/problemPage";
     }
+
+    // LEGACY MODE
+    @GetMapping("/legacy//{pCode}")
+    public String getProblemLegacy(@PathVariable("pCode") String code, Model model, HttpSession session) throws SQLException {
+        Problem problem = problemService.getProblem(Integer.parseInt(code));
+        sessionService.loadSessionToModel(session, model);
+        model.addAllAttributes(Map.of(
+                "pCode", problem.getCode(),
+                "pName", problem.getName()
+        ));
+        return "problem/problemRPage";
+    }
+    ////
 
     @GetMapping("/make")
     public String problemMake(Model model, HttpSession session, HttpServletResponse response) throws IOException {
@@ -141,10 +145,6 @@ public class ProblemControl {
         problem.setDifficulty  (request.getParameter("diff"));
         problem.setContent     (request.getParameter("cont"));
         problem.setSolution    (request.getParameter("solu"));
-        problem.setAnswer      (request.getParameter("answ"));
-        problem.setHint        (request.getParameter("hint"));
-        problem.setHasHint     (request.getParameter("hasH").equals("true"));
-        problem.setExternalTabs(request.getParameter("extr"));
         problem.setTags        (request.getParameter("tags"));
         problemService.registerProblem(problem, session);
         return "redirect:/problem";
@@ -195,10 +195,10 @@ public class ProblemControl {
         problem.setDifficulty  (request.getParameter("diff"));
         problem.setContent     (request.getParameter("cont"));
         problem.setSolution    (request.getParameter("solu"));
-        problem.setAnswer      (request.getParameter("answ"));
-        problem.setHint        (request.getParameter("hint"));
-        problem.setHasHint     (request.getParameter("hasH").equals("true"));
-        problem.setExternalTabs(request.getParameter("extr"));
+        problem.setAnswer      ("");
+        problem.setHint        ("");
+        problem.setHasHint     (false);
+        problem.setExternalTabs("");
         problem.setTags        (request.getParameter("tags"));
         problemService.updateProblem(problem);
         return "/problem/"+problem.getCode();

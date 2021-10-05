@@ -10,6 +10,29 @@
         <div id="editor">
             <textarea id="ipuac" onkeyup="update()" spellcheck="false">
 #def text-align=4
+#def table-align=2
+
+== ETC ==
+[hide(보기, 가려짐)]
+
+== TABLE ==
+Length of Sticks
+||(-8)8||
+||(-4)4||(-4)4||
+||(-2)2||(-2)2||(-2)2||(-2)2||
+||1||1||1||1||1||1||1||1||
+
+Stairs
+||(|4).||(|3).||(|2).||(|1).||.||
+||(-2).||
+||(-3).||
+||(-4).||
+
+Cover
+||---{{{#1A396D ''창의적 융합인재{{{-3 를}}} 육성하는 과학영재학교[lf]서울과학고등학교''}}}||
+
+== FUNC ==
+[math(\frac{1}{2}at^2)]
 
 == Quote ==
 ! Una volta che abbiate conosciuto il volo, camminerete sulla terra guardando il cielo, perché là siete stati e là desidererete tornare.
@@ -33,6 +56,7 @@
 
 == TEXT STYLES ==
 {{{#f00 R}}}{{{#0f0 G}}}{{{#00f B}}}
+[[[#f00 {{{#fff Hello}}}]]]
 {{{#74c '''--{{{+6 I}}}{{{+5 I}}}{{{+4 I}}}{{{+3 I}}}{{{+2 I}}}{{{+1 I}}}{{{+0 I}}}{{{-1 I}}}{{{-2 I}}}{{{-3 I}}}{{{-4 I}}}{{{-5 I}}}{{{-6 I}}}--'''}}}
 ''''BOLD AND ITALIC''''
 '''ITALIC'''
@@ -45,7 +69,9 @@ PLAIN,,SUB,,
 </textarea>
         </div>
         <div id="problem-container" style="margin-top: 15px; border: 1px #000 solid; padding: 10px;">
-            <div id="render" class="prob-appl"></div>
+            <div id="render" class="prob-appl">
+                Rendering
+            </div>
         </div>
     </body>
     <style>

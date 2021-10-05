@@ -133,13 +133,13 @@ public class ProblemRepository {
         psmt.setString(3, problem.getDifficultyCode());
         psmt.setString(4, problem.getContent());
         psmt.setString(5, problem.getSolution());
-        psmt.setString(6, problem.getAnswer());
-        psmt.setString(7, problem.getHint());
+        psmt.setString(6, "");
+        psmt.setString(7, "");
         psmt.setString(8, auther);
         psmt.setTimestamp(9, timestamp);
         psmt.setTimestamp(10, timestamp);
-        psmt.setString(11, problem.getExternalTabs());
-        psmt.setBoolean(12, problem.isHasHint());
+        psmt.setString(11, "");
+        psmt.setBoolean(12, false);
         psmt.setString(13, problem.getTags());
 
         psmt.execute();
