@@ -49,7 +49,6 @@ function showAns() {
     gei('prob-control').style.display = 'none';
     gei('prob-control-nd').style.display = 'block';
     gei('after-sol').style.display = 'block';
-    gei('answer-block').style.display = 'block';
     setTimeout(()=>gei('after-sol').style.transform = 'scaleY(1)', 2);
 }
 

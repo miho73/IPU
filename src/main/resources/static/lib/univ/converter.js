@@ -1,5 +1,7 @@
 function convertDiff(code) {
     switch(code) {
+        case "unse":
+            return "Unset";
         case "unra":
             return "Unrated";
         case "broz":
@@ -21,6 +23,8 @@ function convertDiff(code) {
 
 function convertDiffColor(code) {
     switch(code) {
+        case "unse":
+            return "#000";
         case "unra":
             return "#555";
         case "broz":

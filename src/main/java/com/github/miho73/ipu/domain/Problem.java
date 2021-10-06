@@ -14,7 +14,7 @@ public class Problem {
     public enum PROBLEM_CATEGORY {
         ETCETERA,
         ALGEBRA,
-        NUMERIC_THEORY,
+        NUMBER_THEORY,
         COMBINATORICS,
         GEOMETRY,
         PHYSICS,
@@ -80,9 +80,9 @@ public class Problem {
     }
     public String getCategoryCode() {
         return switch (category) {
-            case ETCETERA       -> "etc";
+            case ETCETERA       -> "etce";
             case ALGEBRA        -> "alge";
-            case NUMERIC_THEORY -> "numb";
+            case NUMBER_THEORY -> "numb";
             case COMBINATORICS  -> "comb";
             case GEOMETRY       -> "geom";
             case PHYSICS        -> "phys";
@@ -96,9 +96,9 @@ public class Problem {
     }
     public void setCategory(String category) {
         switch (category) {
-            case "etc"  -> setCategory(PROBLEM_CATEGORY.ETCETERA);
+            case "etce"  -> setCategory(PROBLEM_CATEGORY.ETCETERA);
             case "alge" -> setCategory(PROBLEM_CATEGORY.ALGEBRA);
-            case "numb" -> setCategory(PROBLEM_CATEGORY.NUMERIC_THEORY);
+            case "numb" -> setCategory(PROBLEM_CATEGORY.NUMBER_THEORY);
             case "comb" -> setCategory(PROBLEM_CATEGORY.COMBINATORICS);
             case "geom" -> setCategory(PROBLEM_CATEGORY.GEOMETRY);
             case "phys" -> setCategory(PROBLEM_CATEGORY.PHYSICS);

@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Hashtable;
 import java.util.Map;
 
 @Controller("ProblemControl")
@@ -48,15 +49,17 @@ public class ProblemControl {
         return "problem/problemList";
     }
     @GetMapping("/category")
-    public String getProblemCategoryPage(@RequestParam(value = "page", required = false, defaultValue = "0") String page, Model model, HttpSession session) {
+    public String getProblemCategoryPage(@RequestParam(value = "page", required = false, defaultValue = "0") String page, Model model, HttpSession session) throws SQLException {
         sessionService.loadSessionToModel(session, model);
-        model.addAttribute("page", Integer.parseInt(page));
-        return "problem/problemCategory";
-    }
-    @GetMapping("/difficulty")
-    public String getProblemDifficultyPage(@RequestParam(value = "page", required = false, defaultValue = "0") String page, Model model, HttpSession session) {
-        sessionService.loadSessionToModel(session, model);
-        model.addAttribute("page", Integer.parseInt(page));
+        Hashtable<Problem.PROBLEM_CATEGORY, Integer> dat = problemService.getNumberOfProblemsInCategory();
+        model.addAttribute("alge", dat.get(Problem.PROBLEM_CATEGORY.ALGEBRA));
+        model.addAttribute("biol", dat.get(Problem.PROBLEM_CATEGORY.BIOLOGY));
+        model.addAttribute("comb", dat.get(Problem.PROBLEM_CATEGORY.COMBINATORICS));
+        model.addAttribute("chem", dat.get(Problem.PROBLEM_CATEGORY.CHEMISTRY));
+        model.addAttribute("numb", dat.get(Problem.PROBLEM_CATEGORY.NUMBER_THEORY));
+        model.addAttribute("phys", dat.get(Problem.PROBLEM_CATEGORY.PHYSICS));
+        model.addAttribute("geom", dat.get(Problem.PROBLEM_CATEGORY.GEOMETRY));
+        model.addAttribute("eart", dat.get(Problem.PROBLEM_CATEGORY.EARTH_SCIENCE));
         return "problem/problemCategory";
     }
     //TODO: make random
@@ -80,8 +83,12 @@ public class ProblemControl {
     }
 
     @GetMapping("/{pCode}")
-    public String getProblem(@PathVariable("pCode") String code, Model model, HttpSession session) throws SQLException {
+    public String getProblem(@PathVariable("pCode") String code, Model model, HttpSession session, HttpServletResponse response) throws SQLException, IOException {
         Problem problem = problemService.getProblem(Integer.parseInt(code));
+        if(problem == null) {
+            response.sendError(404);
+            return null;
+        }
         sessionService.loadSessionToModel(session, model);
         model.addAllAttributes(Map.of(
                 "pCode", problem.getCode(),
@@ -92,8 +99,12 @@ public class ProblemControl {
 
     // LEGACY MODE
     @GetMapping("/legacy//{pCode}")
-    public String getProblemLegacy(@PathVariable("pCode") String code, Model model, HttpSession session) throws SQLException {
+    public String getProblemLegacy(@PathVariable("pCode") String code, Model model, HttpSession session, HttpServletResponse response) throws SQLException, IOException {
         Problem problem = problemService.getProblem(Integer.parseInt(code));
+        if(problem == null) {
+            response.sendError(404);
+            return null;
+        }
         sessionService.loadSessionToModel(session, model);
         model.addAllAttributes(Map.of(
                 "pCode", problem.getCode(),

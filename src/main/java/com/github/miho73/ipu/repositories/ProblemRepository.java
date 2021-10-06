@@ -11,6 +11,8 @@ import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import java.sql.*;
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
@@ -176,5 +178,16 @@ public class ProblemRepository {
         psmt.setInt(12, problem.getCode());
 
         psmt.execute();
+    }
+
+    public int getNumberOfProblemsInCategory(Problem.PROBLEM_CATEGORY category) throws SQLException {
+        String sql = "SELECT COUNT(*) AS cnt FROM prob WHERE problem_category=?;";
+        PreparedStatement psmt = conn.prepareStatement(sql);
+        psmt.setString(1, category.toString().substring(0, 4).toLowerCase());
+        ResultSet rs = psmt.executeQuery();
+
+        if(!rs.next()) return 0;
+
+        return rs.getInt("cnt");
     }
 }
