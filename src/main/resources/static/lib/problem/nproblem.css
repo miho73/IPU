@@ -1,8 +1,9 @@
-textarea#editor {
+textarea.editor {
     width: 100%;
-    height: 100%;
+    height: 300px;
     box-sizing: border-box;
-    resize: vertical
+    resize: vertical;
+    outline: none;
 }
 #display {
     overflow-y: auto !important;
@@ -212,7 +213,7 @@ button#add-tag {
 button#add-tag:hover {
     background-color: #ccc;
 }
-#preview, #confirm {
+button.mpb {
     padding: 10px 20px 10px 20px;
     font-size: 1.2em;
     border-radius: 24.4px;
@@ -229,10 +230,10 @@ button#add-tag:hover {
     -o-transition: background-color .15s linear;
     transition: background-color .15s linear;
 }
-#preview:hover, #confirm:hover {
+button.mpb:hover {
     background-color: #ff926b;
 }
-#preview:disabled, #confirm:disabled {
+button.mpb:disabled {
     background-color: #b3441c;
 }
 

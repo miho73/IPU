@@ -24,7 +24,7 @@ jobs:
       - name: Prepare to sync
         run: |
           mkdir to_be_sync
-          cp -r ./{serves,docsMapping.json,build/libs/IPU-3.0.0.jar} ./to_be_sync
+          cp -r ./{resources,build/libs/IPU-3.0.0.jar} ./to_be_sync
           mv to_be_sync/IPU-3.0.0.jar to_be_sync/IPU.jar
       - name: Upload to FTP
         uses: SamKirkland/FTP-Deploy-Action@4.1.0

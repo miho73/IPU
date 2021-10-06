@@ -11,6 +11,8 @@ import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import java.sql.*;
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
@@ -133,13 +135,13 @@ public class ProblemRepository {
         psmt.setString(3, problem.getDifficultyCode());
         psmt.setString(4, problem.getContent());
         psmt.setString(5, problem.getSolution());
-        psmt.setString(6, problem.getAnswer());
-        psmt.setString(7, problem.getHint());
+        psmt.setString(6, "");
+        psmt.setString(7, "");
         psmt.setString(8, auther);
         psmt.setTimestamp(9, timestamp);
         psmt.setTimestamp(10, timestamp);
-        psmt.setString(11, problem.getExternalTabs());
-        psmt.setBoolean(12, problem.isHasHint());
+        psmt.setString(11, "");
+        psmt.setBoolean(12, false);
         psmt.setString(13, problem.getTags());
 
         psmt.execute();
@@ -176,5 +178,16 @@ public class ProblemRepository {
         psmt.setInt(12, problem.getCode());
 
         psmt.execute();
+    }
+
+    public int getNumberOfProblemsInCategory(Problem.PROBLEM_CATEGORY category) throws SQLException {
+        String sql = "SELECT COUNT(*) AS cnt FROM prob WHERE problem_category=?;";
+        PreparedStatement psmt = conn.prepareStatement(sql);
+        psmt.setString(1, category.toString().substring(0, 4).toLowerCase());
+        ResultSet rs = psmt.executeQuery();
+
+        if(!rs.next()) return 0;
+
+        return rs.getInt("cnt");
     }
 }

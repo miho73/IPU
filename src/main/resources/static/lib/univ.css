@@ -392,8 +392,8 @@ a.ham-href:hover {
 }
 
 div.non-container,div.container {
-    width: 50%;
-    margin: 0 25%;
+    width: 70%;
+    margin: 0 15%;
     margin-bottom: 4vh;
     margin-top: 4vh;
 }

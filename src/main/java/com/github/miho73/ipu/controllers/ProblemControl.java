@@ -2,7 +2,6 @@ package com.github.miho73.ipu.controllers;
 
 import com.github.miho73.ipu.domain.Problem;
 import com.github.miho73.ipu.library.security.SHA;
-import com.github.miho73.ipu.repositories.SolutionRepository;
 import com.github.miho73.ipu.repositories.UserRepository;
 import com.github.miho73.ipu.services.ProblemService;
 import com.github.miho73.ipu.services.ResourceService;
@@ -19,13 +18,12 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.File;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Hashtable;
 import java.util.Map;
-import java.util.logging.Logger;
 
 @Controller("ProblemControl")
 @RequestMapping("/problem")
@@ -51,15 +49,17 @@ public class ProblemControl {
         return "problem/problemList";
     }
     @GetMapping("/category")
-    public String getProblemCategoryPage(@RequestParam(value = "page", required = false, defaultValue = "0") String page, Model model, HttpSession session) {
+    public String getProblemCategoryPage(@RequestParam(value = "page", required = false, defaultValue = "0") String page, Model model, HttpSession session) throws SQLException {
         sessionService.loadSessionToModel(session, model);
-        model.addAttribute("page", Integer.parseInt(page));
-        return "problem/problemCategory";
-    }
-    @GetMapping("/difficulty")
-    public String getProblemDifficultyPage(@RequestParam(value = "page", required = false, defaultValue = "0") String page, Model model, HttpSession session) {
-        sessionService.loadSessionToModel(session, model);
-        model.addAttribute("page", Integer.parseInt(page));
+        Hashtable<Problem.PROBLEM_CATEGORY, Integer> dat = problemService.getNumberOfProblemsInCategory();
+        model.addAttribute("alge", dat.get(Problem.PROBLEM_CATEGORY.ALGEBRA));
+        model.addAttribute("biol", dat.get(Problem.PROBLEM_CATEGORY.BIOLOGY));
+        model.addAttribute("comb", dat.get(Problem.PROBLEM_CATEGORY.COMBINATORICS));
+        model.addAttribute("chem", dat.get(Problem.PROBLEM_CATEGORY.CHEMISTRY));
+        model.addAttribute("numb", dat.get(Problem.PROBLEM_CATEGORY.NUMBER_THEORY));
+        model.addAttribute("phys", dat.get(Problem.PROBLEM_CATEGORY.PHYSICS));
+        model.addAttribute("geom", dat.get(Problem.PROBLEM_CATEGORY.GEOMETRY));
+        model.addAttribute("eart", dat.get(Problem.PROBLEM_CATEGORY.EARTH_SCIENCE));
         return "problem/problemCategory";
     }
     //TODO: make random
@@ -83,21 +83,36 @@ public class ProblemControl {
     }
 
     @GetMapping("/{pCode}")
-    public String getProblem(@PathVariable("pCode") String code, Model model, HttpSession session) throws SQLException {
+    public String getProblem(@PathVariable("pCode") String code, Model model, HttpSession session, HttpServletResponse response) throws SQLException, IOException {
         Problem problem = problemService.getProblem(Integer.parseInt(code));
+        if(problem == null) {
+            response.sendError(404);
+            return null;
+        }
         sessionService.loadSessionToModel(session, model);
         model.addAllAttributes(Map.of(
                 "pCode", problem.getCode(),
-                "pName", problem.getName(),
-                "content", problem.getContent(),
-                "solution", problem.getSolution(),
-                "answer", problem.getAnswer(),
-                "hint", problem.getHint(),
-                "hasHint", problem.isHasHint(),
-                "extrTabs", problem.getExternalTabs()
+                "pName", problem.getName()
         ));
         return "problem/problemPage";
     }
+
+    // LEGACY MODE
+    @GetMapping("/legacy//{pCode}")
+    public String getProblemLegacy(@PathVariable("pCode") String code, Model model, HttpSession session, HttpServletResponse response) throws SQLException, IOException {
+        Problem problem = problemService.getProblem(Integer.parseInt(code));
+        if(problem == null) {
+            response.sendError(404);
+            return null;
+        }
+        sessionService.loadSessionToModel(session, model);
+        model.addAllAttributes(Map.of(
+                "pCode", problem.getCode(),
+                "pName", problem.getName()
+        ));
+        return "problem/problemRPage";
+    }
+    ////
 
     @GetMapping("/make")
     public String problemMake(Model model, HttpSession session, HttpServletResponse response) throws IOException {
@@ -141,10 +156,6 @@ public class ProblemControl {
         problem.setDifficulty  (request.getParameter("diff"));
         problem.setContent     (request.getParameter("cont"));
         problem.setSolution    (request.getParameter("solu"));
-        problem.setAnswer      (request.getParameter("answ"));
-        problem.setHint        (request.getParameter("hint"));
-        problem.setHasHint     (request.getParameter("hasH").equals("true"));
-        problem.setExternalTabs(request.getParameter("extr"));
         problem.setTags        (request.getParameter("tags"));
         problemService.registerProblem(problem, session);
         return "redirect:/problem";
@@ -195,10 +206,10 @@ public class ProblemControl {
         problem.setDifficulty  (request.getParameter("diff"));
         problem.setContent     (request.getParameter("cont"));
         problem.setSolution    (request.getParameter("solu"));
-        problem.setAnswer      (request.getParameter("answ"));
-        problem.setHint        (request.getParameter("hint"));
-        problem.setHasHint     (request.getParameter("hasH").equals("true"));
-        problem.setExternalTabs(request.getParameter("extr"));
+        problem.setAnswer      ("");
+        problem.setHint        ("");
+        problem.setHasHint     (false);
+        problem.setExternalTabs("");
         problem.setTags        (request.getParameter("tags"));
         problemService.updateProblem(problem);
         return "/problem/"+problem.getCode();

@@ -11,8 +11,8 @@
         <meta name="twitter:description" content="새 문제 만들기">
         <link rel="stylesheet" type="text/css" href="/lib/problem/nproblem.css">
         <link rel="stylesheet" type="text/css" href="/lib/problem/problem-solve.css">
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/quill/2.0.0-dev.3/quill.snow.min.css" rel="stylesheet">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/quill/2.0.0-dev.3/quill.min.js" type="text/javascript"></script>
+        <link rel="stylesheet" type="text/css" href="/lib/ipuac/ipuac.css">
+        <script src="/lib/ipuac/ipuac.js"></script>
         <style>
             img {
                 width: 100% !important;
@@ -39,10 +39,11 @@
                         <option value="biol">생물</option>
                         <option value="eart">지구</option>
                     </optgroup>
-                    <option value="etc">기타</option>
+                    <option value="etce">기타</option>
                 </select>
                 <select id="diffi" class="selbox">
                     <option disabled selected>난이도</option>
+                    <option value="unse">Unset</option>
                     <option value="unra">Unrated</option>
                     <option value="broz">Bronze</option>
                     <option value="silv">Silver</option>
@@ -54,81 +55,14 @@
             </div>
             <h3 id="pro-cont" class="sub-title">문제 내용*</h3>
             <div class="editor-container">
-                <div id="editor-cont"></div>
-                <div class="table-controller">
-                    <button id="tbtn-1" class="ctrl-table" onclick="ctrlTable(1)">&#62; Open table editor</button>
-                    <div class="table-menu" id="tab-1">
-                        <button class="table-btn"  onclick="addTable      (conttable)">테이블 추가</button>
-                        <button class="table-btn"  onclick="addColumnLeft (conttable)">왼쪽 행 추가</button>
-                        <button class="table-btn"  onclick="addColumnRight(conttable)">오른쪽 행 추가</button>
-                        <button class="table-btn"  onclick="addRowAbove   (conttable)">위에 열 추가</button>
-                        <button class="table-btn"  onclick="addRowBelow   (conttable)">아래 열 추가</button>
-                        <button class="table-btn"  onclick="deleteColumn  (conttable)">행 삭제</button>
-                        <button class="table-btn"  onclick="deleteRow     (conttable)">열 삭제</button>
-                        <button class="table-btn"  onclick="deleteTable   (conttable)">테이블 삭제</button>
-                    </div>
-                </div>
+                <textarea id="content" class="editor">== 문제 ==</textarea>
             </div>
             <h3 id="pro-exp" class="sub-title">풀이*</h3>
             <div class="editor-container">
-                <div id="editor-exp"></div>
-                <div class="table-controller">
-                    <button id="tbtn-2" class="ctrl-table" onclick="ctrlTable(2)">&#62; Open table editor</button>
-                    <div class="table-menu" id="tab-2">
-                        <button class="table-btn"  onclick="addTable      (exptable)">테이블 추가</button>
-                        <button class="table-btn"  onclick="addColumnLeft (exptable)">왼쪽 행 추가</button>
-                        <button class="table-btn"  onclick="addColumnRight(exptable)">오른쪽 행 추가</button>
-                        <button class="table-btn"  onclick="addRowAbove   (exptable)">위에 열 추가</button>
-                        <button class="table-btn"  onclick="addRowBelow   (exptable)">아래 열 추가</button>
-                        <button class="table-btn"  onclick="deleteColumn  (exptable)">행 삭제</button>
-                        <button class="table-btn"  onclick="deleteRow     (exptable)">열 삭제</button>
-                        <button class="table-btn"  onclick="deleteTable   (exptable)">테이블 삭제</button>
-                    </div>
-                </div>
-            </div>
-            <h3 id="pro-ans" class="sub-title">정답*</h3>
-            <div class="editor-container">
-                <div id="editor-ans"></div>
-                <div class="table-controller">
-                    <button id="tbtn-3" class="ctrl-table" onclick="ctrlTable(3)">&#62; Open table editor</button>
-                    <div class="table-menu" id="tab-3">
-                        <button class="table-btn"  onclick="addTable      (anstable)">테이블 추가</button>
-                        <button class="table-btn"  onclick="addColumnLeft (anstable)">왼쪽 행 추가</button>
-                        <button class="table-btn"  onclick="addColumnRight(anstable)">오른쪽 행 추가</button>
-                        <button class="table-btn"  onclick="addRowAbove   (anstable)">위에 열 추가</button>
-                        <button class="table-btn"  onclick="addRowBelow   (anstable)">아래 열 추가</button>
-                        <button class="table-btn"  onclick="deleteColumn  (anstable)">행 삭제</button>
-                        <button class="table-btn"  onclick="deleteRow     (anstable)">열 삭제</button>
-                        <button class="table-btn"  onclick="deleteTable   (anstable)">테이블 삭제</button>
-                    </div>
-                </div>
-            </div>
-            <div id="hint-edit-container" class="expand-height" style="display: none; max-height: 0;">
-                <h3 id="pro-hint" class="sub-title">힌트</h3>
-                <div class="editor-container" style="margin-bottom: 5px;">
-                    <div id="editor-hint"></div>
-                    <div class="table-controller">
-                        <button id="tbtn-4" class="ctrl-table" onclick="ctrlTable(4)">&#62; Open table editor</button>
-                        <div class="table-menu" id="tab-4">
-                            <button class="table-btn"  onclick="addTable      (hinttable)">테이블 추가</button>
-                            <button class="table-btn"  onclick="addColumnLeft (hinttable)">왼쪽 행 추가</button>
-                            <button class="table-btn"  onclick="addColumnRight(hinttable)">오른쪽 행 추가</button>
-                            <button class="table-btn"  onclick="addRowAbove   (hinttable)">위에 열 추가</button>
-                            <button class="table-btn"  onclick="addRowBelow   (hinttable)">아래 열 추가</button>
-                            <button class="table-btn"  onclick="deleteColumn  (hinttable)">행 삭제</button>
-                            <button class="table-btn"  onclick="deleteRow     (hinttable)">열 삭제</button>
-                            <button class="table-btn"  onclick="deleteTable   (hinttable)">테이블 삭제</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div style="text-align: left; margin-bottom: 20px; margin-top: 20px;">
-                <label><input type="checkbox" id="hashint" onchange="hintSH()">이 문제에 힌트를 추가합니다.</label>
-            </div>
-            <h3 id="pro-extr" class="sub-title" style="margin-bottom: 10px;">추가 탭</h3>
-            <div id="extr-tab-cont">
-                <div id="extr-edit-cont"></div>
-                <button id="extr-add" onclick="addExtr()" style="margin-top: 10px;">+ 추가</button>
+                <textarea id="solution" class="editor">
+== 풀이 ==
+
+== 정답 ==</textarea>
             </div>
             <h3 id="pro-tags" class="sub-title" style="margin-bottom: 10px;">태그</h3>
             <div id="addc-tags-cont">
@@ -150,34 +84,17 @@
                 </div>
             </div>
             <div style="text-align: center;">
-                <button id="preview" onclick="preview()">Preview</button>
+                <button id="preview" class="mpb" onclick="preview()">Preview</button>
             </div>
             <div id="preview-container" style="display: none; text-align: left !important; padding: 0;">
                 <div style="margin: 0 5%; width: 90%;">
                     <h1 style="margin-bottom: 1em;" id="preview-name"></h1>
-                    <span class="prob-title">문제</span>
-                    <hr class="prob-hr">
-                    <div id="preview-content" class="mathjax prob-appl ql-editor ql-shower"></div>
-                    <hr class="prob-div-hr">
-                    <div id="hint-prev" class="expand-height" style="display: none; max-height: 0;">
-                        <span class="prob-title">힌트</span>
-                        <hr class="prob-hr">
-                        <div id="preview-hint" class="mathjax prob-appl ql-editor ql-shower"></div>
-                        <hr class="prob-div-hr">
-                    </div>
-                    <span class="prob-title">풀이</span>
-                    <hr class="prob-hr">
-                    <div id="preview-exp" class="mathjax prob-appl ql-editor ql-shower"></div>
-                    <hr class="prob-div-hr">
-                    <span class="prob-title">정답</span>
-                    <hr class="prob-hr">
-                    <div id="preview-ans" class="mathjax prob-appl ql-editor ql-shower"></div>
-                    <hr class="prob-div-hr">
-                    <div id="custon-tabs">
+                    <div id="prev-content"></div>
+                    <div id="prev-solution"></div>
                  </div>
-                </div>                        
                 <div style="text-align: center;">
-                    <button id="confirm" onclick="confirme()">Confirm</button>
+                    <button id="top" class="mpb" onclick="location.href = '#title';">Top</button>
+                    <button id="confirm" class="mpb" onclick="confirme()">Confirm</button>
                 </div>
             </div>
         </div>

@@ -3,6 +3,7 @@ package com.github.miho73.ipu.controllers;
 import com.github.miho73.ipu.domain.LoginForm;
 import com.github.miho73.ipu.domain.SignupForm;
 import com.github.miho73.ipu.domain.User;
+import com.github.miho73.ipu.repositories.SessionRepository;
 import com.github.miho73.ipu.services.InviteService;
 import com.github.miho73.ipu.services.SessionService;
 import com.github.miho73.ipu.services.AuthService;
@@ -11,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -110,6 +110,9 @@ public class AuthControl {
 
     @GetMapping("/login/deauth")
     public String invalidSession(HttpSession session) {
+        if(session == null) {
+            return "redirect:/";
+        }
         sessionService.invalidSession(session);
         LOGGER.debug("Invalidated session "+session.getId());
         return "redirect:/";

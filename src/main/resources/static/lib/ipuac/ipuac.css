@@ -1,0 +1,144 @@
+textarea {
+    width: 80%;
+    height: 500px;
+    font-size: 0.9em;
+    font-family: Consolas, monaco, monospace;
+}
+
+p {
+    line-break: anywhere;
+    font-weight: 400;
+    font-size: 1em;
+    color: #444;
+    margin: 0 0 7px;
+}
+
+p.error {
+    color: #f00;
+}
+
+iframe {
+    width: 60%;
+    height: 300px;
+}
+
+*.ac-left {
+    text-align: left;
+}
+*.ac-center {
+    text-align: center;
+}
+*.ac-right {
+    text-align: right;
+}
+*.ac-stretch {
+    text-align: justify;
+}
+
+
+a#edit-href-title {
+    color: #111;
+    font-size: 1.3em;
+    cursor: default;
+}
+span.prob-title {
+    font-size: 1.6em;
+    font-weight: 500;
+    border-bottom: 2px #0076C0 solid;
+    margin: 0;
+    color: #333;
+}
+hr.prob-div-hr,hr.prob-hr {
+    margin: 0 0 15px 0;
+    height: 2px;
+    background-color: #ccc;
+    border: none;
+}
+hr.prob-div-hr {
+    margin-top: 10px;
+}
+
+
+span.ac-bold {
+    font-weight: 750;
+}
+span.ac-italic {
+    font-style: italic;
+}
+span.ac-underline {
+    text-decoration: underline;
+}
+span.ac-strike {
+    text-decoration: line-through;
+}
+a.ac-link {
+    color: #0076C0;
+    text-decoration: none;
+}
+a.ac-link:hover {
+    text-decoration: underline;
+}
+button.ac-hidden {
+    color: #0076C0;
+    text-decoration: none;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    padding: 0;
+    font-size: 1.05em;
+    outline: none;
+}
+button.ac-hidden:hover {
+    text-decoration: underline;
+}
+div.ac-hidden-content {
+    display: none;
+}
+
+img.ac-img {
+    width: 100%;
+}
+iframe {
+    border: none;
+}
+iframe.ac-ytp {
+    width: 80%;
+}
+iframe.ac-embed {
+    width: 100%;
+}
+
+blockquote.ac-quote {
+    border-left: 3px solid #cacaca;
+    padding: 5px 15px;
+    border-radius: 0;
+}
+
+table.ac-table, tbody.ac-tbody>tr>th, tbody.ac-tbody>tr>td, thead.ac-thead>tr>th, thead.ac-thead>tr>td {
+    border: 1px #999 solid;
+    padding: 5px;
+}
+table.ac-table {
+    border-collapse: collapse;
+    width: 70%;
+    margin-bottom: 10px;
+}
+tbody > tr:nth-child(even) {
+    background-color: #eee;
+}
+tbody > tr:nth-child(odd) {
+    background-color: #fff;
+}
+
+@media (max-width: 800px) {
+    iframe.ac-ytp {
+        width: 100%;
+    }
+}
+
+p.answer-block {
+    border: 2px #555 solid;
+    margin: 7px 0;
+    padding: 5px;
+    text-align: center;
+}

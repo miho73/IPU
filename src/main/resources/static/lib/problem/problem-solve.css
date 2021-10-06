@@ -7,53 +7,6 @@ div#problem-container {
     margin: 0 25%;
     margin-bottom: 5vh;
 }
-span.prob-title {
-    font-size: 1.6em;
-    font-weight: 500;
-    border-bottom: 2px #0076C0 solid;
-    margin: 0;
-}
-hr.prob-div-hr,hr.prob-hr {
-    margin: 0 0 15px 0;
-    height: 2px;
-    background-color: #ccc;
-    border: none;
-}
-hr.prob-div-hr {
-    margin-top: 10px;
-}
-a#edit-href-title {
-    color: #000;
-    font-size: 1.3em;
-    cursor: default;
-}
-img {
-    width: 80%;
-}
-div.prob-appl>p,div.prob-appl>a#show-hint,div.prob-appl>li,div.prob-appl>blockquote,div.prob-appl>ol>li,div.prob-appl>ul>li {
-    font-size: 1.1em;
-    margin: 5px 0;
-    font-weight: 390;
-}
-div.prob-appl>p>a {
-    color: #0076C0 !important;
-    font-weight: 400;
-}
-div.prob-appl>p>a:hover {
-    text-decoration: underline;
-}
-div.ql-shower {
-    white-space: normal !important;
-    padding: 0 !important;
-    line-height: normal;
-}
-a#show-hint {
-    color: #0076C0;
-    cursor: pointer;
-}
-a#show-hint:hover {
-    text-decoration: underline;
-}
 div#after-sol {
     transform: scaleY(0);
     transform-origin: top;

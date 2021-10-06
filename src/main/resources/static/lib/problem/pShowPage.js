@@ -1,34 +1,40 @@
 var timex = 0;
 var timer;
 
-function onload(specx) {
-    let toAdd = gei('custom-tabs');
-    let div = document.createElement('hr');
-    div.classList.add('prob-hr');
-    let divProb = document.createElement('hr');
-    divProb.classList.add('prob-div-hr');
-    spec = JSON.parse(specx);
-    spec.forEach(spe => {
-        let title = document.createElement('span');
-        let cont = document.createElement('div');
-        title.classList.add('prob-title');
-        title.innerText = spe.name
-        cont.classList.add('mathjax');
-        cont.classList.add('prob-appl');
-        cont.classList.add('ql-editor');
-        cont.classList.add('ql-shower');
-        cont.innerHTML = spe.content;
-        toAdd.appendChild(title);
-        toAdd.appendChild(div);
-        toAdd.appendChild(cont);
-        toAdd.appendChild(divProb);
+function onload(code) {
+    $.ajax({
+        type: 'POST',
+        url: '/problem/api/get-detail',
+        data: {
+            code: code
+        },
+        success: function(data) {
+            update('solving', data['prob_cont']);
+            update('after-sol', data['prob_exp']);
+            timer = setInterval(()=>timex++, 1000);
+        },
+        error: function(err) {
+            console.log(err);
+        }
     });
-    timer = setInterval(()=>timex++, 1000);
 }
 
-function showHint() {
-    gei('show-hint').style.display = 'none';
-    gei('hint-view').style.display = 'block';
+function onloadR(code) {
+    $.ajax({
+        type: 'POST',
+        url: '/problem/api/get-detail',
+        data: {
+            code: code
+        },
+        success: function(data) {
+            gei('solving').innerHTML = data['prob_cont'];
+            gei('after-sol').innerHTML = data['prob_exp'];
+            timer = setInterval(()=>timex++, 1000);
+        },
+        error: function(err) {
+            console.log(err);
+        }
+    });
 }
 
 function markaswa(cod) {

@@ -1,22 +1,24 @@
-## 1. PSQL Guide
+# PSQL Guide
 
 IPU uses postgresql as DBMS. Here's the structure and user spec for IPU.
 
-### 1.1. PostgreSQL Setup
+## 1.1. PostgreSQL Setup
 
 > Run below command in order to install PostgreSQL to your server.   
 > `sudo apt-get update`   
 > `sudo apt-get install postgresql postgresql-contrib`
 
-### 1.2 USER setup
+## 1.2 USER setup
+
 > `CREATE USER <USERNAME> WITH ENCRYPTED PASSWORD '<Password>'';`
 > And, execute below command in order to grant all privileges to IPU databases
 
-### 1.3 IDENTIFICATION DB
+## 1.3 IDENTIFICATION DB
 
-> Database name: identification;   
-> Table name: iden   
-> `CREATE DATABASE identification OWNER <USERNAME>;`
+> Database name: identification;  
+> Table name: iden  
+> `CREATE DATABASE identification OWNER <USERNAME>;`  
+>
 > ```sql
 > CREATE TABLE IF NOT EXISTS iden(
 > user_code SERIAL PRIMARY KEY NOT NULL,
@@ -38,9 +40,10 @@ IPU uses postgresql as DBMS. Here's the structure and user spec for IPU.
 
 ### 1.4 USER SOLVE HISTORY DB
 
-> Database name: solves;   
-> Table name: <each user's name>   
-> `CREATE DATABASE solves OWNER <USERNAME>;`
+> Database name: solves;  
+> Table name: <each user's name>  
+> `CREATE DATABASE solves OWNER <USERNAME>;`  
+>
 > ```sql
 > CREATE TABLE IF NOT EXISTS u<usercode>(
 > code SERIAL PRIMARY KEY NOT NULL,
@@ -53,11 +56,12 @@ IPU uses postgresql as DBMS. Here's the structure and user spec for IPU.
 
 ### 1.5 PROBLEM DB
 
-> Database name: problem   
-> Table name: prob   
-> `CREATE DATABASE problem OWNER <USERNAME>;`   
+> Database name: problem  
+> Table name: prob  
+> `CREATE DATABASE problem OWNER <USERNAME>;`  
 >
 > Problem content db
+>
 > ```sql
 > CREATE TABLE IF NOT EXISTS prob(
 > problem_code SERIAL PRIMARY KEY NOT NULL,
@@ -65,18 +69,15 @@ IPU uses postgresql as DBMS. Here's the structure and user spec for IPU.
 > problem_category CHAR(4) NOT NULL,
 > problem_difficulty CHAR(4) NOT NULL,
 > problem_content TEXT NOT NULL,
-> problem_solution TEXT NOT NULL,
-> problem_answer TEXT NOT NULL,
-> problem_hint TEXT NOT NULL,
-> has_hint BOOLEAN NOT NULL,
 > author_name VARCHAR(50) NOT NULL,
 > added_at TIMESTAMP WITH TIME ZONE NOT NULL,
 > last_modified TIMESTAMP WITH TIME ZONE NOT NULL,
 > tags TEXT NOT NULL,
-> extr_tabs TEXT NOT NULL
 > );
 > ```
+>
 > Problem resources db
+>
 > ```sql
 > CREATE TABLE IF NOT EXISTS resources(
 > resource_code CHAR(88) PRIMARY KEY,
@@ -89,11 +90,13 @@ IPU uses postgresql as DBMS. Here's the structure and user spec for IPU.
 
 ### 1.5 INVITE CODE DB
 
-> Database name: invite;   
-> Table name: codes   
-> `CREATE DATABASE invite OWNER <USERNAME>;`
+> Database name: invite;  
+> Table name: codes  
+> `CREATE DATABASE invite OWNER <USERNAME>;`  
+>
 > ```sql
 > CREATE TABLE IF NOT EXISTS codes (
 > code CHAR(5) PRIMARY KEY NOT NULL
 > );
 > ```
+>

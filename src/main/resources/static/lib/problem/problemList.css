@@ -46,6 +46,7 @@ input#search {
     width: 5vw;
     border: 1px #555 solid;
     border-right-width: 0;
+    border-radius: 0;
 }
 button#submit-search {
     height: 40px;
@@ -75,4 +76,14 @@ button#submit-search {
     input#search {
         width: 100%;
     }
+}
+
+td.cate-kor {
+    width: 15%
+}
+td.cate-eng {
+    width: 60%
+}
+td.cate-nop {
+    width:25%
 }
