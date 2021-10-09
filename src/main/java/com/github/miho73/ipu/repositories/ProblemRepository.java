@@ -6,15 +6,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import java.sql.*;
-import java.util.Dictionary;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Vector;
+import java.util.*;
 
 @Repository("ProblemRepository")
 public class ProblemRepository {
@@ -45,7 +43,7 @@ public class ProblemRepository {
 
     public Problem getProblemSimple(int pCode) throws SQLException {
         String sql = "SELECT problem_name, problem_category, problem_difficulty, tags FROM prob WHERE problem_code=?;";
-        PreparedStatement psmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        PreparedStatement psmt = conn.prepareStatement(sql);
         psmt.setInt(1, pCode);
         ResultSet rs = psmt.executeQuery();
 
@@ -61,9 +59,47 @@ public class ProblemRepository {
 
     public List<Problem> getProblemBriefly(int from, int len) throws SQLException {
         String sql = "SELECT problem_code, problem_name, problem_category, problem_difficulty, tags FROM prob WHERE problem_code>=? ORDER BY problem_code LIMIT ?;";
-        PreparedStatement psmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        PreparedStatement psmt = conn.prepareStatement(sql);
         psmt.setInt(1, from);
         psmt.setInt(2, len);
+        ResultSet rs = psmt.executeQuery();
+
+        List<Problem> pList = new Vector<>();
+        while (rs.next()) {
+            Problem problem = new Problem();
+            problem.setCode(rs.getInt("problem_code"));
+            problem.setName(rs.getString("problem_name"));
+            problem.setCategory(rs.getString("problem_category"));
+            problem.setDifficulty(rs.getString("problem_difficulty"));
+            problem.setTags(rs.getString("tags"));
+            pList.add(problem);
+        }
+        return pList;
+    }
+    public List<Problem> searchProblem(int from, int len, Map<String, String> hKV, String where) throws SQLException {
+        String sql = "SELECT problem_code, problem_name, problem_category, problem_difficulty, tags FROM prob WHERE problem_code>=? "+where+" ORDER BY problem_code LIMIT ?;";
+        LOGGER.debug("query="+where);
+        PreparedStatement psmt = conn.prepareStatement(sql);
+        int currentFilling = 2;
+        psmt.setInt(1, from);
+        if(hKV.containsKey("has")) {
+            String fi = "%"+hKV.get("has")+"%";
+            psmt.setString(2, fi);
+            psmt.setString(3, fi);
+            psmt.setString(4, fi);
+            currentFilling = 5;
+        }
+        if(hKV.containsKey("cat")) {
+            String fi = hKV.get("cat");
+            psmt.setString(currentFilling, fi);
+            currentFilling++;
+        }
+        if(hKV.containsKey("dif")) {
+            String fi = hKV.get("dif");
+            psmt.setString(currentFilling, fi);
+            currentFilling++;
+        }
+        psmt.setInt(currentFilling, len);
         ResultSet rs = psmt.executeQuery();
 
         List<Problem> pList = new Vector<>();
@@ -81,7 +117,7 @@ public class ProblemRepository {
 
     public Problem getProblem(int code) throws SQLException {
         String sql = "SELECT problem_code, problem_name, problem_content, problem_solution, problem_answer, problem_hint, extr_tabs, has_hint FROM prob WHERE problem_code=?;";
-        PreparedStatement psmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        PreparedStatement psmt = conn.prepareStatement(sql);
         psmt.setInt(1, code);
         ResultSet rs = psmt.executeQuery();
 
@@ -101,7 +137,7 @@ public class ProblemRepository {
 
     public Problem getFullProblem(int code) throws SQLException {
         String sql = "SELECT * FROM prob WHERE problem_code=?;";
-        PreparedStatement psmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        PreparedStatement psmt = conn.prepareStatement(sql);
         psmt.setInt(1, code);
         ResultSet rs = psmt.executeQuery();
 

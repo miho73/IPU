@@ -82,7 +82,7 @@ public class Problem {
         return switch (category) {
             case ETCETERA       -> "etce";
             case ALGEBRA        -> "alge";
-            case NUMBER_THEORY -> "numb";
+            case NUMBER_THEORY  -> "numb";
             case COMBINATORICS  -> "comb";
             case GEOMETRY       -> "geom";
             case PHYSICS        -> "phys";

@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 @Service("ProblemService")
 public class ProblemService {
@@ -23,6 +24,8 @@ public class ProblemService {
     private final UserRepository userRepository;
     private final SessionService sessionService;
     private final ExperienceSystem experienceSystem;
+
+    private final int PROBLEM_PER_PAGE = 30;
 
     @Autowired
     public ProblemService(ProblemRepository problemRepository, SessionService sessionService, SolutionRepository solutionRepository, UserRepository userRepository, ExperienceSystem experienceSystem) {
@@ -85,5 +88,41 @@ public class ProblemService {
         ret.put(Problem.PROBLEM_CATEGORY.PHYSICS,        problemRepository.getNumberOfProblemsInCategory(Problem.PROBLEM_CATEGORY.PHYSICS));
 
         return ret;
+    }
+
+    public JSONArray searchProblem(int page, String has, String cate, String diff) throws SQLException {
+        int frm = page*PROBLEM_PER_PAGE+1;
+
+        Vector<String> wheres = new Vector<>();
+        Map<String, String> hasAndValues = new Hashtable<>();
+        if(!has.equals("")) {
+            wheres.add("(problem_name LIKE ? OR problem_content LIKE ? OR problem_solution LIKE ?)");
+            hasAndValues.put("has", has);
+        }
+        if(!cate.equals("")) {
+            wheres.add("problem_category = ?");
+            hasAndValues.put("cat", cate);
+        }
+        if(!diff.equals("")) {
+            wheres.add("problem_difficulty = ?");
+            hasAndValues.put("dif", diff);
+        }
+
+        String where = String.join(" AND ", wheres);
+        if(!where.equals("")) where = "AND "+where;
+
+        JSONArray root = new JSONArray();
+        List<Problem> problems = problemRepository.searchProblem(frm, PROBLEM_PER_PAGE, hasAndValues, where);
+        for(Problem problem : problems) {
+            JSONObject element = new JSONObject();
+            element.put("code", problem.getCode());
+            element.put("name", problem.getName());
+            JSONArray tags = new JSONArray(problem.getTags());
+            tags.put(new JSONObject(Map.of("key", "diff", "content", problem.getDifficultyCode())));
+            tags.put(new JSONObject(Map.of("key", "cate", "content", problem.getCategoryCode())));
+            element.put("tags", tags);
+            root.put(element);
+        }
+        return root;
     }
 }

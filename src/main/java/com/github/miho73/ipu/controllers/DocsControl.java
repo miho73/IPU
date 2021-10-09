@@ -33,7 +33,6 @@ public class DocsControl {
 
     @GetMapping("{url}")
     public String docsReq(@PathVariable("url") String url, Model model, HttpSession session, HttpServletResponse response) throws IOException {
-        System.out.println("dfff");
         String mapping = docsService.getMapping(url);
         if(mapping == null) {
             response.sendError(404);

@@ -2,7 +2,7 @@
 
 <html lang="ko" xmlns:th="https://www.thymeleaf.org">
     <head>
-        <title>문제 - IPU</title>
+        <title>문제 검색 - IPU</title>
         <th:block th:replace="fragments/header-comp.html :: header-comp"></th:block>
         <link rel="stylesheet" type="text/css" href="/lib/profile/profile.css">
         <link rel="stylesheet" type="text/css" href="/lib/table.css">
@@ -10,19 +10,20 @@
         <script src="/lib/univ/converter.js"></script>
         <script src="/lib/problem/pShow.js"></script>
         <meta name="title" content="IPU - 문제">
-        <meta name="description" content="IPU - 문제 목록">
+        <meta name="description" content="IPU - 문제 검색">
         <meta property="og:title" content="IPU - 문제">
-        <meta property="og:description" content="IPU - 문제 목록">
+        <meta property="og:description" content="IPU - 문제 검새">
         <meta name="twitter:title" content="IPU - 문제">
-        <meta name="twitter:description" content="IPU - 문제 목록">
+        <meta name="twitter:description" content="IPU - 문제 검색">
     </head>
-    <body th:onload="load([[${page}]])">
+    <body>
         <th:block th:replace="fragments/header.html :: navigation"></th:block>
         <div id="prob-nav" class="non-container">
             <div id="prob-vi">
-                <a class="vi-sel" href="/problem">전체</a>
+                <a class="vi-cho" href="/problem">전체</a>
                 <a class="vi-cho" href="/problem/category">분류</a>
                 <a class="vi-cho" href="/problem/random">랜덤</a>
+                <a class="vi-sel" href="/problem/search">검색</a>
             </div>
             <form action="/problem/search" method="GET" id="search-form">
                 <input type="text" spellcheck="false" placeholder="검색" id="search" name="cont" class="nout" aria-label="문제 검색">
@@ -38,7 +39,20 @@
                     <th style="width: 57%;">문제 제목</th>
                     <th style="width: 37%;">정보</th>
                 </thead>
-                <tbody id="addProb"></tbody>
+                <tbody id="addProb">
+                    <tr th:each="problem: ${pList}">
+                        <td th:text="${problem.code}"></td>
+                        <td>
+                            <a th:text="${problem.name}" th:href="${'/problem/'+problem.code}"></a>
+                        </td>
+                        <td th:text="${problem.tags}"></td>
+                        <!--
+                        <td th:each="tag: ${new JSONArray(tags).toList()}">
+                            <span th:if="${tag.key.equals('diff')}" class="tag tag-diff" th:text="${tag.content}"></span>
+                        </td>
+                        -->
+                    </tr>
+                </tbody>
             </table>
         </div>
         <p id="not">이 페이지는 비어있습니다.</p>

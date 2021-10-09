@@ -52,15 +52,31 @@ public class ProblemControl {
     public String getProblemCategoryPage(@RequestParam(value = "page", required = false, defaultValue = "0") String page, Model model, HttpSession session) throws SQLException {
         sessionService.loadSessionToModel(session, model);
         Hashtable<Problem.PROBLEM_CATEGORY, Integer> dat = problemService.getNumberOfProblemsInCategory();
-        model.addAttribute("alge", dat.get(Problem.PROBLEM_CATEGORY.ALGEBRA));
-        model.addAttribute("biol", dat.get(Problem.PROBLEM_CATEGORY.BIOLOGY));
-        model.addAttribute("comb", dat.get(Problem.PROBLEM_CATEGORY.COMBINATORICS));
-        model.addAttribute("chem", dat.get(Problem.PROBLEM_CATEGORY.CHEMISTRY));
-        model.addAttribute("numb", dat.get(Problem.PROBLEM_CATEGORY.NUMBER_THEORY));
-        model.addAttribute("phys", dat.get(Problem.PROBLEM_CATEGORY.PHYSICS));
-        model.addAttribute("geom", dat.get(Problem.PROBLEM_CATEGORY.GEOMETRY));
-        model.addAttribute("eart", dat.get(Problem.PROBLEM_CATEGORY.EARTH_SCIENCE));
+        model.addAllAttributes(Map.of(
+                "alge", dat.get(Problem.PROBLEM_CATEGORY.ALGEBRA),
+                "biol", dat.get(Problem.PROBLEM_CATEGORY.BIOLOGY),
+                "comb", dat.get(Problem.PROBLEM_CATEGORY.COMBINATORICS),
+                "chem", dat.get(Problem.PROBLEM_CATEGORY.CHEMISTRY),
+                "numb", dat.get(Problem.PROBLEM_CATEGORY.NUMBER_THEORY),
+                "phys", dat.get(Problem.PROBLEM_CATEGORY.PHYSICS),
+                "geom", dat.get(Problem.PROBLEM_CATEGORY.GEOMETRY),
+                "eart", dat.get(Problem.PROBLEM_CATEGORY.EARTH_SCIENCE)
+        ));
         return "problem/problemCategory";
+    }
+    @GetMapping("/search")
+    public String searchBySearch(@RequestParam(value = "page", required = false, defaultValue = "0") String page,
+                                 @RequestParam(value = "cont", required = false, defaultValue = "") String contains,
+                                 @RequestParam(value = "diff", required = false, defaultValue = "") String difficulty,
+                                 @RequestParam(value = "cate", required = false, defaultValue = "") String category,
+                                 HttpSession session, Model model) throws SQLException {
+        sessionService.loadSessionToModel(session, model);
+        int pg = Integer.parseInt(page);
+        model.addAttribute("page", pg);
+        JSONArray sResult = problemService.searchProblem(pg, contains, category, difficulty);
+        System.out.println(((JSONObject)sResult.get(0)).get("tags"));
+        model.addAttribute("pList", sResult.toList());
+        return "problem/problemSearch";
     }
     //TODO: make random
     @GetMapping("/random")
@@ -84,19 +100,24 @@ public class ProblemControl {
 
     @GetMapping("/{pCode}")
     public String getProblem(@PathVariable("pCode") String code, Model model, HttpSession session, HttpServletResponse response) throws SQLException, IOException {
-        Problem problem = problemService.getProblem(Integer.parseInt(code));
-        if(problem == null) {
+        try {
+            Problem problem = problemService.getProblem(Integer.parseInt(code));
+            if(problem == null) {
+                response.sendError(404);
+                return null;
+            }
+            sessionService.loadSessionToModel(session, model);
+            model.addAllAttributes(Map.of(
+                    "pCode", problem.getCode(),
+                    "pName", problem.getName()
+            ));
+            return "problem/problemPage";
+        }
+        catch (Exception e) {
             response.sendError(404);
             return null;
         }
-        sessionService.loadSessionToModel(session, model);
-        model.addAllAttributes(Map.of(
-                "pCode", problem.getCode(),
-                "pName", problem.getName()
-        ));
-        return "problem/problemPage";
     }
-
     // LEGACY MODE
     @GetMapping("/legacy//{pCode}")
     public String getProblemLegacy(@PathVariable("pCode") String code, Model model, HttpSession session, HttpServletResponse response) throws SQLException, IOException {
@@ -112,7 +133,6 @@ public class ProblemControl {
         ));
         return "problem/problemRPage";
     }
-    ////
 
     @GetMapping("/make")
     public String problemMake(Model model, HttpSession session, HttpServletResponse response) throws IOException {

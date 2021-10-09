@@ -14,7 +14,7 @@
         <meta name="twitter:title" content="IPU - 문제">
         <meta name="twitter:description" content="IPU - 문제 분류">
     </head>
-    <body th:onload="load([[${page}]])">
+    <body>
         <th:block th:replace="fragments/header.html :: navigation"></th:block>
         <div id="prob-nav" class="non-container">
             <div id="prob-vi">
@@ -22,8 +22,8 @@
                 <a class="vi-sel" href="/problem/category">분류</a>
                 <a class="vi-cho" href="/problem/random">랜덤</a>
             </div>
-            <form action="/problem/api/search" method="POST" id="search-form">
-                <input type="text" spellcheck="false" placeholder="검색" id="search" class="nout" aria-label="문제 검색">
+            <form action="/problem/search" method="GET" id="search-form">
+                <input type="text" spellcheck="false" placeholder="검색" id="search" name="cont" class="nout" aria-label="문제 검색">
                 <button type="submit" id="submit-search" class="nout" style="fill: #fff;" aria-label="문제 검색하기">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M23.809 21.646l-6.205-6.205c1.167-1.605 1.857-3.579 1.857-5.711 0-5.365-4.365-9.73-9.731-9.73-5.365 0-9.73 4.365-9.73 9.73 0 5.366 4.365 9.73 9.73 9.73 2.034 0 3.923-.627 5.487-1.698l6.238 6.238 2.354-2.354zm-20.955-11.916c0-3.792 3.085-6.877 6.877-6.877s6.877 3.085 6.877 6.877-3.085 6.877-6.877 6.877c-3.793 0-6.877-3.085-6.877-6.877z"/></svg>
                 </button>
@@ -38,73 +38,73 @@
                 <tbody id="addProb">
                     <tr>
                         <td class="cate-kor">
-                            <a href="/problem/tag/cate=alge">대수학</a>
+                            <a href="/problem/search/?cate=alge">대수학</a>
                         </td>
                         <td class="cate-eng">
-                            <a href="/problem/tag/cate=alge">Algebra</a>
+                            <a href="/problem/search/?cate=alge">Algebra</a>
                         </td>
                         <td class="cate-nop" th:text="${alge}"></td>
                     </tr>
                     <tr>
                         <td class="cate-kor">
-                            <a href="/problem/tag/cate=numb">정수론</a>
+                            <a href="/problem/search/?cate=numb">정수론</a>
                         </td>
                         <td class="cate-eng">
-                            <a href="/problem/tag/cate=numb">Number Theory</a>
+                            <a href="/problem/search/?cate=numb">Number Theory</a>
                         </td>
                         <td class="cate-nop" th:text="${numb}"></td>
                     </tr>
                     <tr>
                         <td class="cate-kor">
-                            <a href="/problem/tag/cate=comb">조합론</a>
+                            <a href="/problem/search/?cate=comb">조합론</a>
                         </td>
                         <td class="cate-eng">
-                            <a href="/problem/tag/cate=comb">Combinatorics</a>
+                            <a href="/problem/search/?cate=comb">Combinatorics</a>
                         </td>
                         <td class="cate-nop" th:text="${comb}"></td>
                     </tr>
                     <tr>
                         <td class="cate-kor">
-                            <a href="/problem/tag/cate=geom">기하학</a>
+                            <a href="/problem/search/?cate=geom">기하학</a>
                         </td>
                         <td class="cate-eng">
-                            <a href="/problem/tag/cate=geom">Geometry</a>
+                            <a href="/problem/search/?cate=geom">Geometry</a>
                         </td>
                         <td class="cate-nop" th:text="${geom}"></td>
                     </tr>
                     <tr>
                         <td class="cate-kor">
-                            <a href="/problem/tag/cate=phys">물리학</a>
+                            <a href="/problem/search/?cate=phys">물리학</a>
                         </td>
                         <td class="cate-eng">
-                            <a href="/problem/tag/cate=phys">Physics</a>
+                            <a href="/problem/search/?cate=phys">Physics</a>
                         </td>
                         <td class="cate-nop" th:text="${phys}"></td>
                     </tr>
                     <tr>
                         <td class="cate-kor">
-                            <a href="/problem/tag/cate=chem">화학</a>
+                            <a href="/problem/search/?cate=chem">화학</a>
                         </td>
                         <td class="cate-eng">
-                            <a href="/problem/tag/cate=chem">Chemistry</a>
+                            <a href="/problem/search/?cate=chem">Chemistry</a>
                         </td>
                         <td class="cate-nop" th:text="${chem}"></td>
                     </tr>
                     <tr>
                         <td class="cate-kor">
-                            <a href="/problem/tag/cate=biol">생물학</a>
+                            <a href="/problem/search/?cate=biol">생물학</a>
                         </td>
                         <td class="cate-eng">
-                            <a href="/problem/tag/cate=biol">Biology</a>
+                            <a href="/problem/search/?cate=biol">Biology</a>
                         </td>
                         <td class="cate-nop" th:text="${biol}"></td>
                     </tr>
                     <tr>
                         <td class="cate-kor">
-                            <a href="/problem/tag/cate=eart">지구과학</a>
+                            <a href="/problem/search/?cate=eart">지구과학</a>
                         </td>
                         <td class="cate-eng">
-                            <a href="/problem/tag/cate=eart">Earth Science</a>
+                            <a href="/problem/search/?cate=eart">Earth Science</a>
                         </td>
                         <td class="cate-nop" th:text="${eart}"></td>
                     </tr>

@@ -11,6 +11,7 @@ function onload(code) {
         success: function(data) {
             update('solving', data['prob_cont']);
             update('after-sol', data['prob_exp']);
+            MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
             timer = setInterval(()=>timex++, 1000);
         },
         error: function(err) {

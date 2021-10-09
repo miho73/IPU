@@ -17,7 +17,7 @@
     </head>
     <body th:onload="onload([[${pCode}]])">
         <th:block th:replace="fragments/header.html :: navigation"></th:block>
-        <div id="problem-container">
+        <div id="problem-container" class="mathjax">
             <div>
                 <a th:href="${'/problem/edit/'+pCode}" id="edit-href-title">
                     <h1 id="prob-title" th:text="${pName}"></h1>
