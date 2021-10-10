@@ -74,7 +74,6 @@ public class ProblemControl {
         int pg = Integer.parseInt(page);
         model.addAttribute("page", pg);
         JSONArray sResult = problemService.searchProblem(pg, contains, category, difficulty);
-        System.out.println(((JSONObject)sResult.get(0)).get("tags"));
         model.addAttribute("pList", sResult.toList());
         return "problem/problemSearch";
     }
@@ -99,7 +98,7 @@ public class ProblemControl {
     }
 
     @GetMapping("/{pCode}")
-    public String getProblem(@PathVariable("pCode") String code, Model model, HttpSession session, HttpServletResponse response) throws SQLException, IOException {
+    public String getProblem(@PathVariable("pCode") String code, Model model, HttpSession session, HttpServletResponse response) throws IOException {
         try {
             Problem problem = problemService.getProblem(Integer.parseInt(code));
             if(problem == null) {

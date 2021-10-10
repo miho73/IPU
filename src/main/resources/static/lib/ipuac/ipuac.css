@@ -8,7 +8,7 @@ textarea {
 p {
     line-break: anywhere;
     font-weight: 400;
-    font-size: 1em;
+    font-size: 0.9em;
     color: #444;
     margin: 0 0 7px;
 }
@@ -42,7 +42,7 @@ a#edit-href-title {
     cursor: default;
 }
 span.prob-title {
-    font-size: 1.6em;
+    font-size: 1.4em;
     font-weight: 500;
     border-bottom: 2px #0076C0 solid;
     margin: 0;

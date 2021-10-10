@@ -40,7 +40,6 @@ public class SessionService {
         session.setAttribute("name", user.getName());
         LOGGER.debug("Set user to session: "+user.getCode()+": "+user.getId()+"("+user.getName()+") "+user.getPrivilege());
         if(sessionRepository.exists(user.getId())) {
-            invalidSession(sessionRepository.get(user.getId()));
             sessionRepository.remove(user.getId());
         }
         LOGGER.debug("Registering session to table. ID="+user.getId());
