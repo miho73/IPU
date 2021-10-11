@@ -3,6 +3,7 @@ description: Propose something new.
 
 labels: 
 - enhancement
+- Triage-Needed
 body:
 - type: markdown
   attributes:
