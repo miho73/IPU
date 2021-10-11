@@ -14,12 +14,12 @@ body:
     label: Description of the new feature / enhancement
     placeholder: How new feature should work?
   validations:
-    required: false
+    required: true
 
 - type: textarea
   attributes:
     label: Supporting information
     placeholder: Having additional data, research, or anything helpful? These can be a great help to implement new feature.
   validations:
-    required: true
+    required: false
 
