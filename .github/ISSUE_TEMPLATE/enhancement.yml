@@ -1,0 +1,25 @@
+name: "⭐ Feature / enhancement request"
+description: Propose something new.
+
+labels: 
+- enhancement
+body:
+- type: markdown
+  attributes:
+    value: |
+      Please make sure to [search for existing issues](https://github.com/miho73/IPU/issues) before filing a new one!
+      
+- type: textarea
+  attributes:
+    label: Description of the new feature / enhancement
+    placeholder: How new feature should work?
+  validations:
+    required: true
+
+- type: textarea
+  attributes:
+    label: Supporting information
+    placeholder: Having additional data, research, or anything helpful? These can be a great help to implement new feature.
+  validations:
+    required: true
+
