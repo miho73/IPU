@@ -3,6 +3,7 @@ description: Propose something new.
 
 labels: 
 - enhancement
+- Triage-Needed
 body:
 - type: markdown
   attributes:
@@ -21,5 +22,5 @@ body:
     label: Supporting information
     placeholder: Having additional data, research, or anything helpful? These can be a great help to implement new feature.
   validations:
-    required: true
+    required: false
 
