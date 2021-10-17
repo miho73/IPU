@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+
+<html lang="ko" xmlns:th="https://www.thymeleaf.org">
+    <head>
+        <title>IPUAC 문법</title>
+        <th:block th:replace="fragments/header-comp.html :: header-comp"></th:block>
+        <link rel="stylesheet" type="text/css" href="/lib/docs/docs.css">
+        <link rel="stylesheet" type="text/css" href="/lib/table.css">
+        <meta name="title" content="IPUAC 문법">
+        <meta property="og:title" content="IPUAC 문법">
+        <meta name="twitter:title" content="IPUAC 문법">
+        <meta name="description" content="IPUAC 문법">
+        <meta property="og:description" content="IPUAC 문법">
+        <meta name="twitter:description" content="IPUAC 문법">
+    </head>
+    <body>
+        <th:block th:replace="fragments/header.html :: navigation"></th:block>
+        <div class="container">
+            <h1 class="title">IPUAC 문법</h1>
+            <h3 class="head-pt">이 문서는 문제를 작성하는데 사용하는 IPUAC의 문법을 설명하는 문서입니다.</h3>
+            <ol>
+                <li class="li" type="A">
+                    <h3 class="pt">지시문</h3>
+                    <p>지시문은 IPUAC를 처리하는 방식을 지시합니다. 모든 지시문은 <code>#</code>로 시작합니다.</p>
+                    <ul>
+                        <li>
+                            <p>정의</p>
+                            <p><code>#def [속성명]=[값]</code></p>
+                            <p>문서 인터프리팅 중 사용할 속성을 정의합니다. 예를 들어 다음 명령은 `text-align` 속성의 값을 1로 정합니다.</p>
+                            <p><code>#def text-align=1</code></p>
+                            <p>정의는 문서의 어디에 았어도 좋습니다. 문서 도중에 정의로 속성의 값이 바뀐 경우 그 다음줄부터 변경사항이 적용됩니다.</p>
+                        </li>
+                    </ul>
+                </li>
+                <li class="li" type="A">
+                    <h3 class="pt">글 구조화</h3>
+                    <ul>
+                        <li>
+                            <p>섹션</p>
+                            <p><code>== 섹션명 ==</code></p>
+                            <p>문제 내용, 답, 해설 등 섹션을 나눌 때 사용합니다. 이 명령은 텍스트 정렬과 함께 쓰일 수 없습니다.</p>
+                        </li>
+                        <li>
+                            <p>텍스트 정렬</p>
+                            <p><code>\1</code>, <code>\2</code>, <code>\3</code>, <code>\4</code></p>
+                            <p>위 4가지 문자중 하나를 매 줄의 가장 첫 줄에 넣으세요. 각각이 의미하는 바는 다음과 같습니다.</p>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <td>입력</td>
+                                        <td>정렬</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><code>\1</code></td>
+                                        <td>왼쪽</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>\2</code></td>
+                                        <td>가운데</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>\3</code></td>
+                                        <td>오른쪽</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>\4</code></td>
+                                        <td>양쪽에 맞추기</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p>만약 정의에서 <code>text-align</code>의 값이 정의된 경우 텍스트 정렬이 정해지지 않은 줄의 텍스트 정렬은 속성을 따릅니다. 정의의 속성에는 1부터 4까지의 값이 들어가며, 각각의 의미는 위의 표와 같습니다.</p>
+                        </li>
+                    </ul>
+                </li>
+                <li class="li" type="A">
+                    <h3 class="pt">글의 요소</h3>
+                    <ul>
+                        <li>
+                            <p>스타일</p>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>입력</th>
+                                        <th>출력</th>
+                                        <th>설명</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>&#39;&#39;굵게&#39;&#39;</td>
+                                        <td><strong>굵게</strong></td>
+                                        <td>작은 따옴표 2개</td>
+                                    </tr>
+                                    <tr>
+                                        <td>&#39;&#39;&#39;기울임&#39;&#39;&#39;</td>
+                                        <td><em>기울임</em></td>
+                                        <td>작은 따옴표 3개</td>
+                                    </tr>
+                                    <tr>
+                                        <td>&#39;&#39;&#39;&#39;굵게 기울임&#39;&#39;&#39;&#39;</td>
+                                        <td><strong><em>굵게 기울임</em></strong></td>
+                                        <td>작은 따옴표 4개</td>
+                                    </tr>
+                                    <tr>
+                                        <td>__밑줄__</td>
+                                        <td><u>밑줄</u></td>
+                                        <td>언더바 2개</td>
+                                    </tr>
+                                    <tr>
+                                        <td>--취소선--</td>
+                                        <td><del>취소선</del></td>
+                                        <td>빼기 기호 2개</td>
+                                    </tr>
+                                    <tr>
+                                        <td>a^^b^^</td>
+                                        <td>a<sup>b</sup></td>
+                                        <td>첨자의 텍스트 크기는 일부 작아집니다.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>a,,b,,</td>
+                                        <td>a<sub>b</sub></td>
+                                        <td>첨자의 텍스트 크기는 일부 작아집니다.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </li>
+                        <li>
+                            <p>텍스트 크기</p>
+                            <p>텍스트 크기는 정수를 사용합니다. 이때 영이나 양의 정수더라도 부호를 생략할 수 없습니다.</p>
+                            <p><code>{{{크기 텍스트}}}</code></p>
+                            <p>실제 텍스트 크기는 다음과 같이 계산합니다.</p>
+                            <p><code>크기=0.9+0.1(크기 숫자)</code></p>
+                            <p>예를 들어 다음은 크기가 0.3em인 "Hello"를 보여줍니다.</p>
+                            <p><code>{{{-6 Hello}}}</code></p>
+                        </li>
+                        <li>
+                            <p>텍스트 색</p>
+                            <p>CSS 색상 표기법을 사용합니다.</p>
+                            <p><code>{{{색상 텍스트}}}</code></p>
+                            <p>예를 들어 다음은 빨간색 "Hello"를 보여줍니다.</p>
+                            <p><code>{{{#f00 Hello}}}</code></p>
+                        </li>
+                        <li>
+                            <p>텍스트 배경색</p>
+                            <p>CSS 색상 표기법을 사용합니다.</p>
+                            <p><code>[[[색상 텍스트]]]</code></p>
+                            <p>예를 들어 다음은 빨간색 배경 위의 흰색 "Hello"를 보여줍니다.</p>
+                            <p><code>[[[#f00 {{{#fff Hello}}}]]]</code></p>
+                        </li>
+                        <li>
+                            <h3 class="pt">링크</h3>
+                            <p>다음 방법으로 링크를 보여줄 수 있습니다.</p>
+                            <table>
+                                <thead>
+                                <tr>
+                                    <td>입력</td>
+                                    <td>출력</td>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>[[URL]]</td>
+                                    <td>
+                                        <a href="URL">URL</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>[[URL|Go to URL]]</td>
+                                    <td>
+                                        <a href="URL">Go to URL</a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </li>
+                        <li>
+                            <h3 class="pt">텍스트 크기</h3>
+                        </li>
+                        <li>
+                            <h3 class="pt">텍스트 크기</h3>
+                        </li>
+                        <li>
+                            <h3 class="pt">텍스트 크기</h3>
+                        </li>
+                        <li>
+                            <h3 class="pt">텍스트 크기</h3>
+                        </li>
+                        <li>
+                            <h3 class="pt">텍스트 크기</h3>
+                        </li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+    </body>
+</html>

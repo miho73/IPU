@@ -75,6 +75,8 @@ public class ProblemControl {
         model.addAttribute("page", pg);
         JSONArray sResult = problemService.searchProblem(pg, contains, category, difficulty);
         model.addAttribute("pList", sResult.toList());
+        if(contains.equals("")) model.addAttribute("query", "");
+        else model.addAttribute("query", contains);
         return "problem/problemSearch";
     }
     //TODO: make random
