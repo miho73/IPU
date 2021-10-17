@@ -17,6 +17,7 @@ td {
     font-size: 1em;
     font-weight: 400;
     color: #222;
+    word-break: break-all;
 }
 td > a {
     font-size: 1em;
@@ -39,6 +40,9 @@ tbody > tr:nth-child(even) {
     table {
         font-size: 0.8em;
         width: 150%;
+    }
+    table.no-react {
+        width: 100%
     }
 }
 

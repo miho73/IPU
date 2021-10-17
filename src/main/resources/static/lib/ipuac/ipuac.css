@@ -112,11 +112,13 @@ blockquote.ac-quote {
     border-left: 3px solid #cacaca;
     padding: 5px 15px;
     border-radius: 0;
+    color: #444;
 }
 
 table.ac-table, tbody.ac-tbody>tr>th, tbody.ac-tbody>tr>td, thead.ac-thead>tr>th, thead.ac-thead>tr>td {
     border: 1px #999 solid;
     padding: 5px;
+    color: #444;
 }
 table.ac-table {
     border-collapse: collapse;

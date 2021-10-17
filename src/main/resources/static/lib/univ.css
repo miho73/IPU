@@ -383,6 +383,12 @@ code {
     border-radius: 5px;
     font-weight: 400;
     font-size: 0.9em;
+    display: inline-block;
+}
+
+code.inline {
+    display: inline;
+    padding: 2px;
 }
 
 @media (max-width: 900px) {
