@@ -1,6 +1,8 @@
 package com.github.miho73.ipu.controllers;
 
+import com.github.miho73.ipu.domain.Problem;
 import com.github.miho73.ipu.services.InviteService;
+import com.github.miho73.ipu.services.ProblemService;
 import com.github.miho73.ipu.services.SessionService;
 import com.github.miho73.ipu.services.UserService;
 import org.json.JSONObject;
@@ -26,12 +28,14 @@ public class RootControl {
     private final InviteService inviteService;
     private final SessionService sessionService;
     private final UserService userService;
+    private final ProblemService problemService;
 
     @Autowired
-    public RootControl(InviteService inviteService, SessionService sessionService, UserService userService) {
+    public RootControl(InviteService inviteService, SessionService sessionService, UserService userService, ProblemService problemService) {
         this.inviteService = inviteService;
         this.sessionService = sessionService;
         this.userService = userService;
+        this.problemService = problemService;
     }
 
     @GetMapping("")
@@ -190,5 +194,44 @@ public class RootControl {
         }
         sessionService.loadSessionToModel(session, model);
         return "root/resources";
+    }
+    @GetMapping("/pdb")
+    public String pdb(Model model, HttpSession session, HttpServletResponse response) throws IOException {
+        if(sessionService.hasPrivilege(SessionService.PRIVILEGES.PROBLEM_MAKE, session)) {
+            response.sendError(404);
+            return null;
+        }
+        sessionService.loadSessionToModel(session, model);
+        return "root/pdb";
+    }
+
+    @PostMapping("/api/pReq")
+    @ResponseBody
+    public String sendProblem(HttpSession session, HttpServletResponse response, HttpServletRequest request) throws IOException, SQLException {
+        if(sessionService.hasPrivilege(SessionService.PRIVILEGES.PROBLEM_MAKE, session)) {
+            response.sendError(404);
+            return null;
+        }
+        int code = Integer.parseInt(request.getParameter("code"));
+        Problem p = problemService.getFullProblem(code);
+        if(p == null) {
+            response.setStatus(404);
+            return "PROBLEM_NOT_FOUND";
+        }
+        JSONObject json = new JSONObject();
+        json.put("problem_code", p.getCode());
+        json.put("problem_name", p.getName());
+        json.put("problem_category", p.getCategory());
+        json.put("problem_difficulty", p.getDifficulty());
+        json.put("problem_content", p.getContent());
+        json.put("problem_answer", p.getAnswer());
+        json.put("problem_hint", p.getHint());
+        json.put("has_hint", p.isHasHint());
+        json.put("author_name", p.getAuthor_name());
+        json.put("added_at", p.getAdded_at());
+        json.put("last_modified", p.getLast_modified());
+        json.put("tags", p.getExternalTabs());
+        json.put("extr_tabs", p.getExternalTabs());
+        return json.toString();
     }
 }

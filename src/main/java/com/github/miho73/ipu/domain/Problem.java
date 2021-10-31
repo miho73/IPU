@@ -1,5 +1,7 @@
 package com.github.miho73.ipu.domain;
 
+import java.sql.Timestamp;
+
 public class Problem {
     public enum PROBLEM_DIFFICULTY {
         UNSET,
@@ -28,7 +30,29 @@ public class Problem {
     private PROBLEM_CATEGORY category;
     private String content, solution, answer, hint;
     private boolean hasHint;
-    private String externalTabs, tags;
+    private String externalTabs, tags, author_name;
+    private Timestamp added_at, last_modified;
+
+    public String getAuthor_name() {
+        return author_name;
+    }
+    public void setAuthor_name(String author_name) {
+        this.author_name = author_name;
+    }
+
+    public Timestamp getAdded_at() {
+        return added_at;
+    }
+    public void setAdded_at(Timestamp added_at) {
+        this.added_at = added_at;
+    }
+
+    public Timestamp getLast_modified() {
+        return last_modified;
+    }
+    public void setLast_modified(Timestamp last_modified) {
+        this.last_modified = last_modified;
+    }
 
     public int getCode() {
         return code;

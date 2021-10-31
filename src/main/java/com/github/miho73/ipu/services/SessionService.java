@@ -105,7 +105,7 @@ public class SessionService {
 
     public void invalidSession(HttpSession session) {
         LOGGER.debug("Invalidated session ID="+getId(session)+". Drop from table");
-        sessionRepository.remove(getId(session));
+        if(getId(session) != null) sessionRepository.remove(getId(session));
         session.invalidate();
     }
 

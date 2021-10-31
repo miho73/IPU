@@ -39,3 +39,10 @@ th {
 li {
     font-size: 0.77em;
 }
+ul.rt-nav {
+    padding: 0;
+}
+li.rt-nav {
+    font-size: 1em;
+    list-style-type: none;
+}

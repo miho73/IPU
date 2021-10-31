@@ -155,6 +155,9 @@ public class ProblemRepository {
         problem.setExternalTabs(rs.getString("extr_tabs"));
         problem.setTags(rs.getString("tags"));
         problem.setHasHint(rs.getBoolean("has_hint"));
+        problem.setAuthor_name(rs.getString("author_name"));
+        problem.setAdded_at(rs.getTimestamp("added_at"));
+        problem.setLast_modified((rs.getTimestamp("last_modified")));
         return problem;
     }
 

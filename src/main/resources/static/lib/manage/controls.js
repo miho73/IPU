@@ -107,3 +107,28 @@ function sendUlogQuery() {
         }
     });
 }
+
+problemElements = ['problem_code', 'problem_name', 'problem_category', 'problem_difficulty', 'problem_content', 'problem_answer', 'problem_hint', 'has_hint', 'author_name', 'added_at', 'last_modified', 'tags', 'extr_tabs'];
+function pReq() {
+    html = '';
+    $.ajax({
+        method: "POST",
+        dataType: "json",
+        url: "/root/api/pReq",
+        data: {
+            code: gei('pQueryCode').value
+        },
+        success: function(data) {
+            cnt = 0;
+            problemElements.forEach((ele)=>{
+                html += '<td>'+data[ele]+'</td>';
+            });
+        },
+        error: function(error) {
+            html = error.responseText;
+        },
+        complete: function() {
+            gei('pData').innerHTML = '<tr>'+html+'</tr>';
+        }
+    });
+}
