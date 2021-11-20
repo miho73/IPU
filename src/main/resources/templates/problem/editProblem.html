@@ -79,6 +79,16 @@
                     </div>
                     <button id="add-tag" onclick="tagHandle()">추가</button>
                 </div>
+                <div id="add-tags-edit">
+                    <input id="edit-tags" type="text" class="tag-input" spellcheck="false" style="width: 100%;" value="[]">
+                    <button id="apply-tag-edit" class="tag-btn" onclick="applyTagsJSONtoVar()">적용</button>
+                </div>
+                <div id="preset-tags">
+                    <div class="tag-preset">
+                        <input id="pActive" type="checkbox">
+                        <label for="pActive">문제 활성화</label>
+                    </div>
+                </div>
             </div>
             <div style="text-align: center;">
                 <button id="preview" class="mpb" onclick="preview()">Preview</button>
@@ -114,6 +124,7 @@
                     gei('name').value = apply.prob_name;
                     gei('category').value = apply.cate;
                     gei('diffi').value = apply.diff;
+                    gei('pActive').checked = apply.active;
                     let tags = JSON.parse(apply.tags);
                     tags.forEach(tagc=>{
                         let ne = {
@@ -178,7 +189,8 @@
                     diff: dif.value,
                     cont: content,
                     solu: exp,
-                    tags: JSON.stringify(tag)
+                    tags: JSON.stringify(tag),
+                    active: gei('pActive').checked
                 },
                 success: function(data) {
                     window.onbeforeunload = undefined;

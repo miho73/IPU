@@ -3,6 +3,14 @@ package com.github.miho73.ipu.domain;
 import java.sql.Timestamp;
 
 public class Problem {
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
     public enum PROBLEM_DIFFICULTY {
         UNSET,
         UNRATED,
@@ -28,9 +36,9 @@ public class Problem {
     private String name;
     private PROBLEM_DIFFICULTY difficulty;
     private PROBLEM_CATEGORY category;
-    private String content, solution, answer, hint;
-    private boolean hasHint;
-    private String externalTabs, tags, author_name;
+    private String content, solution;
+    private boolean active;
+    private String tags, author_name;
     private Timestamp added_at, last_modified;
 
     public String getAuthor_name() {
@@ -144,34 +152,6 @@ public class Problem {
     }
     public void setSolution(String solution) {
         this.solution = solution;
-    }
-
-    public String getAnswer() {
-        return answer;
-    }
-    public void setAnswer(String answer) {
-        this.answer = answer;
-    }
-
-    public String getHint() {
-        return hint;
-    }
-    public void setHint(String hint) {
-        this.hint = hint;
-    }
-
-    public boolean isHasHint() {
-        return hasHint;
-    }
-    public void setHasHint(boolean hasHint) {
-        this.hasHint = hasHint;
-    }
-
-    public String getExternalTabs() {
-        return externalTabs;
-    }
-    public void setExternalTabs(String externalTabs) {
-        this.externalTabs = externalTabs;
     }
 
     public String getTags() {

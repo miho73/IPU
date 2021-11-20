@@ -24,6 +24,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.Random;
 
 @Controller("ProblemControl")
 @RequestMapping("/problem")
@@ -79,11 +80,13 @@ public class ProblemControl {
         else model.addAttribute("query", contains);
         return "problem/problemSearch";
     }
-    //TODO: make random
+    Random rand = new Random();
     @GetMapping("/random")
-    public void getRandomProblem(Model model, HttpSession session, HttpServletResponse response) throws IOException {
+    public void getRandomProblem(Model model, HttpSession session, HttpServletResponse response) throws IOException, SQLException {
         sessionService.loadSessionToModel(session, model);
-        response.sendRedirect("/problem/5");
+
+         rand.setSeed(System.nanoTime());
+        response.sendRedirect("/problem/"+(rand.nextInt(problemService.getNumberOfProblems())+1));
     }
 
     @PostMapping(value = "/api/get", produces = "application/json; charset=utf-8")
@@ -110,7 +113,8 @@ public class ProblemControl {
             sessionService.loadSessionToModel(session, model);
             model.addAllAttributes(Map.of(
                     "pCode", problem.getCode(),
-                    "pName", problem.getName()
+                    "pName", problem.getName(),
+                    "active", problem.isActive()
             ));
             return "problem/problemPage";
         }
@@ -118,21 +122,6 @@ public class ProblemControl {
             response.sendError(404);
             return null;
         }
-    }
-    // LEGACY MODE
-    @GetMapping("/legacy//{pCode}")
-    public String getProblemLegacy(@PathVariable("pCode") String code, Model model, HttpSession session, HttpServletResponse response) throws SQLException, IOException {
-        Problem problem = problemService.getProblem(Integer.parseInt(code));
-        if(problem == null) {
-            response.sendError(404);
-            return null;
-        }
-        sessionService.loadSessionToModel(session, model);
-        model.addAllAttributes(Map.of(
-                "pCode", problem.getCode(),
-                "pName", problem.getName()
-        ));
-        return "problem/problemRPage";
     }
 
     @GetMapping("/make")
@@ -178,6 +167,7 @@ public class ProblemControl {
         problem.setContent     (request.getParameter("cont"));
         problem.setSolution    (request.getParameter("solu"));
         problem.setTags        (request.getParameter("tags"));
+        problem.setActive      (Boolean.parseBoolean(request.getParameter("active")));
         problemService.registerProblem(problem, session);
         return "redirect:/problem";
     }
@@ -202,14 +192,11 @@ public class ProblemControl {
         Problem problem = problemService.getFullProblem(code);
         detail.put("cate", problem.getCategoryCode());
         detail.put("diff", problem.getDifficultyCode());
-        detail.put("hashint", problem.isHasHint());
-        detail.put("prob_ans", problem.getAnswer());
         detail.put("prob_cont", problem.getContent());
         detail.put("prob_exp", problem.getSolution());
-        detail.put("prob_hint", problem.getHint());
         detail.put("prob_name", problem.getName());
-        detail.put("spec", problem.getExternalTabs());
         detail.put("tags", problem.getTags());
+        detail.put("active", problem.isActive());
         return detail.toString();
     }
 
@@ -227,11 +214,8 @@ public class ProblemControl {
         problem.setDifficulty  (request.getParameter("diff"));
         problem.setContent     (request.getParameter("cont"));
         problem.setSolution    (request.getParameter("solu"));
-        problem.setAnswer      ("");
-        problem.setHint        ("");
-        problem.setHasHint     (false);
-        problem.setExternalTabs("");
         problem.setTags        (request.getParameter("tags"));
+        problem.setActive      (Boolean.parseBoolean(request.getParameter("active")));
         problemService.updateProblem(problem);
         return "/problem/"+problem.getCode();
     }

@@ -2,6 +2,13 @@ h1#prob-title {
     text-align: left;
     font-size: 2em;
 }
+p#problem-cannot-solve {
+    color: #f22;
+    font-weight: 500;
+    font-size: 1.5em;
+    margin-top: 10px;
+}
+
 div#problem-container {
     width: 50%;
     margin: 0 25%;
@@ -81,6 +88,7 @@ p#sol-time::after {
     font-size: 0.5em;
     font-weight: 600;
 }
+
 @media (max-width: 900px) {
     h1#prob-title {
         font-size: 1.4em;

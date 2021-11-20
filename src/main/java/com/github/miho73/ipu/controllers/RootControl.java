@@ -115,7 +115,7 @@ public class RootControl {
     }
     @PostMapping("/api/perm")
     @ResponseBody
-    public String permissionControl(HttpSession session, HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public String permissionControl(HttpSession session, HttpServletRequest request, HttpServletResponse response) {
         if(sessionService.hasPrivilege(SessionService.PRIVILEGES.SUPERUSER, session)) {
             response.setStatus(403);
             return "perm";
@@ -135,9 +135,9 @@ public class RootControl {
                     }
                     String perm = (String) userService.getUserDataById(cmdParam[1], "privilege");
                     if(perm == null) {
-                        return "User \'"+cmdParam[2]+"\' is not exists";
+                        return "User '"+cmdParam[2]+"' is not exists";
                     }
-                    return "Privilege of \'"+cmdParam[1]+"\' is \'"+perm+"\'";
+                    return "Privilege of '"+cmdParam[1]+"' is '"+perm+"'";
                 }
                 case "UPDATE" -> {
                     if(cmdParam.length < 3) {
@@ -157,7 +157,7 @@ public class RootControl {
                     if(sess != null) {
                         sess.setAttribute("privilege", cmdParam[1]);
                     }
-                    return "OK. Executed query to update privilege of user \'"+cmdParam[2]+"\' to \'"+cmdParam[1]+"\'.";
+                    return "OK. Executed query to update privilege of user '"+cmdParam[2]+"' to '"+cmdParam[1]+"'.";
                 }
                 default -> {
                     response.setStatus(400);
@@ -183,7 +183,7 @@ public class RootControl {
             return "usr";
         }
         sessionService.invalidSession(sess);
-        return "OK Deactivated session of \'"+id+"\'";
+        return "OK Deactivated session of '"+id+"'";
     }
 
     @GetMapping("/resources")
@@ -224,14 +224,9 @@ public class RootControl {
         json.put("problem_category", p.getCategory());
         json.put("problem_difficulty", p.getDifficulty());
         json.put("problem_content", p.getContent());
-        json.put("problem_answer", p.getAnswer());
-        json.put("problem_hint", p.getHint());
-        json.put("has_hint", p.isHasHint());
         json.put("author_name", p.getAuthor_name());
         json.put("added_at", p.getAdded_at());
         json.put("last_modified", p.getLast_modified());
-        json.put("tags", p.getExternalTabs());
-        json.put("extr_tabs", p.getExternalTabs());
         return json.toString();
     }
 }

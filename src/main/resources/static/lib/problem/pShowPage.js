@@ -20,24 +20,6 @@ function onload(code) {
     });
 }
 
-function onloadR(code) {
-    $.ajax({
-        type: 'POST',
-        url: '/problem/api/get-detail',
-        data: {
-            code: code
-        },
-        success: function(data) {
-            gei('solving').innerHTML = data['prob_cont'];
-            gei('after-sol').innerHTML = data['prob_exp'];
-            timer = setInterval(()=>timex++, 1000);
-        },
-        error: function(err) {
-            console.log(err);
-        }
-    });
-}
-
 function markaswa(cod) {
     wa(cod);
     showAns();

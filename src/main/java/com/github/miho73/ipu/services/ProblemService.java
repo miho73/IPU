@@ -47,6 +47,7 @@ public class ProblemService {
             tags.put(new JSONObject(Map.of("key", "diff", "content", problem.getDifficultyCode())));
             tags.put(new JSONObject(Map.of("key", "cate", "content", problem.getCategoryCode())));
             element.put("tags", tags);
+            element.put("active", problem.isActive());
             root.put(element);
         }
         return root;
@@ -67,6 +68,10 @@ public class ProblemService {
     }
 
     public void registerSolution(int code, int time, boolean result, int userCode) throws SQLException {
+        Problem problem = problemRepository.getProblemSimple(code);
+        if(!problem.isActive()) {
+            return;
+        }
         solutionRepository.addSolution(code, time, result, userCode);
         Problem.PROBLEM_DIFFICULTY difficulty = problemRepository.getProblemSimple(code).getDifficulty();
         int solves = solutionRepository.getNumberOfSolves(userCode, code);
@@ -96,7 +101,7 @@ public class ProblemService {
         Vector<String> wheres = new Vector<>();
         Map<String, String> hasAndValues = new Hashtable<>();
         if(!has.equals("")) {
-            wheres.add("(problem_name LIKE ? OR problem_content LIKE ? OR problem_solution LIKE ?)");
+            wheres.add("(problem_name LIKE ? OR problem_content LIKE ?)");
             hasAndValues.put("has", has);
         }
         if(!cate.equals("")) {
@@ -124,5 +129,9 @@ public class ProblemService {
             root.put(element);
         }
         return root;
+    }
+
+    public int getNumberOfProblems() throws SQLException {
+        return problemRepository.getNumberOfProblems();
     }
 }

@@ -48,6 +48,14 @@ function load(pg) {
                     }
                     info.appendChild(tag);
                 });
+                console.log(datum.active);
+                if(!datum.active) {
+                    let tag = document.createElement('span');
+                    tag.classList.add('tag');
+                    tag.classList.add(`tag-cannot-solve`);
+                    tag.innerText = '제출 불가';
+                    info.appendChild(tag);
+                }
                 ppr.appendChild(tr);
             });
         },

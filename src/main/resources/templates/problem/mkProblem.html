@@ -80,7 +80,17 @@
                         <label>배경 색: </label>
                         <input type="text" id="tag-back" class="tag-input tag-color" onkeyup="updateColor('tag-back')" spellcheck="false" value="9cff65" style="background-color: #9cff65;">
                     </div>
-                    <button id="add-tag" onclick="tagHandle()">추가</button>
+                    <button id="add-tag" class="tag-btn" onclick="tagHandle()">추가</button>
+                </div>
+                <div id="add-tags-edit">
+                    <input id="edit-tags" type="text" class="tag-input" spellcheck="false" style="width: 100%;" value="[]">
+                    <button id="apply-tag-edit" class="tag-btn" onclick="applyTagsJSONtoVar()">적용</button>
+                </div>
+                <div id="preset-tags">
+                    <div class="tag-preset">
+                        <input id="pActive" type="checkbox">
+                        <label for="pActive">문제 활성화</label>
+                    </div>
                 </div>
             </div>
             <div style="text-align: center;">

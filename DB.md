@@ -69,10 +69,12 @@ IPU uses postgresql as DBMS. Here's the structure and user spec for IPU.
 > problem_category CHAR(4) NOT NULL,
 > problem_difficulty CHAR(4) NOT NULL,
 > problem_content TEXT NOT NULL,
+> problem_solution TEXT NOT NULL,
 > author_name VARCHAR(50) NOT NULL,
+> active BOOLEAN NOT NULL,
 > added_at TIMESTAMP WITH TIME ZONE NOT NULL,
 > last_modified TIMESTAMP WITH TIME ZONE NOT NULL,
-> tags TEXT NOT NULL,
+> tags TEXT NOT NULL
 > );
 > ```
 >

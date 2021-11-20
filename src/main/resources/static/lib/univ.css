@@ -326,6 +326,10 @@ span.tag {
     background-color: #9b6bcc;
     color: #fff;
 }
+.tag-cannot-solve {
+    background-color: #f67;
+    color: #fcfcfc;
+}
 .tag-ac {
     background-color: #00b040;
     color: #fff;

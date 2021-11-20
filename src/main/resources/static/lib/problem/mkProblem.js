@@ -88,7 +88,8 @@ function confirme() {
             diff: dif.value,
             cont: content,
             solu: exp,
-            tags: JSON.stringify(tag)
+            tags: JSON.stringify(tag),
+            active: gei('pActive').checked
         },
         success: function(data) {
             window.onbeforeunload = undefined;
@@ -125,6 +126,23 @@ function tagHandle() {
     ntag.style.backgroundColor = `#${ne.back}`;
     ntag.style.color = `#${ne.color}`;
     gei('tags-cont').appendChild(ntag);
+    gei('edit-tags').value = JSON.stringify(tag);
+}
+
+function applyTagsJSONtoVar() {
+    let json = gei('edit-tags').value;
+    if(json == '') json = '';
+    tag = JSON.parse(json);
+    gei('tags-cont').innerHTML = '';
+    tag.forEach(ne => {
+        let ntag = document.createElement('span');
+        ntag.classList.add('tag');
+        ntag.classList.add(`tag-${ne.key}`);
+        ntag.innerText = ne.content;
+        ntag.style.backgroundColor = `#${ne.back}`;
+        ntag.style.color = `#${ne.color}`;
+        gei('tags-cont').appendChild(ntag);
+    });
 }
 
 function updateColor(id) {

@@ -22,16 +22,16 @@ iframe {
     height: 300px;
 }
 
-*.ac-left {
+*.ac-left,tr.ac-left>td {
     text-align: left;
 }
-*.ac-center {
+*.ac-center,tr.ac-center>td {
     text-align: center;
 }
-*.ac-right {
+*.ac-right,tr.ac-right>td {
     text-align: right;
 }
-*.ac-stretch {
+*.ac-stretch,tr.ac-stretch>td {
     text-align: justify;
 }
 

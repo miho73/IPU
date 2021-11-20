@@ -68,26 +68,25 @@ public class UserService {
         JSONArray arr = solutionRepository.getSolved(frm, len, uCode);
         JSONArray cpy = new JSONArray();
         arr.forEach((con)->{
-            Problem problem = null;
+            Problem problem;
             int pCode = ((JSONObject)con).getInt("code");
             try {
                 problem = problemRepository.getProblemSimple(pCode);
+                JSONArray tags = new JSONArray(problem.getTags());
+                tags.put(new JSONObject(Map.of(
+                        "key", "cate",
+                        "content", problem.getCategoryCode()
+                )));
+                tags.put(new JSONObject(Map.of(
+                        "key", "diff",
+                        "content", problem.getDifficultyCode()
+                )));
+                ((JSONObject)con).put("name", problem.getName());
+                ((JSONObject)con).put("tags", tags);
+                cpy.put(con);
             } catch (SQLException e) {
                 LOGGER.debug("Fail to get problem data from solve history. pCode="+pCode);
             }
-            assert problem != null;
-            JSONArray tags = new JSONArray(problem.getTags());
-            tags.put(new JSONObject(Map.of(
-                    "key", "cate",
-                    "content", problem.getCategoryCode()
-            )));
-            tags.put(new JSONObject(Map.of(
-                    "key", "diff",
-                    "content", problem.getDifficultyCode()
-            )));
-            ((JSONObject)con).put("name", problem.getName());
-            ((JSONObject)con).put("tags", tags);
-            cpy.put(con);
         });
         return cpy.toString();
     }

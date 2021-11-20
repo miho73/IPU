@@ -33,11 +33,12 @@
         </div>
         <div id="prob-control">
             <button id="show-ans-btn" class="end-btn" onclick="showAns()">정답 보기</button>
+            <p th:if="${!active}" id="problem-cannot-solve">이 문제는 제출할 수 없습니다.</p>
         </div>
         <div id="prob-control-nd">
             <div th:if="${logged}">
-                <button id="wa-btn" class="end-btn" style="margin-right: 7px;" th:onclick="wa([[${pCode}]])">틀렸다고 표시</button>
-                <button id="ac-btn" class="end-btn" style="margin-left: 7px;" th:onclick="ac([[${pCode}]])">맞았다고 표시</button>
+                <button id="wa-btn" th:if="${active}" class="end-btn" style="margin-right: 7px;" th:onclick="wa([[${pCode}]])">틀렸다고 표시</button>
+                <button id="ac-btn" th:if="${active}" class="end-btn" style="margin-left: 7px;" th:onclick="ac([[${pCode}]])">맞았다고 표시</button>
             </div>
         </div>
     </body>
