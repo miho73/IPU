@@ -17,18 +17,14 @@ import javax.security.auth.kerberos.KerberosTicket;
 import java.sql.*;
 
 @Repository("SolutionRepository")
-public class SolutionRepository {
-    private DriverManagerDataSource dataSource;
-    private Connection conn;
-
-    private final Logger LOGGER = LoggerFactory.getLogger(SolutionRepository.class);
-
+public class SolutionRepository extends com.github.miho73.ipu.repositories.Repository {
     @Value("${db.solution.url}") private String DB_URL;
     @Value("${db.solution.username}") private String DB_USERNAME;
     @Value("${db.solution.password}") private String DB_PASSWORD;
 
+    @Override
     @PostConstruct
-    public void initProblemRepository() throws SQLException {
+    public void initRepository() {
         LOGGER.debug("Initializing SolutionRepository DB");
         LOGGER.debug("DB config: url="+DB_URL+", username="+DB_USERNAME);
         dataSource = new DriverManagerDataSource();
@@ -36,21 +32,16 @@ public class SolutionRepository {
         dataSource.setUrl(DB_URL);
         dataSource.setUsername(DB_USERNAME);
         dataSource.setPassword(DB_PASSWORD);
-        conn = dataSource.getConnection();
     }
 
-    public void close() throws SQLException {
-        conn.close();
-    }
-
-    public void addUser(int usercode) throws SQLException {
+    public void addUser(int usercode, Connection conn) throws SQLException {
         String sql = "CREATE TABLE IF NOT EXISTS u" + usercode +
-                "(code SERIAL NOT NULL," +
-                "problem_code INTEGER NOT NULL," +
-                "solved_time TIMESTAMP WITH TIME ZONE NOT NULL," +
-                "solving_time INTEGER NOT NULL," +
-                "correct BOOLEAN NOT NULL" +
-                ");";
+                     "(code SERIAL NOT NULL," +
+                     "problem_code INTEGER NOT NULL," +
+                     "solved_time TIMESTAMP WITH TIME ZONE NOT NULL," +
+                     "solving_time INTEGER NOT NULL," +
+                     "correct BOOLEAN NOT NULL" +
+                     ");";
 
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
@@ -58,7 +49,7 @@ public class SolutionRepository {
         psmt.execute();
     }
 
-    public void addSolution(int problemCode, int solveTime, boolean correct, int userCode) throws SQLException {
+    public void addSolution(int problemCode, int solveTime, boolean correct, int userCode, Connection conn) throws SQLException {
         String sql = "INSERT INTO u"+userCode+" (problem_code, solved_time, solving_time, correct) VALUES (?, ?, ?, ?)";
 
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -71,11 +62,11 @@ public class SolutionRepository {
         psmt.execute();
     }
 
-    public JSONArray getSolved(int frm, int len, int uCode) throws SQLException {
+    public JSONArray getSolved(int frm, int len, int uCode, Connection conn) throws SQLException {
         String sql = "SELECT code, problem_code, solved_time, solving_time, correct " +
-                "FROM u"+uCode+" " +
-                "WHERE code<=((SELECT code FROM u"+uCode+" ORDER BY code DESC LIMIT 1)-?) " +
-                "ORDER BY code DESC LIMIT ?;";
+                     "FROM u"+uCode+" " +
+                     "WHERE code<=((SELECT code FROM u"+uCode+" ORDER BY code DESC LIMIT 1)-?) " +
+                     "ORDER BY code DESC LIMIT ?;";
         PreparedStatement psmt = conn.prepareStatement(sql);
         psmt.setInt(1, frm-1);
         psmt.setInt(2, len);
@@ -93,7 +84,7 @@ public class SolutionRepository {
         return probs;
     }
 
-    public int getNumberOfSolves(int uCode, int pCode) throws SQLException {
+    public int getNumberOfSolves(int uCode, int pCode, Connection conn) throws SQLException {
         LOGGER.debug("Get Number of Solves request for user "+uCode+" pCode="+pCode);
         String sql = "SELECT COUNT(*) AS count FROM u"+uCode+" WHERE problem_code=?;";
 
@@ -105,7 +96,7 @@ public class SolutionRepository {
         return rs.getInt("count");
     }
 
-    public void dropSolves(int uCode) throws SQLException {
+    public void dropSolves(int uCode, Connection conn) throws SQLException {
         String sql = "DROP TABLE u"+uCode+";";
 
         PreparedStatement psmt = conn.prepareStatement(sql);

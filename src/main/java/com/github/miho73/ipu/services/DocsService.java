@@ -17,7 +17,7 @@ import java.util.Scanner;
 
 @Service("DocsService")
 public class DocsService {
-    private final Logger LOGGER = LoggerFactory.getLogger(CommonControl.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     @Value("${docs.mappingFile}") String mappingFile;
 

@@ -13,7 +13,7 @@ import java.util.Map;
 
 @Service("SessionService")
 public class SessionService {
-    private final Logger LOGGER = LoggerFactory.getLogger(SessionService.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
     private final SessionRepository sessionRepository = new SessionRepository();
 
     /**

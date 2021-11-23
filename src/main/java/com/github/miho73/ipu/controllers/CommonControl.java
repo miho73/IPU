@@ -18,7 +18,7 @@ import java.util.Scanner;
 public class CommonControl {
     private String sitemap;
     private String robotTxt;
-    private final Logger LOGGER = LoggerFactory.getLogger(CommonControl.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     @Value("${config.sitemap.path}") String sitemapPath;
     @Value("${config.robot.path}") String robotTxtPath;

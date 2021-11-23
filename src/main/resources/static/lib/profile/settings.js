@@ -65,6 +65,8 @@ function upload() {
                 case "fpwd":
                     gei('errdis').innerText = "프로필은 업데이트되었지만 암호는 바꾸지 못했습니다.";
                     break;
+                case "error":
+                    gei('errdis').innerText = "프로필을 업데이트하지 못했습니다. 잠시 후에 다시 시도해주세요.";
             }
             window.location.hash = "errdis";
         }

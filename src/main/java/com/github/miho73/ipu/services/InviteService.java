@@ -4,6 +4,7 @@ import com.github.miho73.ipu.repositories.InviteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -17,11 +18,17 @@ public class InviteService {
     }
 
     public boolean checkExists(String code) throws SQLException {
-        return inviteRepository.checkExist(code);
+        Connection connection = inviteRepository.openConnection();
+        boolean is = inviteRepository.checkExist(code, connection);
+        inviteRepository.close(connection);
+        return is;
     }
 
     public List<String> listCodes() throws SQLException {
-        return inviteRepository.getList();
+        Connection connection = inviteRepository.openConnection();
+        List<String> lst = inviteRepository.getList(connection);
+        inviteRepository.close(connection);
+        return lst;
     }
 
     public enum DB_ACTION {
@@ -30,14 +37,17 @@ public class InviteService {
         UPDATE
     }
     public void IDU(String[] params, DB_ACTION action) throws SQLException {
+        Connection connection = inviteRepository.openConnection();
+        connection.setAutoCommit(false);
         switch (action) {
-            case INSERT -> inviteRepository.insertCode(params[1]);
-            case DELETE -> inviteRepository.deleteCode(params[1]);
-            case UPDATE -> inviteRepository.updateCode(params[1], params[2]);
+            case INSERT -> inviteRepository.insertCode(params[1], connection);
+            case DELETE -> inviteRepository.deleteCode(params[1], connection);
+            case UPDATE -> inviteRepository.updateCode(params[1], params[2], connection);
         }
+        inviteRepository.commitAndClose(connection);
     }
 
     public boolean inviteCodeValidator(String code) {
-        return code.length() >= 4 && code.length() <= 6;
+        return code.length() < 4 || code.length() > 6;
     }
 }

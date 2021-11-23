@@ -31,7 +31,7 @@ public class AuthControl {
     private final AuthService userService;
     private final SessionService sessionService;
     private final InviteService inviteService;
-    private final Logger LOGGER = LoggerFactory.getLogger(AuthControl.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     private final Pattern IdNameValidator = Pattern.compile("^(?=.*[A-Za-z])[A-Za-z0-9]{0,50}$");
     private final Pattern PasswordValidator = Pattern.compile("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d!\"#$%&'()*+,\\-./:;<=>?@\\[\\]^_`{|}~\\\\\\)]{6,}$");
@@ -58,7 +58,7 @@ public class AuthControl {
     public String postLogin(@RequestParam(value = "ret", required = false, defaultValue = "/") String ret,
                             @ModelAttribute LoginForm loginForm,
                             Model model,
-                            HttpSession session) throws IOException {
+                            HttpSession session) {
         if(sessionService.checkLogin(session)) {
             return "redirect:"+ret;
         }
@@ -78,9 +78,8 @@ public class AuthControl {
         AuthService.LOGIN_RESULT result;
         try {
             result = userService.checkLogin(loginForm, session);
-        } catch (SQLException | InvalidInputException | NoSuchAlgorithmException | IllegalArgumentException e) {
-            LOGGER.error("Login error. Form: id="+loginForm.getId()+", gVers="+loginForm.getgVers()+", gToken="+loginForm.getgToken());
-            LOGGER.error(e.getMessage(), e);
+        } catch (Exception e) {
+            LOGGER.error("Login error: "+e.getMessage()+" Form: id="+loginForm.getId()+", gVers="+loginForm.getgVers()+", gToken="+loginForm.getgToken(), e);
             model.addAttribute("error_text", "문제가 발생했습니다. 잠시 후에 다시 시도해주세요.");
             return "auth/signin";
         }
@@ -130,7 +129,7 @@ public class AuthControl {
     @PostMapping("/signup")
     public String signup(@ModelAttribute SignupForm form,
                          Model model,
-                         HttpSession session) throws SQLException, InvalidInputException, NoSuchAlgorithmException, IOException {
+                         HttpSession session) throws Exception {
         boolean wasError = false;
         StringBuilder errTxt = new StringBuilder();
 
@@ -168,17 +167,26 @@ public class AuthControl {
             model.addAttribute("error_text", "이미 사용중인 ID 입니다. 다른 ID를 골라주세요.");
             return "auth/signup";
         }
+        if(result == AuthService.SIGNUP_RESULT.ERROR) {
+            model.addAttribute("error_text", "계정을 만들지 못했습니다. 잠시 후에 다시 시도해주세요.");
+            return "auth/signup";
+        }
         return "redirect:/";
     }
 
     @PostMapping("/api/invite-check")
     @ResponseBody
-    public String inviteCheck(@RequestBody String code) throws SQLException {
+    public String inviteCheck(@RequestBody String code) {
         boolean ok = false;
-        if(code.length()>=4){
-            ok = inviteService.checkExists(code.substring(code.length() - 4));
+        try {
+            if(code.length()>=4){
+                ok = inviteService.checkExists(code.substring(code.length() - 4));
+            }
+            LOGGER.debug("Invite code challenge. "+code+": "+(ok?"succeed":"failed"));
         }
-        LOGGER.debug("Invite code challenge. "+code+": "+(ok?"succeed":"failed"));
+        catch (Exception e) {
+            LOGGER.error("Cannoot check invite code: "+code, e);
+        }
         return Boolean.toString(ok);
     }
 }

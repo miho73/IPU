@@ -9,24 +9,21 @@ import org.springframework.context.annotation.PropertySources;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.annotation.PostConstruct;
 import java.sql.*;
 import java.util.*;
 
 @Repository("ProblemRepository")
-public class ProblemRepository {
-    private DriverManagerDataSource dataSource;
-    private Connection conn;
-
-    private final Logger LOGGER = LoggerFactory.getLogger(ProblemRepository.class);
-
+public class ProblemRepository extends com.github.miho73.ipu.repositories.Repository {
     @Value("${db.problem.url}") private String DB_URL;
     @Value("${db.problem.username}") private String DB_USERNAME;
     @Value("${db.problem.password}") private String DB_PASSWORD;
 
+    @Override
     @PostConstruct
-    public void initProblemRepository() throws SQLException {
+    public void initRepository() {
         LOGGER.debug("Initializing ProblemRepository DB");
         LOGGER.debug("DB config: url="+DB_URL+", username="+DB_USERNAME);
         dataSource = new DriverManagerDataSource();
@@ -34,14 +31,9 @@ public class ProblemRepository {
         dataSource.setUrl(DB_URL);
         dataSource.setUsername(DB_USERNAME);
         dataSource.setPassword(DB_PASSWORD);
-        conn = dataSource.getConnection();
     }
 
-    public void close() throws SQLException {
-        conn.close();
-    }
-
-    public Problem getProblemSimple(int pCode) throws SQLException {
+    public Problem getProblemSimple(int pCode, Connection conn) throws SQLException {
         String sql = "SELECT problem_name, problem_category, problem_difficulty, tags, active FROM prob WHERE problem_code=?;";
         PreparedStatement psmt = conn.prepareStatement(sql);
         psmt.setInt(1, pCode);
@@ -58,7 +50,7 @@ public class ProblemRepository {
         return ret;
     }
 
-    public List<Problem> getProblemBriefly(int from, int len) throws SQLException {
+    public List<Problem> getProblemBriefly(int from, int len, Connection conn) throws SQLException {
         String sql = "SELECT problem_code, problem_name, problem_category, problem_difficulty, tags, active FROM prob WHERE problem_code>=? ORDER BY problem_code LIMIT ?;";
         PreparedStatement psmt = conn.prepareStatement(sql);
         psmt.setInt(1, from);
@@ -78,7 +70,7 @@ public class ProblemRepository {
         }
         return pList;
     }
-    public List<Problem> searchProblem(int from, int len, Map<String, String> hKV, String where) throws SQLException {
+    public List<Problem> searchProblem(int from, int len, Map<String, String> hKV, String where, Connection conn) throws SQLException {
         String sql = "SELECT problem_code, problem_name, problem_category, problem_difficulty, tags, active FROM prob WHERE problem_code>=? "+where+" ORDER BY problem_code LIMIT ?;";
         LOGGER.debug("query="+where);
         PreparedStatement psmt = conn.prepareStatement(sql);
@@ -88,8 +80,7 @@ public class ProblemRepository {
             String fi = "%"+hKV.get("has")+"%";
             psmt.setString(2, fi);
             psmt.setString(3, fi);
-            psmt.setString(4, fi);
-            currentFilling = 5;
+            currentFilling = 4;
         }
         if(hKV.containsKey("cat")) {
             String fi = hKV.get("cat");
@@ -118,7 +109,7 @@ public class ProblemRepository {
         return pList;
     }
 
-    public Problem getProblem(int code) throws SQLException {
+    public Problem getProblem(int code, Connection conn) throws SQLException {
         String sql = "SELECT problem_code, problem_name, problem_content, problem_solution, active FROM prob WHERE problem_code=?;";
         PreparedStatement psmt = conn.prepareStatement(sql);
         psmt.setInt(1, code);
@@ -135,7 +126,7 @@ public class ProblemRepository {
         return problem;
     }
 
-    public Problem getFullProblem(int code) throws SQLException {
+    public Problem getFullProblem(int code, Connection conn) throws SQLException {
         String sql = "SELECT * FROM prob WHERE problem_code=?;";
         PreparedStatement psmt = conn.prepareStatement(sql);
         psmt.setInt(1, code);
@@ -158,7 +149,7 @@ public class ProblemRepository {
         return problem;
     }
 
-    public void registerProblem(Problem problem, String auther) throws SQLException {
+    public void registerProblem(Problem problem, Connection conn) throws SQLException {
         String sql = "INSERT INTO prob" +
                 "(problem_name, problem_category, problem_difficulty, problem_content, problem_solution, author_name, added_at, last_modified, tags, active) VALUES " +
                 "(?, ?, ?, ?, ?, ?, ?, ?, ?, true);";
@@ -171,14 +162,14 @@ public class ProblemRepository {
         psmt.setString(3, problem.getDifficultyCode());
         psmt.setString(4, problem.getContent());
         psmt.setString(5, problem.getSolution());
-        psmt.setString(6, auther);
+        psmt.setString(6, problem.getAuthor_name());
         psmt.setTimestamp(7, timestamp);
         psmt.setTimestamp(8, timestamp);
         psmt.setString(9, problem.getTags());
 
         psmt.execute();
     }
-    public void updateProblem(Problem problem) throws SQLException {
+    public void updateProblem(Problem problem, Connection conn) throws SQLException {
         String sql = "UPDATE prob SET " +
                 "problem_name=?,"+
                 "problem_category=?,"+
@@ -206,7 +197,7 @@ public class ProblemRepository {
         psmt.execute();
     }
 
-    public int getNumberOfProblemsInCategory(Problem.PROBLEM_CATEGORY category) throws SQLException {
+    public int getNumberOfProblemsInCategory(Problem.PROBLEM_CATEGORY category, Connection conn) throws SQLException {
         String sql = "SELECT COUNT(*) AS cnt FROM prob WHERE problem_category=?;";
         PreparedStatement psmt = conn.prepareStatement(sql);
         psmt.setString(1, category.toString().substring(0, 4).toLowerCase());
@@ -217,7 +208,7 @@ public class ProblemRepository {
         return rs.getInt("cnt");
     }
 
-    public int getNumberOfProblems() throws SQLException {
+    public int getNumberOfProblems(Connection conn) throws SQLException {
         String sql = "SELECT COUNT(*) AS cnt FROM prob;";
         PreparedStatement psmt = conn.prepareStatement(sql);
         ResultSet rs = psmt.executeQuery();

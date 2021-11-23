@@ -10,6 +10,8 @@ import com.github.miho73.ipu.services.SessionService;
 import com.github.miho73.ipu.services.UserService;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,11 +26,12 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Map;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 @Controller("UserControl")
 public class UserControl {
+    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+
     private final SessionService sessionService;
     private final UserService userService;
     private final AuthService authService;
@@ -127,7 +130,7 @@ public class UserControl {
 
     @PostMapping("/settings")
     @ResponseBody
-    public String settingChange(HttpServletRequest request, HttpSession session, HttpServletResponse response) throws IOException, InvalidInputException, SQLException, NoSuchAlgorithmException {
+    public String settingChange(HttpServletRequest request, HttpSession session, HttpServletResponse response) throws Exception {
         if(!sessionService.checkLogin(session)) {
             response.sendError(403);
             return null;
@@ -143,25 +146,31 @@ public class UserControl {
             return "form";
         }
 
-        if(authService.auth(id, lPwd)) {
-            if(bio.length() > 500 || name.length() > 50 || name.equals("")) {
-                response.setStatus(400);
-                return "form";
-            }
-            userService.updateProfile(name, bio, uCode);
-            sessionService.setName(session, name);
-            if(pwdC) {
-                if(!PasswordValidator.matcher(nPwd).matches()) {
+        try {
+            if(authService.auth(id, lPwd)) {
+                if(bio.length() > 500 || name.length() > 50 || name.equals("")) {
                     response.setStatus(400);
-                    return "fpwd";
+                    return "form";
                 }
-                authService.updatePassword(nPwd, uCode);
+                userService.updateProfile(name, bio, uCode);
+                sessionService.setName(session, name);
+                if(pwdC) {
+                    if(!PasswordValidator.matcher(nPwd).matches()) {
+                        response.setStatus(400);
+                        return "fpwd";
+                    }
+                    authService.updatePassword(nPwd, uCode);
+                }
+                return "ok";
             }
-            return "ok";
+            else {
+                response.setStatus(403);
+                return "pwd";
+            }
         }
-        else {
-            response.setStatus(403);
-            return "pwd";
+        catch (Exception e) {
+            LOGGER.error("Cannot update user settings: "+e.getMessage());
+            return "error";
         }
     }
 
@@ -178,7 +187,6 @@ public class UserControl {
     }
 
     @PostMapping("/settings/bye")
-    //TODO: use transaction
     public String byeAcc(Model model, HttpSession session, HttpServletRequest request, HttpServletResponse response) throws InvalidInputException, SQLException, NoSuchAlgorithmException, IOException {
         if(!sessionService.checkLogin(session)) {
             response.sendError(403);
@@ -186,10 +194,21 @@ public class UserControl {
         }
         String pwd = request.getParameter("pwd");
         if(authService.auth(sessionService.getId(session), pwd)) {
-            int uCode = sessionService.getCode(session);
-            userService.deleteUesr(uCode);
-            sessionService.invalidSession(session);
-            return "profile/realbye";
+            try {
+                int uCode = sessionService.getCode(session);
+                userService.deleteUesr(uCode);
+                sessionService.invalidSession(session);
+                return "profile/realbye";
+            }
+            catch (Exception e) {
+                LOGGER.error("Cannot delete user", e);
+                model.addAllAttributes(Map.of(
+                        "username", sessionService.getName(session),
+                        "userid", sessionService.getId(session),
+                        "fail", "계정을 삭제하지 못했습니다. 잠시 후에 다시 시도해주세요."
+                ));
+                return "profile/goodbye";
+            }
         }
         else {
             model.addAllAttributes(Map.of(

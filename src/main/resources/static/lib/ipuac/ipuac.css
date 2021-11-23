@@ -1,11 +1,4 @@
-textarea {
-    width: 80%;
-    height: 500px;
-    font-size: 0.9em;
-    font-family: Consolas, monaco, monospace;
-}
-
-p {
+p.ipuac {
     line-break: anywhere;
     font-weight: 400;
     font-size: 0.9em;

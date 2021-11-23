@@ -20,18 +20,14 @@ import java.util.TimeZone;
 import java.util.Vector;
 
 @Repository("UserRepository")
-public class UserRepository {
-    private DriverManagerDataSource dataSource;
-    private Connection conn;
-
-    private final Logger LOGGER = LoggerFactory.getLogger(UserRepository.class);
-
+public class UserRepository extends com.github.miho73.ipu.repositories.Repository {
     @Value("${db.identification.url}") private String DB_URL;
     @Value("${db.identification.username}") private String DB_USERNAME;
     @Value("${db.identification.password}") private String DB_PASSWORD;
 
+    @Override
     @PostConstruct
-    public void initUserRepository() throws SQLException {
+    public void initRepository() {
         LOGGER.debug("Initializing UserRepository DB");
         LOGGER.debug("DB config: url="+DB_URL+", username="+DB_USERNAME);
         dataSource = new DriverManagerDataSource();
@@ -39,14 +35,9 @@ public class UserRepository {
         dataSource.setUrl(DB_URL);
         dataSource.setUsername(DB_USERNAME);
         dataSource.setPassword(DB_PASSWORD);
-        conn = dataSource.getConnection();
     }
 
-    public void close() throws SQLException {
-        conn.close();
-    }
-
-    public User getUserByCode(int code) throws SQLException {
+    public User getUserByCode(int code, Connection conn) throws SQLException {
         String sql = "SELECT * FROM iden WHERE user_code=?;";
         PreparedStatement psmt = conn.prepareStatement(sql);
         psmt.setInt(1, code);
@@ -66,7 +57,7 @@ public class UserRepository {
         return user;
     }
 
-    public User getUserById(String id) throws SQLException {
+    public User getUserById(String id, Connection conn) throws SQLException {
         String sql = "SELECT * FROM iden WHERE user_id=?;";
         PreparedStatement psmt = conn.prepareStatement(sql);
         psmt.setString(1, id);
@@ -82,7 +73,7 @@ public class UserRepository {
         );
     }
 
-    public User getProfileById(String id) throws SQLException {
+    public User getProfileById(String id, Connection conn) throws SQLException {
         String sql = "SELECT * FROM iden WHERE user_id=?;";
         PreparedStatement psmt = conn.prepareStatement(sql);
         psmt.setString(1, id);
@@ -97,7 +88,7 @@ public class UserRepository {
         return user;
     }
 
-    public Object getUserDataById(String id, String column) throws SQLException {
+    public Object getUserDataById(String id, String column, Connection conn) throws SQLException {
         String sql = "SELECT "+column+" FROM iden WHERE user_id=?";
         PreparedStatement psmt = conn.prepareStatement(sql);
         psmt.setString(1, id);
@@ -106,7 +97,7 @@ public class UserRepository {
         if(!rs.next()) return null;
         return rs.getObject(column);
     }
-    public Object queryUserById(String id, String column) throws SQLException {
+    public Object queryUserById(String id, String column, Connection conn) throws SQLException {
         String sql = "SELECT ? FROM iden WHERE user_id=?;";
         PreparedStatement psmt = conn.prepareStatement(sql);
         psmt.setString(1, column);
@@ -116,8 +107,7 @@ public class UserRepository {
         return rs.getObject(column);
     }
 
-    // Add user data to identification database
-    public void addUser(User user) throws SQLException {
+    public void addUser(User user, Connection conn) throws SQLException {
         String sql = "INSERT INTO iden" +
                 "(user_id, user_name, user_password, user_salt, invite_code, bio, privilege, joined, experience) VALUES " +
                 "(?, ?, ?, ?, ?, '', 'u', ? , 0);";
@@ -135,7 +125,7 @@ public class UserRepository {
     }
 
     // Update user data type of string
-    public void updateUserStringById(String id, String column, String newValue) throws SQLException {
+    public void updateUserStringById(String id, String column, String newValue, Connection conn) throws SQLException {
         String sql = "UPDATE iden SET "+column+"=? WHERE user_id=?;";
         PreparedStatement psmt = conn.prepareStatement(sql);
         psmt.setString(1, newValue);
@@ -144,7 +134,7 @@ public class UserRepository {
     }
 
     // Update user data type of timestamp
-    public void updateUserTSById(String id, String column, Timestamp timestamp) throws SQLException {
+    public void updateUserTSById(String id, String column, Timestamp timestamp, Connection conn) throws SQLException {
         String sql = "UPDATE iden SET "+column+"=? WHERE user_id=?;";
         PreparedStatement psmt = conn.prepareStatement(sql);
         psmt.setTimestamp(1, timestamp);
@@ -153,7 +143,7 @@ public class UserRepository {
     }
 
     // Get user data required to do login
-    public User getUserForAuthentication(String id) throws SQLException {
+    public User getUserForAuthentication(String id, Connection conn) throws SQLException {
         String sql = "SELECT * FROM iden WHERE user_id=?;";
         PreparedStatement psmt = conn.prepareStatement(sql);
         psmt.setString(1, id);
@@ -169,7 +159,7 @@ public class UserRepository {
         return user;
     }
 
-    public List<User> getUserRanking(int len) throws SQLException {
+    public List<User> getUserRanking(int len, Connection conn) throws SQLException {
         String sql = "SELECT user_id, user_name, bio, experience FROM iden ORDER BY experience DESC LIMIT ?;";
         PreparedStatement psmt = conn.prepareStatement(sql);
         psmt.setInt(1, len);
@@ -187,7 +177,7 @@ public class UserRepository {
         return ret;
     }
 
-    public void addExperience(int exp, int userCode) throws SQLException {
+    public void addExperience(int exp, int userCode, Connection conn) throws SQLException {
         String sql = "UPDATE iden SET experience=((SELECT experience FROM iden WHERE user_code=?)+?) WHERE user_code=?;";
         PreparedStatement psmt = conn.prepareStatement(sql);
         psmt.setInt(1, userCode);
@@ -196,7 +186,7 @@ public class UserRepository {
         psmt.execute();
     }
 
-    public void updateProfile(String name, String bio, int code) throws SQLException {
+    public void updateProfile(String name, String bio, int code, Connection conn) throws SQLException {
         String sql = "UPDATE iden SET user_name=?, bio=? WHERE user_code=?;";
 
         PreparedStatement psmt = conn.prepareStatement(sql);
@@ -206,7 +196,7 @@ public class UserRepository {
         psmt.execute();
     }
 
-    public void updatePassword(String nPwd, String nSalt, int code) throws SQLException {
+    public void updatePassword(String nPwd, String nSalt, int code, Connection conn) throws SQLException {
         String sql = "UPDATE iden SET user_password=?, user_salt=? WHERE user_code=?;";
 
         PreparedStatement psmt = conn.prepareStatement(sql);
@@ -216,7 +206,7 @@ public class UserRepository {
         psmt.execute();
     }
 
-    public void deleteUser(int uCode) throws SQLException {
+    public void deleteUser(int uCode, Connection conn) throws SQLException {
         String sql = "DELETE FROM iden WHERE user_code=?;";
 
         PreparedStatement psmt = conn.prepareStatement(sql);

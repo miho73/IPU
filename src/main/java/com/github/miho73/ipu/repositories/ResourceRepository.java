@@ -12,18 +12,14 @@ import javax.annotation.PostConstruct;
 import java.sql.*;
 
 @Repository("ResourceRepository")
-public class ResourceRepository {
-    private DriverManagerDataSource dataSource;
-    private Connection conn;
-
-    private final Logger LOGGER = LoggerFactory.getLogger(ResourceRepository.class);
-
+public class ResourceRepository extends com.github.miho73.ipu.repositories.Repository {
     @Value("${db.problem.url}") private String DB_URL;
     @Value("${db.problem.username}") private String DB_USERNAME;
     @Value("${db.problem.password}") private String DB_PASSWORD;
 
+    @Override
     @PostConstruct
-    public void initResourceRepository() throws SQLException {
+    public void initRepository() {
         LOGGER.debug("Initializing ResourceRepository DB");
         LOGGER.debug("DB config: url="+DB_URL+", username="+DB_USERNAME);
         dataSource = new DriverManagerDataSource();
@@ -31,14 +27,9 @@ public class ResourceRepository {
         dataSource.setUrl(DB_URL);
         dataSource.setUsername(DB_USERNAME);
         dataSource.setPassword(DB_PASSWORD);
-        conn = dataSource.getConnection();
     }
 
-    public void close() throws SQLException {
-        conn.close();
-    }
-
-    public void addResource(byte[] resource, String hash, String adder) throws SQLException {
+    public void addResource(byte[] resource, String hash, String adder, Connection conn) throws SQLException {
         LOGGER.debug("Add resource to DB. HASH="+hash+". Added_by="+adder);
         String sql = "INSERT INTO resources (resource_code, resource, registered, registered_by, resource_name) VALUES (?, ?, ?, ?, '');";
 
@@ -52,7 +43,7 @@ public class ResourceRepository {
         psmt.execute();
     }
 
-    public byte[] getResource(String hash) throws SQLException {
+    public byte[] getResource(String hash, Connection conn) throws SQLException {
         LOGGER.debug("Get resource hash of "+hash);
         String sql = "SELECT resource FROM resources WHERE resource_code=?";
         PreparedStatement psmt = conn.prepareStatement(sql);

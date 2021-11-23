@@ -6,6 +6,8 @@ import com.github.miho73.ipu.services.ProblemService;
 import com.github.miho73.ipu.services.SessionService;
 import com.github.miho73.ipu.services.UserService;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,7 +19,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.swing.plaf.PanelUI;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -29,6 +30,8 @@ public class RootControl {
     private final SessionService sessionService;
     private final UserService userService;
     private final ProblemService problemService;
+
+    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     public RootControl(InviteService inviteService, SessionService sessionService, UserService userService, ProblemService problemService) {
@@ -72,7 +75,7 @@ public class RootControl {
                             response.setStatus(400);
                             return "Argument is not enough to execute APPEND";
                         }
-                        if(!inviteService.inviteCodeValidator(cmdParam[1])) {
+                        if(inviteService.inviteCodeValidator(cmdParam[1])) {
                             response.setStatus(400);
                             return "Invalid Invite code format";
                         }
@@ -83,7 +86,7 @@ public class RootControl {
                             response.setStatus(400);
                             return "Argument is not enough to execute UPDATE";
                         }
-                        if(!inviteService.inviteCodeValidator(cmdParam[2])) {
+                        if(inviteService.inviteCodeValidator(cmdParam[2])) {
                             response.setStatus(400);
                             return "Invalid Invite code format";
                         }
@@ -109,6 +112,7 @@ public class RootControl {
             }
             catch (SQLException e) {
                 response.setStatus(500);
+                LOGGER.error("Cannot modify invite code table", e);
                 return "SQL Failure: "+e.getMessage();
             }
         }
@@ -166,6 +170,7 @@ public class RootControl {
             }
         } catch (SQLException e) {
             response.setStatus(500);
+            LOGGER.error("Cannot update user permission", e);
             return "dbquery";
         }
     }

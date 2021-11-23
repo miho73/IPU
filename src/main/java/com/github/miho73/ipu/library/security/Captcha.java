@@ -23,7 +23,7 @@ public class Captcha {
     private final String VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify";
     private final String USER_AGENT = "Mozilla/5.0";
 
-    private final Logger LOGGER = LoggerFactory.getLogger(Captcha.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     public boolean getV3Result(String token) throws IOException {
         return getResult(CAPTCHA_V3_SECRET, token);

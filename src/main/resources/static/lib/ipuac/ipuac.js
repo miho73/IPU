@@ -252,7 +252,7 @@ function render(renderRoot, content) {
 
         // 섹션인 경우 바로 적용
         if(section.test(line)) {
-            html = `<span class="prob-title">${line.substr(3, len-6)}</span><hr class="prob-hr">`;
+            html = `<span class="prob-title ipuac">${line.substr(3, len-6)}</span><hr class="prob-hr ipuac">`;
             finalDOM.push(html);
             return;
         }
@@ -260,37 +260,37 @@ function render(renderRoot, content) {
         if(line[0] == '\\') {
             switch(line[1]) {
                 case '1':
-                    html = `<p class="ac-left">${line.substr(2, len-2)}</p>`;
+                    html = `<p class="ac-left ipuac">${line.substr(2, len-2)}</p>`;
                     break;
                 case '2':
-                    html = `<p class="ac-center">${line.substr(2, len-2)}</p>`;
+                    html = `<p class="ac-center ipuac">${line.substr(2, len-2)}</p>`;
                     break;
                 case '3':
-                    html = `<p class="ac-right">${line.substr(2, len-2)}</p>`;
+                    html = `<p class="ac-right ipuac">${line.substr(2, len-2)}</p>`;
                     break;
                 case '4':
-                    html = `<p class="ac-stretch">${line.substr(2, len-2)}</p>`;
+                    html = `<p class="ac-stretch ipuac">${line.substr(2, len-2)}</p>`;
                     break;
                 default:
-                    html = `<p>${line}</p>`;   
+                    html = `<p class="ipuac">${line}</p>`;
             }
         }
         else if(definitions.hasOwnProperty('text-align')) {
             switch(definitions['text-align']) {
                 case '1':
-                    html = `<p class="ac-left">${line}</p>`;
+                    html = `<p class="ac-left ipuac">${line}</p>`;
                     break;
                 case '2':
-                    html = `<p class="ac-center">${line}</p>`;
+                    html = `<p class="ac-center ipuac">${line}</p>`;
                     break;
                 case '3':
-                    html = `<p class="ac-right">${line}</p>`;
+                    html = `<p class="ac-right ipuac">${line}</p>`;
                     break;
                 case '4':
-                    html = `<p class="ac-stretch">${line}</p>`;
+                    html = `<p class="ac-stretch ipuac">${line}</p>`;
                     break;
                 default:
-                    html = `<p>${line}</p>`;
+                    html = `<p class="ipuac">${line}</p>`;
             }
         }
         else html = `<p>${line}</p>`;
