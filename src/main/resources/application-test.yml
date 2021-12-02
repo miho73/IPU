@@ -20,19 +20,19 @@ docs.mappingFile: resources/docsMapping.json
 
 db:
   identification:
-    url: ENC(vrjqWCJqAk4JO7jl2ORQCWvUcMfJx210+Q3Dtcf3q3Z0+FUqoT46Z6XXY2CpZB5haGrWdZTBiODJdDyLcADBh7J/aqeiWQbSsMy6QCQO/8pmopflO0qbinEJAyk1oMdn)
+    url: jdbc:postgresql://localhost:5432/identification
     username: ENC(bjwHiiIti9hI7QfDvdDkHQ4CCEt8LFwpWFu54Dk6b6caVpKV/KVU1w/eY/g9Qvca)
     password: ENC(yRG2nJUsih22Z0vGX2rKpZgkfiBRmUUXHpC9xNxFCF6RUHaQHBYg2VOeu6BydN7P)
   problem:
-    url: ENC(FiiiKa3EWEg7rGeCP6w70rRjuzIY1036g1V2Kh6D70nBEcsM09HhLSrqVVEaDjXjuYgZhhDizuNHLMGKsWI4ZWgPHoa2ilPiqRdPiW25UIQ=)
+    url: jdbc:postgresql://localhost:5432/problem
     username: ENC(lxXIHLICd7tfW17qMz1lN1THDrHITBddgnyCSJYwGMDDR0n9UfzrFgsLnSGOySwX)
     password: ENC(ukSuagnZIUcev/8v125f7+epWhKCVkw0mA2YTG6EULLyaqzelbfmjUkixAjVMbqG)
   invite:
-    url: ENC(/2klJnfRWn1jS7MuPU7yh4PZLg0DWgaMCX2IiPbxHPdLAN+5NV2CEUpSC0yCOdIJkeZaFyEBLRb3G5ehi6NPAGpKc0yncOQeKxdQZVmMzlc=)
+    url: jdbc:postgresql://localhost:5432/invite
     username: ENC(5YI5toVnfFFWtq40VUAc0njuKv8IWWgRiKjBdRS0UGbQTv3bMU2v5MtgSNqn3wlt)
     password: ENC(qONxcaGxLHFqxnxqcmZQnRtLq3vdwMWelyqwuk2zFRaYz+CdYLud19uHBmFXCR7e)
   solution:
-    url: ENC(WOFZFDTjNpAj7pV/HOOIGq8asHvgR6Wr3KLQ33tdq039G7Hkrg3dT2enYfaucIRG5lPaGEkaCSnxH6QJS38ceB8sZHdsqAuSazLRHkNGd/U=)
+    url: jdbc:postgresql://localhost:5432/solves
     username: ENC(JlfY2ysgy5BoQjfIWUuczFl4b4KDuU5F4+n/EE2QxAP4rJEYpBVLrTD1HnlcbnoA)
     password: ENC(SDE8KpL8EtFepBZ7Ie68q+MAQ4Vhwrf3kqa49rFzd8tmLxwUQuSIO9SHN80rS7Fu)
 
