@@ -140,8 +140,15 @@ public class UserControl {
         boolean pwdC = Boolean.parseBoolean(request.getParameter("pwdC"));
         String nPwd = request.getParameter("npwd"), lPwd = request.getParameter("lpwd");
         int uCode = sessionService.getCode(session);
+        LOGGER.debug("Profile update request: id="+id+", name="+name+", bio="+bio);
 
         if(!PasswordValidator.matcher(lPwd).matches()) {
+            LOGGER.debug("Cannot update profile: legacy password not in format");
+            response.setStatus(400);
+            return "form";
+        }
+        if(pwdC && !PasswordValidator.matcher(nPwd).matches()) {
+            LOGGER.debug("Cannot update profile: new password not in format");
             response.setStatus(400);
             return "form";
         }
@@ -149,21 +156,19 @@ public class UserControl {
         try {
             if(authService.auth(id, lPwd)) {
                 if(bio.length() > 500 || name.length() > 50 || name.equals("")) {
+                    LOGGER.debug("Cannot update profile: profile not in format");
                     response.setStatus(400);
                     return "form";
                 }
                 userService.updateProfile(name, bio, uCode);
                 sessionService.setName(session, name);
                 if(pwdC) {
-                    if(!PasswordValidator.matcher(nPwd).matches()) {
-                        response.setStatus(400);
-                        return "fpwd";
-                    }
                     authService.updatePassword(nPwd, uCode);
                 }
                 return "ok";
             }
             else {
+                LOGGER.debug("Profile update password failure");
                 response.setStatus(403);
                 return "pwd";
             }
