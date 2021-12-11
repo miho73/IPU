@@ -139,9 +139,9 @@ public class RootControl {
                     }
                     String perm = (String) userService.getUserDataById(cmdParam[1], "privilege");
                     if(perm == null) {
-                        return "User '"+cmdParam[2]+"' is not exists";
+                        return "User not exists";
                     }
-                    return "Privilege of '"+cmdParam[1]+"' is '"+perm+"'";
+                    return "Privilege is '"+perm+"'";
                 }
                 case "UPDATE" -> {
                     if(cmdParam.length < 3) {
@@ -161,7 +161,7 @@ public class RootControl {
                     if(sess != null) {
                         sess.setAttribute("privilege", cmdParam[1]);
                     }
-                    return "OK. Executed query to update privilege of user '"+cmdParam[2]+"' to '"+cmdParam[1]+"'.";
+                    return "OK. Executed query to update privilege.";
                 }
                 default -> {
                     response.setStatus(400);
