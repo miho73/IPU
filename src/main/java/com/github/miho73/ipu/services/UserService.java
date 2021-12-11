@@ -124,7 +124,7 @@ public class UserService {
         Connection connection = userRepository.openConnectionForEdit();
         try {
             userRepository.updateProfile(name, bio, code, connection);
-            userRepository.close(connection);
+            userRepository.commitAndClose(connection);
         }
         catch (Exception e) {
             userRepository.rollbackAndClose(connection);

@@ -188,7 +188,7 @@ public class RootControl {
             return "usr";
         }
         sessionService.invalidSession(sess);
-        return "OK Deactivated session of '"+id+"'";
+        return "OK Deactivated session";
     }
 
     @GetMapping("/resources")
