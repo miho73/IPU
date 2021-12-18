@@ -13,7 +13,7 @@ const superscript   = new RegExp('[\\^]{2}(.*?)[\\^]{2}', 'g');
 const subscript     = new RegExp('[,]{2}(.*?)[,]{2}',     'g');
 
 const color         = new RegExp('[{]{3}(.*?)\\s(.*?)[}]{3}',      'g');
-const bgcolor       = new RegExp('[\\[]{3}(.*?)\\s(.*?)[\\]]{3}', 'g');
+const bgcolor       = new RegExp('[\\[]{3}(.*?)\\s(.*?)[\\]]{3}',  'g');
 const font_size     = new RegExp('[{]{3}([+-]\\d+)\\s(.*?)[}]{3}', 'g');
 
 const link_with_exp = new RegExp('[\\[]{2}(.*?)[|](.*?)[\\]]{2}', 'g');
@@ -22,7 +22,7 @@ const image         = new RegExp('[\\[][{](.*?)[}][\\]]',         'g');
 const imageWithArgs = new RegExp('[\\[][{](.*?)[|](.*?)[}][\\]]', 'g');
 
 const func          = new RegExp('[\\[]([a-zA-Z]+?)[(](.*?)[)][\\]]', 'g');
-const tableElement  = new RegExp('^[(]([|-]\\d+)[)](.*)$', 'g')
+const tableElement  = new RegExp('^[(]([|-]\\d+)[)](.*?)$', 'g')
 /********************/
 
 function render(renderRoot, content) {

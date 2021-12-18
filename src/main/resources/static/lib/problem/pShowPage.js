@@ -2,22 +2,8 @@ var timex = 0;
 var timer;
 
 function onload(code) {
-    $.ajax({
-        type: 'POST',
-        url: '/problem/api/get-detail',
-        data: {
-            code: code
-        },
-        success: function(data) {
-            update('solving', data['prob_cont']);
-            update('after-sol', data['prob_exp']);
-            MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
-            timer = setInterval(()=>timex++, 1000);
-        },
-        error: function(err) {
-            console.log(err);
-        }
-    });
+    MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+    timer = setInterval(()=>timex++, 1000);
 }
 
 function markaswa(cod) {

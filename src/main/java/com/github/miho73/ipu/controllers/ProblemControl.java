@@ -1,6 +1,7 @@
 package com.github.miho73.ipu.controllers;
 
 import com.github.miho73.ipu.domain.Problem;
+import com.github.miho73.ipu.library.ipuac.Renderer;
 import com.github.miho73.ipu.library.security.SHA;
 import com.github.miho73.ipu.repositories.UserRepository;
 import com.github.miho73.ipu.services.AuthService;
@@ -37,6 +38,7 @@ public class ProblemControl {
     private final SessionService sessionService;
     private final UserRepository userRepository;
     private final ResourceService resourceService;
+    private final Renderer renderer = new Renderer();
     private final SHA sha = new SHA();
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
@@ -120,7 +122,9 @@ public class ProblemControl {
             model.addAllAttributes(Map.of(
                     "pCode", problem.getCode(),
                     "pName", problem.getName(),
-                    "active", problem.isActive()
+                    "active", problem.isActive(),
+                    "problem_ipuac", renderer.IPUACtoHTML(problem.getContent()),
+                    "solution_ipuac", renderer.IPUACtoHTML(problem.getSolution())
             ));
             return "problem/problemPage";
         }
