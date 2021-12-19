@@ -3,6 +3,8 @@ description: Report errors or unexpected behavior
 labels: 
 - bug
 - Triage-Needed
+projects:
+- IPU
 body:
 - type: markdown
   attributes:
