@@ -48,7 +48,6 @@ function load(pg) {
                     }
                     info.appendChild(tag);
                 });
-                console.log(datum.active);
                 if(!datum.active) {
                     let tag = document.createElement('span');
                     tag.classList.add('tag');

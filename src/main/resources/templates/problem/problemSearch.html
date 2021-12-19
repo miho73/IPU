@@ -45,21 +45,13 @@
                         <td>
                             <a th:text="${problem.name}" th:href="${'/problem/'+problem.code}"></a>
                         </td>
-                        <td th:text="${problem.tags}"></td>
-                        <!--
-                        <td th:each="tag: ${new JSONArray(tags).toList()}">
-                            <span th:if="${tag.key.equals('diff')}" class="tag tag-diff" th:text="${tag.content}"></span>
+                        <td class="tag-con">
+                            <div th:utext="${problem.tags}"></div>
                         </td>
-                        -->
                     </tr>
                 </tbody>
             </table>
         </div>
-        <p id="not">이 페이지는 비어있습니다.</p>
-        <div id="nav">
-            <a id="prev" class="previous round">이전</a>
-            <span id="pnsep">······</span>
-            <a id="next" class="next round">다음</a>
-        </div>
+        <p id="not" th:if="${nothing}">검색결과가 없습니다.</p>
     </body>
 </html>

@@ -1,5 +1,6 @@
 package com.github.miho73.ipu.services;
 
+import com.github.miho73.ipu.library.Converters;
 import com.github.miho73.ipu.library.ExperienceSystem;
 import com.github.miho73.ipu.repositories.ProblemRepository;
 import com.github.miho73.ipu.domain.Problem;
@@ -27,6 +28,8 @@ public class ProblemService {
     private final UserRepository userRepository;
     private final SessionService sessionService;
     private final ExperienceSystem experienceSystem;
+
+    private final Converters converters = new Converters();
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
@@ -180,9 +183,48 @@ public class ProblemService {
             tags.put(new JSONObject(Map.of("key", "diff", "content", problem.getDifficultyCode())));
             tags.put(new JSONObject(Map.of("key", "cate", "content", problem.getCategoryCode())));
             element.put("tags", tags);
+            element.put("active", problem.isActive());
             root.put(element);
         }
         return root;
+    }
+
+    public JSONArray processTagsToHtml(JSONArray sResult) {
+        JSONArray processedResult = new JSONArray();
+        sResult.forEach(result->{
+            JSONObject workingProblem = ((JSONObject)result);
+            JSONArray tags = (JSONArray)workingProblem.get("tags");
+            StringBuilder html = new StringBuilder();
+            tags.forEach((tagx)->{
+                JSONObject tag = (JSONObject)tagx;
+                Object key = tag.get("key");
+                if ("diff".equals(key)) {
+                    html.append("<span class=\"tag tag-diff\" style=\"background-color: ")
+                        .append(converters.convertDiffColor(tag.getString("content")))
+                        .append(";\">")
+                        .append(converters.convertDiff(tag.getString("content")))
+                        .append("</span>");
+                } else if ("cate".equals(key)) {
+                    html.append("<span class=\"tag tag-cate\">")
+                        .append(converters.convertSubj(tag.getString("content")))
+                        .append("</span>");
+                } else {
+                    html.append("<span class=\"tag tag-custom\" style=\"background-color: #")
+                        .append(tag.get("back"))
+                        .append("; color: #")
+                        .append(tag.get("color"))
+                        .append(";\">")
+                        .append(tag.get("content"))
+                        .append("</span>");
+                }
+            });
+            if(!workingProblem.getBoolean("active")) {
+                html.append("<span class=\"tag tag-cannot-solve\">제출 불가</span>");
+            }
+            workingProblem.put("tags", html.toString());
+            processedResult.put(workingProblem);
+        });
+        return processedResult;
     }
 
     public int getNumberOfProblems() throws SQLException {

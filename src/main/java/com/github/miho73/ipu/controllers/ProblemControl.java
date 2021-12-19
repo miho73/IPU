@@ -4,7 +4,6 @@ import com.github.miho73.ipu.domain.Problem;
 import com.github.miho73.ipu.library.ipuac.Renderer;
 import com.github.miho73.ipu.library.security.SHA;
 import com.github.miho73.ipu.repositories.UserRepository;
-import com.github.miho73.ipu.services.AuthService;
 import com.github.miho73.ipu.services.ProblemService;
 import com.github.miho73.ipu.services.ResourceService;
 import com.github.miho73.ipu.services.SessionService;
@@ -14,11 +13,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -41,7 +40,15 @@ public class ProblemControl {
     private final Renderer renderer = new Renderer();
     private final SHA sha = new SHA();
 
+    private int NUMBER_OF_PROBLEMS;
+
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+
+    @PostConstruct
+    public void initProblemCount() throws SQLException {
+        NUMBER_OF_PROBLEMS = problemService.getNumberOfProblems();
+        LOGGER.debug("Problem count initialized to "+NUMBER_OF_PROBLEMS);
+    }
 
     @Autowired
     public ProblemControl(ProblemService problemService, SessionService sessionService, UserRepository userRepository, ResourceService resourceService) {
@@ -52,9 +59,19 @@ public class ProblemControl {
     }
 
     @GetMapping("")
-    public String getProblemListPage(@RequestParam(value = "page", required = false, defaultValue = "0") String page, Model model, HttpSession session) {
+    public String getProblemListPage(@RequestParam(value = "page", required = false, defaultValue = "0") String pagex, Model model, HttpSession session, HttpServletResponse response) throws IOException, SQLException {
         sessionService.loadSessionToModel(session, model);
-        model.addAttribute("page", Integer.parseInt(page));
+        int page = Integer.parseInt(pagex);
+        int PROBLEM_PER_PAGE = 30;
+        int frm = page* PROBLEM_PER_PAGE +1;
+        if(frm<=0) {
+            response.sendError(400);
+            return null;
+        }
+        JSONArray list = problemService.getProblemList(frm, PROBLEM_PER_PAGE);
+        JSONArray processedList = problemService.processTagsToHtml(list);
+        model.addAttribute("pList", processedList.toList());
+        model.addAttribute("nothing", processedList.length()==0);
         return "problem/problemList";
     }
     @GetMapping("/category")
@@ -83,9 +100,10 @@ public class ProblemControl {
         int pg = Integer.parseInt(page);
         model.addAttribute("page", pg);
         JSONArray sResult = problemService.searchProblem(pg, contains, category, difficulty);
-        model.addAttribute("pList", sResult.toList());
-        if(contains.equals("")) model.addAttribute("query", "");
-        else model.addAttribute("query", contains);
+        JSONArray processedResult = problemService.processTagsToHtml(sResult);
+        model.addAttribute("pList", processedResult.toList());
+        model.addAttribute("query", contains);
+        model.addAttribute("nothing", processedResult.length()==0);
         return "problem/problemSearch";
     }
     Random rand = new Random();
@@ -95,19 +113,6 @@ public class ProblemControl {
 
          rand.setSeed(System.nanoTime());
         response.sendRedirect("/problem/"+(rand.nextInt(problemService.getNumberOfProblems())+1));
-    }
-
-    @PostMapping(value = "/api/get", produces = "application/json; charset=utf-8")
-    @ResponseBody
-    public String getProblemList(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
-        int frm = Integer.parseInt(request.getParameter("frm"));
-        int len = Integer.parseInt(request.getParameter("len"));
-        if(frm<=0 || len<=0 || len>=60) {
-            response.sendError(400);
-            return null;
-        }
-        JSONArray list = problemService.getProblemList(frm, len);
-        return list.toString();
     }
 
     @GetMapping("/{pCode}")
@@ -181,6 +186,8 @@ public class ProblemControl {
         problem.setActive      (Boolean.parseBoolean(request.getParameter("active")));
         problem.setAuthor_name (sessionService.getName(session));
         problemService.registerProblem(problem, session);
+        NUMBER_OF_PROBLEMS++;
+        LOGGER.debug("Problem registered. Problem count now set to "+NUMBER_OF_PROBLEMS);
         return "redirect:/problem";
     }
 
@@ -191,7 +198,6 @@ public class ProblemControl {
             response.sendError(404);
             return null;
         }
-        int pCode = Integer.parseInt(code);
         model.addAttribute("prob_code", code);
         return "problem/editProblem";
     }
