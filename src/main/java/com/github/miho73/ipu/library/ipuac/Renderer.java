@@ -203,7 +203,7 @@ public class Renderer {
             }
             // 이번줄은 테이블이 아니지만 저번줄이 테이블이면 테이블 닫기
             else if(tableFlag) {
-                finalDom.setElementAt(finalDom.get(-1)+"</tbody></table>", finalDom.size()-1);
+                finalDom.setElementAt(finalDom.get(finalDom.size()-1)+"</tbody></table>", finalDom.size()-1);
                 tableFlag = false;
             }
 

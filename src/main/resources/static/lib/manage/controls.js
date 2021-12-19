@@ -108,7 +108,7 @@ function sendUlogQuery() {
     });
 }
 
-problemElements = ['problem_code', 'problem_name', 'problem_category', 'problem_difficulty', 'problem_content', 'problem_answer', 'problem_hint', 'has_hint', 'author_name', 'added_at', 'last_modified', 'tags', 'extr_tabs'];
+problemElements = ['problem_code', 'problem_name', 'problem_category', 'problem_difficulty', 'problem_content', 'problem_solution', 'tags', 'active', 'author_name', 'added_at', 'last_modified'];
 function pReq() {
     html = '';
     $.ajax({

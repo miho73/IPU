@@ -229,6 +229,9 @@ public class RootControl {
         json.put("problem_category", p.getCategory());
         json.put("problem_difficulty", p.getDifficulty());
         json.put("problem_content", p.getContent());
+        json.put("problem_solution", p.getSolution());
+        json.put("tags", p.getTags());
+        json.put("active", p.isActive());
         json.put("author_name", p.getAuthor_name());
         json.put("added_at", p.getAdded_at());
         json.put("last_modified", p.getLast_modified());
