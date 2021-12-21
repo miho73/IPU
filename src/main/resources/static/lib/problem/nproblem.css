@@ -99,7 +99,7 @@ select.selbox {
     outline: none;
     font-size: 1em;
     font-weight: 350;
-    -webkit-appearance: none;  /* 네이티브 외형 감추기 */
+    -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
     border-radius: 0px;
