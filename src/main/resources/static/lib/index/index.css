@@ -23,7 +23,7 @@ div.slide {
     transition: opacity, .15s linear;
 }
 div.slide1 {
-    background-image: url("/lib/imgs/bg/1.jpg");
+    background-image: url("/lib/imgs/bg/1.webp");
 }
 h1.slide-txt {
     position: absolute;
