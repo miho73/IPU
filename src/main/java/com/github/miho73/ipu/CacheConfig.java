@@ -11,11 +11,11 @@ import java.util.concurrent.TimeUnit;
 public class CacheConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(final ResourceHandlerRegistry registry) {
-        CacheControl cacheControl = CacheControl.maxAge(31536000, TimeUnit.SECONDS)
+        CacheControl cacheControl = CacheControl.maxAge(604800, TimeUnit.SECONDS)
                                                 .noTransform()
                                                 .mustRevalidate();
 
-        registry.addResourceHandler("**/univ.*", "**/*.ttf", "**/*.webp", "**/*.svg", "**/fonts/*.css", "**/lib/*")
+        registry.addResourceHandler("**/*.css", "**/*.js", "**/*.ttf", "**/*.webp", "**/*.svg", "**/lib/*", "**/*.png", "**/*.jpg")
                 .addResourceLocations("classpath:/static/")
                 .setCacheControl(cacheControl);
     }

@@ -1,20 +1,14 @@
 package com.github.miho73.ipu.controllers;
 
 import com.github.miho73.ipu.domain.Problem;
-import com.github.miho73.ipu.services.InviteService;
-import com.github.miho73.ipu.services.ProblemService;
-import com.github.miho73.ipu.services.SessionService;
-import com.github.miho73.ipu.services.UserService;
+import com.github.miho73.ipu.services.*;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,15 +24,17 @@ public class RootControl {
     private final SessionService sessionService;
     private final UserService userService;
     private final ProblemService problemService;
+    private final ResourceService resourceService;
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    public RootControl(InviteService inviteService, SessionService sessionService, UserService userService, ProblemService problemService) {
+    public RootControl(InviteService inviteService, SessionService sessionService, UserService userService, ProblemService problemService, ResourceService resourceService) {
         this.inviteService = inviteService;
         this.sessionService = sessionService;
         this.userService = userService;
         this.problemService = problemService;
+        this.resourceService = resourceService;
     }
 
     @GetMapping("")
@@ -236,5 +232,53 @@ public class RootControl {
         json.put("added_at", p.getAdded_at());
         json.put("last_modified", p.getLast_modified());
         return json.toString();
+    }
+
+    @PostMapping("/api/search-resource")
+    @ResponseBody
+    public String searchResource(HttpSession session, HttpServletResponse response, @RequestParam("code") String code) throws IOException, SQLException {
+        if(sessionService.hasPrivilege(SessionService.PRIVILEGES.PROBLEM_MAKE, session)) {
+            response.sendError(404);
+            return null;
+        }
+        if(code.equals("LIST")) {
+            LOGGER.debug("List all resources");
+            return resourceService.getAllResources();
+        }
+        else if(code.startsWith("code=")) {
+            boolean exists = resourceService.isResourceExists(code.substring(5));
+            LOGGER.debug("Resource code of "+code.substring(5)+" existence: "+exists);
+            if(exists) {
+                return resourceService.queryResource(code.substring(5));
+            }
+            else {
+                response.sendError(404);
+                return null;
+            }
+        }
+        else if(code.startsWith("name=")) {
+            String result = resourceService.queryResourceByName(code.substring(5));
+            if(result.equals("")) {
+                LOGGER.error("Resource name of "+code.substring(5)+" was not found");
+                response.sendError(400);
+                return null;
+            }
+            else return result;
+        }
+        else {
+            LOGGER.error("Resource search query not in format");
+            response.sendError(400);
+            return null;
+        }
+    }
+
+    @PostMapping("/api/change-name")
+    @ResponseBody
+    public String changeName(HttpSession session, HttpServletResponse response, @RequestParam("code") String code, @RequestParam String name) throws IOException, SQLException {
+        if(sessionService.hasPrivilege(SessionService.PRIVILEGES.PROBLEM_MAKE, session)) {
+            response.sendError(404);
+            return null;
+        }
+        return resourceService.changeName(code, name)?"Successfully changed.":"Cannot change name";
     }
 }

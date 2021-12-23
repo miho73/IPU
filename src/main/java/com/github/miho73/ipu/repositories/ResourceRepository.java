@@ -1,11 +1,13 @@
 package com.github.miho73.ipu.repositories;
 
+import com.github.miho73.ipu.domain.Resource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import java.sql.*;
+import java.util.Vector;
 
 @Repository("ResourceRepository")
 public class ResourceRepository extends com.github.miho73.ipu.repositories.Repository {
@@ -47,5 +49,69 @@ public class ResourceRepository extends com.github.miho73.ipu.repositories.Repos
         ResultSet rs = psmt.executeQuery();
         if(!rs.next()) return null;
         return rs.getBytes("resource");
+    }
+
+    public boolean isResourceExists(String hash, Connection conn) throws SQLException {
+        LOGGER.debug("Search resource hash of "+hash);
+        String sql = "SELECT resource_code FROM resources WHERE resource_code=?;";
+        PreparedStatement psmt = conn.prepareStatement(sql);
+        psmt.setString(1, hash);
+        ResultSet rs = psmt.executeQuery();
+        return rs.next();
+    }
+
+    public Resource queryResource(String hash, Connection conn) throws SQLException {
+        LOGGER.debug("Query resource hash of "+hash);
+        String sql = "SELECT * FROM resources WHERE resource_code=?;";
+        PreparedStatement psmt = conn.prepareStatement(sql);
+        psmt.setString(1, hash);
+        ResultSet rs = psmt.executeQuery();
+        Resource resource = new Resource();
+        if(!rs.next()) return null;
+        resource.setResource_code(rs.getString("resource_code"));
+        resource.setResource_name(rs.getString("resource_name"));
+        resource.setRegistered_by(rs.getString("registered_by"));
+        resource.setRegistered(rs.getTimestamp("registered"));
+        return resource;
+    }
+    public Resource queryResourceByName(String name, Connection conn) throws SQLException {
+        LOGGER.debug("Query resource name of "+name);
+        String sql = "SELECT * FROM resources WHERE resource_name=?;";
+        PreparedStatement psmt = conn.prepareStatement(sql);
+        psmt.setString(1, name);
+        ResultSet rs = psmt.executeQuery();
+        Resource resource = new Resource();
+        if(!rs.next()) return null;
+        resource.setResource_code(rs.getString("resource_code"));
+        resource.setResource_name(rs.getString("resource_name"));
+        resource.setRegistered_by(rs.getString("registered_by"));
+        resource.setRegistered(rs.getTimestamp("registered"));
+        return resource;
+    }
+
+    public Vector<Resource> getAllResources(Connection conn) throws SQLException {
+        LOGGER.debug("Query of all resources");
+        String sql = "SELECT * FROM resources;";
+        PreparedStatement psmt = conn.prepareStatement(sql);
+        ResultSet rs = psmt.executeQuery();
+        Vector<Resource> resources = new Vector<>();
+        while (rs.next()) {
+            Resource resource = new Resource();
+            resource.setResource_code(rs.getString("resource_code"));
+            resource.setResource_name(rs.getString("resource_name"));
+            resource.setRegistered_by(rs.getString("registered_by"));
+            resource.setRegistered(rs.getTimestamp("registered"));
+            resources.add(resource);
+        }
+        return resources;
+    }
+
+    public void updateName(String hash, String name, Connection conn) throws SQLException {
+        LOGGER.debug("Change name of resource '"+hash+"' to '"+name+"'");
+        String sql = "UPDATE resources SET resource_name=? WHERE resource_code=?;";
+        PreparedStatement psmt = conn.prepareStatement(sql);
+        psmt.setString(1, name);
+        psmt.setString(2, hash);
+        psmt.execute();
     }
 }

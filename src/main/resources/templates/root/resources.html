@@ -13,71 +13,69 @@
         <link rel="stylesheet" type="text/css" href="/lib/profile/profile.css">
         <link rel="stylesheet" type="text/css" href="/lib/manage/manage.css">
         <link rel="stylesheet" type="text/css" href="/lib/table.css">
-        <script src="/lib/manage/controls.js"></script>
     </head>
-    <body onload="loaded()">
+    <body>
         <th:block th:replace="fragments/header.html :: navigation"></th:block>
         <span style="display: none; font-size: 1.5em; color: #f00" id="errdis"></span>
         <div class="container">
             <div class="big-cont">
-                <h2 class="big-title">초대코드</h2>
+                <h2 class="big-title">IPU RESOURCE CENTER SEARCH</h2>
                 <div class="set-cont">
-                    <span class="config-label">
-                        <table class="table table-striped table-bordered">
-                            <thead>
-                                <tr>
-                                    <th style="width: 10%">연번</th>
-                                    <th style="width: 60%;">초대코드</th>
-                                </tr>
-                            </thead>
-                            <tbody id="addInv"></tbody>
-                        </table>
-                        <div class="control">
-                            <span class="console-note">명령: </span>
-                            <input type="text" id="invQuery" class="input console-field">
-                            <button class="commit" onclick="invSend()">COMMIT</button>
-                            <p class="ctrl-exp" style="margin-top: 5px;">APPEND [new code]</p>
-                            <p class="ctrl-exp">DELETE [primary key]</p>
-                            <p class="ctrl-exp">UPDATE [primary key] [new code]</p>
-                            <p class="ctrl-exp">GET</p>
-                        </div>
-                    </span>
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th style="width: 10%">resource_code</th>
+                                <th style="width: 60%;">resource</th>
+                                <th style="width: 10%;">registered</th>
+                                <th style="width: 7%;">registered_by</th>
+                                <th style="width: 13%;">resource_name</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resource-list"></tbody>
+                    </table>
+                    <div class="control">
+                        <span class="console-note">Code: </span>
+                        <input type="text" id="code-to-search" class="input console-field">
+                        <button class="commit" onclick="searchResource()">COMMIT</button>
+                        <p class="ctrl-exp">code=[Resource code]</p>
+                        <p class="ctrl-exp">name=[Resource name]</p>
+                        <p class="ctrl-exp">LIST</p>
+                    </div>
                 </div>
             </div>
             <div class="big-cont">
-                <h2 class="big-title">권한관리</h2>
+                <h2 class="big-title">SET PROBLEM NAME</h2>
                 <div class="set-cont">
-                    <span class="config-label">
-                        <div class="control">
-                            <span class="console-note">명령: </span>
-                            <input type="text" id="usrQuery" class="input console-field">
-                            <button class="commit" onclick="sendPermQuery()">COMMIT</button><br>
-                            <span style="font-size: 0.9em;" id="usrRes">결과</span>
-                            <p class="ctrl-exp" style="margin-top: 5px;">QUERY [user id]</p>
-                            <p class="ctrl-exp">UPDATE [privilege] [user id]</p>
-                            <ul>
-                                <li>u: 문제 풀이권한</li>
-                                <li>p: 문제 제작, 수정 권한</li>
-                                <li>i: 초대코드 관리 권한</li>
-                                <li>s: SuperUser 권한</li>
-                            </ul>
-                        </div>
-                    </span>
+                    <div class="control">
+                        <span class="console-note">Command: </span>
+                        <input type="text" id="name-change-command" class="input console-field">
+                        <button class="commit" onclick="setProbName()">COMMIT</button><br>
+                        <span style="font-size: 0.9em;" id="cNameRes">결과</span>
+                        <p class="ctrl-exp">[Problem code] [Problem name]</p>
+                    </div>
                 </div>
             </div>
             <div class="big-cont">
-                <h2 class="big-title">로그인 해제</h2>
+                <h2 class="big-title">SEARCH PROBLEM USING RESOURCE</h2>
                 <div class="set-cont">
-                    <span class="config-label">
-                        <div class="control">
-                            <span class="console-note">해제할 ID: </span>
-                            <input type="text" id="usrUnlog" class="input console-field">
-                            <button class="commit" onclick="sendUlogQuery()">COMMIT</button><br>
-                            <span style="font-size: 0.9em;" id="uLogRes">결과</span>
-                            <p class="ctrl-exp" style="margin-top: 5px;">[user id]</p>
-                            <p class="ctrl-exp">이 명령은 해당 사용자의 로그인 세션을 비활성화합니다.</p>
-                        </div>
-                    </span>
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th style="width: 10%">resource_code</th>
+                                <th style="width: 60%;">resource</th>
+                                <th style="width: 10%;">registered</th>
+                                <th style="width: 7%;">registered_by</th>
+                                <th style="width: 13%;">resource_name</th>
+                            </tr>
+                        </thead>
+                        <tbody id="problem-using-resource"></tbody>
+                    </table>
+                    <div class="control">
+                        <span class="console-note">Code: </span>
+                        <input type="text" id="usrQuery" class="input console-field">
+                        <button class="commit" onclick="">COMMIT</button><br>
+                        <p class="ctrl-exp">code=[Problem code to search]</p>
+                    </div>
                 </div>
             </div>
             <div class="big-cont">
@@ -96,4 +94,46 @@
             </div>
         </div>
     </body>
+    <script>
+        function searchResource() {
+            let code = gei('code-to-search').value;
+            $.ajax({
+                method: 'POST',
+                url: '/root/api/search-resource',
+                data: {
+                    code: code
+                },
+                success: function(data) {
+                    let resArr = JSON.parse(data);
+                    let html = '';
+                    resArr.forEach(res => {
+                        html+=`<tr><td>${res.resource_code}</td><td><img src="/problem/lib/${res.resource_code}" width="100%"></td><td>${res.registered}</td><td>${res.registered_by}</td><td>${res.resource_name}</td></tr>`;
+                    });
+                    gei('resource-list').innerHTML = html;
+                },
+                error: function(error) {
+                    gei('resource-list').innerText = error.responseText.error;
+                }
+            });
+        }
+
+        function setProbName() {
+            let command = gei('name-change-command').value.split(' ');
+            let code = command[0], name = command[1];
+            $.ajax({
+                method: 'POST',
+                url: '/root/api/change-name',
+                data: {
+                    code: code,
+                    name: name
+                },
+                success: function(data) {
+                    gei('cNameRes').innerText = data;
+                },
+                error: function(error) {
+                    gei('cNameRes').innerText = data.responseText;
+                }
+            });
+        }
+    </script>
 </html>
