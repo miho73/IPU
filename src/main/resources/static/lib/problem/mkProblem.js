@@ -14,8 +14,7 @@ function selectLocalImage(forwhat) {
             processData: false,
             contentType: false,
             success: function(data) {
-                const range = forwhat.getSelection();
-                forwhat.insertEmbed(range.index, 'image', '/problem/lib/'+data);
+                gei('image-upload-result').innerText = `Successfully uploaded. Code=${data}`;
             },
             error: function(err) {
                 switch(err.responseText) {

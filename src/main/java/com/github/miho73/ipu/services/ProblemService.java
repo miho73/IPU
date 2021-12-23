@@ -110,7 +110,7 @@ public class ProblemService {
                 return;
             }
             solutionRepository.addSolution(code, time, result, userCode, solvesConnection);
-            Problem.PROBLEM_DIFFICULTY difficulty = problemRepository.getProblemSimple(code, probConnection).getDifficulty();
+            Problem.PROBLEM_DIFFICULTY difficulty = problem.getDifficulty();
             int solves = solutionRepository.getNumberOfSolves(userCode, code, solvesConnection);
             int exp = experienceSystem.getExp(difficulty, solves);
             if(!result) exp=experienceSystem.toWa(exp, difficulty);
