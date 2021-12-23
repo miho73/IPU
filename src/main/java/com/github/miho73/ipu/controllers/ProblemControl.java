@@ -168,7 +168,7 @@ public class ProblemControl {
             response.sendError(404);
             return null;
         }
-        return resource;
+        return new byte[]{0x00};
     }
     @PostMapping("/register")
     public String problemRegister(HttpServletRequest request, Model model, HttpSession session, HttpServletResponse response) throws SQLException, IOException {

@@ -1,10 +1,6 @@
 package com.github.miho73.ipu.repositories;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.annotation.PropertySources;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Repository;
 
@@ -45,7 +41,7 @@ public class ResourceRepository extends com.github.miho73.ipu.repositories.Repos
 
     public byte[] getResource(String hash, Connection conn) throws SQLException {
         LOGGER.debug("Get resource hash of "+hash);
-        String sql = "SELECT resource FROM resources WHERE resource_code=?";
+        String sql = "SELECT resource FROM resources WHERE resource_code=?;";
         PreparedStatement psmt = conn.prepareStatement(sql);
         psmt.setString(1, hash);
         ResultSet rs = psmt.executeQuery();

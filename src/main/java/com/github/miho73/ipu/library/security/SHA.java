@@ -2,16 +2,12 @@ package com.github.miho73.ipu.library.security;
 
 import com.github.miho73.ipu.exceptions.InvalidInputException;
 import com.github.miho73.ipu.library.Operations;
-import org.apache.tomcat.util.buf.Utf8Decoder;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.Base64.Encoder;
-import java.util.Base64.Decoder;
-
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 
 @Component
 public class SHA {
@@ -25,7 +21,7 @@ public class SHA {
         return doHash(msg, salt);
     }
     public String MD5(byte[] data) throws NoSuchAlgorithmException {
-        MessageDigest md = MessageDigest.getInstance("SHA-512");
+        MessageDigest md = MessageDigest.getInstance("MD5");
         md.reset();
         md.update(data);
         String preHash = Base64.getEncoder().encodeToString(md.digest());

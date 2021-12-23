@@ -15,7 +15,7 @@ public class CacheConfig implements WebMvcConfigurer {
                                                 .noTransform()
                                                 .mustRevalidate();
 
-        registry.addResourceHandler("**/univ.*", "**/*.ttf", "**/*.webp", "**/*.svg", "**/fonts/*.css")
+        registry.addResourceHandler("**/univ.*", "**/*.ttf", "**/*.webp", "**/*.svg", "**/fonts/*.css", "**/lib/*")
                 .addResourceLocations("classpath:/static/")
                 .setCacheControl(cacheControl);
     }
