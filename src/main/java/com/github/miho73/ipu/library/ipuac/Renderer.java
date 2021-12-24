@@ -237,9 +237,9 @@ public class Renderer {
             if(line.charAt(0) == '\\') {
                 html = switch (line.charAt(1)) {
                     case '1' -> "<p class=\"ac-left ipuac\">" + line.substring(2, len) + "</p>";
-                    case '2' -> "<p class=\"ac-center ipuac\">" + line.substring(2, len - 2) + "</p>";
-                    case '3' -> "<p class=\"ac-right ipuac\">" + line.substring(2, len - 2) + "</p>";
-                    case '4' -> "<p class=\"ac-stretch ipuac\">" + line.substring(2, len - 2) + "</p>";
+                    case '2' -> "<p class=\"ac-center ipuac\">" + line.substring(2, len) + "</p>";
+                    case '3' -> "<p class=\"ac-right ipuac\">" + line.substring(2, len) + "</p>";
+                    case '4' -> "<p class=\"ac-stretch ipuac\">" + line.substring(2, len) + "</p>";
                     default -> "<p class=\"ipuac\">" + line + "</p>";
                 };
             }
