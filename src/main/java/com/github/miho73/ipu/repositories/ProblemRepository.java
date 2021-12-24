@@ -1,19 +1,15 @@
 package com.github.miho73.ipu.repositories;
 
 import com.github.miho73.ipu.domain.Problem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.annotation.PropertySources;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.annotation.PostConstruct;
 import java.sql.*;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 
 @Repository("ProblemRepository")
 public class ProblemRepository extends com.github.miho73.ipu.repositories.Repository {
@@ -216,5 +212,22 @@ public class ProblemRepository extends com.github.miho73.ipu.repositories.Reposi
         if(!rs.next()) return -1;
 
         return rs.getInt("cnt");
+    }
+
+    public Vector<Problem> searchProblemUsingResource(String code, Connection conn) throws SQLException {
+        String sql = "SELECT problem_code, problem_name FROM prob WHERE (problem_content LIKE ? OR problem_solution LIKE ?);";
+        PreparedStatement psmt = conn.prepareStatement(sql);
+        psmt.setString(1, "%"+code+"%");
+        psmt.setString(2, "%"+code+"%");
+        ResultSet rs = psmt.executeQuery();
+
+        Vector<Problem> ret = new Vector<>();
+        while(rs.next()) {
+            Problem problem = new Problem();
+            problem.setCode(rs.getInt("problem_code"));
+            problem.setName(rs.getString("problem_name"));
+            ret.add(problem);
+        }
+        return ret;
     }
 }

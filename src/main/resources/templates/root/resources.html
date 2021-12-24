@@ -35,7 +35,7 @@
                     </table>
                     <div class="control">
                         <span class="console-note">Code: </span>
-                        <input type="text" id="code-to-search" class="input console-field">
+                        <input type="text" id="code-to-search" class="input console-field" onkeyup="if(event.keyCode===13){searchResource()}">
                         <button class="commit" onclick="searchResource()">COMMIT</button>
                         <p class="ctrl-exp">code=[Resource code]</p>
                         <p class="ctrl-exp">name=[Resource name]</p>
@@ -48,7 +48,7 @@
                 <div class="set-cont">
                     <div class="control">
                         <span class="console-note">Command: </span>
-                        <input type="text" id="name-change-command" class="input console-field">
+                        <input type="text" id="name-change-command" class="input console-field" onkeyup="if(event.keyCode===13){setProbName()}">
                         <button class="commit" onclick="setProbName()">COMMIT</button><br>
                         <span style="font-size: 0.9em;" id="cNameRes">결과</span>
                         <p class="ctrl-exp">[Problem code] [Problem name]</p>
@@ -61,26 +61,27 @@
                     <table class="table table-striped table-bordered">
                         <thead>
                             <tr>
-                                <th style="width: 10%">resource_code</th>
-                                <th style="width: 60%;">resource</th>
-                                <th style="width: 10%;">registered</th>
-                                <th style="width: 7%;">registered_by</th>
-                                <th style="width: 13%;">resource_name</th>
+                                <th style="width: 15%">problem_code</th>
+                                <th style="width: 65%;">problem_name</th>
+                                <th style="width: 20%;">Editing page</th>
                             </tr>
                         </thead>
                         <tbody id="problem-using-resource"></tbody>
                     </table>
                     <div class="control">
                         <span class="console-note">Code: </span>
-                        <input type="text" id="usrQuery" class="input console-field">
-                        <button class="commit" onclick="">COMMIT</button><br>
-                        <p class="ctrl-exp">code=[Problem code to search]</p>
+                        <input type="text" id="pUsnResCmd" class="input console-field" onkeyup="if(event.keyCode===13){searchUsing()}">
+                        <button class="commit" onclick="searchUsing()">COMMIT</button><br>
+                        <p class="ctrl-exp">[Problem code to search]</p>
                     </div>
                 </div>
             </div>
             <div class="big-cont">
                 <h2 class="big-title">NAVIGATION</h2>
                 <ul class="rt-nav">
+                    <li class="rt-nav">
+                        <a href="/root">관리 페이지</a>
+                    </li>
                     <li class="rt-nav">
                         <a href="/problem/make">문제 추가 페이지</a>
                     </li>
@@ -132,6 +133,28 @@
                 },
                 error: function(error) {
                     gei('cNameRes').innerText = data.responseText;
+                }
+            });
+        }
+
+        function searchUsing() {
+            let command = gei('pUsnResCmd').value;
+            $.ajax({
+                method: 'POST',
+                url: '/root/api/problem-using-resource',
+                data: {
+                    code: command
+                },
+                success: function(data) {
+                    let resArr = JSON.parse(data);
+                    let html = '';
+                    resArr.forEach(res => {
+                        html+=`<tr><td>${res.code}</td><td><a href="/problem/${res.code}" target="_blank">${res.name}</a></td><td><a href="/problem/edit/${res.code}" target="_blank">EDIT PAGE</a></td></tr>`;
+                    });
+                    gei('problem-using-resource').innerHTML = html;
+                },
+                error: function(error) {
+                    gei('problem-using-resource').innerText = error.responseText.error;
                 }
             });
         }

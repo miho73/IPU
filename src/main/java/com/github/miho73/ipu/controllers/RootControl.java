@@ -281,4 +281,19 @@ public class RootControl {
         }
         return resourceService.changeName(code, name)?"Successfully changed.":"Cannot change name";
     }
+
+    @PostMapping("/api/problem-using-resource")
+    @ResponseBody
+    public String searchProblemUsingResource(HttpSession session, HttpServletResponse response, @RequestParam("code") String code) throws SQLException, IOException {
+        if(sessionService.hasPrivilege(SessionService.PRIVILEGES.PROBLEM_MAKE, session)) {
+            response.sendError(404);
+            return null;
+        }
+        String res = resourceService.searchProblemUsingResource(code);
+        if(res.equals("nf")) {
+            response.setStatus(400);
+            return "{\"error\":\"Resource not found\"}";
+        }
+        else return res;
+    }
 }

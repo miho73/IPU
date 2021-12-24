@@ -1,6 +1,8 @@
 package com.github.miho73.ipu.services;
 
+import com.github.miho73.ipu.domain.Problem;
 import com.github.miho73.ipu.domain.Resource;
+import com.github.miho73.ipu.repositories.ProblemRepository;
 import com.github.miho73.ipu.repositories.ResourceRepository;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -16,12 +18,14 @@ import java.util.Vector;
 @Service("ResourceService")
 public class ResourceService {
     private final ResourceRepository resourceRepository;
+    private final ProblemRepository problemRepository;
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    public ResourceService(ResourceRepository resourceRepository) {
+    public ResourceService(ResourceRepository resourceRepository, ProblemRepository problemRepository) {
         this.resourceRepository = resourceRepository;
+        this.problemRepository = problemRepository;
     }
 
     public void addResource(byte[] resource, String hash, String adder) throws SQLException {
@@ -102,5 +106,22 @@ public class ResourceService {
         resourceRepository.updateName(code, name, connection);
         resourceRepository.commitAndClose(connection);
         return true;
+    }
+
+    public String searchProblemUsingResource(String code) throws SQLException {
+        Connection probConnection = problemRepository.openConnection();
+        Connection resConnection = resourceRepository.openConnection();
+        if(!resourceRepository.isResourceExists(code, resConnection)) {
+            return "nf";
+        }
+        Vector<Problem> searched = problemRepository.searchProblemUsingResource(code, probConnection);
+        JSONArray ret = new JSONArray();
+        for (Problem problem : searched) {
+            JSONObject probObj = new JSONObject();
+            probObj.put("code", problem.getCode());
+            probObj.put("name", problem.getName());
+            ret.put(probObj);
+        }
+        return ret.toString();
     }
 }

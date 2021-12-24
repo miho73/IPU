@@ -43,7 +43,7 @@
                         </table>
                         <div class="control">
                             <span class="console-note">명령: </span>
-                            <input type="text" id="pQueryCode" class="input console-field">
+                            <input type="text" id="pQueryCode" class="input console-field" onkeyup="if(event.keyCode===13){pReq()}">
                             <button class="commit" onclick="pReq()">COMMIT</button>
                             <p class="ctrl-exp">[problem code]</p>
                         </div>
@@ -53,6 +53,9 @@
             <div class="big-cont">
                 <h2 class="big-title">NAVIGATION</h2>
                 <ul class="rt-nav">
+                    <li class="rt-nav">
+                        <a href="/root">관리 페이지</a>
+                    </li>
                     <li class="rt-nav">
                         <a href="/problem/make">문제 추가 페이지</a>
                     </li>
