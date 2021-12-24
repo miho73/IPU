@@ -35,6 +35,11 @@
                         <p class="nav">가입</p>
                     </a>
                 </li>
+                <li class="nav" th:if="${root}">
+                    <a href="/root" class="nav" style="border-right-width: 2px;">
+                        <p class="nav">루트</p>
+                    </a>
+                </li>
                 <li class="nav" th:if="${logged}">
                     <a href="/profile" class="nav" style="border-right-width: 2px;">
                         <p class="nav" th:text="${user.getName()}"></p>
@@ -68,6 +73,7 @@
                         <a href="/login/deauth" class="ham-usr-btn">로그아웃</a>
                         <a href="/profile" class="ham-usr-btn">프로필</a>
                         <a href="/settings" class="ham-usr-btn">설정</a>
+                        <a href="/root" th:if="${root}" class="ham-usr-btn">루트</a>
                     </div>
                 </div>
                 <div th:unless="${logged}">

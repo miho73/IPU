@@ -52,12 +52,11 @@ public class RootControl {
 
     @PostMapping(value = "/api/inv", produces = "application/json; charset=utf-8")
     @ResponseBody
-    public String inviteControl(HttpSession session, HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public String inviteControl(HttpSession session, HttpServletRequest request, HttpServletResponse response, @RequestParam("q") String cmd) throws IOException {
         if(sessionService.hasPrivilege(SessionService.PRIVILEGES.INVITE_CODES, session)) {
             response.sendError(403);
             return null;
         }
-        String cmd = request.getParameter("q");
         String[] cmdParam = cmd.split(" ");
         if(cmdParam.length < 1 || cmdParam.length>3) {
             response.setStatus(400);
@@ -115,12 +114,11 @@ public class RootControl {
     }
     @PostMapping("/api/perm")
     @ResponseBody
-    public String permissionControl(HttpSession session, HttpServletRequest request, HttpServletResponse response) {
+    public String permissionControl(HttpSession session, HttpServletRequest request, HttpServletResponse response, @RequestParam("q") String cmd) {
         if(sessionService.hasPrivilege(SessionService.PRIVILEGES.SUPERUSER, session)) {
             response.setStatus(403);
             return "perm";
         }
-        String cmd = request.getParameter("q");
         String[] cmdParam = cmd.split(" ");
         if(cmdParam.length < 1 || cmdParam.length>3) {
             response.setStatus(400);
@@ -172,12 +170,11 @@ public class RootControl {
     }
     @PostMapping("/api/deauth")
     @ResponseBody
-    public String deAuth(HttpSession session, HttpServletRequest request, HttpServletResponse response) {
+    public String deAuth(HttpSession session, HttpServletRequest request, HttpServletResponse response, @RequestParam("id") String id) {
         if(sessionService.hasPrivilege(SessionService.PRIVILEGES.SUPERUSER, session)) {
             response.setStatus(403);
             return "perm";
         }
-        String id = request.getParameter("id");
         HttpSession sess = sessionService.getSessonById(id);
         if(sess == null) {
             response.setStatus(400);
@@ -208,12 +205,12 @@ public class RootControl {
 
     @PostMapping("/api/pReq")
     @ResponseBody
-    public String sendProblem(HttpSession session, HttpServletResponse response, HttpServletRequest request) throws IOException, SQLException {
+    public String sendProblem(HttpSession session, HttpServletResponse response, HttpServletRequest request, @RequestParam("code") String codei) throws IOException, SQLException {
         if(sessionService.hasPrivilege(SessionService.PRIVILEGES.PROBLEM_MAKE, session)) {
             response.sendError(404);
             return null;
         }
-        int code = Integer.parseInt(request.getParameter("code"));
+        int code = Integer.parseInt(codei);
         Problem p = problemService.getFullProblem(code);
         if(p == null) {
             response.setStatus(404);
@@ -292,8 +289,15 @@ public class RootControl {
         String res = resourceService.searchProblemUsingResource(code);
         if(res.equals("nf")) {
             response.setStatus(400);
-            return "{\"error\":\"Resource not found\"}";
+            return "Resource not found";
         }
         else return res;
+    }
+
+    @PostMapping("/api/delete-resource")
+    @ResponseBody
+    public String deleteResource(HttpSession session, HttpServletResponse response, @RequestParam("code") String code) throws SQLException {
+        resourceService.deleteResource(code);
+        return "ok";
     }
 }

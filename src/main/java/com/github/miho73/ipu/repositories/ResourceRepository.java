@@ -114,4 +114,12 @@ public class ResourceRepository extends com.github.miho73.ipu.repositories.Repos
         psmt.setString(2, hash);
         psmt.execute();
     }
+
+    public void deleteResource(String code, Connection conn) throws SQLException {
+        LOGGER.debug("Delete resource '"+code+"'");
+        String sql = "DELETE FROM resources WHERE resource_code=?;";
+        PreparedStatement psmt = conn.prepareStatement(sql);
+        psmt.setString(1, code);
+        psmt.execute();
+    }
 }

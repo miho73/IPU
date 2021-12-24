@@ -1,6 +1,5 @@
 package com.github.miho73.ipu.services;
 
-import com.github.miho73.ipu.controllers.AuthControl;
 import com.github.miho73.ipu.domain.User;
 import com.github.miho73.ipu.repositories.SessionRepository;
 import org.slf4j.Logger;
@@ -67,12 +66,14 @@ public class SessionService {
             User user = getUserData(session);
             model.addAllAttributes(Map.of(
                     "logged", true,
-                    "user", user
+                    "user", user,
+                    "root", !isRoot(session)
             ));
         }
         else {
             model.addAllAttributes(Map.of(
-                    "logged", false
+                    "logged", false,
+                    "root", false
             ));
         }
     }
@@ -101,6 +102,9 @@ public class SessionService {
             case INVITE_CODES -> priv.contains("i");
             default -> false;
         };
+    }
+    public boolean isRoot(HttpSession session) {
+        return hasPrivilege(SessionService.PRIVILEGES.INVITE_CODES, session) && hasPrivilege(SessionService.PRIVILEGES.PROBLEM_MAKE, session);
     }
 
     public void invalidSession(HttpSession session) {

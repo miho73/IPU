@@ -124,4 +124,10 @@ public class ResourceService {
         }
         return ret.toString();
     }
+
+    public void deleteResource(String code) throws SQLException {
+        Connection connection = resourceRepository.openConnectionForEdit();
+        resourceRepository.deleteResource(code, connection);
+        resourceRepository.commitAndClose(connection);
+    }
 }

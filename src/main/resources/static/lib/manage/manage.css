@@ -26,6 +26,16 @@ button.commit {
     padding: 7px;
 }
 
+button.res-hash-copy {
+    background-color: transparent;
+    outline: none;
+    border: none;
+    color: #0076C0;
+}
+button.res-hash-copy:hover {
+    text-decoration: underline;
+}
+
 p.ctrl-exp {
     font-size: 0.7em;
     color: #777;

@@ -77,6 +77,18 @@
                 </div>
             </div>
             <div class="big-cont">
+                <h2 class="big-title">DELETE RESOURCE</h2>
+                <div class="set-cont">
+                    <div class="control">
+                        <span class="console-note">Code: </span>
+                        <input type="text" id="pDelRes" class="input console-field">
+                        <button class="commit" onclick="deleteRes()">COMMIT</button><br>
+                        <span style="font-size: 0.9em;" id="cDelResRes">결과</span>
+                        <p class="ctrl-exp">[Problem code to delete]</p>
+                    </div>
+                </div>
+            </div>
+            <div class="big-cont">
                 <h2 class="big-title">NAVIGATION</h2>
                 <ul class="rt-nav">
                     <li class="rt-nav">
@@ -107,13 +119,17 @@
                 success: function(data) {
                     let resArr = JSON.parse(data);
                     let html = '';
+                    if(resArr.length == 0) {
+                        gei('problem-using-resource').innerHTML = 'Nothing was searched';
+                        return;
+                    }
                     resArr.forEach(res => {
-                        html+=`<tr><td>${res.resource_code}</td><td><img src="/problem/lib/${res.resource_code}" width="100%"></td><td>${res.registered}</td><td>${res.registered_by}</td><td>${res.resource_name}</td></tr>`;
+                        html+=`<tr><td><button class="res-hash-copy" onclick="navigator.clipboard.writeText(this.innerText)">${res.resource_code}</button></td><td><img src="/problem/lib/${res.resource_code}" width="100%"></td><td>${res.registered}</td><td>${res.registered_by}</td><td>${res.resource_name}</td></tr>`;
                     });
                     gei('resource-list').innerHTML = html;
                 },
                 error: function(error) {
-                    gei('resource-list').innerText = error.responseText.error;
+                    gei('resource-list').innerText = error.responseText;
                 }
             });
         }
@@ -148,13 +164,34 @@
                 success: function(data) {
                     let resArr = JSON.parse(data);
                     let html = '';
+                    if(resArr.length == 0) {
+                        gei('problem-using-resource').innerHTML = 'Nothing was searched';
+                        return;
+                    }
                     resArr.forEach(res => {
                         html+=`<tr><td>${res.code}</td><td><a href="/problem/${res.code}" target="_blank">${res.name}</a></td><td><a href="/problem/edit/${res.code}" target="_blank">EDIT PAGE</a></td></tr>`;
                     });
                     gei('problem-using-resource').innerHTML = html;
                 },
                 error: function(error) {
-                    gei('problem-using-resource').innerText = error.responseText.error;
+                    gei('problem-using-resource').innerText = error.responseText;
+                }
+            });
+        }
+
+        function deleteRes() {
+            let command = gei('pDelRes').value;
+            $.ajax({
+                method: 'POST',
+                url: '/root/api/delete-resource',
+                data: {
+                    code: command
+                },
+                success: function(data) {
+                    gei('cDelResRes').innerText = 'Deleted resource';
+                },
+                error: function(error) {
+                    gei('cDelResRes').innerText = error.responseText;
                 }
             });
         }
