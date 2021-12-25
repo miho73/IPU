@@ -72,6 +72,9 @@ public class ProblemControl {
         JSONArray processedList = problemService.processTagsToHtml(list);
         model.addAttribute("pList", processedList.toList());
         model.addAttribute("nothing", processedList.length()==0);
+        model.addAttribute("hasPrev", page != 0);
+        model.addAttribute("hasNext", (NUMBER_OF_PROBLEMS-(page+1)*PROBLEM_PER_PAGE)>0);
+        model.addAttribute("page", page);
         return "problem/problemList";
     }
     @GetMapping("/category")

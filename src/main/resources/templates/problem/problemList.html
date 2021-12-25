@@ -52,9 +52,9 @@
         </div>
         <p id="not" th:if="${nothing}">이 페이지는 비어있습니다.</p>
         <div id="nav">
-            <a id="prev" class="previous round">이전</a>
-            <span id="pnsep">······</span>
-            <a id="next" class="next round">다음</a>
+            <a id="prev" class="previous round" th:if="${hasPrev}" th:href="${'/problem/?page='+(page-1)}">이전</a>
+            <span id="pnsep" th:if="${hasPrev && hasNext}">······</span>
+            <a id="next" class="next round" th:if="${hasNext}" th:href="${'/problem/?page='+(page+1)}">다음</a>
         </div>
     </body>
 </html>
