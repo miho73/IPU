@@ -316,6 +316,7 @@ span.tag {
     cursor: default;
     white-space: nowrap;
     display: inline-block;
+    font-size: 0.85em;
 }
 .tag-custom {
     background-color: #eee;

@@ -4,7 +4,7 @@ table {
     width: 100%;
 }
 th {
-    font-size: 1.1em;
+    font-size: 1em;
     font-weight: 500;
     border-bottom: #ccc 2px solid;
 }
@@ -14,13 +14,13 @@ th,td {
     padding: 7px;
 }
 td {
-    font-size: 1em;
+    font-size: 0.9em;
     font-weight: 400;
     color: #222;
     word-break: break-all;
 }
 td > a {
-    font-size: 1em;
+    font-size: 0.9em;
     font-weight: 400;
     color: #0076C0;
 }
