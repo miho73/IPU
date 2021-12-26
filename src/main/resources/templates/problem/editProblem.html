@@ -24,7 +24,7 @@
         <div class="container">
             <div id="top-menu">
                 <input type="text" id="name" class="prob-name" spellcheck="false">
-                <select id="category" class="selbox">
+                <select id="category" class="univ-sel">
                     <option disabled selected>분류</option>
                     <optgroup label="수학">
                         <option value="alge">대수</option>
@@ -53,7 +53,7 @@
                 </select>
             </div>
             <div id="tools">
-                <button onclick="selectLocalImage()">이미지 업로드</button>
+                <button onclick="selectLocalImage()" class="univ-btn">이미지 업로드</button>
                 <p id="image-upload-result"></p>
             </div>
             <h3 id="pro-cont" class="sub-title">문제 내용*</h3>
@@ -84,7 +84,7 @@
                 </div>
                 <div id="add-tags-edit">
                     <input id="edit-tags" type="text" class="tag-input" spellcheck="false" style="width: 100%;" value="[]">
-                    <button id="apply-tag-edit" class="tag-btn" onclick="applyTagsJSONtoVar()">적용</button>
+                    <button id="apply-tag-edit" class="univ-btn" onclick="applyTagsJSONtoVar()">적용</button>
                 </div>
                 <div id="preset-tags">
                     <div class="tag-preset">

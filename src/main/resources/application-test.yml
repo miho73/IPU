@@ -45,4 +45,11 @@ captcha:
     secret: ENC(Bq+4is0NfuOtjcONleLLQ2A9DyDALUSSwnkLlhgeNPOP+1lh/wMMlxCL5s7HsamSQa5C1kpKPiZfVptGgwBOV77/hmbl2oTGdgolfjSCZzs=)
 
 # Debug
-spring.thymeleaf.cache: false
+spring:
+  thymeleaf:
+    cache: false
+  devtools:
+    restart:
+      enabled: true
+    livereload:
+      enabled: true

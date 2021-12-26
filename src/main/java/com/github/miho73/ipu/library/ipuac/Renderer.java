@@ -36,7 +36,7 @@ public class Renderer {
         Vector<String> finalDom = new Vector<>();
 
         HashMap<String, String> definitions = new HashMap<>();
-        boolean quoteFlag = false, tableFlag = false, listFlag = false;
+        boolean quoteFlag = false, tableFlag = false, uListFlag = false, oListFlag = false;
         int hide_code = 0;
 
         for (String line: lines) {
@@ -53,9 +53,9 @@ public class Renderer {
                     finalDom.setElementAt(finalDom.elementAt(finalDom.size()-1)+"</tbody></table>", finalDom.size()-1);
                     tableFlag = false;
                 }
-                if(listFlag) {
+                if(uListFlag) {
                     finalDom.setElementAt(finalDom.get(finalDom.size()-1)+"</ul>", finalDom.size()-1);
-                    listFlag = false;
+                    uListFlag = false;
                 }
                 continue;
             }
@@ -174,19 +174,37 @@ public class Renderer {
             // Bullet list 바로 적용
             if(line.startsWith("*")) {
                 html = new StringBuilder();
-                if(!listFlag) {
+                if(!uListFlag) {
                     html = new StringBuilder("<ul class=\"ac-ul\">");
                 }
                 html.append("<li class=\"ac-ul-li\">")
-                    .append(line.substring(2));
-                listFlag = true;
+                        .append(line.substring(2));
+                uListFlag = true;
                 finalDom.add(html.toString());
                 continue;
             }
             // 이번줄은 리스트가 아니지만 저번이 리스트였다면 리스트 끝내줌
-            else if(listFlag) {
+            else if(uListFlag) {
                 finalDom.setElementAt(finalDom.get(finalDom.size()-1)+"</ul>", finalDom.size()-1);
-                listFlag = false;
+                uListFlag = false;
+            }
+
+            // Bullet list 바로 적용
+            if(line.startsWith("-")) {
+                html = new StringBuilder();
+                if(!oListFlag) {
+                    html = new StringBuilder("<ol class=\"ac-ul\">");
+                }
+                html.append("<li class=\"ac-ul-li\">")
+                        .append(line.substring(2));
+                oListFlag = true;
+                finalDom.add(html.toString());
+                continue;
+            }
+            // 이번줄은 리스트가 아니지만 저번이 리스트였다면 리스트 끝내줌
+            else if(oListFlag) {
+                finalDom.setElementAt(finalDom.get(finalDom.size()-1)+"</ol>", finalDom.size()-1);
+                oListFlag = false;
             }
 
             // 테이블 바로 적용

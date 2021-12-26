@@ -12,6 +12,7 @@
 
 * {
     font-family: 'Spoqa Han Sans Neo', 'sans-serif';
+    -webkit-appearance: none;
 }
 *.mon-font {
     font-family: 'Montserrat', 'Spoqa Han Sans Neo', 'sans-serif';    
@@ -409,4 +410,46 @@ code.inline {
     div.container, div.container-in {
         overflow-x: scroll;
     }
+}
+
+*.formthis {
+    border-width: 1px;
+    border-style: solid;
+    border-color: #f00;
+    box-shadow: 0 0 3px #f00;
+}
+
+button.univ-btn {
+    background-color: transparent;
+    outline: none;
+    border-radius: 4px;
+    border: #aaa 1px solid;
+    padding: 5px 10px;
+    -webkit-transition: background-color .1s linear;
+    -moz-transition: background-color .1s linear;
+    -ms-transition: background-color .1s linear;
+    -o-transition: background-color .1s linear;
+    transition: background-color .1s linear;
+}
+button.univ-btn:hover {
+    background-color: #0001;
+}
+button.univ-btn:active {
+    background-color: #0002;
+}
+button.univ-btn:disabled {
+    background-color: #0003;
+}
+
+select.univ-sel {
+    height: 100%;
+    outline: none;
+    font-size: 1em;
+    font-weight: 350;
+    -moz-appearance: none;
+    appearance: none;
+    border-radius: 0px;
+    width: fit-content;
+    padding: 4px 25px 4px 5px;
+    background: url('/lib/imgs/down-arrow.svg') no-repeat 95% 50%;
 }
