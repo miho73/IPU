@@ -3,23 +3,23 @@ package com.github.miho73.ipu.controllers;
 import com.github.miho73.ipu.domain.LoginForm;
 import com.github.miho73.ipu.domain.SignupForm;
 import com.github.miho73.ipu.domain.User;
-import com.github.miho73.ipu.repositories.SessionRepository;
+import com.github.miho73.ipu.library.events.AuthenticationFailureBadCredentialsEvent;
+import com.github.miho73.ipu.library.events.AuthenticationSuccessEvent;
+import com.github.miho73.ipu.library.security.bruteforce.LoginAttemptService;
+import com.github.miho73.ipu.services.AuthService;
 import com.github.miho73.ipu.services.InviteService;
 import com.github.miho73.ipu.services.SessionService;
-import com.github.miho73.ipu.services.AuthService;
-import com.github.miho73.ipu.exceptions.InvalidInputException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
-import java.sql.SQLException;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -32,6 +32,9 @@ public class AuthControl {
     private final SessionService sessionService;
     private final InviteService inviteService;
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+
+    @Autowired private ApplicationEventPublisher publisher;
+    @Autowired private LoginAttemptService loginAttemptService;
 
     private final Pattern IdNameValidator = Pattern.compile("^(?=.*[A-Za-z])[A-Za-z0-9]{0,50}$");
     private final Pattern PasswordValidator = Pattern.compile("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d!\"#$%&'()*+,\\-./:;<=>?@\\[\\]^_`{|}~\\\\\\)]{6,}$");
@@ -58,7 +61,8 @@ public class AuthControl {
     public String postLogin(@RequestParam(value = "ret", required = false, defaultValue = "/") String ret,
                             @ModelAttribute LoginForm loginForm,
                             Model model,
-                            HttpSession session) {
+                            HttpSession session,
+                            HttpServletRequest request) {
         if(sessionService.checkLogin(session)) {
             return "redirect:"+ret;
         }
@@ -77,6 +81,18 @@ public class AuthControl {
 
         AuthService.LOGIN_RESULT result;
         try {
+            String ip = request.getHeader("X-Forwarded-For");
+            if(ip == null) {
+                ip = request.getRemoteAddr();
+            }
+            else {
+                ip = ip.split(",")[0];
+            }
+            if(loginAttemptService.isBlocked(ip)) {
+                LOGGER.debug("IP ban: IP="+ip);
+                model.addAttribute("error_text", "로그인할 수 없습니다. 잠시 후에 다시 시도해주세요.");
+                return "auth/signin";
+            }
             result = userService.checkLogin(loginForm, session);
         } catch (Exception e) {
             LOGGER.error("Login error: "+e.getMessage()+" Form: id="+loginForm.getId()+", gVers="+loginForm.getgVers()+", gToken="+loginForm.getgToken(), e);
@@ -85,6 +101,7 @@ public class AuthControl {
         }
 
         if(result == AuthService.LOGIN_RESULT.OK) {
+            publisher.publishEvent(new AuthenticationSuccessEvent(request));
             return "redirect:"+ret;
         }
         else if(result == AuthService.LOGIN_RESULT.CAPTCHA_FAILED) {
@@ -93,6 +110,7 @@ public class AuthControl {
                     "captcha_version", "v2",
                     "error_text", "CAPTCHA 인증에 실패했습니다. 다시 시도해주세요."
             ));
+            publisher.publishEvent(new AuthenticationFailureBadCredentialsEvent(request));
             return "auth/signin";
         }
         else if (result == AuthService.LOGIN_RESULT.BLOCKED) {
@@ -101,6 +119,7 @@ public class AuthControl {
         }
         else if(result == AuthService.LOGIN_RESULT.BAD_PASSWORD || result == AuthService.LOGIN_RESULT.ID_NOT_FOUND) {
             model.addAttribute("error_text", "다시 시도해주세요.");
+            publisher.publishEvent(new AuthenticationFailureBadCredentialsEvent(request));
             return "auth/signin";
         }
         model.addAttribute("error_text", "문제가 발생했습니다. 잠시 후에 다시 시도해주세요.");
