@@ -1,10 +1,9 @@
 p.ipuac {
     line-break: anywhere;
     font-weight: 400;
-    font-size: 1.3em;
+    font-size: 1em;
     color: #444;
-    margin: 0 0 6px;
-    line-height: 1.7em;
+    margin: 0 0 7px;
 }
 
 p.error {
@@ -38,12 +37,12 @@ a#edit-href-title {
 span.prob-title {
     font-size: 1.4em;
     font-weight: 500;
-    border-bottom: 2px #0076C0 solid;
+    border-bottom: 3px #0076C0 solid;
     margin: 0;
     color: #333;
 }
 hr.prob-div-hr,hr.prob-hr {
-    margin: 0 0 15px 0;
+    margin: 1px 0 15px 0;
     height: 2px;
     background-color: #ccc;
     border: none;

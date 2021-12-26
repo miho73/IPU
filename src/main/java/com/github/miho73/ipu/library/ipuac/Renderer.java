@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 
 public class Renderer {
     /**   LINE REGEX   **/
-    private final Pattern section       = Pattern.compile("^==\\s+(.*?)\\s+==$");
+    private final Pattern section      = Pattern.compile("^==\\s+(.*?)\\s+==$");
 
     private final String bold_n_italic = "[']{4}(.*?)[']{4}";
     private final String italic        = "[']{3}(.*?)[']{3}";
@@ -36,11 +36,11 @@ public class Renderer {
         Vector<String> finalDom = new Vector<>();
 
         HashMap<String, String> definitions = new HashMap<>();
-        boolean quoteFlag = false, tableFlag = false;
+        boolean quoteFlag = false, tableFlag = false, listFlag = false;
         int hide_code = 0;
 
         for (String line: lines) {
-            String html = "";
+            StringBuilder html = new StringBuilder();
             int len = line.length();
 
             // 빈 줄(줄바꿈)인 경우 무시(인용, 테이블은 끊어줌)
@@ -52,6 +52,10 @@ public class Renderer {
                 if(tableFlag) {
                     finalDom.setElementAt(finalDom.elementAt(finalDom.size()-1)+"</tbody></table>", finalDom.size()-1);
                     tableFlag = false;
+                }
+                if(listFlag) {
+                    finalDom.setElementAt(finalDom.get(finalDom.size()-1)+"</ul>", finalDom.size()-1);
+                    listFlag = false;
                 }
                 continue;
             }
@@ -65,8 +69,8 @@ public class Renderer {
                         definitions.put(prop[0], prop[1]);
                         break;
                     default:
-                        html="<p class=\"error\">IPUAC 오류: 지시문 '"+inst+"을(를) 이해할 수 없습니다.</p>";
-                        finalDom.add(html);
+                        html = new StringBuilder("<p class=\"error\">IPUAC 오류: 지시문 '" + inst + "을(를) 이해할 수 없습니다.</p>");
+                        finalDom.add(html.toString());
                         break;
                 }
                 continue;
@@ -77,7 +81,7 @@ public class Renderer {
                        .replaceAll(">", "&#62;");
 
             //매크로 치환
-            line = line.replaceAll("\\[lf\\]", "<br>")
+            line = line.replaceAll("\\[lf]", "<br>")
                        .replaceAll("---", "<hr class=\"prob-div-hr\">");
 
             // 텍스트 스타일 Regex로 검색 -> 치환
@@ -167,38 +171,56 @@ public class Renderer {
                 else break;
             }
 
+            // Bullet list 바로 적용
+            if(line.startsWith("*")) {
+                html = new StringBuilder();
+                if(!listFlag) {
+                    html = new StringBuilder("<ul class=\"ac-ul\">");
+                }
+                html.append("<li class=\"ac-ul-li\">")
+                    .append(line.substring(2));
+                listFlag = true;
+                finalDom.add(html.toString());
+                continue;
+            }
+            // 이번줄은 리스트가 아니지만 저번이 리스트였다면 리스트 끝내줌
+            else if(listFlag) {
+                finalDom.setElementAt(finalDom.get(finalDom.size()-1)+"</ul>", finalDom.size()-1);
+                listFlag = false;
+            }
+
             // 테이블 바로 적용
             if(line.startsWith("||")) {
-                html = "";
+                html = new StringBuilder();
                 //테이블이 처음 시작된 경우 테이블 열기
                 if(!tableFlag) {
-                    html = "<table class=\"ac-table\"><tbody class=\"ac-tbody\">";
+                    html = new StringBuilder("<table class=\"ac-table\"><tbody class=\"ac-tbody\">");
                 }
-                html = switch (definitions.getOrDefault("table-align", "0")) {
+                html = new StringBuilder(switch (definitions.getOrDefault("table-align", "0")) {
                     case "1" -> html + "<tr class=\"ac-left\">";
                     case "2" -> html + "<tr class=\"ac-center\">";
                     case "3" -> html + "<tr class=\"ac-right\">";
                     case "4" -> html + "<tr class=\"ac-stretch\">";
                     default -> html + "<tr>";
-                };
+                });
                 String[] inTable = line.substring(2, line.length()-2).split("[|]{2}");
                 for (String td : inTable) {
                     Matcher matcher = tableElement.matcher(td);
                     if(matcher.find()) {
                         String inst = matcher.group(1);
                         if(inst.charAt(0)=='-') {
-                            html = html+"<td colspan=\""+inst.substring(1)+"\">"+matcher.group(2)+"</td>";
+                            html.append("<td colspan=\"").append(inst.substring(1)).append("\">").append(matcher.group(2)).append("</td>");
                         }
                         else if(inst.charAt(0)=='|') {
-                            html = html+"<td rowspan=\""+inst.substring(1)+"\">"+matcher.group(2)+"</td>";
+                            html.append("<td rowspan=\"").append(inst.substring(1)).append("\">").append(matcher.group(2)).append("</td>");
                         }
-                        else html = html+"<td>"+td+"</td>";
+                        else html.append("<td>").append(td).append("</td>");
                     }
-                    else html = html+"<td>"+td+"</td>";
+                    else html.append("<td>").append(td).append("</td>");
                 }
-                html = html+"</tr>";
+                html.append("</tr>");
                 tableFlag = true;
-                finalDom.add(html);
+                finalDom.add(html.toString());
                 continue;
             }
             // 이번줄은 테이블이 아니지만 저번줄이 테이블이면 테이블 닫기
@@ -210,14 +232,13 @@ public class Renderer {
             // 인용문 바로 적용
             if(line.charAt(0) == '!') {
                 if(quoteFlag) {
-                    html = "<br>"+line.substring(1);
+                    html = new StringBuilder("<br>" + line.substring(1));
                 }
-                else html = "<blockquote class=\"ac-quote\">"+line.substring(1);
+                else html = new StringBuilder("<blockquote class=\"ac-quote\">" + line.substring(1));
                 quoteFlag = true;
-                finalDom.add(html);
+                finalDom.add(html.toString());
                 continue;
             }
-
             // 이번줄은 인용이 아니지만 저번줄이 인용이면 저번 인용 닫기
             else if(quoteFlag) {
                 finalDom.setElementAt(finalDom.elementAt(finalDom.size()-1)+"</blockquote>", finalDom.size()-1);
@@ -229,31 +250,31 @@ public class Renderer {
 
             // 섹션인 경우 바로 적용
             if(section.matcher(line).matches()) {
-                html = "<span class=\"prob-title ipuac\">"+line.substring(2, len-2)+"</span><hr class=\"prob-hr ipuac\">";
-                finalDom.add(html);
+                html = new StringBuilder("<span class=\"prob-title ipuac\">" + line.substring(2, len - 2) + "</span><hr class=\"prob-hr ipuac\">");
+                finalDom.add(html.toString());
                 continue;
             }
 
             if(line.charAt(0) == '\\') {
-                html = switch (line.charAt(1)) {
+                html = new StringBuilder(switch (line.charAt(1)) {
                     case '1' -> "<p class=\"ac-left ipuac\">" + line.substring(2, len) + "</p>";
                     case '2' -> "<p class=\"ac-center ipuac\">" + line.substring(2, len) + "</p>";
                     case '3' -> "<p class=\"ac-right ipuac\">" + line.substring(2, len) + "</p>";
                     case '4' -> "<p class=\"ac-stretch ipuac\">" + line.substring(2, len) + "</p>";
                     default -> "<p class=\"ipuac\">" + line + "</p>";
-                };
+                });
             }
             else if(definitions.containsKey("text-align")) {
-                html = switch (definitions.get("text-align")) {
+                html = new StringBuilder(switch (definitions.get("text-align")) {
                     case "1" -> "<p class=\"ac-left ipuac\">" + line + "</p>";
                     case "2" -> "<p class=\"ac-center ipuac\">" + line + "</p>";
                     case "3" -> "<p class=\"ac-right ipuac>" + line + "</p>";
                     case "4" -> "<p class=\"ac-stretch ipuac\">" + line + "</p>";
                     default -> "<p class=\"ipuac\">" + line + "</p>";
-                };
+                });
             }
-            else html = "<p class=\"ipuac\">"+line+"</p>";
-            finalDom.add(html);
+            else html = new StringBuilder("<p class=\"ipuac\">" + line + "</p>");
+            finalDom.add(html.toString());
         }
         StringBuilder finalHtml = new StringBuilder();
         for (String line : finalDom) {
