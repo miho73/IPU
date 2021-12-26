@@ -14,13 +14,13 @@ th,td {
     padding: 7px;
 }
 td {
-    font-size: 0.9em;
+    font-size: 1em;
     font-weight: 400;
     color: #222;
     word-break: break-all;
 }
 td > a {
-    font-size: 0.9em;
+    font-size: 1em;
     font-weight: 400;
     color: #0076C0;
 }

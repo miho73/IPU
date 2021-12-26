@@ -23,7 +23,7 @@
         <h1 id="title">문제 등록</h1>
         <div class="container">
             <div id="top-menu">
-                <input type="text" id="name" class="prob-name" spellcheck="false">
+                <input type="text" id="name" class="univ-input" spellcheck="false">
                 <select id="category" class="univ-sel">
                     <option disabled selected>분류</option>
                     <optgroup label="수학">
@@ -40,7 +40,7 @@
                     </optgroup>
                     <option value="etce">기타</option>
                 </select>
-                <select id="diffi" class="selbox">
+                <select id="diffi" class="univ-sel">
                     <option disabled selected>난이도</option>
                     <option value="unse">Unset</option>
                     <option value="unra">Unrated</option>
@@ -71,23 +71,23 @@
             <div id="addc-tags-cont">
                 <div id="tags-cont"></div>
                 <div id="add-tags-cont">
-                    <div>
+                    <div class="tag-element-div">
                         <label>태그: </label>
-                        <input type="text" id="tag-input" class="tag-input" spellcheck="false">
+                        <input type="text" id="tag-input" class="univ-input tag-input" spellcheck="false" style="width: 89.5%;">
                     </div>
-                    <div>
+                    <div class="tag-element-div">
                         <label>글씨 색: </label>
-                        <input type="text" id="tag-fore" class="tag-input tag-color" onkeyup="updateColor('tag-fore')" spellcheck="false" value="333">
+                        <input type="text" id="tag-fore" class="univ-input tag-input tag-color" onkeyup="updateColor('tag-fore')" spellcheck="false" value="333">
                     </div>
-                    <div>
+                    <div class="tag-element-div">
                         <label>배경 색: </label>
-                        <input type="text" id="tag-back" class="tag-input tag-color" onkeyup="updateColor('tag-back')" spellcheck="false" value="9cff65" style="background-color: #9cff65;">
+                        <input type="text" id="tag-back" class="univ-input tag-input tag-color" onkeyup="updateColor('tag-back')" spellcheck="false" value="9cff65" style="background-color: #9cff65;">
                     </div>
-                    <button id="add-tag" class="univ-btn" onclick="tagHandle()">추가</button>
+                    <button id="add-tag" class="univ-btn" onclick="tagHandle()" style="min-width: 50px; height: 100%">추가</button>
                 </div>
                 <div id="add-tags-edit">
-                    <input id="edit-tags" type="text" class="tag-input" spellcheck="false" style="width: 100%;" value="[]">
-                    <button id="apply-tag-edit" class="univ-btn" onclick="applyTagsJSONtoVar()">적용</button>
+                    <input id="edit-tags" type="text" class="univ-input" spellcheck="false" style="width: 100%;" value="[]">
+                    <button id="apply-tag-edit" class="univ-btn" onclick="applyTagsJSONtoVar()" style="min-width: 50px;">적용</button>
                 </div>
                 <div id="preset-tags">
                     <div class="tag-preset">

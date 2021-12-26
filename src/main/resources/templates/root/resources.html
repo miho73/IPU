@@ -21,18 +21,20 @@
             <div class="big-cont">
                 <h2 class="big-title">IPU RESOURCE CENTER SEARCH</h2>
                 <div class="set-cont">
-                    <table class="table table-striped table-bordered">
-                        <thead>
-                            <tr>
-                                <th style="width: 10%">resource_code</th>
-                                <th style="width: 60%;">resource</th>
-                                <th style="width: 10%;">registered</th>
-                                <th style="width: 7%;">registered_by</th>
-                                <th style="width: 13%;">resource_name</th>
-                            </tr>
-                        </thead>
-                        <tbody id="resource-list"></tbody>
-                    </table>
+                    <div class="container" style="margin: 0; width: 100%;">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th style="width: 10%">resource_code</th>
+                                    <th style="width: 60%;">resource</th>
+                                    <th style="width: 10%;">registered</th>
+                                    <th style="width: 7%;">registered_by</th>
+                                    <th style="width: 13%;">resource_name</th>
+                                </tr>
+                            </thead>
+                            <tbody id="resource-list"></tbody>
+                        </table>
+                    </div>
                     <div class="control">
                         <span class="console-note">Code: </span>
                         <input type="text" id="code-to-search" class="input console-field" onkeyup="if(event.keyCode===13){searchResource()}">
@@ -58,16 +60,18 @@
             <div class="big-cont">
                 <h2 class="big-title">SEARCH PROBLEM USING RESOURCE</h2>
                 <div class="set-cont">
-                    <table class="table table-striped table-bordered">
-                        <thead>
-                            <tr>
-                                <th style="width: 15%">problem_code</th>
-                                <th style="width: 65%;">problem_name</th>
-                                <th style="width: 20%;">Editing page</th>
-                            </tr>
-                        </thead>
-                        <tbody id="problem-using-resource"></tbody>
-                    </table>
+                    <div class="container" style="margin: 0; width: 100%;">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th style="width: 15%">problem_code</th>
+                                    <th style="width: 65%;">problem_name</th>
+                                    <th style="width: 20%;">Editing page</th>
+                                </tr>
+                            </thead>
+                            <tbody id="problem-using-resource"></tbody>
+                        </table>
+                    </div>
                     <div class="control">
                         <span class="console-note">Code: </span>
                         <input type="text" id="pUsnResCmd" class="input console-field" onkeyup="if(event.keyCode===13){searchUsing()}">

@@ -12,7 +12,7 @@ textarea.editor {
     text-align: left;
 }
 #preview-container {
-    width: 100%;
+    width: 99%;
     margin: auto;
     padding-top: 1em;
     margin-bottom: 20px;
@@ -48,15 +48,6 @@ p.title-prev {
     text-align: left;
     margin: auto;
     font-size: 1.2em;
-}
-
-input.prob-name {
-    width: 30%;
-    outline: none;
-    font-size: 1.2em;
-    font-weight: 400;
-    height: 100%;
-    box-sizing: border-box;
 }
 
 a.prob-href {
@@ -101,17 +92,26 @@ span.prob-title {
     align-items: center;
     width: 100%;
 }
+input#name {
+    width: 40%;
+}
+div#tools {
+    margin: 10px 0;
+}
 input.tag-input {
-    width: 100px;
-    outline: none;
-    border: 1px #444 solid;
-    padding: 5px 10px;
-    border-radius: 2px;
-    font-size: 1.1em;
+    width: 60%;
+}
+input.tag-color {
+    max-width: 100px;
 }
 input.tag-color:before {
     content: "RGB#";
 }
+
+h3.sub-title {
+    margin: 20px 0 5px 0;
+}
+
 button.mpb {
     padding: 10px 20px 10px 20px;
     font-size: 1.2em;
@@ -134,4 +134,10 @@ button.mpb:hover {
 }
 button.mpb:disabled {
     background-color: #b3441c;
+}
+
+@media (max-width: 700px) {
+    input.tag-input {
+        width: 92%;
+    }
 }

@@ -317,7 +317,7 @@ span.tag {
     cursor: default;
     white-space: nowrap;
     display: inline-block;
-    font-size: 0.85em;
+    font-size: 0.95em;
 }
 .tag-custom {
     background-color: #eee;
@@ -382,6 +382,8 @@ div.non-container,div.container {
     margin: 0 15%;
     margin-bottom: 4vh;
     margin-top: 4vh;
+    scroll-behavior: smooth;
+    overflow: auto;
 }
 
 code {
@@ -406,9 +408,6 @@ code.inline {
     div.container,div.non-container {
         width: 90%;
         margin-left: 5%;
-    }
-    div.container, div.container-in {
-        overflow-x: scroll;
     }
 }
 
@@ -451,5 +450,21 @@ select.univ-sel {
     border-radius: 0px;
     width: fit-content;
     padding: 4px 25px 4px 5px;
+    border: #666 1px solid;
+    border-radius: 5px;
     background: url('/lib/imgs/down-arrow.svg') no-repeat 95% 50%;
+}
+
+input[type=text].univ-input {
+    outline: none;
+    font-size: 1.2em;
+    font-weight: 400;
+    height: 100%;
+    box-sizing: border-box;
+    border: #666 1px solid;
+    border-radius: 5px;
+}
+
+input[type=checkbox] {
+    -webkit-appearance: checkbox;
 }

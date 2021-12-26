@@ -23,24 +23,26 @@
                 <h2 class="big-title">PROBLEM DATABASE</h2>
                 <div class="set-cont">
                     <span class="config-label">
-                        <table class="table table-striped table-bordered">
-                            <thead>
-                                <tr>
-                                    <th style="width: 3%">problem_code</th>
-                                    <th style="width: 7%;">problem_name</th>
-                                    <th style="width: 3%;">problem_category</th>
-                                    <th style="width: 3%;">problem_difficulty</th>
-                                    <th style="width: 34%;">problem_content</th>
-                                    <th style="width: 34%;">problem_solution</th>
-                                    <th style="width: 7%;">tags</th>
-                                    <th style="width: 3%;">active</th>
-                                    <th style="width: 3%;">author_name</th>
-                                    <th style="width: 3%;">added_at</th>
-                                    <th style="width: 3%;">last_modified</th>
-                                </tr>
-                            </thead>
-                            <tbody id="pData"></tbody>
-                        </table>
+                        <div class="container" style="margin: 0; width: 100%;">
+                            <table class="table table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 3%">problem_code</th>
+                                        <th style="width: 7%;">problem_name</th>
+                                        <th style="width: 3%;">problem_category</th>
+                                        <th style="width: 3%;">problem_difficulty</th>
+                                        <th style="width: 34%;">problem_content</th>
+                                        <th style="width: 34%;">problem_solution</th>
+                                        <th style="width: 7%;">tags</th>
+                                        <th style="width: 3%;">active</th>
+                                        <th style="width: 3%;">author_name</th>
+                                        <th style="width: 3%;">added_at</th>
+                                        <th style="width: 3%;">last_modified</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pData"></tbody>
+                            </table>
+                        </div>
                         <div class="control">
                             <span class="console-note">명령: </span>
                             <input type="text" id="pQueryCode" class="input console-field" onkeyup="if(event.keyCode===13){pReq()}">
