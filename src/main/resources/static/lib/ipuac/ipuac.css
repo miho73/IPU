@@ -1,9 +1,10 @@
 p.ipuac {
     line-break: anywhere;
     font-weight: 400;
-    font-size: 0.9em;
+    font-size: 1.3em;
     color: #444;
-    margin: 0 0 7px;
+    margin: 0 0 6px;
+    line-height: 1.7em;
 }
 
 p.error {

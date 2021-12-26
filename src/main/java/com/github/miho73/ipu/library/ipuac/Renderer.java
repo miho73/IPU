@@ -252,7 +252,7 @@ public class Renderer {
                     default -> "<p class=\"ipuac\">" + line + "</p>";
                 };
             }
-            else html = "<p>"+line+"</p>";
+            else html = "<p class=\"ipuac\">"+line+"</p>";
             finalDom.add(html);
         }
         StringBuilder finalHtml = new StringBuilder();

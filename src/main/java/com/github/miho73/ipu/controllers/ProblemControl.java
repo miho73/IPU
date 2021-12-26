@@ -7,6 +7,7 @@ import com.github.miho73.ipu.repositories.UserRepository;
 import com.github.miho73.ipu.services.ProblemService;
 import com.github.miho73.ipu.services.ResourceService;
 import com.github.miho73.ipu.services.SessionService;
+import org.apache.tomcat.util.json.ParseException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -141,6 +142,21 @@ public class ProblemControl {
             LOGGER.error("Cannot open problem '" +code+"'", e);
             return null;
         }
+    }
+
+    @PostMapping("/api/ipuac-translation")
+    @ResponseBody
+    public String ipuacTranslation(HttpSession session, HttpServletResponse response, @RequestParam("code") String ipuacs) throws IOException, ParseException {
+        if(sessionService.hasPrivilege(SessionService.PRIVILEGES.PROBLEM_MAKE, session)) {
+            response.sendError(403);
+            return null;
+        }
+        JSONArray codes = new JSONArray(ipuacs);
+        JSONArray html = new JSONArray();
+        for(int i=0; i<codes.length(); i++) {
+            html.put(renderer.IPUACtoHTML(codes.getString(i)));
+        }
+        return html.toString();
     }
 
     @GetMapping("/make")

@@ -43,6 +43,3 @@ captcha:
   v2:
     sitekey: 6LcEQUAcAAAAAAYOVwrByX_OZs6-fyZbGV46nkoK
     secret: ENC(Bq+4is0NfuOtjcONleLLQ2A9DyDALUSSwnkLlhgeNPOP+1lh/wMMlxCL5s7HsamSQa5C1kpKPiZfVptGgwBOV77/hmbl2oTGdgolfjSCZzs=)
-
-# Debug
-spring.thymeleaf.cache: false

@@ -27,18 +27,34 @@ function selectLocalImage(forwhat) {
 }
 
 function preview() {
-    namex = gei('name').value;
-    content = gei('content').value;
-    exp = gei('solution').value;
-    gei('preview-container').style.display = "block";
-    setTimeout(()=>{
-        gei('preview-container').style.opacity = 1;
-    }, 10);
-    gei('preview-name').innerText = namex;
-    update('prev-content', content);
-    update('prev-solution', exp);
-    MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
-    location.href = '#confirm'
+    payload = [];
+    payload[0] = gei('content').value;
+    payload[1] = gei('solution').value;
+    $.ajax({
+       type: 'POST',
+       url: '/problem/api/ipuac-translation',
+       data: {
+           code: JSON.stringify(payload)
+       },
+       success: function(data) {
+           translated = JSON.parse(data);
+           content = translated[0],
+           exp = translated[1];
+           namex = gei('name').value;
+           gei('preview-container').style.display = "block";
+           setTimeout(()=>{
+               gei('preview-container').style.opacity = 1;
+           }, 10);
+           gei('preview-name').innerText = namex;
+           gei('prev-content').innerHTML = content;
+           gei('prev-solution').innerHTML = exp;
+           MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+           location.href = '#confirm'
+       },
+       error: function(err) {
+           alert(err.responseText+". IPUAC 번역에 실패했습니다.");
+       }
+    });
 }
 function confirme() {
     let proceed = confirm("문제를 등록할까요?");
