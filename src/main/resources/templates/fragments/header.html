@@ -14,44 +14,44 @@
             </a>
             <ul class="nav-left hide-on-mobile">
                 <li class="nav">
-                    <a href="/problem" class="nav" style="border-left-width: 2px;">
+                    <a href="/problem" class="nav" style="border-left-width: 0;">
                         <p class="nav">문제</p>
                     </a>
                 </li>
                 <li class="nav">
-                    <a href="/users" class="nav" style="border-left-width: 2px;">
+                    <a href="/users" class="nav" style="border-left-width: 0;">
                         <p class="nav">랭킹</p>
                     </a>
                 </li>
             </ul>
             <ul class="nav-right hide-on-mobile">
+                <li class="nav" th:if="${root}">
+                    <a href="/root" class="nav" style="border-right-width: 0;">
+                        <p class="nav">루트</p>
+                    </a>
+                </li>
                 <li class="nav" th:unless="${logged}">
-                    <a href="/login" class="nav" style="border-left-width: 2px;">
+                    <a href="/login" class="nav" style="border-right-width: 0;">
                         <p class="nav">로그인</p>
                     </a>
                 </li>
                 <li class="nav" th:unless="${logged}">
-                    <a href="/signup" class="nav">
+                    <a href="/signup" class="nav" style="border-right-width: 0;">
                         <p class="nav">가입</p>
                     </a>
                 </li>
-                <li class="nav" th:if="${root}">
-                    <a href="/root" class="nav" style="border-right-width: 2px;">
-                        <p class="nav">루트</p>
-                    </a>
-                </li>
                 <li class="nav" th:if="${logged}">
-                    <a href="/profile" class="nav" style="border-right-width: 2px;">
+                    <a href="/profile" class="nav" style="border-right-width: 0;">
                         <p class="nav" th:text="${user.getName()}"></p>
                     </a>
                 </li>
                 <li class="nav" th:if="${logged}">
-                    <a href="/settings" class="nav" style="border-right-width: 2px;">
+                    <a href="/settings" class="nav" style="border-right-width: 0;">
                         <p class="nav">설정</p>
                     </a>
                 </li>
                 <li class="nav" th:if="${logged}">
-                    <a href="/login/deauth" class="nav" style="border-right-width: 2px;">
+                    <a href="/login/deauth" class="nav" style="border-right-width: 0;">
                         <p class="nav">로그아웃</p>
                     </a>
                 </li>

@@ -16,7 +16,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf:2.6.1'
 	implementation 'org.springframework.boot:spring-boot-starter-web:2.6.1'
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc:2.6.1'
-	compileOnly 'org.springframework.boot:spring-boot-devtools:2.6.1'
+	implementation 'org.springframework.boot:spring-boot-devtools:2.6.1'
 	implementation 'org.springframework.session:spring-session-core:2.6.0'
 	implementation 'org.postgresql:postgresql:42.3.1'
 	implementation 'org.json:json:20211205'

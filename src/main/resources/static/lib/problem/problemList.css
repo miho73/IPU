@@ -2,7 +2,7 @@ div#prob-nav {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    margin-bottom: 20px;
+    margin-bottom: 0;
 }
 div#prob-vi {
     display: flex;
@@ -12,7 +12,8 @@ div#prob-vi {
     width: 60%;
 }
 a.vi-cho,a.vi-sel {
-    padding: 15px;
+    padding: 10px 15px;
+    font-size: 0.85em;
     display: inline-flex;
     flex-direction: column;
     justify-content: center;
@@ -44,7 +45,7 @@ input#search {
     line-height: 30px;
     min-width: 150px;
     width: 5vw;
-    border: 1px #555 solid;
+    border: 1px #888 solid;
     border-right-width: 0;
     border-radius: 0;
 }

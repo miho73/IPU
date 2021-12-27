@@ -141,6 +141,7 @@ nav#navigation {
     height: 60px;
     background-color: #f6f6f6;
     text-align: center;
+    z-index: 10;
 }
 ul.nav-right {
     position: absolute;
