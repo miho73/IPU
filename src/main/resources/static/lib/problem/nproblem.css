@@ -92,6 +92,9 @@ span.prob-title {
     align-items: center;
     width: 100%;
 }
+input, select {
+    height: 100%;
+}
 input#name {
     width: 40%;
 }

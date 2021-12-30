@@ -1,21 +1,19 @@
-package com.github.miho73.ipu;
+package com.github.miho73.ipu.config.cache;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.CacheControl;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.util.concurrent.TimeUnit;
-
 @Configuration
-public class CacheConfig implements WebMvcConfigurer {
+public class CacheConfigNoCache implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(final ResourceHandlerRegistry registry) {
-        CacheControl cacheControl = CacheControl.maxAge(604800, TimeUnit.SECONDS)
+        CacheControl cacheControl = CacheControl.noCache()
                                                 .noTransform()
                                                 .mustRevalidate();
 
-        registry.addResourceHandler("**/*.css", "**/*.js", "**/*.ttf", "**/*.webp", "**/*.svg", "**/lib/*", "**/*.png", "**/*.jpg")
+        registry.addResourceHandler("**/*.css", "**/*.js")
                 .addResourceLocations("classpath:/static/")
                 .setCacheControl(cacheControl);
     }

@@ -12,13 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
@@ -29,7 +22,6 @@ import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
-import java.util.ConcurrentModificationException;
 import java.util.TimeZone;
 
 @Service("AuthService")
@@ -42,8 +34,6 @@ public class AuthService {
     private final InviteService inviteService;
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
-    private TimeZone tz = TimeZone.getTimeZone("UTC");
-    private final DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
 
     @Autowired
     public AuthService(UserRepository userRepository, SHA sha, Captcha captcha, SessionService sessionService, InviteService inviteService, SolutionRepository solutionRepository) {
@@ -54,6 +44,8 @@ public class AuthService {
         this.inviteService = inviteService;
         this.solutionRepository = solutionRepository;
 
+        TimeZone tz = TimeZone.getTimeZone("UTC");
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
         df.setTimeZone(tz);
     }
 
@@ -168,8 +160,10 @@ public class AuthService {
             LOGGER.debug("Cannot creat user: "+e.getMessage()+". id="+user.getId()+"; name="+user.getName()+"; invite="+user.getInviteCode());
             return SIGNUP_RESULT.ERROR;
         }
-        Connection userConnection = userRepository.openConnection(), solvesConnection = solutionRepository.openConnection();
+        Connection userConnection = null, solvesConnection = null;
         try {
+            userConnection = userRepository.openConnectionForEdit();
+            solvesConnection = solutionRepository.openConnectionForEdit();
             userRepository.addUser(user, userConnection);
             int code = (int) userRepository.getUserDataById(user.getId(), "user_code", userConnection);
             solutionRepository.addUser(code, solvesConnection);
@@ -179,10 +173,11 @@ public class AuthService {
             return SIGNUP_RESULT.OK;
         }
         catch (Exception e) {
-            userRepository.rollback(userConnection);
-            solutionRepository.rollback(solvesConnection);
-            userRepository.close(userConnection);
-            solutionRepository.close(solvesConnection);
+            LOGGER.error("Signup request: id="+user.getId()+", name="+user.getName()+", result=Internal error");
+            if(userConnection != null) userRepository.rollback(userConnection);
+            if(solvesConnection != null) solutionRepository.rollback(solvesConnection);
+            if(userConnection != null) userRepository.close(userConnection);
+            if(solvesConnection != null) solutionRepository.close(solvesConnection);
             return SIGNUP_RESULT.ERROR;
         }
     }

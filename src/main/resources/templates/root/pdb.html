@@ -18,42 +18,38 @@
     <body>
         <th:block th:replace="fragments/header.html :: navigation"></th:block>
         <span style="display: none; font-size: 1.5em; color: #f00" id="errdis"></span>
-        <div class="container">
-            <div class="big-cont">
-                <h2 class="big-title">PROBLEM DATABASE</h2>
-                <div class="set-cont">
-                    <span class="config-label">
-                        <div class="container" style="margin: 0; width: 100%;">
-                            <table class="table table-striped table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th style="width: 3%">problem_code</th>
-                                        <th style="width: 7%;">problem_name</th>
-                                        <th style="width: 3%;">problem_category</th>
-                                        <th style="width: 3%;">problem_difficulty</th>
-                                        <th style="width: 34%;">problem_content</th>
-                                        <th style="width: 34%;">problem_solution</th>
-                                        <th style="width: 7%;">tags</th>
-                                        <th style="width: 3%;">active</th>
-                                        <th style="width: 3%;">author_name</th>
-                                        <th style="width: 3%;">added_at</th>
-                                        <th style="width: 3%;">last_modified</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="pData"></tbody>
-                            </table>
-                        </div>
-                        <div class="control">
-                            <span class="console-note">명령: </span>
-                            <input type="text" id="pQueryCode" class="input console-field" onkeyup="if(event.keyCode===13){pReq()}">
-                            <button class="commit" onclick="pReq()">COMMIT</button>
-                            <p class="ctrl-exp">[problem code]</p>
-                        </div>
-                    </span>
+        <div class="container page">
+            <div class="section">
+                <p class="section-title">PROBLEM DATABASE</p>
+                <div class="non-container">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th style="width: 3%">problem_code</th>
+                                <th style="width: 7%;">problem_name</th>
+                                <th style="width: 3%;">problem_category</th>
+                                <th style="width: 3%;">problem_difficulty</th>
+                                <th style="width: 34%;">problem_content</th>
+                                <th style="width: 34%;">problem_solution</th>
+                                <th style="width: 7%;">tags</th>
+                                <th style="width: 3%;">active</th>
+                                <th style="width: 3%;">author_name</th>
+                                <th style="width: 3%;">added_at</th>
+                                <th style="width: 3%;">last_modified</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pData"></tbody>
+                    </table>
+                </div>
+                <div class="control">
+                    <span class="console-note">명령: </span>
+                    <input type="text" id="pQueryCode" class="univ-input console-field" onkeyup="if(event.keyCode===13){pReq()}">
+                    <button class="commit" onclick="pReq()">COMMIT</button>
+                    <p class="ctrl-exp">[problem code]</p>
                 </div>
             </div>
-            <div class="big-cont">
-                <h2 class="big-title">NAVIGATION</h2>
+            <div class="section">
+                <p class="section-title">NAVIGATION</p>
                 <ul class="rt-nav">
                     <li class="rt-nav">
                         <a href="/root">관리 페이지</a>
@@ -70,5 +66,6 @@
                 </ul>
             </div>
         </div>
+        <th:block th:replace="fragments/footer.html :: footer"></th:block>
     </body>
 </html>

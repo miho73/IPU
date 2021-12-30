@@ -1,4 +1,4 @@
-package com.github.miho73.ipu;
+package com.github.miho73.ipu.config;
 
 import org.jasypt.encryption.StringEncryptor;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;

@@ -10,13 +10,13 @@
         <script src="/lib/profile/pProfile.js"></script>
         <meta property="og:title" content="IPU - 프로필">
         <meta name="twitter:title" content="IPU - 프로필">
-        <meta name="description" content="<%= username%>의 프로필">
-        <meta property="og:description" content="<%= username%>의 프로필">
-        <meta name="twitter:description" content="<%= username%>의 프로필">
+        <meta name="description" th:content="${username+'의 프로필'}">
+        <meta property="og:description" th:content="${username+'의 프로필'}">
+        <meta name="twitter:description" th:content="${username+'의 프로필'}">
     </head>
     <body th:onload="load([[${pg}]])">
         <th:block th:replace="fragments/header.html :: navigation"></th:block>
-        <div class="non-container">
+        <div class="container">
             <div id="headerup">
                 <h1 id="uname" th:text="${username}"></h1>
                 <h3 id="uid" th:text="${userId}"></h3>
@@ -34,7 +34,7 @@
                     </div>
                 </div>
             </div>
-            <div class="container-in">
+            <div class="non-container">
                 <table id="prob-list-table">
                     <thead>
                         <tr>
@@ -48,14 +48,15 @@
                     <tbody id="solveds"></tbody>
                 </table>
             </div>
-            <div id="nav">
+            <div>
                 <p id="not" style="display: none;">이 페이지는 비어있습니다.</p>
-                <div id="nav">
+                <div>
                     <a id="prev" class="previous round">이전</a>
                     <span id="pnsep" style="user-select: none;">······</span>
                     <a id="next" class="next round">다음</a>
                 </div>
             </div>
         </div>
+        <th:block th:replace="fragments/footer.html :: footer"></th:block>
     </body>
 </html>

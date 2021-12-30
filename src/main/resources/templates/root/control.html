@@ -10,7 +10,6 @@
         <meta name="description" content="sudo ipu">
         <meta property="og:description" content="sudo ipu">
         <meta name="twitter:description" content="sudo ipu">
-        <link rel="stylesheet" type="text/css" href="/lib/profile/profile.css">
         <link rel="stylesheet" type="text/css" href="/lib/manage/manage.css">
         <link rel="stylesheet" type="text/css" href="/lib/table.css">
         <script src="/lib/manage/controls.js"></script>
@@ -18,72 +17,60 @@
     <body onload="loaded()">
         <th:block th:replace="fragments/header.html :: navigation"></th:block>
         <span style="display: none; font-size: 1.5em; color: #f00" id="errdis"></span>
-        <div class="container">
-            <div class="big-cont">
-                <h2 class="big-title">초대코드</h2>
-                <div class="set-cont">
-                    <span class="config-label">
-                        <div class="container" style="margin: 0; width: 100%;">
-                            <table class="table table-striped table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th style="width: 10%">연번</th>
-                                        <th style="width: 60%;">초대코드</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="addInv"></tbody>
-                            </table>
-                        </div>
-                        <div class="control">
-                            <span class="console-note">명령: </span>
-                            <input type="text" id="invQuery" class="input console-field">
-                            <button class="commit" onclick="invSend()">COMMIT</button>
-                            <p class="ctrl-exp" style="margin-top: 5px;">APPEND [new code]</p>
-                            <p class="ctrl-exp">DELETE [primary key]</p>
-                            <p class="ctrl-exp">UPDATE [primary key] [new code]</p>
-                            <p class="ctrl-exp">GET</p>
-                        </div>
-                    </span>
+        <div class="container page">
+            <div class="section">
+                <p class="section-title">초대코드</p>
+                <div class="non-container">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                        <tr>
+                            <th style="width: 10%">연번</th>
+                            <th style="width: 60%;">초대코드</th>
+                        </tr>
+                        </thead>
+                        <tbody id="addInv"></tbody>
+                    </table>
+                </div>
+                <div class="control">
+                    <span class="console-note">명령: </span>
+                    <input type="text" id="invQuery" class="univ-input console-field">
+                    <button class="commit" onclick="invSend()">COMMIT</button>
+                    <p class="ctrl-exp" style="margin-top: 5px;">APPEND [new code]</p>
+                    <p class="ctrl-exp">DELETE [primary key]</p>
+                    <p class="ctrl-exp">UPDATE [primary key] [new code]</p>
+                    <p class="ctrl-exp">GET</p>
                 </div>
             </div>
-            <div class="big-cont">
-                <h2 class="big-title">권한관리</h2>
-                <div class="set-cont">
-                    <span class="config-label">
-                        <div class="control">
-                            <span class="console-note">명령: </span>
-                            <input type="text" id="usrQuery" class="input console-field">
-                            <button class="commit" onclick="sendPermQuery()">COMMIT</button><br>
-                            <span style="font-size: 0.9em;" id="usrRes">결과</span>
-                            <p class="ctrl-exp" style="margin-top: 5px;">QUERY [user id]</p>
-                            <p class="ctrl-exp">UPDATE [privilege] [user id]</p>
-                            <ul>
-                                <li>u: 문제 풀이권한</li>
-                                <li>p: 문제 제작, 수정 권한</li>
-                                <li>i: 초대코드 관리 권한</li>
-                                <li>s: SuperUser 권한</li>
-                            </ul>
-                        </div>
-                    </span>
+            <div class="section">
+                <p class="section-title">권한관리</p>
+                <div class="control">
+                    <span class="console-note">명령: </span>
+                    <input type="text" id="usrQuery" class="univ-input console-field">
+                    <button class="commit" onclick="sendPermQuery()">COMMIT</button><br>
+                    <span style="font-size: 0.9em;" id="usrRes">결과</span>
+                    <p class="ctrl-exp" style="margin-top: 5px;">QUERY [user id]</p>
+                    <p class="ctrl-exp">UPDATE [privilege] [user id]</p>
+                    <ul>
+                        <li>u: 문제 풀이권한</li>
+                        <li>p: 문제 제작, 수정 권한</li>
+                        <li>i: 초대코드 관리 권한</li>
+                        <li>s: SuperUser 권한</li>
+                    </ul>
                 </div>
             </div>
-            <div class="big-cont">
-                <h2 class="big-title">로그인 해제</h2>
-                <div class="set-cont">
-                    <span class="config-label">
-                        <div class="control">
-                            <span class="console-note">해제할 ID: </span>
-                            <input type="text" id="usrUnlog" class="input console-field">
-                            <button class="commit" onclick="sendUlogQuery()">COMMIT</button><br>
-                            <span style="font-size: 0.9em;" id="uLogRes">결과</span>
-                            <p class="ctrl-exp" style="margin-top: 5px;">[user id]</p>
-                            <p class="ctrl-exp">이 명령은 해당 사용자의 로그인 세션을 비활성화합니다.</p>
-                        </div>
-                    </span>
+            <div class="section">
+                <p class="section-title">로그인 해제</p>
+                <div class="control">
+                    <span class="console-note">해제할 ID: </span>
+                    <input type="text" id="usrUnlog" class="univ-input console-field">
+                    <button class="commit" onclick="sendUlogQuery()">COMMIT</button><br>
+                    <span style="font-size: 0.9em;" id="uLogRes">결과</span>
+                    <p class="ctrl-exp" style="margin-top: 5px;">[user id]</p>
+                    <p class="ctrl-exp">이 명령은 해당 사용자의 로그인 세션을 비활성화합니다.</p>
                 </div>
             </div>
-            <div class="big-cont">
-                <h2 class="big-title">NAVIGATION</h2>
+            <div class="section">
+                <p class="section-title">NAVIGATION</p>
                 <ul class="rt-nav">
                     <li class="rt-nav">
                         <a href="/root">관리 페이지</a>
@@ -100,5 +87,6 @@
                 </ul>
             </div>
         </div>
+        <th:block th:replace="fragments/footer.html :: footer"></th:block>
     </body>
 </html>

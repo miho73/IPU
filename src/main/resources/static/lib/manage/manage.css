@@ -1,6 +1,5 @@
  div.control {
     text-align: left;
-    margin-top: 10px;
     font-size: 1.2em;
 }
 
@@ -11,7 +10,7 @@ span.console-note {
 }
 
 input.console-field {
-    width: 30%;
+    width: 50%;
     margin: auto;
     margin-right: 0;
 }
@@ -51,6 +50,7 @@ li {
 }
 ul.rt-nav {
     padding: 0;
+    margin: 0;
 }
 li.rt-nav {
     font-size: 1em;

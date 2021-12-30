@@ -10,7 +10,7 @@ IPU uses postgresql as DBMS. Here's the structure and user spec for IPU.
 
 ## 1.2 USER setup
 
-> `CREATE USER <USERNAME> WITH ENCRYPTED PASSWORD '<Password>'';`
+> `CREATE USER <USERNAME> WITH ENCRYPTED PASSWORD '<Password>';`  
 > And, execute below command in order to grant all privileges to IPU databases
 
 ## 1.3 IDENTIFICATION DB

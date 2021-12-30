@@ -50,6 +50,6 @@ spring:
     cache: false
   devtools:
     restart:
-      enabled: true
+      enabled: false
     livereload:
       enabled: true

@@ -16,7 +16,7 @@
     </head>
     <body>
         <th:block th:replace="fragments/header.html :: navigation"></th:block>
-        <div id="prob-nav" class="non-container">
+        <div id="prob-nav" class="container">
             <div id="prob-vi">
                 <a class="vi-cho" href="/problem">전체</a>
                 <a class="vi-sel" href="/problem/category">분류</a>
@@ -111,5 +111,6 @@
                 </tbody>
             </table>
         </div>
+        <th:block th:replace="fragments/footer.html :: footer"></th:block>
     </body>
 </html>

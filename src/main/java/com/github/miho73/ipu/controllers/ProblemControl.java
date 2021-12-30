@@ -7,7 +7,6 @@ import com.github.miho73.ipu.repositories.UserRepository;
 import com.github.miho73.ipu.services.ProblemService;
 import com.github.miho73.ipu.services.ResourceService;
 import com.github.miho73.ipu.services.SessionService;
-import org.apache.tomcat.util.json.ParseException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -112,11 +111,11 @@ public class ProblemControl {
     }
     Random rand = new Random();
     @GetMapping("/random")
-    public void getRandomProblem(Model model, HttpSession session, HttpServletResponse response) throws IOException, SQLException {
+    public void getRandomProblem(Model model, HttpSession session, HttpServletResponse response) throws IOException {
         sessionService.loadSessionToModel(session, model);
 
          rand.setSeed(System.nanoTime());
-        response.sendRedirect("/problem/"+(rand.nextInt(problemService.getNumberOfProblems())+1));
+        response.sendRedirect("/problem/"+(rand.nextInt(NUMBER_OF_PROBLEMS)+1));
     }
 
     @GetMapping("/{pCode}")
@@ -146,7 +145,7 @@ public class ProblemControl {
 
     @PostMapping("/api/ipuac-translation")
     @ResponseBody
-    public String ipuacTranslation(HttpSession session, HttpServletResponse response, @RequestParam("code") String ipuacs) throws IOException, ParseException {
+    public String ipuacTranslation(HttpSession session, HttpServletResponse response, @RequestParam("code") String ipuacs) throws IOException {
         if(sessionService.hasPrivilege(SessionService.PRIVILEGES.PROBLEM_MAKE, session)) {
             response.sendError(403);
             return null;

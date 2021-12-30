@@ -5,13 +5,11 @@ import com.github.miho73.ipu.domain.User;
 import com.github.miho73.ipu.repositories.ProblemRepository;
 import com.github.miho73.ipu.repositories.SolutionRepository;
 import com.github.miho73.ipu.repositories.UserRepository;
-import org.apache.tomcat.util.json.JSONParser;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.source.ConfigurationPropertyName;
 import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
@@ -138,6 +136,8 @@ public class UserService {
         try {
             userRepository.deleteUser(uCode, userConnection);
             solutionRepository.dropSolves(uCode, solvesConnection);
+            userRepository.commitAndClose(userConnection);
+            solutionRepository.commitAndClose(solvesConnection);
         }
         catch (Exception e) {
             userRepository.close(userConnection);

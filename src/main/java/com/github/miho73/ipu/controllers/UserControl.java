@@ -1,15 +1,10 @@
 package com.github.miho73.ipu.controllers;
 
-import com.github.miho73.ipu.domain.LoginForm;
-import com.github.miho73.ipu.domain.Problem;
 import com.github.miho73.ipu.domain.User;
 import com.github.miho73.ipu.exceptions.InvalidInputException;
-import com.github.miho73.ipu.repositories.UserRepository;
 import com.github.miho73.ipu.services.AuthService;
 import com.github.miho73.ipu.services.SessionService;
 import com.github.miho73.ipu.services.UserService;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +18,6 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -184,6 +178,7 @@ public class UserControl {
         if(!sessionService.checkLogin(session)) {
             return "redirect:/login/?ret=/settings/bye";
         }
+        sessionService.loadSessionToModel(session, model);
         model.addAllAttributes(Map.of(
                 "username", sessionService.getName(session),
                 "userid", sessionService.getId(session)
@@ -197,6 +192,7 @@ public class UserControl {
             response.sendError(403);
             return null;
         }
+        LOGGER.debug("Delete accont. ID="+sessionService.getId(session));
         String pwd = request.getParameter("pwd");
         if(authService.auth(sessionService.getId(session), pwd)) {
             try {
@@ -207,6 +203,7 @@ public class UserControl {
             }
             catch (Exception e) {
                 LOGGER.error("Cannot delete user", e);
+                sessionService.loadSessionToModel(session, model);
                 model.addAllAttributes(Map.of(
                         "username", sessionService.getName(session),
                         "userid", sessionService.getId(session),
@@ -216,6 +213,7 @@ public class UserControl {
             }
         }
         else {
+            sessionService.loadSessionToModel(session, model);
             model.addAllAttributes(Map.of(
                     "username", sessionService.getName(session),
                     "userid", sessionService.getId(session),

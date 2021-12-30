@@ -9,53 +9,35 @@
             <p style="text-align: center; margin: 3px">스크립트 사용이 비활성화되어 있습니다. 웹사이트가 일부 작동하지 않을 수 있습니다.</p>
         </noscript>
         <nav id="navigation">
-            <a href="/" class="nav-logo">
+            <a href="/">
                 <p id="title">IPU</p>
             </a>
-            <ul class="nav-left hide-on-mobile">
-                <li class="nav">
-                    <a href="/problem" class="nav" style="border-left-width: 0;">
-                        <p class="nav">문제</p>
-                    </a>
-                </li>
-                <li class="nav">
-                    <a href="/users" class="nav" style="border-left-width: 0;">
-                        <p class="nav">랭킹</p>
-                    </a>
-                </li>
-            </ul>
-            <ul class="nav-right hide-on-mobile">
-                <li class="nav" th:if="${root}">
-                    <a href="/root" class="nav" style="border-right-width: 0;">
-                        <p class="nav">루트</p>
-                    </a>
-                </li>
-                <li class="nav" th:unless="${logged}">
-                    <a href="/login" class="nav" style="border-right-width: 0;">
-                        <p class="nav">로그인</p>
-                    </a>
-                </li>
-                <li class="nav" th:unless="${logged}">
-                    <a href="/signup" class="nav" style="border-right-width: 0;">
-                        <p class="nav">가입</p>
-                    </a>
-                </li>
-                <li class="nav" th:if="${logged}">
-                    <a href="/profile" class="nav" style="border-right-width: 0;">
-                        <p class="nav" th:text="${user.getName()}"></p>
-                    </a>
-                </li>
-                <li class="nav" th:if="${logged}">
-                    <a href="/settings" class="nav" style="border-right-width: 0;">
-                        <p class="nav">설정</p>
-                    </a>
-                </li>
-                <li class="nav" th:if="${logged}">
-                    <a href="/login/deauth" class="nav" style="border-right-width: 0;">
-                        <p class="nav">로그아웃</p>
-                    </a>
-                </li>
-            </ul>
+            <div class="hide-on-mobile nav-hrefs">
+                <a href="/problem">
+                    <p class="nav">문제</p>
+                </a>
+                <a href="/users">
+                    <p class="nav">랭킹</p>
+                </a>
+                <a href="/root" th:if="${root}">
+                    <p class="nav">루트</p>
+                </a>
+                <a href="/login" th:unless="${logged}">
+                    <p class="nav">로그인</p>
+                </a>
+                <a href="/signup" th:unless="${logged}">
+                    <p class="nav">가입</p>
+                </a>
+                <a href="/profile" th:if="${logged}">
+                    <p class="nav" th:text="${user.getName()}"></p>
+                </a>
+                <a href="/settings" th:if="${logged}">
+                    <p class="nav">설정</p>
+                </a>
+                <a href="/login/deauth" th:if="${logged}">
+                    <p class="nav">로그아웃</p>
+                </a>
+            </div>
             <button class="nav-ham inline-on-mobile" onclick="hamburger()" aria-label="메뉴 열기">
                 <div class="bun">
                     <span id="top-patty1" class="pattyc"><span id="top-patty2" class="patty"></span></span>
@@ -65,23 +47,19 @@
         </nav>
         <nav id="hambuger-menu" onclick="hamburger()" class="hide-on-pc">
             <div id="profile-display">
-                <div th:if="${logged}">
-                <span id="ham-uname">
+                <span id="ham-uname" th:if="${logged}">
                     <a href="/profile" th:text="${user.getName()}"></a>
                 </span>
-                    <div id="ham-usr-menu">
-                        <a href="/login/deauth" class="ham-usr-btn">로그아웃</a>
-                        <a href="/profile" class="ham-usr-btn">프로필</a>
-                        <a href="/settings" class="ham-usr-btn">설정</a>
-                        <a href="/root" th:if="${root}" class="ham-usr-btn">루트</a>
-                    </div>
+                <div id="ham-usr-menu" th:if="${logged}">
+                    <a href="/login/deauth" class="ham-usr-btn">로그아웃</a>
+                    <a href="/profile" class="ham-usr-btn">프로필</a>
+                    <a href="/settings" class="ham-usr-btn">설정</a>
+                    <a href="/root" th:if="${root}" class="ham-usr-btn">루트</a>
                 </div>
-                <div th:unless="${logged}">
-                    <a href="/login" class="ham-usr-btn">로그인</a>
-                    <a href="/signup" class="ham-usr-btn">가입</a>
-                </div>
+                <a href="/login" class="ham-usr-btn" th:unless="${logged}">로그인</a>
+                <a href="/signup" class="ham-usr-btn" th:unless="${logged}">가입</a>
             </div>
-            <hr style="margin-bottom: 0;">
+            <hr class="univ">
             <div id="ham-hrefs-list">
                 <a href="/problem" class="ham-href">문제</a>
                 <a href="/users" class="ham-href">랭킹</a>

@@ -1,35 +1,29 @@
-body {
-    background-color: #000;
-    height: 100vh;
-}
-
-h1.main-text {
+div#index-dots-container {
     width: 100%;
-    font-size: 6em;
-    text-align: center;
+    height: 60vh;
+    background-color: #e39ff6;
+    background: -webkit-linear-gradient(to right, #8e2de2, #4a00e0);
+    background: linear-gradient(to right, #8e2de2, #4a00e0);
+    position: relative;
+}
+
+svg.dot-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    fill: transparent;
+    stroke-linecap: round;
+    stroke-width: 5px;
+    stroke: #fff;
+}
+
+p.main-text {
+    width: 100%;
+    font-size: 3.5em;
+    font-weight: 470;
+    text-align: left;
     color: #fff;
-    margin: 0;
-}
-
-@media (max-width: 1300px) {
-    h1.main-text {
-        font-size: 4em;
-    }
-}
-@media (max-width: 850px) {
-    h1.main-text {
-        font-size: 5em;
-    }
-}
-@media (max-width: 600px) {
-    h1.main-text {
-        font-size: 4em;
-    }
-}
-
-@media (max-width: 900px) and (orientation: landscape) {
-    div#main {
-        margin-top: 0;
-        height: 90vh;
-    }
+    margin: 0 0 5vh 5vw;
+    position: absolute;
+    bottom: 0;
 }

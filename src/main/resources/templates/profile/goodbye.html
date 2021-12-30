@@ -13,6 +13,7 @@
         <meta name="twitter:description" content="IPU를 탈퇴하면 즉시 모든 계정과 정보가 삭제됩니다.">
     </head>
     <body>
+        <th:block th:replace="fragments/header.html :: navigation"></th:block>
         <div id="block" style="display: none;"></div>
         <div id="display">
             <div id="root">
@@ -20,27 +21,30 @@
                 <div style="text-align: center;">
                     <h1 id="wanna-del" th:text="${'계정 '+username+'('+userid+')를 삭제할까요?'}"></h1>
                     <p id="sel-acc-subt">계정을 삭제하면 즉시 모든 풀이기록, 프로필이 삭제됩니다.<br>여러분이 만든 문제들은 삭제되지 않고 보존됩니다.</p>
-                    <p style="color: #f00; font-size: 2em; text-shadow: 0 0 2px #f00; display: <%= fail%>;" th:text="${fail}"></p>
+                    <p style="color: #f00; font-size: 2em; text-shadow: 0 0 2px #f00;" th:text="${fail}"></p>
                     <form method="POST">
                         <label class="fl">계속하려면 암호를 입력하세요</label><br>
-                        <input type="password" id="pwd" name="pwd" class="in pwd" required><br>
+                        <input type="password" id="pwd" name="pwd" class="univ-input" style="margin: 5px 0 10px 0;" required><br>
                         <label class="fl" style="margin-top: 5em;">삭제를 확인하려면 아래에 <i>"I Promise U"</i>를 정확하게 쓰세요.</label><br>
-                        <input type="text" id="check" name="check" class="in" onkeyup="changed()" required spellcheck="false" autocomplete="off"><br>
-                        <button id="real-del" style="margin-top: 5em;" type="submit" disabled>삭제</button>
+                        <input type="text" id="check" name="check" class="univ-input" onkeyup="changed()" style="margin: 5px 0 10px 0;" required spellcheck="false" autocomplete="off"><br>
+                        <button id="real-del" class="univ-btn" style="margin: 10px 0 30px 0;" type="submit" disabled>삭제</button>
                     </form>
                 </div>
             </div>
         </div>
+        <th:block th:replace="fragments/footer.html :: footer"></th:block>
     </body>
     <script>
         function changed() {
             let t = gei('check').value;
             if(t == 'I Promise U') {
-                gei('check').style.boxShadow = "0 0 5px #0f0";
+                gei('check').classList.add('okthis')
+                gei('check').classList.remove('formthis')
                 gei('real-del').disabled = false;
             }
             else {
-                gei('check').style.boxShadow = "0 0 5px #f00";
+                gei('check').classList.add('formthis')
+                gei('check').classList.remove('okthis')
                 gei('real-del').disabled = true;
             }
         }
