@@ -44,7 +44,7 @@ jobs:
             {
               attachments: [{
                 color: '${{ job.status }}' === 'success' ? 'good' : '${{ job.status }}' === 'failure' ? 'danger' : 'warning',
-                text: `${process.env.AS_WORKFLOW}\n${process.env.AS_JOB} (${process.env.AS_COMMIT}) of ${process.env.AS_REPO}@${process.env.AS_REF} by ${process.env.AS_AUTHOR} ${{ job.status }} in ${process.env.AS_TOOK}\n배포작업이 끝났어요.`,
+                text: `${process.env.AS_AUTHOR}님이 만든 커밋 ${process.env.AS_COMMIT}에 대한 배포작업이 끝났어요.\결과: ${{ job.status }} in ${process.env.AS_TOOK}\n`,
               }]
             }
           author_name: "개발요정"
