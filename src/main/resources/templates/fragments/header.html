@@ -3,10 +3,10 @@
 <html xmlns:th="http://www.thymeleaf.org">
     <th:block th:fragment="navigation">
         <!--[if IE]>
-        <p style="text-align: center; margin: 3px">IE9 이하 버전의 인터넷 익스플로러는 일부 지원되지 않습니다. 다른 브라우저를 이용해 주세요.</p>
+        <p style="text-align: center; margin: 3px">IE9 이하 버전의 인터넷 익스플로러는 일부 지원되지 않아요. 다른 브라우저를 이용해 주세요.</p>
         <![endif]-->
         <noscript>
-            <p style="text-align: center; margin: 3px">스크립트 사용이 비활성화되어 있습니다. 웹사이트가 일부 작동하지 않을 수 있습니다.</p>
+            <p style="text-align: center; margin: 3px">스크립트 사용이 비활성화되어 있어요. 스크립트를 활성화해주세요.</p>
         </noscript>
         <nav id="navigation">
             <a href="/">
@@ -45,7 +45,7 @@
                 </div>
             </button>
         </nav>
-        <nav id="hambuger-menu" onclick="hamburger()" class="hide-on-pc">
+        <nav id="hambuger-menu" onclick="hamburger()" class="block-on-mobile" style="display: none;">
             <div id="profile-display">
                 <span id="ham-uname" th:if="${logged}">
                     <a href="/profile" th:text="${user.getName()}"></a>

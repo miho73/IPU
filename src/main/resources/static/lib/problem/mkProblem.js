@@ -19,7 +19,7 @@ function selectLocalImage(forwhat) {
             error: function(err) {
                 switch(err.responseText) {
                     case "size":
-                        alert("최대 5MB까지 올릴 수 있습니다.");
+                        alert("파일이 너무 커요. 5MB 이하로 줄여주세요.");
                 }
             }
         });
@@ -52,7 +52,7 @@ function preview() {
            location.href = '#confirm'
        },
        error: function(err) {
-           alert(err.responseText+". IPUAC 번역에 실패했습니다.");
+           alert(err.responseText+". IPUAC 번역에 실패했어요.");
        }
     });
 }
@@ -112,7 +112,7 @@ function confirme() {
         },
         error: function(err) {
             if(err.status == 403) {
-                let x = confirm('문제를 추가하려면 로그인해야 합니다.');
+                let x = confirm('문제를 추가하려면 로그인해야 해요.');
                 if(x) {
                     window.location.href = `/login/?ret=problem/make`;
                 }
@@ -167,7 +167,7 @@ function updateColor(id) {
 window.onbeforeunload = function (e) {
     e = e || window.event;
     if (e) {
-        e.returnValue = '편집사항이 저장되지 않습니다. 정말 닫을까요?';
+        e.returnValue = '문제가 저장되지 않아요!. 정말 닫을까요?';
     }
-    return '편집사항이 저장되지 않습니다. 정말 닫을까요?';
+    return '문제가 저장되지 않아요!. 정말 닫을까요?';
 };

@@ -36,19 +36,19 @@ function wa(cod) {
             activeFinal(false);
         },
         error: function(err) {
-            let ec, suf = " 잠시 후 다시 시도해주세요";
+            let ec, suf = " 잠시 후에 다시 해보면 어떨까요?";
             switch(err.responseText) {
                 case "trans":
-                    ec = "문제가 발생했습니다."+suf;
+                    ec = "문제가 발생했어요. "+suf;
                     break;
                 case "forb":
-                    ec = "권한이 없습니다.";
+                    ec = "권한이 없어요.";
                     break;
                 case "time":
-                    ec = "제출은 1분마다 할 수 있습니다.";
+                    ec = "제출은 1분마다 할 수 있어요. 빨리 푸는데요?!";
                     break;
-                default:
-                    ec = "문제가 발생했습니다."+suf;
+                default: 
+                    ec = "제출하지 못했어요."+suf;
             }
             alert(ec);
             gei('ac-btn').disabled = false;
@@ -72,19 +72,19 @@ function ac(cod) {
             activeFinal(true);
         },
         error: function(err) {
-            let ec, suf = " 잠시 후 다시 시도해주세요";
+            let ec, suf = " 잠시 후에 다시 해보면 어떨까요?";
             switch(err.responseText) {
                 case "trans":
-                    ec = "문제가 발생했습니다."+suf;
+                    ec = "문제가 발생했어요. "+suf;
                     break;
                 case "forb":
-                    ec = "권한이 없습니다.";
+                    ec = "권한이 없어요.";
                     break;
                 case "time":
-                    ec = "제출은 1분마다 할 수 있습니다.";
+                    ec = "제출은 1분마다 할 수 있어요. 빨리 푸는데요?!";
                     break;
                 default:
-                    ec = "문제가 발생했습니다."+suf;
+                    ec = "제출하지 못했어요. "+suf;
             }
             alert(ec);
             gei('ac-btn').disabled = false;

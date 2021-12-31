@@ -75,7 +75,7 @@ public class AuthControl {
         // Login form validator
         if(!IdNameValidator.matcher(loginForm.getId()).matches() || !PasswordValidator.matcher(loginForm.getPassword()).matches()) {
             LOGGER.debug("Invalid login form: id="+loginForm.getId());
-            model.addAttribute("error_text", "ID 또는 암호가 형식에 맞지 않습니다.");
+            model.addAttribute("error_text", "ID 또는 암호가 형식에 맞지 않아요.");
             return "auth/signin";
         }
 
@@ -90,13 +90,13 @@ public class AuthControl {
             }
             if(loginAttemptService.isBlocked(ip)) {
                 LOGGER.debug("IP ban: IP="+ip);
-                model.addAttribute("error_text", "로그인할 수 없습니다. 잠시 후에 다시 시도해주세요.");
+                model.addAttribute("error_text", "로그인할 수 없어요.");
                 return "auth/signin";
             }
             result = userService.checkLogin(loginForm, session);
         } catch (Exception e) {
             LOGGER.error("Login error: "+e.getMessage()+" Form: id="+loginForm.getId()+", gVers="+loginForm.getgVers()+", gToken="+loginForm.getgToken(), e);
-            model.addAttribute("error_text", "문제가 발생했습니다. 잠시 후에 다시 시도해주세요.");
+            model.addAttribute("error_text", "로그인하지 못했어요. 잠시 후에 다시 해주세요.");
             return "auth/signin";
         }
 
@@ -108,13 +108,13 @@ public class AuthControl {
             model.addAllAttributes(Map.of(
                     "capt_site", CAPTCHA_V2_SITE_KEY,
                     "captcha_version", "v2",
-                    "error_text", "CAPTCHA 인증에 실패했습니다. 다시 시도해주세요."
+                    "error_text", "CAPTCHA 인증에 실패했어요. 다시 시도해주세요."
             ));
             publisher.publishEvent(new AuthenticationFailureBadCredentialsEvent(request));
             return "auth/signin";
         }
         else if (result == AuthService.LOGIN_RESULT.BLOCKED) {
-            model.addAttribute("error_text", "이 계정으로는 로그인할 수 없습니다.");
+            model.addAttribute("error_text", "이 계정으로는 로그인할 수 없어요.");
             return "auth/signin";
         }
         else if(result == AuthService.LOGIN_RESULT.BAD_PASSWORD || result == AuthService.LOGIN_RESULT.ID_NOT_FOUND) {
@@ -122,7 +122,7 @@ public class AuthControl {
             publisher.publishEvent(new AuthenticationFailureBadCredentialsEvent(request));
             return "auth/signin";
         }
-        model.addAttribute("error_text", "문제가 발생했습니다. 잠시 후에 다시 시도해주세요.");
+        model.addAttribute("error_text", "문제가 발생해서 로그인하지 못했어요. 잠시 후에 다시 시도해주세요.");
         return "auth/signin";
     }
 
@@ -154,17 +154,17 @@ public class AuthControl {
 
         model.addAttribute("capt_site", CAPTCHA_V2_SITE_KEY);
         if(!IdNameValidator.matcher(form.getId()).matches()) {
-            errTxt.append("ID는 50자 이내의 알파벳이나 숫자여야 합니다.<br/>");
+            errTxt.append("ID는 50자 이내의 알파벳이나 숫자여야 해요.<br/>");
             LOGGER.debug("Signup id regex failure: "+form.getId());
             wasError = true;
         }
         if(!IdNameValidator.matcher(form.getId()).matches()) {
-            errTxt.append("이름은 50자 이내의 알파벳이나 숫자여야 합니다.<br/>");
+            errTxt.append("이름은 50자 이내의 알파벳이나 숫자여야 해요.<br/>");
             LOGGER.debug("Signup name regex failure: "+form.getName());
             wasError = true;
         }
         if(!PasswordValidator.matcher(form.getPassword()).matches()) {
-            errTxt.append("암호는 6글자 이상에 영어, 숫자 한 글자 이상을 가져야 합니다.<br/>");
+            errTxt.append("암호는 6글자 이상에 영어, 숫자 한 글자 이상을 가져야 해요.<br/>");
             LOGGER.debug("Signup password regex failure");
             wasError = true;
         }
@@ -175,19 +175,19 @@ public class AuthControl {
 
         AuthService.SIGNUP_RESULT result = userService.addUser(new User(form.getId(), form.getName(), form.getPassword(), form.getInvite()), form.getgToken());
         if(result == AuthService.SIGNUP_RESULT.CAPTCHA_FAILED) {
-            model.addAttribute("error_text", "CAPTCHA 인증에 실패했습니다. 다시 시도해주세요.");
+            model.addAttribute("error_text", "CAPTCHA 인증에 실패했어요. 다시 시도해주세요.");
             return "auth/signup";
         }
         if(result == AuthService.SIGNUP_RESULT.INVALID_INVITE) {
-            model.addAttribute("error_text", "유효하지 않은 초대코드입니다. 다시 시도해주세요.");
+            model.addAttribute("error_text", "유효하지 않은 초대코드에요.");
             return "auth/signup";
         }
         if(result == AuthService.SIGNUP_RESULT.DUPLICATED_ID) {
-            model.addAttribute("error_text", "이미 사용중인 ID 입니다. 다른 ID를 골라주세요.");
+            model.addAttribute("error_text", "이미 사용중인 ID에요. 조금 더 개성을 담아 ID를 지어주세요!");
             return "auth/signup";
         }
         if(result == AuthService.SIGNUP_RESULT.ERROR) {
-            model.addAttribute("error_text", "계정을 만들지 못했습니다. 잠시 후에 다시 시도해주세요.");
+            model.addAttribute("error_text", "계정을 만들지 못했어요. 잠시 후에 다시 시도해주세요.");
             return "auth/signup";
         }
         return "redirect:/";

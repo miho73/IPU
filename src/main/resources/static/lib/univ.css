@@ -140,7 +140,7 @@ a.footer-content {
 nav#navigation {
     height: 60px;
     background-color: #fff;
-    padding: 0 10px 0 50px;
+    margin: 0 10px 0 20px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -302,6 +302,12 @@ footer {
     justify-content: flex-start;
     align-items: flex-start;
     gap: 6px;
+    opacity: 0;
+    -webkit-transition: opacity .1s ease-out;
+    -moz-transition: opacity .1s ease-out;
+    -ms-transition: opacity .1s ease-out;
+    -o-transition: opacity .1s ease-out;
+    transition: opacity .1s ease-out;
 }
 *.footer-text {
     color: #898989;
@@ -461,7 +467,8 @@ input[type=text].univ-input,input[type=password].univ-input {
 
 textarea.univ-text {
     padding: 7px;
-    min-width: 327px;
+    width: 300px;
+    min-width: 200px;
     min-height: 54px;
     max-width: 700px;
     max-height: 500px;

@@ -91,7 +91,7 @@ p#sol-time::after {
 
 @media (max-width: 900px) {
     h1#prob-title {
-        font-size: 1.4em;
+        font-size: 1.2em;
     }
     div#problem-container {
         width: 90%;

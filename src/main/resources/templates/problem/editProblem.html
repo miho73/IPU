@@ -203,7 +203,7 @@
                 },
                 error: function(err) {
                     if(err.status == 403) {
-                        let x = confirm('문제를 업데이트하려면 로그인해야 합니다.');
+                        let x = confirm('문제를 업데이트하려면 로그인해야 해요.');
                         if(x) {
                             window.location.href = `/login/?ret=problem/[[${prob_code}]]/edit`;
                         }
@@ -226,9 +226,9 @@
         window.onbeforeunload = function (e) {
             e = e || window.event;
             if (e) {
-                e.returnValue = '편집사항이 저장되지 않습니다. 정말 닫을까요?';
+                e.returnValue = '편집사항이 저장되지 않아요. 정말 닫을까요?';
             }
-            return '편집사항이 저장되지 않습니다. 정말 닫을까요?';
+            return '편집사항이 저장되지 않아요. 정말 닫을까요?';
         };
     </script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML'></script>

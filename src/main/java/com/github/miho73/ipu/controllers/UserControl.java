@@ -139,20 +139,25 @@ public class UserControl {
         if(!PasswordValidator.matcher(lPwd).matches()) {
             LOGGER.debug("Cannot update profile: legacy password not in format");
             response.setStatus(400);
-            return "form";
+            return "form-lpwd";
         }
         if(pwdC && !PasswordValidator.matcher(nPwd).matches()) {
             LOGGER.debug("Cannot update profile: new password not in format");
             response.setStatus(400);
-            return "form";
+            return "form-npwd";
         }
 
         try {
             if(authService.auth(id, lPwd)) {
-                if(bio.length() > 500 || name.length() > 50 || name.equals("")) {
-                    LOGGER.debug("Cannot update profile: profile not in format");
+                if(bio.length() > 500) {
+                    LOGGER.debug("Cannot update profile: profile not in format(bio)");
                     response.setStatus(400);
-                    return "form";
+                    return "form-bio";
+                }
+                else if(name.length() > 50 || name.equals("")) {
+                    LOGGER.debug("Cannot update profile: profile not in format(name)");
+                    response.setStatus(400);
+                    return "form-name";
                 }
                 userService.updateProfile(name, bio, uCode);
                 sessionService.setName(session, name);
@@ -207,7 +212,7 @@ public class UserControl {
                 model.addAllAttributes(Map.of(
                         "username", sessionService.getName(session),
                         "userid", sessionService.getId(session),
-                        "fail", "계정을 삭제하지 못했습니다. 잠시 후에 다시 시도해주세요."
+                        "fail", "계정을 삭제하지 못했어요. 잠시 후에 다시 시도해주세요."
                 ));
                 return "profile/goodbye";
             }
@@ -217,7 +222,7 @@ public class UserControl {
             model.addAllAttributes(Map.of(
                     "username", sessionService.getName(session),
                     "userid", sessionService.getId(session),
-                    "fail", "올바르지 않은 암호입니다"
+                    "fail", "잘못된 암호에요."
             ));
             return "profile/goodbye";
         }

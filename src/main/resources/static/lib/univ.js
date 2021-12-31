@@ -29,6 +29,17 @@ function hamburger() {
     isBurgerOpen = !isBurgerOpen;
 }
 
+window.addEventListener('load', ()=>{
+    if ($(document.body).height() < $(window).height()) {
+        gei('footer').setAttribute('style', 'position: fixed!important; bottom: 0px;');
+    }
+    gei('footer').style.opacity = 1;
+});
+
+if ($(document.body).height() < $(window).height()) {
+    $('#footer').attr('style', 'position: fixed!important; bottom: 0px;');
+}
+
 function gei(id) {
     return document.getElementById(id);
 }

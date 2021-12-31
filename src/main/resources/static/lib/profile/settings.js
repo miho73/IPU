@@ -57,16 +57,22 @@ function upload() {
             gei('errdis').style.display = "block";
             switch(err.responseText) {
                 case "pwd":
-                    gei('errdis').innerText = "인증 실패";
+                    gei('errdis').innerText = "잘못된 암호에요.";
                     break;
-                case "form":
-                    gei('errdis').innerText = "알맞지 않은 형식입니다.";
+                case "form-lpwd":
+                    gei('errdis').innerText = "잘못된 암호에요.";
                     break;
-                case "fpwd":
-                    gei('errdis').innerText = "프로필은 업데이트되었지만 암호는 바꾸지 못했습니다.";
+                case "form-npwd":
+                    gei('errdis').innerText = "암호는 6글자 이상에 영어, 숫자 한 글자 이상을 가져야 해요.";
+                    break;
+                case "form-bio":
+                    gei('errdis').innerText = "상태메시지는 500자 이내여야 해요.";
+                    break;
+                case "form-name":
+                    gei('errdis').innerText = "이름은 50자 이내의 알파벳이나 숫자여야 해요.";
                     break;
                 case "error":
-                    gei('errdis').innerText = "프로필을 업데이트하지 못했습니다. 잠시 후에 다시 시도해주세요.";
+                    gei('errdis').innerText = "프로필을 업데이트하지 못했어요. 잠시 후에 다시 시도해주세요.";
             }
             window.location.hash = "errdis";
         }
