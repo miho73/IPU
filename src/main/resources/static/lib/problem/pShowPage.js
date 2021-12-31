@@ -110,3 +110,21 @@ function activeFinal(cor) {
     }, 200);
     gei('sol-time').innerText = timex;
 }
+
+function changeStar(code) {
+    $.ajax({
+        method: 'PATCH',
+        url: '/problem/api/change-star',
+        data: 'code='+code,
+        dataType: 'json',
+        success: function(result) {
+            if(result.result.stared == 1) {
+                gei('star-icon').classList.add("stared")
+            }
+            if(result.result.stared == 0) {
+                gei('star-icon').classList.remove("stared")
+            }
+        },
+        error: function() {}
+    });
+}
