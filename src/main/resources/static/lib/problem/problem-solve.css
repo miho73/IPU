@@ -38,12 +38,12 @@ div.problem-star {
     height: 24px;
 }
 svg.star-icon {
-    width: 22px;
-    height: 22px;
-    margin: ;
+    width: 23px;
+    height: 23px;
+    margin: 2px;
 }
 svg.stared {
-
+    fill: #ffcd3c;
 }
 div#after-sol {
     transform: scaleY(0);
