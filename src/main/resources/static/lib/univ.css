@@ -363,6 +363,9 @@ span.tag {
     background-color: #dd4124;
     color: #fff;
 }
+.tag-star {
+    background-color: #444;    
+}
 
 div.non-container,div.container {
     width: 70%;

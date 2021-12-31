@@ -162,7 +162,7 @@ public class Renderer {
                         // hide 함수는 바로 적용
                         case "hide" -> {
                             String[] argsh = arg.split(",");
-                            line = "<button class=\"ac-hidden\" onclick=\"open(" + hide_code + ")\" id=\"ac-open-" + hide_code + "\">" + argsh[0] + "</button><div id=\"ac-hidden-" + hide_code + "\" class=\"ac-hidden-content\">" + argsh[1] + "</div>";
+                            line = "<button class=\"ac-hidden\" onclick=\"openHidden(" + hide_code + ")\" id=\"ac-open-" + hide_code + "\">" + argsh[0] + "</button><div id=\"ac-hidden-" + hide_code + "\" class=\"ac-hidden-content\">" + argsh[1] + "</div>";
                             hide_code++;
                         }
                         default -> line = "<p class=\"error\">IPUAC 오류: 함수 '"+matcher.group(1).toLowerCase()+"을(를) 이해할 수 없습니다.</p>";

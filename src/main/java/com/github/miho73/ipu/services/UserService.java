@@ -14,8 +14,11 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
+import java.util.stream.Stream;
 
 @Service("UserService")
 public class UserService {
@@ -144,6 +147,67 @@ public class UserService {
             solutionRepository.close(solvesConnection);
             LOGGER.error("Cannot delete user", e);
             throw  e;
+        }
+    }
+
+    public boolean isUserStaredProblem(int uCode, int pCode) throws SQLException {
+        Connection userConnection = userRepository.openConnection();
+        try {
+            LOGGER.debug("Query star of user "+uCode+" for "+pCode);
+            boolean stared = userRepository.isUserStaredProblem(uCode, pCode, userConnection);
+            userRepository.close(userConnection);
+            return stared;
+        }
+        catch (Exception e) {
+            LOGGER.error("Cannot check if user user stared: ", e);
+            userRepository.close(userConnection);
+            return false;
+        }
+    }
+
+    public int changeUserStar(int uCode, int pCode) throws SQLException {
+        int ret;
+        Connection userConnection = userRepository.openConnectionForEdit();
+        try {
+            LOGGER.debug("Change star of user "+uCode+" for "+pCode);
+            Vector<String> stared = getUserStaredList(uCode);
+            if(userRepository.isUserStaredProblem(uCode, pCode, userConnection)) {
+                stared.remove(Integer.toString(pCode));
+                ret = 0;
+            }
+            else {
+                stared.add(Integer.toString(pCode));
+                ret = 1;
+            }
+            userRepository.updateStaredProblem(uCode, ","+String.join(",", stared)+",", userConnection);
+            userRepository.commitAndClose(userConnection);
+            return ret;
+        }
+        catch (Exception e) {
+            LOGGER.error("Cannot check if user user stared: ", e);
+            userRepository.rollbackAndClose(userConnection);
+            throw e;
+        }
+    }
+
+    public Vector<String> getUserStaredList(int uCode) throws SQLException {
+        Connection userConnection = userRepository.openConnection();
+        try {
+            LOGGER.debug("Get user stared list of user "+uCode);
+            String staredStr = userRepository.getUserStaredProblem(uCode, userConnection);
+            String[] staredStrLst = staredStr.split(",");
+            userRepository.close(userConnection);
+            Vector<String> ret = new Vector<>();
+            if(staredStrLst.length != 0) {
+                Stream<String> arr = Arrays.stream(staredStrLst, 1, staredStrLst.length);
+                arr.forEach(ret::add);
+            }
+            return ret;
+        }
+        catch (Exception e) {
+            LOGGER.error("Cannot check if user user stared: ", e);
+            userRepository.close(userConnection);
+            return new Vector<>();
         }
     }
 }

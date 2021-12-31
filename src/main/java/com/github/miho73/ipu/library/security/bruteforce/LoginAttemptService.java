@@ -10,17 +10,17 @@ import org.springframework.stereotype.Service;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-@Service
+@Service("LoginAttemptService")
 public class LoginAttemptService {
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
-    private final int MAX_ATTEMPT = 5;
-    private LoadingCache<String, Integer> attemptsCache;
+    private final LoadingCache<String, Integer> attemptsCache;
 
     public LoginAttemptService() {
         super();
         attemptsCache = CacheBuilder.newBuilder().
-                expireAfterWrite(3, TimeUnit.HOURS).build(new CacheLoader<String, Integer>() {
+                expireAfterWrite(3, TimeUnit.HOURS).build(new CacheLoader<>() {
+                    @Override
                     public Integer load(String key) {
                         return 0;
                     }
@@ -44,10 +44,10 @@ public class LoginAttemptService {
 
     public boolean isBlocked(String key) {
         try {
+            int MAX_ATTEMPT = 5;
             return attemptsCache.get(key) >= MAX_ATTEMPT;
         } catch (ExecutionException e) {
             return false;
         }
     }
 }
-

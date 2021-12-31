@@ -106,7 +106,7 @@ public class ProblemRepository extends com.github.miho73.ipu.repositories.Reposi
     }
 
     public Problem getProblem(int code, Connection conn) throws SQLException {
-        String sql = "SELECT problem_code, problem_name, problem_content, problem_solution, active FROM prob WHERE problem_code=?;";
+        String sql = "SELECT problem_code, problem_name, problem_content, problem_solution, problem_difficulty, tags, active FROM prob WHERE problem_code=?;";
         PreparedStatement psmt = conn.prepareStatement(sql);
         psmt.setInt(1, code);
         ResultSet rs = psmt.executeQuery();
@@ -118,6 +118,8 @@ public class ProblemRepository extends com.github.miho73.ipu.repositories.Reposi
         problem.setName(rs.getString("problem_name"));
         problem.setContent(rs.getString("problem_content"));
         problem.setSolution(rs.getString("problem_solution"));
+        problem.setDifficulty(rs.getString("problem_difficulty"));
+        problem.setTags(rs.getString("tags"));
         problem.setActive(rs.getBoolean("active"));
         return problem;
     }

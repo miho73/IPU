@@ -2,11 +2,13 @@ package com.github.miho73.ipu.controllers;
 
 import com.github.miho73.ipu.domain.Problem;
 import com.github.miho73.ipu.library.ipuac.Renderer;
+import com.github.miho73.ipu.library.rest.response.RestfulReponse;
 import com.github.miho73.ipu.library.security.SHA;
 import com.github.miho73.ipu.repositories.UserRepository;
 import com.github.miho73.ipu.services.ProblemService;
 import com.github.miho73.ipu.services.ResourceService;
 import com.github.miho73.ipu.services.SessionService;
+import com.github.miho73.ipu.services.UserService;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -36,6 +38,7 @@ public class ProblemControl {
     private final ProblemService problemService;
     private final SessionService sessionService;
     private final UserRepository userRepository;
+    private final UserService userService;
     private final ResourceService resourceService;
     private final Renderer renderer = new Renderer();
     private final SHA sha = new SHA();
@@ -51,11 +54,12 @@ public class ProblemControl {
     }
 
     @Autowired
-    public ProblemControl(ProblemService problemService, SessionService sessionService, UserRepository userRepository, ResourceService resourceService) {
+    public ProblemControl(ProblemService problemService, SessionService sessionService, UserRepository userRepository, UserService userService, ResourceService resourceService) {
         this.problemService = problemService;
         this.sessionService = sessionService;
         this.userRepository = userRepository;
         this.resourceService = resourceService;
+        this.userService = userService;
     }
 
     @GetMapping("")
@@ -69,7 +73,8 @@ public class ProblemControl {
             return null;
         }
         JSONArray list = problemService.getProblemList(frm, PROBLEM_PER_PAGE);
-        JSONArray processedList = problemService.processTagsToHtml(list);
+        JSONArray processedList = problemService.processTagsToHtml(list, session);
+
         model.addAttribute("pList", processedList.toList());
         model.addAttribute("nothing", processedList.length()==0);
         model.addAttribute("hasPrev", page != 0);
@@ -103,7 +108,8 @@ public class ProblemControl {
         int pg = Integer.parseInt(page);
         model.addAttribute("page", pg);
         JSONArray sResult = problemService.searchProblem(pg, contains, category, difficulty);
-        JSONArray processedResult = problemService.processTagsToHtml(sResult);
+        JSONArray processedResult = problemService.processTagsToHtml(sResult, session);
+
         model.addAttribute("pList", processedResult.toList());
         model.addAttribute("query", contains);
         model.addAttribute("nothing", processedResult.length()==0);
@@ -127,12 +133,15 @@ public class ProblemControl {
                 return null;
             }
             sessionService.loadSessionToModel(session, model);
+            boolean isStared = (sessionService.checkLogin(session) && userService.isUserStaredProblem(sessionService.getCode(session), Integer.parseInt(code)));
             model.addAllAttributes(Map.of(
                     "pCode", problem.getCode(),
                     "pName", problem.getName(),
                     "active", problem.isActive(),
                     "problem_ipuac", renderer.IPUACtoHTML(problem.getContent()),
-                    "solution_ipuac", renderer.IPUACtoHTML(problem.getSolution())
+                    "solution_ipuac", renderer.IPUACtoHTML(problem.getSolution()),
+                    "tags", problemService.processTagsToHtml(problem),
+                    "stared", isStared
             ));
             return "problem/problemPage";
         }
@@ -293,6 +302,30 @@ public class ProblemControl {
         }
         finally {
             userRepository.close(connection);
+        }
+    }
+
+    @PatchMapping("/api/change-star")
+    @ResponseBody
+    public String updateStar(HttpSession session, @RequestParam("code") String code, HttpServletResponse response) {
+        response.setContentType("application/json");
+        LOGGER.debug("Change star of user "+sessionService.getId(session)+". problem of "+code);
+        if(sessionService.hasPrivilege(SessionService.PRIVILEGES.USER, session)) {
+            response.setStatus(403);
+            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.FORBIDDEN);
+        }
+        try {
+            int result = userService.changeUserStar(sessionService.getCode(session), Integer.parseInt(code));
+            JSONObject res = new JSONObject();
+            res.put("stared", result);
+            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.OK, res);
+        }
+        catch (NumberFormatException e) {
+            response.setStatus(400);
+            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.BAD_REQUEST);
+        } catch (SQLException e) {
+            response.setStatus(500);
+            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR);
         }
     }
 }

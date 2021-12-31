@@ -1,22 +1,13 @@
 package com.github.miho73.ipu.repositories;
 
 import com.github.miho73.ipu.domain.User;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.annotation.PropertySources;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import java.sql.*;
-import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.TimeZone;
 import java.util.Vector;
 
 @Repository("UserRepository")
@@ -109,7 +100,7 @@ public class UserRepository extends com.github.miho73.ipu.repositories.Repositor
 
     public void addUser(User user, Connection conn) throws SQLException {
         String sql = "INSERT INTO iden" +
-                "(user_id, user_name, user_password, user_salt, invite_code, bio, privilege, joined, experience) VALUES " +
+                "(user_id, user_name, user_password, user_salt, invite_code, bio, privilege, joined, experience, stared_problem) VALUES " +
                 "(?, ?, ?, ?, ?, '', 'u', ? , 0);";
 
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -211,6 +202,35 @@ public class UserRepository extends com.github.miho73.ipu.repositories.Repositor
 
         PreparedStatement psmt = conn.prepareStatement(sql);
         psmt.setInt(1, uCode);
+        psmt.execute();
+    }
+
+    public boolean isUserStaredProblem(int uCode, int pCode, Connection conn) throws SQLException {
+        String sql = "SELECT stared_problem FROM iden WHERE stared_problem LIKE ? AND user_code=?;";
+
+        PreparedStatement psmt = conn.prepareStatement(sql);
+        psmt.setString(1, "%,"+pCode+",%");
+        psmt.setInt(2, uCode);
+        ResultSet rs = psmt.executeQuery();
+
+        return rs.next();
+    }
+    public String getUserStaredProblem(int uCode, Connection conn) throws SQLException {
+        String sql = "SELECT stared_problem FROM iden WHERE user_code=?;";
+
+        PreparedStatement psmt = conn.prepareStatement(sql);
+        psmt.setInt(1, uCode);
+        ResultSet rs = psmt.executeQuery();
+        if(!rs.next()) throw null;
+        return rs.getString("stared_problem");
+    }
+
+    public void updateStaredProblem(int uCode, String newList, Connection conn) throws SQLException {
+        String sql = "UPDATE iden SET stared_problem=? WHERE user_code=?;";
+
+        PreparedStatement psmt = conn.prepareStatement(sql);
+        psmt.setString(1, newList);
+        psmt.setInt(2, uCode);
         psmt.execute();
     }
 }

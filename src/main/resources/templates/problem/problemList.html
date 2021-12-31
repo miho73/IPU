@@ -50,7 +50,7 @@
                 </tbody>
             </table>
         </div>
-        <p id="not" th:if="${nothing}">이 페이지는 비어있어요.</p>
+        <p id="not" th:if="${nothing}">페이지가 비어있어요.</p>
         <div id="nav">
             <a id="prev" class="previous round" th:if="${hasPrev}" th:href="${'/problem/?page='+(page-1)}">이전</a>
             <span id="pnsep" th:if="${hasPrev && hasNext}">······</span>

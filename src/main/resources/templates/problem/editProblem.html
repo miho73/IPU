@@ -12,11 +12,8 @@
         <link rel="stylesheet" type="text/css" href="/lib/problem/nproblem.css">
         <link rel="stylesheet" type="text/css" href="/lib/problem/problem-solve.css">
         <link rel="stylesheet" type="text/css" href="/lib/ipuac/ipuac.css">
-        <style>
-            img {
-                width: 100% !important;
-            }
-        </style>
+        <script src="/lib/ipuac/ipuac.js"></script>
+        <script src="/lib/problem/mkProblem.js"></script>
     </head>
     <body class="no-mathjax" onload="loaded()">
         <th:block th:replace="fragments/header.html :: navigation"></th:block>
@@ -110,7 +107,6 @@
         </div>
         <th:block th:replace="fragments/footer.html :: footer"></th:block>
     </body>
-    <script src="/lib/problem/mkProblem.js"></script>
     <script th:inline="javascript">
         function loaded() {
             $.ajax({

@@ -1,6 +1,7 @@
-h1#prob-title {
+h1.prob-title {
     text-align: left;
     font-size: 2em;
+    margin: 27px 0 10px 0;
 }
 p#problem-cannot-solve {
     color: #f22;
@@ -13,6 +14,36 @@ div#problem-container {
     width: 50%;
     margin: 0 25%;
     margin-bottom: 5vh;
+}
+div.problem-info {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+div.problem-tags {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 5px;
+    width: fit-content;
+}
+div.problem-star {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 24px;
+}
+svg.star-icon {
+    width: 22px;
+    height: 22px;
+    margin: ;
+}
+svg.stared {
+
 }
 div#after-sol {
     transform: scaleY(0);
@@ -90,8 +121,8 @@ p#sol-time::after {
 }
 
 @media (max-width: 900px) {
-    h1#prob-title {
-        font-size: 1.2em;
+    h1.prob-title {
+        font-size: 1.5em;
     }
     div#problem-container {
         width: 90%;
@@ -102,9 +133,6 @@ p#sol-time::after {
     }
     span.prob-title {
         font-size: 1.2em;
-    }
-    a#edit-href-title {
-        font-size: 0.8em;
     }
     div.prob-appl>p,div.prob-appl>a#show-hint,div.prob-appl>li,div.prob-appl>blockquote,div.prob-appl>ol>li,div.prob-appl>ul>li {
         font-size: 0.95em;

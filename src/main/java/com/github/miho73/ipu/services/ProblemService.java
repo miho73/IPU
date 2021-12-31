@@ -1,9 +1,9 @@
 package com.github.miho73.ipu.services;
 
+import com.github.miho73.ipu.domain.Problem;
 import com.github.miho73.ipu.library.Converters;
 import com.github.miho73.ipu.library.ExperienceSystem;
 import com.github.miho73.ipu.repositories.ProblemRepository;
-import com.github.miho73.ipu.domain.Problem;
 import com.github.miho73.ipu.repositories.SolutionRepository;
 import com.github.miho73.ipu.repositories.UserRepository;
 import org.json.JSONArray;
@@ -26,6 +26,7 @@ public class ProblemService {
     private final ProblemRepository problemRepository;
     private final SolutionRepository solutionRepository;
     private final UserRepository userRepository;
+    private final UserService userService;
     private final SessionService sessionService;
     private final ExperienceSystem experienceSystem;
 
@@ -33,15 +34,14 @@ public class ProblemService {
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
-    private final int PROBLEM_PER_PAGE = 30;
-
     @Autowired
-    public ProblemService(ProblemRepository problemRepository, SessionService sessionService, SolutionRepository solutionRepository, UserRepository userRepository, ExperienceSystem experienceSystem) {
+    public ProblemService(ProblemRepository problemRepository, SessionService sessionService, SolutionRepository solutionRepository, UserRepository userRepository, UserService userService, ExperienceSystem experienceSystem) {
         this.problemRepository = problemRepository;
         this.sessionService = sessionService;
         this.solutionRepository = solutionRepository;
         this.userRepository = userRepository;
         this.experienceSystem = experienceSystem;
+        this.userService = userService;
     }
 
     public JSONArray getProblemList(int from, int length) throws SQLException {
@@ -148,7 +148,8 @@ public class ProblemService {
     }
 
     public JSONArray searchProblem(int page, String has, String cate, String diff) throws SQLException {
-        int frm = page*PROBLEM_PER_PAGE+1;
+        int PROBLEM_PER_PAGE = 30;
+        int frm = page* PROBLEM_PER_PAGE +1;
 
         Vector<String> wheres = new Vector<>();
         Map<String, String> hasAndValues = new Hashtable<>();
@@ -189,8 +190,34 @@ public class ProblemService {
         return root;
     }
 
-    public JSONArray processTagsToHtml(JSONArray sResult) {
+    public String processTagsToHtml(Problem problem) {
+        JSONArray tags = new JSONArray(problem.getTags());
+        StringBuilder html = new StringBuilder();
+        tags.forEach((tagx)-> {
+            JSONObject tag = (JSONObject) tagx;
+            html.append("<span class=\"tag tag-custom\" style=\"background-color: #")
+                    .append(tag.get("back"))
+                    .append("; color: #")
+                    .append(tag.get("color"))
+                    .append(";\">")
+                    .append(tag.get("content"))
+                    .append("</span>");
+        });
+        html.append("<span class=\"tag tag-diff\" style=\"background-color: ")
+                .append(converters.convertDiffColor(problem.getDifficultyCode()))
+                .append(";\">")
+                .append(converters.convertDiff(problem.getDifficultyCode()))
+                .append("</span>");
+        return html.toString();
+    }
+
+    public JSONArray processTagsToHtml(JSONArray sResult, HttpSession user) throws SQLException {
         JSONArray processedResult = new JSONArray();
+        Vector<String> starList = new Vector<>();
+        if(user != null && sessionService.checkLogin(user)) {
+            starList = userService.getUserStaredList(sessionService.getCode(user));
+        }
+        Vector<String> finalStarList = starList;
         sResult.forEach(result->{
             JSONObject workingProblem = ((JSONObject)result);
             JSONArray tags = (JSONArray)workingProblem.get("tags");
@@ -204,11 +231,15 @@ public class ProblemService {
                         .append(";\">")
                         .append(converters.convertDiff(tag.getString("content")))
                         .append("</span>");
-                } else if ("cate".equals(key)) {
+                }
+                else if ("cate".equals(key)) {
+                    /*
                     html.append("<span class=\"tag tag-cate\">")
                         .append(converters.convertSubj(tag.getString("content")))
                         .append("</span>");
-                } else {
+                     */
+                }
+                else {
                     html.append("<span class=\"tag tag-custom\" style=\"background-color: #")
                         .append(tag.get("back"))
                         .append("; color: #")
@@ -220,6 +251,9 @@ public class ProblemService {
             });
             if(!workingProblem.getBoolean("active")) {
                 html.append("<span class=\"tag tag-cannot-solve\">제출 불가</span>");
+            }
+            if(finalStarList.contains(Integer.toString(workingProblem.getInt("code")))) {
+                html.append("<span class=\"tag tag-star\">⭐</span>");
             }
             workingProblem.put("tags", html.toString());
             processedResult.put(workingProblem);
