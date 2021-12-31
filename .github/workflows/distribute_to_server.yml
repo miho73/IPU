@@ -35,3 +35,12 @@ jobs:
           protocol: ftps
           local-dir: ./to_be_sync/
           server-dir: ./ipu/
+      - name: action-slack
+        uses: 8398a7/action-slack@v3.12.0
+        with:
+          status: ${{job.status}}
+          author_name: <슬랙 챗봇 이름>
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # required
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
