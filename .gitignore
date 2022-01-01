@@ -6,6 +6,7 @@
 !**/src/main/**/build/
 !**/src/test/**/build/
 keystore.p12
+Dockerfile
 
 ### STS ###
 .apt_generated
