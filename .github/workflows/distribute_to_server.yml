@@ -35,3 +35,20 @@ jobs:
           protocol: ftps
           local-dir: ./to_be_sync/
           server-dir: ./ipu/
+      - name: action-slack
+        uses: 8398a7/action-slack@v3.12.0
+        with:
+          status: custom
+          fields: workflow,job,commit,repo,ref,author,took
+          custom_payload: |
+            {
+              attachments: [{
+                color: '${{ job.status }}' === 'success' ? 'good' : '${{ job.status }}' === 'failure' ? 'danger' : 'warning',
+                text: `커밋 ${process.env.AS_COMMIT}에 대한 배포작업이 끝났어요.\n결과: ${{ job.status }} in ${process.env.AS_TOOK}\n`,
+              }]
+            }
+          author_name: "개발요정"
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: always()
+
