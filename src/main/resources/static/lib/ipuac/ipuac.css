@@ -4,6 +4,7 @@ p.ipuac {
     font-size: 1em;
     color: #444;
     margin: 0 0 7px;
+    overflow-x: auto;
 }
 
 p.error {

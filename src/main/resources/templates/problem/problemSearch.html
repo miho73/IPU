@@ -31,7 +31,7 @@
                 </button>
             </form>
         </div>
-        <div class="container">
+        <div class="container" th:unless="${nothing}">
             <table class="problem-lst-table" id="prob-list-table">
                 <thead>
                     <th style="width: 9%">문제</th>
@@ -51,7 +51,7 @@
                 </tbody>
             </table>
         </div>
-        <p id="not" th:if="${nothing}">검색결과가 없네요.</p>
+        <p id="not" th:if="${nothing}">검색결과가 없어요.</p>
         <th:block th:replace="fragments/footer.html :: footer"></th:block>
     </body>
 </html>

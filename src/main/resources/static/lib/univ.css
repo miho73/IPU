@@ -209,9 +209,9 @@ div#ham-hrefs-list {
     align-items: flex-start;
 }
 a.ham-href {
-    margin-left: 5vw;
+    margin-left: 8%;
     padding: 7px;
-    width: 90vw;
+    width: 85%;
 }
 div.bun {
     display: flex;
