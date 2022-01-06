@@ -17,29 +17,6 @@ public class User {
 
     public User() {}
 
-    // General purpose
-    public User(int code, String id, String name, String privilege, String last_solve) {
-        this.code = code;
-        this.id = id;
-        this.name = name;
-        this.privilege = privilege;
-    }
-
-    // Authentication purpose
-    public User(int code, String id, String pwd, String salt) {
-        this.code = code;
-        this.id = id;
-        this.pwd = pwd;
-        this.salt = salt;
-    }
-
-    // Session purpose
-    public User(String id, String name, String privilege) {
-        this.id = id;
-        this.name = name;
-        this.privilege = privilege;
-    }
-
     public User(String id, String name, String pwd, String inviteCode) {
         this.id = id;
         this.name = name;

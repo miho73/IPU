@@ -1,6 +1,8 @@
 package com.github.miho73.ipu.controllers;
 
 import com.github.miho73.ipu.domain.Problem;
+import com.github.miho73.ipu.exceptions.InvalidInputException;
+import com.github.miho73.ipu.library.rest.response.RestfulReponse;
 import com.github.miho73.ipu.services.*;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -20,22 +22,13 @@ import java.util.List;
 @Controller("RootControl")
 @RequestMapping("/root")
 public class RootControl {
-    private final InviteService inviteService;
-    private final SessionService sessionService;
-    private final UserService userService;
-    private final ProblemService problemService;
-    private final ResourceService resourceService;
+    @Autowired private InviteService inviteService;
+    @Autowired private SessionService sessionService;
+    @Autowired private UserService userService;
+    @Autowired private ProblemService problemService;
+    @Autowired private ResourceService resourceService;
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
-
-    @Autowired
-    public RootControl(InviteService inviteService, SessionService sessionService, UserService userService, ProblemService problemService, ResourceService resourceService) {
-        this.inviteService = inviteService;
-        this.sessionService = sessionService;
-        this.userService = userService;
-        this.problemService = problemService;
-        this.resourceService = resourceService;
-    }
 
     @GetMapping("")
     public String manage(Model model, HttpSession session, HttpServletResponse response) throws IOException {
@@ -231,73 +224,91 @@ public class RootControl {
         return json.toString();
     }
 
-    @PostMapping("/api/search-resource")
+    @GetMapping("/api/resources/get/search")
     @ResponseBody
-    public String searchResource(HttpSession session, HttpServletResponse response, @RequestParam("code") String code) throws IOException, SQLException {
+    public String searchResource(HttpSession session, HttpServletResponse response, @RequestParam("code") String code) throws IOException {
         if(sessionService.hasPrivilege(SessionService.PRIVILEGES.PROBLEM_MAKE, session)) {
-            response.sendError(404);
-            return null;
+            response.setStatus(404);
+            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.FORBIDDEN);
         }
-        if(code.equals("LIST")) {
-            LOGGER.debug("List all resources");
-            return resourceService.getAllResources();
-        }
-        else if(code.startsWith("code=")) {
-            boolean exists = resourceService.isResourceExists(code.substring(5));
-            LOGGER.debug("Resource code of "+code.substring(5)+" existence: "+exists);
-            if(exists) {
-                return resourceService.queryResource(code.substring(5));
+        try {
+            LOGGER.debug("Search resource. QUERY="+code);
+            if(code.equals("LIST")) {
+                LOGGER.debug("List all resources");
+                return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.OK, resourceService.getAllResources());
+            }
+            else if(code.startsWith("code=")) {
+                return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.OK, resourceService.queryResource(code.substring(5)));
+            }
+            else if(code.startsWith("name=")) {
+                return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.OK, resourceService.queryResourceByName(code.substring(5)));
             }
             else {
-                response.sendError(404);
-                return null;
+                LOGGER.error("Resource search query not in format");
+                response.setStatus(400);
+                return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.BAD_REQUEST, "cannot parse query");
             }
         }
-        else if(code.startsWith("name=")) {
-            String result = resourceService.queryResourceByName(code.substring(5));
-            if(result.equals("")) {
-                LOGGER.error("Resource name of "+code.substring(5)+" was not found");
-                response.sendError(400);
-                return null;
-            }
-            else return result;
-        }
-        else {
-            LOGGER.error("Resource search query not in format");
-            response.sendError(400);
-            return null;
+        catch (SQLException e) {
+            response.sendError(500);
+            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR, "database error");
         }
     }
 
-    @PostMapping("/api/change-name")
+    @PatchMapping("/api/resources/name/update")
     @ResponseBody
-    public String changeName(HttpSession session, HttpServletResponse response, @RequestParam("code") String code, @RequestParam String name) throws IOException, SQLException {
+    public String changeName(HttpSession session, HttpServletResponse response, @RequestParam("code") String code, @RequestParam String name) throws IOException {
         if(sessionService.hasPrivilege(SessionService.PRIVILEGES.PROBLEM_MAKE, session)) {
-            response.sendError(404);
-            return null;
+            response.setStatus(403);
+            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.FORBIDDEN);
         }
-        return resourceService.changeName(code, name)?"Successfully changed.":"Cannot change name";
-    }
-
-    @PostMapping("/api/problem-using-resource")
-    @ResponseBody
-    public String searchProblemUsingResource(HttpSession session, HttpServletResponse response, @RequestParam("code") String code) throws SQLException, IOException {
-        if(sessionService.hasPrivilege(SessionService.PRIVILEGES.PROBLEM_MAKE, session)) {
-            response.sendError(404);
-            return null;
+        try {
+            resourceService.changeName(code, name);
+            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.OK);
         }
-        String res = resourceService.searchProblemUsingResource(code);
-        if(res.equals("nf")) {
+        catch (SQLException e) {
+            response.setStatus(500);
+            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR, "database error");
+        }
+        catch (InvalidInputException e) {
             response.setStatus(400);
-            return "Resource not found";
+            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR, e.getMessage());
         }
-        else return res;
     }
 
-    @PostMapping("/api/delete-resource")
+    @GetMapping("/api/problem/search/resources")
     @ResponseBody
-    public String deleteResource(HttpSession session, HttpServletResponse response, @RequestParam("code") String code) throws SQLException {
-        resourceService.deleteResource(code);
-        return "ok";
+    public String searchProblemUsingResource(HttpSession session, HttpServletResponse response, @RequestParam("code") String code) throws IOException {
+        if(sessionService.hasPrivilege(SessionService.PRIVILEGES.PROBLEM_MAKE, session)) {
+            response.setStatus(403);
+            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.FORBIDDEN);
+        }
+        try {
+            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.OK, resourceService.searchProblemUsingResource(code));
+        } catch (SQLException e) {
+            response.setStatus(500);
+            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR, "database error");
+        }
+    }
+
+    @DeleteMapping("/api/resources/delete")
+    @ResponseBody
+    public String deleteResource(HttpSession session, HttpServletResponse response, @RequestParam("code") String code) {
+        if(sessionService.hasPrivilege(SessionService.PRIVILEGES.PROBLEM_MAKE, session)) {
+            response.setStatus(403);
+            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.FORBIDDEN);
+        }
+        try {
+            if(!resourceService.isResourceExists(code)) {
+                response.setStatus(400);
+                return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.BAD_REQUEST, "resource not found");
+            }
+            resourceService.deleteResource(code);
+            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.OK);
+        }
+        catch (SQLException e) {
+            response.setStatus(500);
+            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR, "database error");
+        }
     }
 }

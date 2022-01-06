@@ -16,14 +16,8 @@ import java.io.IOException;
 @Controller("DocsControl")
 @RequestMapping("/docs")
 public class DocsControl {
-    private final SessionService sessionService;
-    private final DocsService docsService;
-
-    @Autowired
-    public DocsControl(SessionService sessionService, DocsService docsService) {
-        this.sessionService = sessionService;
-        this.docsService = docsService;
-    }
+    @Autowired private SessionService sessionService;
+    @Autowired private DocsService docsService;
 
     @GetMapping("")
     public String docsList(Model model, HttpSession session) {

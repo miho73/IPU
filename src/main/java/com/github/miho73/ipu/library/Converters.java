@@ -23,7 +23,6 @@ public class Converters {
 
     public String convertDiffColor(String code) {
         return switch (code) {
-            case "unse" -> "#000";
             case "unra" -> "#555";
             case "broz" -> "#987b43";
             case "silv" -> "#C0C0C0";
@@ -31,6 +30,7 @@ public class Converters {
             case "sapp" -> "#0F52BA";
             case "ruby" -> "#e0115f";
             case "diam" -> "#7BC3D4";
+            case "redd" -> "#5e5e5e; background-image: linear-gradient(to left, violet, indigo, blue, green, yellow, orange, red); -webkit-background-clip: text;";
             default -> "#000";
         };
     }

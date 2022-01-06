@@ -74,7 +74,7 @@ IPU uses postgresql as DBMS. Here's the structure and user spec for IPU.
 > Table name: resources
 > ```sql
 > CREATE TABLE IF NOT EXISTS resources(
-> resource_code CHAR(22) PRIMARY KEY,
+> resource_code CHAR(24) PRIMARY KEY,
 > resource BYTEA NOT NULL,
 > registered TIMESTAMP WITH TIME ZONE NOT NULL,
 > registered_by VARCHAR(50) NOT NULL,

@@ -424,6 +424,9 @@ code.inline {
     box-shadow: 0 0 5px #0f0;
 }
 
+button {
+    cursor: pointer;
+}
 button.univ-btn,a.univ-btn {
     background-color: transparent;
     outline: none;
@@ -466,6 +469,18 @@ input[type=text].univ-input,input[type=password].univ-input {
     box-sizing: border-box;
     border: #aaa 1px solid;
     border-radius: 5px;
+}
+input[type=password] {
+    letter-spacing: 4px;
+}
+input[type=password]::-webkit-input-placeholder {
+    letter-spacing: initial;
+}
+input[type=password]::-ms-input-placeholder {
+    letter-spacing: initial;
+}
+input[type=password]::placeholder {
+    letter-spacing: initial;
 }
 
 textarea.univ-text {

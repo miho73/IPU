@@ -12,9 +12,8 @@
         <link rel="stylesheet" type="text/css" href="/lib/users/usr.css">
         <link rel="stylesheet" type="text/css" href="/lib/table.css">
         <script src="/lib/univ/converter.js"></script>
-        <script src="/lib/users/usr.js"></script>
     </head>
-    <body onload="load()">
+    <body>
         <th:block th:replace="fragments/header.html :: navigation"></th:block>
         <h1 id="title">랭킹</h1>
         <div class="container">
@@ -27,7 +26,16 @@
                         <th style="width: 10%;">경험치</th>
                     </tr>
                 </thead>
-                <tbody id="addUsr"></tbody>
+                <tbody id="addUsr">
+                    <tr th:each="user,index: ${users}">
+                        <td th:text="${index.index+1}"></td>
+                        <td>
+                            <a th:href="${'/profile/'+user.getId()}" th:text="${user.getName()}"></a>
+                        </td>
+                        <td th:text="${user.getBio()}"></td>
+                        <td th:text="${user.getExperience()}" th:style="${'color:'+converter.convertDiffColor(converter.codeTable.get(converter.getLevelCode(user.getExperience())))}"></td>
+                    </tr>
+                </tbody>
             </table>
         </div>
         <th:block th:replace="fragments/footer.html :: footer"></th:block>

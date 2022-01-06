@@ -108,13 +108,14 @@
         function searchResource() {
             let code = gei('code-to-search').value;
             $.ajax({
-                method: 'POST',
-                url: '/root/api/search-resource',
+                method: 'GET',
+                url: '/root/api/resources/get/search',
+                dataType: 'json',
                 data: {
                     code: code
                 },
                 success: function(data) {
-                    let resArr = JSON.parse(data);
+                    let resArr = data.result;
                     let html = '';
                     if(resArr.length == 0) {
                         gei('resource-list').innerHTML = 'Nothing was searched';
@@ -126,7 +127,7 @@
                     gei('resource-list').innerHTML = html;
                 },
                 error: function(error) {
-                    gei('resource-list').innerText = error.responseText;
+                    gei('resource-list').innerText = error.responseJSON.result;
                 }
             });
         }
@@ -135,17 +136,18 @@
             let command = gei('name-change-command').value.split(' ');
             let code = command[0], name = command[1];
             $.ajax({
-                method: 'POST',
-                url: '/root/api/change-name',
+                method: 'PATCH',
+                url: '/root/api/resources/name/update',
+                dataType: 'json',
                 data: {
                     code: code,
                     name: name
                 },
                 success: function(data) {
-                    gei('cNameRes').innerText = data;
+                    gei('cNameRes').innerText = 'Updated resource name';
                 },
                 error: function(error) {
-                    gei('cNameRes').innerText = data.responseText;
+                    gei('cNameRes').innerText = error.responseJSON.result;
                 }
             });
         }
@@ -153,13 +155,14 @@
         function searchUsing() {
             let command = gei('pUsnResCmd').value;
             $.ajax({
-                method: 'POST',
-                url: '/root/api/problem-using-resource',
+                method: 'GET',
+                url: '/root/api/problem/search/resources',
+                dataType: 'json',
                 data: {
                     code: command
                 },
                 success: function(data) {
-                    let resArr = JSON.parse(data);
+                    let resArr = data.result;
                     let html = '';
                     if(resArr.length == 0) {
                         gei('problem-using-resource').innerHTML = 'Nothing was searched';
@@ -171,7 +174,7 @@
                     gei('problem-using-resource').innerHTML = html;
                 },
                 error: function(error) {
-                    gei('problem-using-resource').innerText = error.responseText;
+                    gei('problem-using-resource').innerText = error.responseJSON.result;
                 }
             });
         }
@@ -179,8 +182,9 @@
         function deleteRes() {
             let command = gei('pDelRes').value;
             $.ajax({
-                method: 'POST',
-                url: '/root/api/delete-resource',
+                method: 'DELETE',
+                url: '/root/api/resources/delete',
+                dataType: 'json',
                 data: {
                     code: command
                 },
@@ -188,7 +192,7 @@
                     gei('cDelResRes').innerText = 'Deleted resource';
                 },
                 error: function(error) {
-                    gei('cDelResRes').innerText = error.responseText;
+                    gei('cDelResRes').innerText = error.responseJSON.result;
                 }
             });
         }

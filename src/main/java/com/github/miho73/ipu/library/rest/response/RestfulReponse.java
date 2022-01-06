@@ -31,7 +31,7 @@ public class RestfulReponse {
         return response.toString();
     }
 
-    public static String createRestfulResponse(HTTP_CODE status, JSONObject result) {
+    public static String createRestfulResponse(HTTP_CODE status, Object result) {
         JSONObject response = new JSONObject();
         int code = switch (status){
             case OK -> 200;

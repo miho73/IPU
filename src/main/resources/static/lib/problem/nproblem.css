@@ -59,6 +59,9 @@ span.prob-title {
     font-size: 25px;
     border-bottom: #6495ed 3px solid;
 }
+p#image-upload-result {
+    margin-top: 5px;
+}
 
 #add-tags-cont {
     display: flex;

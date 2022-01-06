@@ -2,6 +2,7 @@ package com.github.miho73.ipu.services;
 
 import com.github.miho73.ipu.domain.Problem;
 import com.github.miho73.ipu.domain.Resource;
+import com.github.miho73.ipu.exceptions.InvalidInputException;
 import com.github.miho73.ipu.repositories.ProblemRepository;
 import com.github.miho73.ipu.repositories.ResourceRepository;
 import org.json.JSONArray;
@@ -17,16 +18,10 @@ import java.util.Vector;
 
 @Service("ResourceService")
 public class ResourceService {
-    private final ResourceRepository resourceRepository;
-    private final ProblemRepository problemRepository;
+    @Autowired private ResourceRepository resourceRepository;
+    @Autowired private ProblemRepository problemRepository;
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
-
-    @Autowired
-    public ResourceService(ResourceRepository resourceRepository, ProblemRepository problemRepository) {
-        this.resourceRepository = resourceRepository;
-        this.problemRepository = problemRepository;
-    }
 
     public void addResource(byte[] resource, String hash, String adder) throws SQLException {
         Connection connection = resourceRepository.openConnectionForEdit();
@@ -54,33 +49,40 @@ public class ResourceService {
         return is;
     }
 
-    public String queryResource(String hash) throws SQLException {
+    public JSONArray queryResource(String hash) throws SQLException {
+        JSONArray ret = new JSONArray();
+
         Connection connection = resourceRepository.openConnection();
         Resource resource = resourceRepository.queryResource(hash, connection);
         resourceRepository.close(connection);
+        if(resource == null) return ret;
 
         JSONObject res = new JSONObject();
         res.put("resource_code", resource.getResource_code());
         res.put("resource_name", resource.getResource_name());
         res.put("registered", resource.getRegistered());
         res.put("registered_by", resource.getRegistered_by());
-        return "["+ res +"]";
+        ret.put(res);
+        return ret;
     }
-    public String queryResourceByName(String name) throws SQLException {
+    public JSONArray queryResourceByName(String name) throws SQLException {
+        JSONArray ret = new JSONArray();
+
         Connection connection = resourceRepository.openConnection();
         Resource resource = resourceRepository.queryResourceByName(name, connection);
         resourceRepository.close(connection);
-        if(resource == null) return "";
+        if(resource == null) return ret;
 
         JSONObject res = new JSONObject();
         res.put("resource_code", resource.getResource_code());
         res.put("resource_name", resource.getResource_name());
         res.put("registered", resource.getRegistered());
         res.put("registered_by", resource.getRegistered_by());
-        return "["+ res +"]";
+        ret.put(res);
+        return ret;
     }
 
-    public String getAllResources() throws SQLException {
+    public JSONArray getAllResources() throws SQLException {
         Connection connection = resourceRepository.openConnection();
         Vector<Resource> resources = resourceRepository.getAllResources(connection);
         resourceRepository.close(connection);
@@ -94,35 +96,33 @@ public class ResourceService {
             res.put("registered_by", resource.getRegistered_by());
             resTot.put(res);
         }
-        return resTot.toString();
+        return resTot;
     }
 
-    public boolean changeName(String code, String name) throws SQLException {
+    public void changeName(String code, String name) throws SQLException, InvalidInputException {
         Connection connection = resourceRepository.openConnectionForEdit();
         if(!resourceRepository.isResourceExists(code, connection)) {
             resourceRepository.commitAndClose(connection);
-            return false;
+            throw new InvalidInputException("resource not found");
         }
         resourceRepository.updateName(code, name, connection);
         resourceRepository.commitAndClose(connection);
-        return true;
     }
 
-    public String searchProblemUsingResource(String code) throws SQLException {
+    public JSONArray searchProblemUsingResource(String code) throws SQLException {
+        JSONArray ret = new JSONArray();
+
         Connection probConnection = problemRepository.openConnection();
         Connection resConnection = resourceRepository.openConnection();
-        if(!resourceRepository.isResourceExists(code, resConnection)) {
-            return "nf";
-        }
+        if(!resourceRepository.isResourceExists(code, resConnection)) return ret;
         Vector<Problem> searched = problemRepository.searchProblemUsingResource(code, probConnection);
-        JSONArray ret = new JSONArray();
         for (Problem problem : searched) {
             JSONObject probObj = new JSONObject();
             probObj.put("code", problem.getCode());
             probObj.put("name", problem.getName());
             ret.put(probObj);
         }
-        return ret.toString();
+        return ret;
     }
 
     public void deleteResource(String code) throws SQLException {

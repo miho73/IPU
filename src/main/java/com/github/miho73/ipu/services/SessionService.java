@@ -45,7 +45,11 @@ public class SessionService {
         sessionRepository.add(session, user.getId());
     }
     public User getUserData(HttpSession session) {
-        return new User((String)session.getAttribute("id"), (String)session.getAttribute("name"), (String)session.getAttribute("privilege"));
+        User user = new User();
+        user.setId(getId(session));
+        user.setName(getName(session));
+        user.setPrivilege(getPrivilege(session));
+        return user;
     }
 
     public String getName(HttpSession session) {
@@ -59,6 +63,9 @@ public class SessionService {
     }
     public int getCode(HttpSession session) {
         return (int)session.getAttribute("code");
+    }
+    public String getPrivilege(HttpSession session) {
+        return (String) session.getAttribute("privilege");
     }
 
     public void loadSessionToModel(HttpSession session, Model model) {

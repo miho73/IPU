@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -36,30 +37,15 @@ public class UserControl {
 
     @Autowired private Converters converters;
 
-    /*
-    @Autowired
-    public UserControl(SessionService sessionService, UserService userService, AuthService authService) {
-        this.sessionService = sessionService;
-        this.userService = userService;
-        this.authService = authService;
-    }
-     */
-
     @GetMapping("/users")
-    public String usersPage(Model model, HttpSession session) {
+    public String usersPage(Model model, HttpSession session) throws SQLException {
         sessionService.loadSessionToModel(session, model);
+        List<User> users = userService.getUserRanking(100);
+        model.addAllAttributes(Map.of(
+                "users", users,
+                "converter", converters
+        ));
         return "profile/users.html";
-    }
-
-    @PostMapping(value = "/api/users", produces = "application/json; charset=utf-8")
-    @ResponseBody
-    public String userRanking(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
-        int len = Integer.parseInt(request.getParameter("len"));
-        if(len<=0 || len>100) {
-            response.sendError(400);
-            return null;
-        }
-        return userService.getUserRanking(len);
     }
 
     @GetMapping("/profile")
@@ -175,15 +161,13 @@ public class UserControl {
 
     @PostMapping("/settings")
     @ResponseBody
-    public String settingChange(HttpServletRequest request, HttpSession session, HttpServletResponse response) throws Exception {
+    public String settingChange(HttpServletRequest request, HttpSession session, HttpServletResponse response,
+                                @RequestParam("name") String name, @RequestParam("pwdC") boolean pwdC, @RequestParam("bio") String bio, @RequestParam("npwd") String nPwd, @RequestParam("lpwd") String lPwd) throws Exception {
         if(!sessionService.checkLogin(session)) {
             response.sendError(403);
             return null;
         }
-        String id=sessionService.getId(session), name = request.getParameter("name");
-        String bio = request.getParameter("bio");
-        boolean pwdC = Boolean.parseBoolean(request.getParameter("pwdC"));
-        String nPwd = request.getParameter("npwd"), lPwd = request.getParameter("lpwd");
+        String id=sessionService.getId(session);
         int uCode = sessionService.getCode(session);
         LOGGER.debug("Profile update request: id="+id+", name="+name+", bio="+bio);
 
@@ -243,13 +227,12 @@ public class UserControl {
     }
 
     @PostMapping("/settings/bye")
-    public String byeAcc(Model model, HttpSession session, HttpServletRequest request, HttpServletResponse response) throws InvalidInputException, SQLException, NoSuchAlgorithmException, IOException {
+    public String byeAcc(Model model, HttpSession session, HttpServletRequest request, HttpServletResponse response, @RequestParam("pwd") String pwd) throws InvalidInputException, SQLException, NoSuchAlgorithmException, IOException {
         if(!sessionService.checkLogin(session)) {
             response.sendError(403);
             return null;
         }
         LOGGER.debug("Delete accont. ID="+sessionService.getId(session));
-        String pwd = request.getParameter("pwd");
         if(authService.auth(sessionService.getId(session), pwd)) {
             try {
                 int uCode = sessionService.getCode(session);

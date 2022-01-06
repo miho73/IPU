@@ -17,7 +17,7 @@
     </head>
     <body class="no-mathjax" onload="loaded()">
         <th:block th:replace="fragments/header.html :: navigation"></th:block>
-        <h1 id="title">문제 등록</h1>
+        <h1 id="title">문제 수정</h1>
         <div class="container">
             <div id="top-menu">
                 <input type="text" id="name" class="univ-input" spellcheck="false">
@@ -181,8 +181,9 @@
             }
             if(!precond) return;
             $.ajax({
-                type: 'POST',
+                type: 'PUT',
                 url: '/problem/update',
+                dataType: 'json',
                 data: {
                     name: namep,
                     code: [[${prob_code}]],
@@ -195,7 +196,7 @@
                 },
                 success: function(data) {
                     window.onbeforeunload = undefined;
-                    window.location.href = data;
+                    window.location.href = [[${'/problem/'+prob_code}]];
                 },
                 error: function(err) {
                     if(err.status == 403) {

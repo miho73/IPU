@@ -10,16 +10,21 @@ function selectLocalImage(forwhat) {
             type: 'POST',
             enctype: 'multipart/form-data',
             url: '/problem/make/upload',
+            dataType: 'json',
             data: fd,
             processData: false,
             contentType: false,
             success: function(data) {
-                gei('image-upload-result').innerText = `Successfully uploaded. Code=${data}`;
+                gei('image-upload-result').innerText = `이미지를 업로드했어요. 코드=${data.result}`;
             },
             error: function(err) {
-                switch(err.responseText) {
-                    case "size":
-                        alert("파일이 너무 커요. 5MB 이하로 줄여주세요.");
+                switch(err.responseJSON.result) {
+                    case "file too large":
+                        gei('image-upload-result').innerText = '업로드 가능한 크기는 최대 5MB에요. 크기를 줄여주세요.';
+                    case "database error":
+                        gei('image-upload-result').innerText = '이미지를 등록하지 못했어요. 잠시 후에 다시 시도해주세요.';
+                    default:
+                        gei('image-upload-result').innerText = '이미지를 등록하지 못했어요. 잠시 후에 다시 시도해주세요.';
                 }
             }
         });

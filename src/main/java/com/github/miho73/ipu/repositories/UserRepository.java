@@ -55,13 +55,12 @@ public class UserRepository extends com.github.miho73.ipu.repositories.Repositor
         ResultSet rs = psmt.executeQuery();
 
         if(!rs.next()) return null;
-        return new User(
-                rs.getInt("user_code"),
-                rs.getString("user_id"),
-                rs.getString("user_name"),
-                rs.getString("privilege"),
-                rs.getString("last_solve")
-        );
+        User user = new User();
+        user.setCode(rs.getInt("user_code"));
+        user.setId(rs.getString("user_id"));
+        user.setName(rs.getString("user_name"));
+        user.setPrivilege(rs.getString("privilege"));
+        return user;
     }
 
     public User getProfileById(String id, Connection conn) throws SQLException {

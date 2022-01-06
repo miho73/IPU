@@ -1,10 +1,13 @@
 package com.github.miho73.ipu.library.ipuac;
 
+import org.springframework.stereotype.Component;
+
 import java.util.HashMap;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Component
 public class Renderer {
     /**   LINE REGEX   **/
     private final Pattern section      = Pattern.compile("^==\\s+(.*?)\\s+==$");

@@ -22,20 +22,12 @@ import java.util.Vector;
 
 @Service("ProblemService")
 public class ProblemService {
-    private final ProblemRepository problemRepository;
-    private final SolutionRepository solutionRepository;
-    private final UserRepository userRepository;
-    private final ExperienceSystem experienceSystem;
+    @Autowired private ProblemRepository problemRepository;
+    @Autowired private SolutionRepository solutionRepository;
+    @Autowired private UserRepository userRepository;
+    @Autowired private ExperienceSystem experienceSystem;
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
-
-    @Autowired
-    public ProblemService(ProblemRepository problemRepository, SessionService sessionService, SolutionRepository solutionRepository, UserRepository userRepository, UserService userService, ExperienceSystem experienceSystem) {
-        this.problemRepository = problemRepository;
-        this.solutionRepository = solutionRepository;
-        this.userRepository = userRepository;
-        this.experienceSystem = experienceSystem;
-    }
 
     public JSONArray getProblemList(int from, int length) throws SQLException {
         JSONArray root = new JSONArray();

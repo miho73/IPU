@@ -32,14 +32,14 @@ import java.util.Random;
 @Controller("ProblemControl")
 @RequestMapping("/problem")
 public class ProblemControl {
-    private final ProblemService problemService;
-    private final SessionService sessionService;
-    private final UserRepository userRepository;
-    private final UserService userService;
-    private final ResourceService resourceService;
-    private final TagService tagService;
-    private final Renderer renderer = new Renderer();
-    private final SHA sha = new SHA();
+    @Autowired private ProblemService problemService;
+    @Autowired private SessionService sessionService;
+    @Autowired private UserRepository userRepository;
+    @Autowired private UserService userService;
+    @Autowired private ResourceService resourceService;
+    @Autowired private TagService tagService;
+    @Autowired private Renderer renderer = new Renderer();
+    @Autowired private SHA sha = new SHA();
 
     private int NUMBER_OF_PROBLEMS;
 
@@ -49,16 +49,6 @@ public class ProblemControl {
     public void initProblemCount() throws SQLException {
         NUMBER_OF_PROBLEMS = problemService.getNumberOfProblems();
         LOGGER.debug("Problem count initialized to "+NUMBER_OF_PROBLEMS);
-    }
-
-    @Autowired
-    public ProblemControl(ProblemService problemService, SessionService sessionService, UserRepository userRepository, UserService userService, ResourceService resourceService, TagService tagService) {
-        this.problemService = problemService;
-        this.sessionService = sessionService;
-        this.userRepository = userRepository;
-        this.resourceService = resourceService;
-        this.userService = userService;
-        this.tagService = tagService;
     }
 
     @GetMapping("")
@@ -177,14 +167,25 @@ public class ProblemControl {
     }
     @PostMapping(value = "/make/upload", produces = "text/plain; charset=utf-8")
     @ResponseBody
-    public String imageUpload(@RequestParam(value = "img")MultipartFile resource, HttpSession session) throws IOException, NoSuchAlgorithmException, SQLException {
+    public String imageUpload(@RequestParam(value = "img")MultipartFile resource, HttpSession session, HttpServletResponse response) throws IOException {
         if(resource.getSize() > 5000000) {
-            return "size";
+            response.setStatus(400);
+            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.BAD_REQUEST, "file too large");
         }
-        byte[] res = resource.getBytes();
-        String hash = sha.MD5(res);
-        resourceService.addResource(res, hash, sessionService.getId(session));
-        return hash;
+        try {
+            byte[] res = resource.getBytes();
+            String hash = sha.MD5(res);
+            resourceService.addResource(res, hash, sessionService.getId(session));
+            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.OK, hash);
+        }
+        catch (SQLException e) {
+            response.setStatus(500);
+            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR, "database error");
+        }
+        catch (NoSuchAlgorithmException e) {
+            response.setStatus(500);
+            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR, "hash failure");
+        }
     }
     @GetMapping(value = "/lib/{src}", produces = "application/octet-stream; charset=utf-8")
     @ResponseBody
@@ -230,8 +231,7 @@ public class ProblemControl {
 
     @PostMapping(value = "/api/get-detail", produces = "application/json; charset=utf-8")
     @ResponseBody
-    public String problemDetail(HttpServletRequest request, HttpServletResponse response) throws SQLException {
-        int code = Integer.parseInt(request.getParameter("code"));
+    public String problemDetail(HttpServletRequest request, HttpServletResponse response, @RequestParam("code") int code) throws SQLException {
         JSONObject detail = new JSONObject();
         Problem problem = problemService.getFullProblem(code);
         detail.put("cate", problem.getCategoryCode());
@@ -244,12 +244,13 @@ public class ProblemControl {
         return detail.toString();
     }
 
-    @PostMapping("/update")
+    @PutMapping("/update")
     @ResponseBody
     public String problemUpdate(HttpServletRequest request, Model model, HttpSession session, HttpServletResponse response) throws SQLException, IOException {
         if(sessionService.hasPrivilege(SessionService.PRIVILEGES.PROBLEM_MAKE, session)) {
-            response.sendError(404);
-            return null;
+            String ret = RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.FORBIDDEN);
+            response.sendError(403);
+            return ret;
         }
         Problem problem = new Problem();
         problem.setCode        (Integer.parseInt(request.getParameter("code")));
@@ -261,12 +262,12 @@ public class ProblemControl {
         problem.setTags        (request.getParameter("tags"));
         problem.setActive      (Boolean.parseBoolean(request.getParameter("active")));
         problemService.updateProblem(problem);
-        return "/problem/"+problem.getCode();
+        return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.OK);
     }
 
     @PostMapping("/api/solrep")
     @ResponseBody
-    public String registerSolve(HttpServletRequest request, HttpSession session, HttpServletResponse response) throws SQLException {
+    public String registerSolve(HttpServletRequest request, HttpSession session, HttpServletResponse response, @RequestParam("code") int code, @RequestParam("time") int time, @RequestParam("res") boolean result) throws SQLException {
         Connection connection = userRepository.openConnectionForEdit();
         try {
             if(!sessionService.checkLogin(session) || sessionService.hasPrivilege(SessionService.PRIVILEGES.USER, session)) {
@@ -285,9 +286,6 @@ public class ProblemControl {
             }
             userRepository.updateUserTSById(uid, "last_solve", now, connection);
 
-            int code = Integer.parseInt(request.getParameter("code"));
-            int time = Integer.parseInt(request.getParameter("time"));
-            boolean result = request.getParameter("res").equals("1");
             int userCode = sessionService.getCode(session);
             problemService.registerSolution(code, time, result, userCode, connection);
             userRepository.commit(connection);

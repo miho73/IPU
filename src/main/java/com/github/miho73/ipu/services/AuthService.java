@@ -26,24 +26,16 @@ import java.util.TimeZone;
 
 @Service("AuthService")
 public class AuthService {
-    private final UserRepository userRepository;
-    private final SolutionRepository solutionRepository;
-    private final SHA sha;
-    private final Captcha captcha;
-    private final SessionService sessionService;
-    private final InviteService inviteService;
+    @Autowired private UserRepository userRepository;
+    @Autowired private SolutionRepository solutionRepository;
+    @Autowired private SHA sha;
+    @Autowired private Captcha captcha;
+    @Autowired private SessionService sessionService;
+    @Autowired private InviteService inviteService;
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
-    @Autowired
-    public AuthService(UserRepository userRepository, SHA sha, Captcha captcha, SessionService sessionService, InviteService inviteService, SolutionRepository solutionRepository) {
-        this.userRepository = userRepository;
-        this.sha = sha;
-        this.captcha = captcha;
-        this.sessionService = sessionService;
-        this.inviteService = inviteService;
-        this.solutionRepository = solutionRepository;
-
+    public AuthService() {
         TimeZone tz = TimeZone.getTimeZone("UTC");
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
         df.setTimeZone(tz);

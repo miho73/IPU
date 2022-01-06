@@ -9,12 +9,9 @@ import javax.servlet.http.HttpServletRequest;
 
 @Component
 public class AuthenticationSuccessEventListener implements ApplicationListener<AuthenticationSuccessEvent> {
+    @Autowired private HttpServletRequest request;
 
-    @Autowired
-    private HttpServletRequest request;
-
-    @Autowired
-    private LoginAttemptService loginAttemptService;
+    @Autowired private LoginAttemptService loginAttemptService;
 
     @Override
     public void onApplicationEvent(final AuthenticationSuccessEvent e) {

@@ -13,15 +13,9 @@ import java.util.Vector;
 
 @Service
 public class TagService {
-    private final Converters converters = new Converters();
-    private final SessionService sessionService;
-    private final UserService userService;
-
-    @Autowired
-    public TagService(SessionService sessionService, UserService userService) {
-        this.sessionService = sessionService;
-        this.userService = userService;
-    }
+    @Autowired private Converters converters = new Converters();
+    @Autowired private SessionService sessionService;
+    @Autowired private UserService userService;
 
     public String processTagsToHtml(Problem problem) {
         JSONArray tags = new JSONArray(problem.getTags());
@@ -82,8 +76,8 @@ public class TagService {
                 html.append("<span class=\"tag tag-star\">⭐</span>");
             }
             if(((JSONObject) result).has("cor")) {
-                if(((JSONObject) result).getBoolean("cor")) html.insert(0, "<span class=\"tag tag-ac\" data-toggle=\"ac\" data-placement=\"bottom\" title=\"Accepted\">AC</span>");
-                else html.insert(0, "<span class=\"tag tag-wa\" data-toggle=\"wa\" title=\"Wrong\" data-placement=\"bottom\">WA</span>");
+                if(((JSONObject) result).getBoolean("cor")) html.insert(0, "<span class=\"tag tag-ac\" title=\"Accepted\">AC</span>");
+                else html.insert(0, "<span class=\"tag tag-wa\" title=\"Wrong\">WA</span>");
             }
             workingProblem.put("tags", html.toString());
             processedResult.put(workingProblem);

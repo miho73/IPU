@@ -22,30 +22,17 @@ import java.util.stream.Stream;
 
 @Service("UserService")
 public class UserService {
-    private final UserRepository userRepository;
-    private final ProblemRepository problemRepository;
-    private final SolutionRepository solutionRepository;
+    @Autowired private UserRepository userRepository;
+    @Autowired private ProblemRepository problemRepository;
+    @Autowired private SolutionRepository solutionRepository;
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
-
-    @Autowired
-    public UserService(UserRepository userRepository, SolutionRepository solutionRepository, ProblemRepository problemRepository) {
-        this.userRepository = userRepository;
-        this.solutionRepository = solutionRepository;
-        this.problemRepository = problemRepository;
-    }
 
     public User getUserByCode(int code) throws SQLException {
         Connection connection = userRepository.openConnection();
         User user = userRepository.getUserByCode(code, connection);
         userRepository.close(connection);
         return  user;
-    }
-    public User getUserById(String id) throws SQLException {
-        Connection connection = userRepository.openConnection();
-        User user = userRepository.getUserById(id, connection);
-        userRepository.close(connection);
-        return user;
     }
     public Object getUserDataById(String id, String column) throws SQLException {
         Connection connection = userRepository.openConnection();
@@ -66,20 +53,11 @@ public class UserService {
         }
     }
 
-    public String getUserRanking(int len) throws SQLException {
+    public List<User> getUserRanking(int len) throws SQLException {
         Connection connection = userRepository.openConnection();
         List<User> users =  userRepository.getUserRanking(len, connection);
         userRepository.close(connection);
-        JSONArray uLst = new JSONArray();
-        users.forEach((user)->{
-            JSONObject usr = new JSONObject();
-            usr.put("uname", user.getName());
-            usr.put("bio", user.getBio());
-            usr.put("exp", user.getExperience());
-            usr.put("id", user.getId());
-            uLst.put(usr);
-        });
-        return uLst.toString();
+        return users;
     }
 
     public User getProfileById(String id) throws SQLException {

@@ -28,9 +28,10 @@ public class AuthControl {
     @Value("${captcha.v3.sitekey}") private String CAPTCHA_V3_SITE_KEY;
     @Value("${captcha.v2.sitekey}") private String CAPTCHA_V2_SITE_KEY;
 
-    private final AuthService userService;
-    private final SessionService sessionService;
-    private final InviteService inviteService;
+    @Autowired private AuthService userService;
+    @Autowired private SessionService sessionService;
+    @Autowired private InviteService inviteService;
+
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     @Autowired private ApplicationEventPublisher publisher;
@@ -38,13 +39,6 @@ public class AuthControl {
 
     private final Pattern IdNameValidator = Pattern.compile("^(?=.*[A-Za-z])[A-Za-z0-9]{0,50}$");
     private final Pattern PasswordValidator = Pattern.compile("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d!\"#$%&'()*+,\\-./:;<=>?@\\[\\]^_`{|}~\\\\\\)]{6,}$");
-
-    @Autowired
-    public AuthControl(AuthService userService, SessionService sessionService, InviteService inviteService) {
-        this.userService = userService;
-        this.sessionService = sessionService;
-        this.inviteService = inviteService;
-    }
 
     @GetMapping("/login")
     public String getLogin(@RequestParam(value = "ret", required = false, defaultValue = "/") String ret, Model model) {

@@ -10,12 +10,7 @@ import java.util.List;
 
 @Service("InviteService")
 public class InviteService {
-    private final InviteRepository inviteRepository;
-
-    @Autowired
-    public InviteService(InviteRepository inviteRepository) {
-        this.inviteRepository = inviteRepository;
-    }
+    @Autowired private InviteRepository inviteRepository;
 
     public boolean checkExists(String code) throws SQLException {
         Connection connection = inviteRepository.openConnection();

@@ -9,12 +9,9 @@ import javax.servlet.http.HttpServletRequest;
 
 @Component
 public class AuthenticationFailureListener implements ApplicationListener<AuthenticationFailureBadCredentialsEvent> {
+    @Autowired private HttpServletRequest request;
 
-    @Autowired
-    private HttpServletRequest request;
-
-    @Autowired
-    private LoginAttemptService loginAttemptService;
+    @Autowired private LoginAttemptService loginAttemptService;
 
     @Override
     public void onApplicationEvent(AuthenticationFailureBadCredentialsEvent e) {
