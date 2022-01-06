@@ -2,9 +2,12 @@ package com.github.miho73.ipu.controllers;
 
 import com.github.miho73.ipu.domain.User;
 import com.github.miho73.ipu.exceptions.InvalidInputException;
+import com.github.miho73.ipu.library.Converters;
 import com.github.miho73.ipu.services.AuthService;
 import com.github.miho73.ipu.services.SessionService;
+import com.github.miho73.ipu.services.TagService;
 import com.github.miho73.ipu.services.UserService;
+import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,16 +29,21 @@ import java.util.regex.Pattern;
 public class UserControl {
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
-    private final SessionService sessionService;
-    private final UserService userService;
-    private final AuthService authService;
+    @Autowired private SessionService sessionService;
+    @Autowired private UserService userService;
+    @Autowired private AuthService authService;
+    @Autowired private TagService tagService;
 
+    @Autowired private Converters converters;
+
+    /*
     @Autowired
     public UserControl(SessionService sessionService, UserService userService, AuthService authService) {
         this.sessionService = sessionService;
         this.userService = userService;
         this.authService = authService;
     }
+     */
 
     @GetMapping("/users")
     public String usersPage(Model model, HttpSession session) {
@@ -62,12 +70,38 @@ public class UserControl {
         sessionService.loadSessionToModel(session, model);
         String uid = sessionService.getId(session);
         User user = userService.getProfileById(uid);
+        int pg = Integer.parseInt(page);
+        int PROBLEM_PER_PAGE = 30;
+        JSONArray solved = userService.getSolved(pg* PROBLEM_PER_PAGE +1, PROBLEM_PER_PAGE, uid);
+        JSONArray processed = tagService.processTagsToHtml(solved, session);
+
+        int currentRank = converters.getLevelCode(user.getExperience());
+        String toUp;
+        float progressWidth;
+        if(currentRank != 8) {
+            toUp =  converters.codeTableRl.getOrDefault(currentRank+1, "Unknown")+"까지 "+(converters.cutTable[currentRank]-user.getExperience());
+            progressWidth = (float)(user.getExperience()-converters.cutTable[currentRank-1])/(float)(converters.cutTable[currentRank]-converters.cutTable[currentRank-1])*100;
+        }
+        else {
+            toUp = "YOU HAVE THE HIGHEST";
+            progressWidth = 100;
+        }
         model.addAllAttributes(Map.of(
                 "username", user.getName(),
                 "userId", user.getId(),
                 "bio", user.getBio(),
                 "experience", user.getExperience(),
-                "pg", Integer.parseInt(page)
+                "currentRank", converters.codeTableRl.getOrDefault(currentRank, "Unset"),
+                "pg", pg,
+                "solved", processed.toList(),
+                "hasNext", processed.length() == PROBLEM_PER_PAGE,
+                "hasPrev", pg != 0,
+                "nothing", processed.length() == 0
+        ));
+        model.addAllAttributes(Map.of(
+                "lvupInf", toUp,
+                "progressBarStyle", converters.codeTable.get(currentRank),
+                "progressBarWidth", progressWidth
         ));
         return "profile/userProfile";
     }
@@ -76,23 +110,40 @@ public class UserControl {
     public String profileOfUser(@RequestParam(value = "page", required = false, defaultValue = "0") String page, @PathVariable("userId") String uid, Model model, HttpSession session) throws SQLException {
         sessionService.loadSessionToModel(session, model);
         User user = userService.getProfileById(uid);
+        int pg = Integer.parseInt(page);
+        int PROBLEM_PER_PAGE = 30;
+        JSONArray solved = userService.getSolved(pg* PROBLEM_PER_PAGE +1, PROBLEM_PER_PAGE, uid);
+        JSONArray processed = tagService.processTagsToHtml(solved, session);
+
+        int currentRank = converters.getLevelCode(user.getExperience());
+        String toUp;
+        float progressWidth;
+        if(currentRank != 8) {
+            toUp =  converters.codeTableRl.getOrDefault(currentRank+1, "Unknown")+"까지 "+(converters.cutTable[currentRank]-user.getExperience());
+            progressWidth = (float)(user.getExperience()-converters.cutTable[currentRank-1])/(float)(converters.cutTable[currentRank]-converters.cutTable[currentRank-1])*100;
+        }
+        else {
+            toUp = "YOU HAVE THE HIGHEST";
+            progressWidth = 100;
+        }
         model.addAllAttributes(Map.of(
                 "username", user.getName(),
                 "userId", user.getId(),
                 "bio", user.getBio(),
                 "experience", user.getExperience(),
-                "pg", Integer.parseInt(page)
+                "currentRank", converters.codeTableRl.getOrDefault(currentRank, "Unset"),
+                "pg", pg,
+                "solved", processed.toList(),
+                "hasNext", processed.length() == PROBLEM_PER_PAGE,
+                "hasPrev", pg != 0,
+                "nothing", processed.length() == 0
+        ));
+        model.addAllAttributes(Map.of(
+                "lvupInf", toUp,
+                "progressBarStyle", converters.codeTable.get(currentRank),
+                "progressBarWidth", progressWidth
         ));
         return "profile/userProfile";
-    }
-
-    @PostMapping(value = "/api/get-solved", produces = "application/json; charset=utf-8")
-    @ResponseBody
-    public String getSolved(HttpServletRequest request) throws SQLException {
-        int frm = Integer.parseInt(request.getParameter("frm"));
-        int len = Integer.parseInt(request.getParameter("len"));
-        String id = request.getParameter("id");
-        return userService.getSolved(frm, len, id);
     }
 
     @GetMapping("/settings")

@@ -31,22 +31,22 @@
             </form>
         </div>
         <div class="container">
-            <table class="problem-lst-table" id="prob-list-table">
+            <table class="problem-lst-table" id="prob-list-table" th:unless="${nothing}">
                 <thead>
                     <th style="width: 9%">문제</th>
                     <th style="width: 54%;">문제 제목</th>
                     <th style="width: 37%;">정보</th>
                 </thead>
                 <tbody id="addProb">
-                <tr th:each="problem: ${pList}">
-                    <td th:text="${problem.code}"></td>
-                    <td>
-                        <a th:text="${problem.name}" th:href="${'/problem/'+problem.code}"></a>
-                    </td>
-                    <td class="tag-con">
-                        <div th:utext="${problem.tags}"></div>
-                    </td>
-                </tr>
+                    <tr th:each="problem: ${pList}">
+                        <td th:text="${problem.code}"></td>
+                        <td>
+                            <a th:text="${problem.name}" th:href="${'/problem/'+problem.code}"></a>
+                        </td>
+                        <td class="tag-con">
+                            <div th:utext="${problem.tags}"></div>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>

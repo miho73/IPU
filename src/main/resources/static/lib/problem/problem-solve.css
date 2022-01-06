@@ -41,9 +41,64 @@ svg.star-icon {
     width: 23px;
     height: 23px;
     margin: 2px;
+    cursor: pointer;
 }
 svg.stared {
     fill: #ffcd3c;
+}
+svg.loading {
+    -webkit-animation: rotate 2s linear infinite;
+    animation: rotate 2s linear infinite;
+    -webkit-transform-origin: center;
+    -ms-transform-origin: center;
+    transform-origin: center;
+}
+circle.loading {
+    stroke-dasharray: 32;
+    stroke-dashoffset: 31.5;
+    -webkit-animation: dash 1.5s ease-in-out infinite;
+    animation: dash 1.5s ease-in-out infinite;
+    stroke-linecap: round;
+    fill: none;
+    stroke-width: 2px;
+}
+@-webkit-keyframes rotate {
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+}
+@keyframes rotate {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+@-webkit-keyframes dash {
+    0% {
+        stroke-dashoffset: 31.5;
+        stroke-dasharray: 32;
+    }
+    50% {
+        stroke-dashoffset: 0;
+        stroke-dasharray: 7 53;
+    }
+    100% {
+        stroke-dashoffset: -31;
+        stroke-dasharray: 32;
+    }
+}
+@keyframes dash {
+    0% {
+        stroke-dashoffset: 31.5;
+        stroke-dasharray: 32;
+    }
+    50% {
+        stroke-dashoffset: 0;
+        stroke-dasharray: 7 53;
+    }
+    100% {
+        stroke-dashoffset: -31;
+        stroke-dasharray: 32;
+    }
 }
 div#after-sol {
     transform: scaleY(0);

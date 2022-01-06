@@ -1,19 +1,12 @@
 package com.github.miho73.ipu.repositories;
 
-import com.github.miho73.ipu.domain.Problem;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.annotation.PropertySources;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
-import javax.security.auth.kerberos.KerberosTicket;
 import java.sql.*;
 
 @Repository("SolutionRepository")

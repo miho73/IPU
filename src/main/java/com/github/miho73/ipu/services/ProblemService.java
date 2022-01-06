@@ -1,7 +1,6 @@
 package com.github.miho73.ipu.services;
 
 import com.github.miho73.ipu.domain.Problem;
-import com.github.miho73.ipu.library.Converters;
 import com.github.miho73.ipu.library.ExperienceSystem;
 import com.github.miho73.ipu.repositories.ProblemRepository;
 import com.github.miho73.ipu.repositories.SolutionRepository;
@@ -26,22 +25,16 @@ public class ProblemService {
     private final ProblemRepository problemRepository;
     private final SolutionRepository solutionRepository;
     private final UserRepository userRepository;
-    private final UserService userService;
-    private final SessionService sessionService;
     private final ExperienceSystem experienceSystem;
-
-    private final Converters converters = new Converters();
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     public ProblemService(ProblemRepository problemRepository, SessionService sessionService, SolutionRepository solutionRepository, UserRepository userRepository, UserService userService, ExperienceSystem experienceSystem) {
         this.problemRepository = problemRepository;
-        this.sessionService = sessionService;
         this.solutionRepository = solutionRepository;
         this.userRepository = userRepository;
         this.experienceSystem = experienceSystem;
-        this.userService = userService;
     }
 
     public JSONArray getProblemList(int from, int length) throws SQLException {
@@ -55,7 +48,6 @@ public class ProblemService {
             element.put("name", problem.getName());
             JSONArray tags = new JSONArray(problem.getTags());
             tags.put(new JSONObject(Map.of("key", "diff", "content", problem.getDifficultyCode())));
-            tags.put(new JSONObject(Map.of("key", "cate", "content", problem.getCategoryCode())));
             element.put("tags", tags);
             element.put("active", problem.isActive());
             root.put(element);
@@ -188,77 +180,6 @@ public class ProblemService {
             root.put(element);
         }
         return root;
-    }
-
-    public String processTagsToHtml(Problem problem) {
-        JSONArray tags = new JSONArray(problem.getTags());
-        StringBuilder html = new StringBuilder();
-        tags.forEach((tagx)-> {
-            JSONObject tag = (JSONObject) tagx;
-            html.append("<span class=\"tag tag-custom\" style=\"background-color: #")
-                    .append(tag.get("back"))
-                    .append("; color: #")
-                    .append(tag.get("color"))
-                    .append(";\">")
-                    .append(tag.get("content"))
-                    .append("</span>");
-        });
-        html.append("<span class=\"tag tag-diff\" style=\"background-color: ")
-                .append(converters.convertDiffColor(problem.getDifficultyCode()))
-                .append(";\">")
-                .append(converters.convertDiff(problem.getDifficultyCode()))
-                .append("</span>");
-        return html.toString();
-    }
-
-    public JSONArray processTagsToHtml(JSONArray sResult, HttpSession user) throws SQLException {
-        JSONArray processedResult = new JSONArray();
-        Vector<String> starList = new Vector<>();
-        if(user != null && sessionService.checkLogin(user)) {
-            starList = userService.getUserStaredList(sessionService.getCode(user));
-        }
-        Vector<String> finalStarList = starList;
-        sResult.forEach(result->{
-            JSONObject workingProblem = ((JSONObject)result);
-            JSONArray tags = (JSONArray)workingProblem.get("tags");
-            StringBuilder html = new StringBuilder();
-            tags.forEach((tagx)->{
-                JSONObject tag = (JSONObject)tagx;
-                Object key = tag.get("key");
-                if ("diff".equals(key)) {
-                    html.append("<span class=\"tag tag-diff\" style=\"background-color: ")
-                        .append(converters.convertDiffColor(tag.getString("content")))
-                        .append(";\">")
-                        .append(converters.convertDiff(tag.getString("content")))
-                        .append("</span>");
-                }
-                else if ("cate".equals(key)) {
-                    /*
-                    html.append("<span class=\"tag tag-cate\">")
-                        .append(converters.convertSubj(tag.getString("content")))
-                        .append("</span>");
-                     */
-                }
-                else {
-                    html.append("<span class=\"tag tag-custom\" style=\"background-color: #")
-                        .append(tag.get("back"))
-                        .append("; color: #")
-                        .append(tag.get("color"))
-                        .append(";\">")
-                        .append(tag.get("content"))
-                        .append("</span>");
-                }
-            });
-            if(!workingProblem.getBoolean("active")) {
-                html.append("<span class=\"tag tag-cannot-solve\">제출 불가</span>");
-            }
-            if(finalStarList.contains(Integer.toString(workingProblem.getInt("code")))) {
-                html.append("<span class=\"tag tag-star\">⭐</span>");
-            }
-            workingProblem.put("tags", html.toString());
-            processedResult.put(workingProblem);
-        });
-        return processedResult;
     }
 
     public int getNumberOfProblems() throws SQLException {

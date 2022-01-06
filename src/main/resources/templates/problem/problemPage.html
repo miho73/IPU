@@ -26,7 +26,10 @@
             </div>
             <div class="problem-info">
                 <div class="problem-tags" th:utext="${tags}"></div>
-                <svg id="star-icon" class="star-icon" th:classappend="${stared ? 'stared' : ''}" xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" clip-rule="evenodd" viewBox="0 0 24 24" th:onclick="changeStar([[${pCode}]])" th:if="${logged}"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z"/></svg>
+                <svg id="star-icon" class="star-icon" th:classappend="${stared ? 'stared' : ''}" xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" clip-rule="evenodd" viewBox="0 0 24 24" th:onclick="changeStar([[${pCode}]])" th:if="${logged}">
+                    <path id="star" d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z"/>
+                    <circle id="star-progress" class="loading" cx="12" cy="12" r="10" stroke="#aaa" style="display: none;"/>
+                </svg>
             </div>
             <div id="solving" th:utext="${problem_ipuac}"></div>
             <div id="after-sol" style="display: none;" th:utext="${solution_ipuac}"></div>

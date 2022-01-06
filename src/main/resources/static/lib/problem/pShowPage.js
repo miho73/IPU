@@ -112,6 +112,9 @@ function activeFinal(cor) {
 }
 
 function changeStar(code) {
+    gei('star-icon').classList.add('loading');
+    gei('star-progress').style.display = 'block';
+    gei('star').style.display = 'none';
     $.ajax({
         method: 'PATCH',
         url: '/problem/api/change-star',
@@ -125,6 +128,11 @@ function changeStar(code) {
                 gei('star-icon').classList.remove("stared")
             }
         },
-        error: function() {}
+        error: function() {},
+        complete: function() {
+            gei('star-icon').classList.remove('loading');
+            gei('star-progress').style.display = 'none';
+            gei('star').style.display = 'block';
+        }
     });
 }

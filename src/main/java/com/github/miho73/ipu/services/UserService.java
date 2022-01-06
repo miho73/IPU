@@ -89,7 +89,7 @@ public class UserService {
         return user;
     }
 
-    public String getSolved(int frm, int len, String id) throws SQLException {
+    public JSONArray getSolved(int frm, int len, String id) throws SQLException {
         Connection userConnection = userRepository.openConnection(), solvesConnection = solutionRepository.openConnection(), problemConnection = problemRepository.openConnection();
         int uCode = (int) userRepository.getUserDataById(id, "user_code", userConnection);
         JSONArray arr = solutionRepository.getSolved(frm, len, uCode, solvesConnection);
@@ -101,15 +101,12 @@ public class UserService {
                 problem = problemRepository.getProblemSimple(pCode, problemConnection);
                 JSONArray tags = new JSONArray(problem.getTags());
                 tags.put(new JSONObject(Map.of(
-                        "key", "cate",
-                        "content", problem.getCategoryCode()
-                )));
-                tags.put(new JSONObject(Map.of(
                         "key", "diff",
                         "content", problem.getDifficultyCode()
                 )));
                 ((JSONObject)con).put("name", problem.getName());
                 ((JSONObject)con).put("tags", tags);
+                ((JSONObject)con).put("active", problem.isActive());
                 cpy.put(con);
             } catch (SQLException e) {
                 LOGGER.error("Fail to get problem data from solve history. pCode="+pCode, e);
@@ -118,7 +115,7 @@ public class UserService {
         problemConnection.close();
         userRepository.close(userConnection);
         solutionRepository.close(solvesConnection);
-        return cpy.toString();
+        return cpy;
     }
 
     public void updateProfile(String name, String bio, int code) throws SQLException {

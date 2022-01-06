@@ -1,8 +1,11 @@
 package com.github.miho73.ipu.library;
 
+import org.springframework.context.annotation.Configuration;
+
 import java.util.HashMap;
 import java.util.Map;
 
+@Configuration
 public class Converters {
     public String convertDiff(String code) {
         return switch (code) {
@@ -32,9 +35,9 @@ public class Converters {
         };
     }
 
-    int[] cutTable = {0, 3000, 15000, 40000, 80000, 150000, 200000, 300000};
+    public int[] cutTable = {0, 3000, 15000, 40000, 80000, 150000, 200000, 300000};
 
-    private Map<Integer, String> codeTableRl = new HashMap<>() {{
+    public Map<Integer, String> codeTableRl = new HashMap<>() {{
         put(1, "Unrated");
         put(2, "Bronze");
         put(3, "Silver");
@@ -45,7 +48,7 @@ public class Converters {
         put(8, "Infinity");
     }};
 
-    private Map<Integer, String> codeTable = new HashMap<>() {{
+    public Map<Integer, String> codeTable = new HashMap<>() {{
         put(1, "unra");
         put(2, "broz");
         put(3, "silv");
@@ -56,7 +59,7 @@ public class Converters {
         put(8, "redd");
     }};
 
-    private Map<String, String> Subj = new HashMap<>() {{
+    public Map<String, String> Subj = new HashMap<>() {{
         put("alge", "대수");
         put("numb", "정수");
         put("comb", "조합");

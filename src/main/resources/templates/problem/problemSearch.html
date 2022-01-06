@@ -32,7 +32,7 @@
             </form>
         </div>
         <div class="container" th:unless="${nothing}">
-            <table class="problem-lst-table" id="prob-list-table">
+            <table class="problem-lst-table" id="prob-list-table" th:unless="${nothing}">
                 <thead>
                     <th style="width: 9%">문제</th>
                     <th style="width: 54%;">문제 제목</th>

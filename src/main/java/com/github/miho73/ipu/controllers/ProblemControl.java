@@ -5,10 +5,7 @@ import com.github.miho73.ipu.library.ipuac.Renderer;
 import com.github.miho73.ipu.library.rest.response.RestfulReponse;
 import com.github.miho73.ipu.library.security.SHA;
 import com.github.miho73.ipu.repositories.UserRepository;
-import com.github.miho73.ipu.services.ProblemService;
-import com.github.miho73.ipu.services.ResourceService;
-import com.github.miho73.ipu.services.SessionService;
-import com.github.miho73.ipu.services.UserService;
+import com.github.miho73.ipu.services.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -40,6 +37,7 @@ public class ProblemControl {
     private final UserRepository userRepository;
     private final UserService userService;
     private final ResourceService resourceService;
+    private final TagService tagService;
     private final Renderer renderer = new Renderer();
     private final SHA sha = new SHA();
 
@@ -54,12 +52,13 @@ public class ProblemControl {
     }
 
     @Autowired
-    public ProblemControl(ProblemService problemService, SessionService sessionService, UserRepository userRepository, UserService userService, ResourceService resourceService) {
+    public ProblemControl(ProblemService problemService, SessionService sessionService, UserRepository userRepository, UserService userService, ResourceService resourceService, TagService tagService) {
         this.problemService = problemService;
         this.sessionService = sessionService;
         this.userRepository = userRepository;
         this.resourceService = resourceService;
         this.userService = userService;
+        this.tagService = tagService;
     }
 
     @GetMapping("")
@@ -73,7 +72,7 @@ public class ProblemControl {
             return null;
         }
         JSONArray list = problemService.getProblemList(frm, PROBLEM_PER_PAGE);
-        JSONArray processedList = problemService.processTagsToHtml(list, session);
+        JSONArray processedList = tagService.processTagsToHtml(list, session);
 
         model.addAttribute("pList", processedList.toList());
         model.addAttribute("nothing", processedList.length()==0);
@@ -108,7 +107,7 @@ public class ProblemControl {
         int pg = Integer.parseInt(page);
         model.addAttribute("page", pg);
         JSONArray sResult = problemService.searchProblem(pg, contains, category, difficulty);
-        JSONArray processedResult = problemService.processTagsToHtml(sResult, session);
+        JSONArray processedResult = tagService.processTagsToHtml(sResult, session);
 
         model.addAttribute("pList", processedResult.toList());
         model.addAttribute("query", contains);
@@ -140,7 +139,7 @@ public class ProblemControl {
                     "active", problem.isActive(),
                     "problem_ipuac", renderer.IPUACtoHTML(problem.getContent()),
                     "solution_ipuac", renderer.IPUACtoHTML(problem.getSolution()),
-                    "tags", problemService.processTagsToHtml(problem),
+                    "tags", tagService.processTagsToHtml(problem),
                     "stared", isStared
             ));
             return "problem/problemPage";

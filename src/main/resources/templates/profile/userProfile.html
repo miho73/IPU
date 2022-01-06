@@ -7,14 +7,13 @@
         <link rel="stylesheet" type="text/css" href="/lib/profile/profile.css">
         <link rel="stylesheet" type="text/css" href="/lib/table.css">
         <script src="/lib/univ/converter.js"></script>
-        <script src="/lib/profile/pProfile.js"></script>
         <meta property="og:title" content="IPU - 프로필">
         <meta name="twitter:title" content="IPU - 프로필">
         <meta name="description" th:content="${username+'의 프로필'}">
         <meta property="og:description" th:content="${username+'의 프로필'}">
         <meta name="twitter:description" th:content="${username+'의 프로필'}">
     </head>
-    <body th:onload="load([[${pg}]])">
+    <body>
         <th:block th:replace="fragments/header.html :: navigation"></th:block>
         <div class="container">
             <div id="headerup">
@@ -22,20 +21,20 @@
                 <h3 id="uid" th:text="${userId}"></h3>
                 <blockquote th:text="${bio}"></blockquote>
                 <div id="experience-div">
-                    <p id="exp-name">Loading</p>
+                    <p id="exp-name" th:text="${currentRank}"></p>
                     <div id="experience" style="background: #000; width: 100%; height: 30px; margin: 0;">
-                        <div id="experi-visib" class="prog-exp">
+                        <div id="experi-visib" class="prog-exp" th:classappend="${'prog-exp-'+progressBarStyle}" th:style="${'width:'+progressBarWidth+'%'}">
                             <p class="exp-dis" th:text="${experience}"></p>
                         </div>
                     </div>
                     <div id="infp">
                         <p class="exp-dis infp" style="margin-top: 10px; margin-bottom: 30px;" th:text="${experience}"></p>
-                        <p class="exp-dis infp" id="next-lv" style="margin-top: 10px; margin-bottom: 30px;" th:text="${experience}"></p>
+                        <p class="exp-dis infp" id="next-lv" style="margin-top: 10px; margin-bottom: 30px;" th:text="${lvupInf}"></p>
                     </div>
                 </div>
             </div>
             <div class="non-container">
-                <table id="prob-list-table">
+                <table id="prob-list-table" th:unless="${nothing}">
                     <thead>
                         <tr>
                             <th style="width: 9%">번호</th>
@@ -45,15 +44,27 @@
                             <th style="width: 23%;">푼 시각</th>
                         </tr>
                     </thead>
-                    <tbody id="solveds"></tbody>
+                    <tbody id="solveds">
+                        <tr th:each="solve,index: ${solved}">
+                            <td th:text="${index.index+1}"></td>
+                            <td>
+                                <a th:text="${solve.name}" th:href="${'/problem/'+solve.code}"></a>
+                            </td>
+                            <td class="tag-con">
+                                <div th:utext="${solve.tags}"></div>
+                            </td>
+                            <td th:text="${solve.solt+'초'}"></td>
+                            <td th:text="${solve.sol}"></td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
             <div>
-                <p id="not" style="display: none;">페이지가 비어있어요.</p>
-                <div>
-                    <a id="prev" class="previous round">이전</a>
-                    <span id="pnsep" style="user-select: none;">······</span>
-                    <a id="next" class="next round">다음</a>
+                <p id="not" th:if="${nothing}">페이지가 비어있어요.</p>
+                <div id="nav">
+                    <a id="prev" class="previous round" th:if="${hasPrev}" th:href="${'./?page='+(pg-1)}">이전</a>
+                    <span id="pnsep" style="user-select: none;" th:if="${hasPrev && hasNext}">······</span>
+                    <a id="next" class="next round" th:if="${hasNext}" th:href="${'./?page='+(pg+1)}">다음</a>
                 </div>
             </div>
         </div>
