@@ -87,10 +87,10 @@ public class UserService {
                 ((JSONObject)con).put("active", problem.isActive());
                 cpy.put(con);
             } catch (SQLException e) {
-                LOGGER.error("Fail to get problem data from solve history. pCode="+pCode, e);
+                LOGGER.error("Fail to get problem data from solve history. pCode="+pCode+", uCode="+uCode, e);
             }
         });
-        problemConnection.close();
+        problemRepository.close(problemConnection);
         userRepository.close(userConnection);
         solutionRepository.close(solvesConnection);
         return cpy;
@@ -168,7 +168,7 @@ public class UserService {
     public Vector<String> getUserStaredList(int uCode) throws SQLException {
         Connection userConnection = userRepository.openConnection();
         try {
-            LOGGER.debug("Get user stared list of user "+uCode);
+            LOGGER.debug("Get user stared list from user "+uCode);
             String staredStr = userRepository.getUserStaredProblem(uCode, userConnection);
             String[] staredStrLst = staredStr.split(",");
             userRepository.close(userConnection);
@@ -180,9 +180,48 @@ public class UserService {
             return ret;
         }
         catch (Exception e) {
-            LOGGER.error("Cannot check if user user stared: ", e);
+            LOGGER.error("Cannot check of user stared: ", e);
             userRepository.close(userConnection);
             return new Vector<>();
+        }
+    }
+
+    public JSONArray getUserStaredProblem(int uCode) throws SQLException {
+        Connection userConnection = userRepository.openConnection(), problemConnection = problemRepository.openConnection();
+        JSONArray cpy = new JSONArray();
+        try {
+            LOGGER.debug("Get user stared problem from user "+uCode);
+            String staredStr = userRepository.getUserStaredProblem(uCode, userConnection);
+            if(staredStr == null) return cpy;
+            String[] staredStrLst = staredStr.split(",");
+            for(String problemCode : staredStrLst) {
+                if(problemCode.equals("")) continue;
+                JSONObject con = new JSONObject();
+                int pCode = Integer.parseInt(problemCode);
+                try {
+                    Problem problem = problemRepository.getProblemSimple(pCode, problemConnection);
+                    JSONArray tags = new JSONArray(problem.getTags());
+                    tags.put(new JSONObject(Map.of(
+                            "key", "diff",
+                            "content", problem.getDifficultyCode()
+                    )));
+                    con.put("code", pCode);
+                    con.put("name", problem.getName());
+                    con.put("tags", tags);
+                    con.put("active", problem.isActive());
+                    cpy.put(con);
+                } catch (SQLException e) {
+                    LOGGER.error("Fail to get problem data from user stared list. pCode="+pCode+". uCode="+uCode, e);
+                }
+            }
+            problemRepository.close(problemConnection);
+            userRepository.close(userConnection);
+            return cpy;
+        }
+        catch (Exception e) {
+            LOGGER.error("Cannot get problem that user stared. uCode="+uCode, e);
+            userRepository.close(userConnection);
+            return cpy;
         }
     }
 }

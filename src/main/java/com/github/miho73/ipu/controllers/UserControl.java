@@ -49,9 +49,14 @@ public class UserControl {
     }
 
     @GetMapping("/profile")
-    public String profileOfYou(@RequestParam(value = "page", required = false, defaultValue = "0") String page, Model model, HttpSession session) throws SQLException {
+    public String profileOfYou(@RequestParam(value = "page", required = false, defaultValue = "0") String page,
+                               @RequestParam(value = "tab", required = false, defaultValue = "solved") String tab,
+                               Model model, HttpSession session) throws SQLException {
         if(!sessionService.checkLogin(session)) {
             return "redirect:/login/?ret=/profile";
+        }
+        if(!tab.equals("solved") && !tab.equals("stars")) {
+            tab = "solved";
         }
         sessionService.loadSessionToModel(session, model);
         String uid = sessionService.getId(session);
@@ -87,19 +92,42 @@ public class UserControl {
         model.addAllAttributes(Map.of(
                 "lvupInf", toUp,
                 "progressBarStyle", converters.codeTable.get(currentRank),
-                "progressBarWidth", progressWidth
+                "progressBarWidth", progressWidth,
+                "tab", tab
         ));
         return "profile/userProfile";
     }
 
     @GetMapping("/profile/{userId}")
-    public String profileOfUser(@RequestParam(value = "page", required = false, defaultValue = "0") String page, @PathVariable("userId") String uid, Model model, HttpSession session) throws SQLException {
+    public String profileOfUser(@RequestParam(value = "page", required = false, defaultValue = "0") String page,
+                                @PathVariable("userId") String uid,
+                                @RequestParam(value = "tab", required = false, defaultValue = "solved") String tab,
+                                Model model, HttpSession session) throws SQLException {
+        if(!tab.equals("solved") && !tab.equals("stars")) {
+            tab = "solved";
+        }
         sessionService.loadSessionToModel(session, model);
         User user = userService.getProfileById(uid);
-        int pg = Integer.parseInt(page);
-        int PROBLEM_PER_PAGE = 30;
-        JSONArray solved = userService.getSolved(pg* PROBLEM_PER_PAGE +1, PROBLEM_PER_PAGE, uid);
-        JSONArray processed = tagService.processTagsToHtml(solved, session);
+
+        if(tab.equals("solved")) {
+            int pg = Integer.parseInt(page), PROBLEM_PER_PAGE = 30;
+            JSONArray solved = userService.getSolved(pg* PROBLEM_PER_PAGE +1, PROBLEM_PER_PAGE, uid);
+            JSONArray processed = tagService.processTagsToHtml(solved, session);
+            model.addAllAttributes(Map.of(
+                "pg", pg,
+                "solved", processed.toList(),
+                "hasNext", processed.length() == PROBLEM_PER_PAGE,
+                "hasPrev", pg != 0,
+                "nothing", processed.length() == 0
+            ));
+        }
+
+        else if(tab.equals("stars")) {
+            JSONArray stars = userService.getUserStaredProblem(user.getCode());
+            JSONArray processed = tagService.processTagsToHtml(stars, session);
+            System.out.println(processed.toList());
+            model.addAttribute("stared", processed.toList());
+        }
 
         int currentRank = converters.getLevelCode(user.getExperience());
         String toUp;
@@ -118,16 +146,10 @@ public class UserControl {
                 "bio", user.getBio(),
                 "experience", user.getExperience(),
                 "currentRank", converters.codeTableRl.getOrDefault(currentRank, "Unset"),
-                "pg", pg,
-                "solved", processed.toList(),
-                "hasNext", processed.length() == PROBLEM_PER_PAGE,
-                "hasPrev", pg != 0,
-                "nothing", processed.length() == 0
-        ));
-        model.addAllAttributes(Map.of(
                 "lvupInf", toUp,
                 "progressBarStyle", converters.codeTable.get(currentRank),
-                "progressBarWidth", progressWidth
+                "progressBarWidth", progressWidth,
+                "tab", tab
         ));
         return "profile/userProfile";
     }

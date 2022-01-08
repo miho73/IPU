@@ -33,18 +33,23 @@
                     </div>
                 </div>
             </div>
-            <div class="non-container">
-                <table id="prob-list-table" th:unless="${nothing}">
-                    <thead>
-                        <tr>
-                            <th style="width: 9%">번호</th>
-                            <th style="width: 23%;">문제 제목</th>
-                            <th style="width: 31%;">정보</th>
-                            <th style="width: 14%;">풀이 시간</th>
-                            <th style="width: 23%;">푼 시각</th>
-                        </tr>
-                    </thead>
-                    <tbody id="solveds">
+            <div class="menu-container">
+                <div class="menu-selection">
+                    <a href="?tab=solved" class="menu-element" th:classappend="${tab == 'solved' ? 'menu-element-selected' : ''}">푼 문제</a>
+                    <a href="?tab=stars" class="menu-element" th:classappend="${tab == 'stars' ? 'menu-element-selected' : ''}">북마크</a>
+                </div>
+                <div class="non-container">
+                    <table class="prob-list-table" th:unless="${nothing}" th:if="${tab == 'solved'}">
+                        <thead>
+                            <tr>
+                                <th style="width: 9%">번호</th>
+                                <th style="width: 23%;">문제 제목</th>
+                                <th style="width: 31%;">정보</th>
+                                <th style="width: 14%;">풀이 시간</th>
+                                <th style="width: 23%;">푼 시각</th>
+                            </tr>
+                        </thead>
+                        <tbody id="solveds">
                         <tr th:each="solve,index: ${solved}">
                             <td th:text="${index.index+1}"></td>
                             <td>
@@ -56,10 +61,31 @@
                             <td th:text="${solve.solt+'초'}"></td>
                             <td th:text="${solve.sol}"></td>
                         </tr>
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                    <table class="prob-list-table" th:if="${tab == 'stars'}">
+                        <thead>
+                            <tr>
+                                <th style="width: 9%">번호</th>
+                                <th style="width: 54%;">문제 제목</th>
+                                <th style="width: 37%;">정보</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="star: ${stared}">
+                                <td th:text="${star.code}"></td>
+                                <td>
+                                    <a th:text="${star.name}" th:href="${'/problem/'+star.code}"></a>
+                                </td>
+                                <td class="tag-con">
+                                    <div th:utext="${star.tags}"></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            <div>
+            <div th:if="${tab == 'solved'}">
                 <p id="not" th:if="${nothing}">페이지가 비어있어요.</p>
                 <div id="nav">
                     <a id="prev" class="previous round" th:if="${hasPrev}" th:href="${'./?page='+(pg-1)}">이전</a>

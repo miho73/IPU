@@ -71,6 +71,7 @@ public class UserRepository extends com.github.miho73.ipu.repositories.Repositor
 
         if(!rs.next()) return null;
         User user = new User();
+        user.setCode(rs.getInt("user_code"));
         user.setId(rs.getString("user_id"));
         user.setName(rs.getString("user_name"));
         user.setBio(rs.getString("bio"));
