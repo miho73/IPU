@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 
-<html lang="ko" class="backdrop-blur">
+<html lang="ko" xmlns:th="https://www.thymeleaf.org">
     <head>
         <title>D-Day</title>
-        <%- include('../../ejs-components/header-comp.ejs')%>
+        <th:block th:replace="fragments/header-comp.html :: header-comp"></th:block>
         <!--Custom meta-->
         <meta name="title" content="D-Day">
         <meta name="description" content="<%=dd%>까지">
@@ -13,7 +13,7 @@
         <meta name="twitter:description" content="<%=dd%>까지">
         <link rel="stylesheet" type="text/css" href="/lib/etc/dday/dday.css">
         <script>
-            let dday_posix = <%=dd%>*1000;
+            let dday_posix = [[${posix}]]*1000;
             setInterval(()=>{
                 let now = Date.now();
                 let dif = dday_posix-now;
@@ -47,7 +47,7 @@
     </head>
     <body>
         <div class="vh-center">
-            <p id="to-what"><%=tit%></p>
+            <p id="to-what" th:text="${forwhat}"></p>
             <p id="tm">D-DAY</p>
         </div>
     </body>
