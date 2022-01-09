@@ -9,7 +9,7 @@ html,body {
 h1,h3,li,ul {
     color: #fff;
 }
-h1#title {
+h1.title {
     font-size: 3em;
     margin-left: 3%;
     margin-top: 2.5%;

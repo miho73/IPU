@@ -5,6 +5,7 @@ import org.json.JSONObject;
 public class RestfulReponse {
     public enum HTTP_CODE {
         OK,
+        CREATED,
         BAD_REQUEST,
         UNAUTHORIZED,
         FORBIDDEN,
@@ -18,6 +19,7 @@ public class RestfulReponse {
         JSONObject response = new JSONObject();
         int code = switch (status){
             case OK -> 200;
+            case CREATED -> 201;
             case BAD_REQUEST -> 400;
             case UNAUTHORIZED -> 401;
             case FORBIDDEN -> 403;
@@ -35,6 +37,7 @@ public class RestfulReponse {
         JSONObject response = new JSONObject();
         int code = switch (status){
             case OK -> 200;
+            case CREATED -> 201;
             case BAD_REQUEST -> 400;
             case UNAUTHORIZED -> 401;
             case FORBIDDEN -> 403;

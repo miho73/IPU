@@ -42,3 +42,7 @@ function updateFooterOnInit() {
 function gei(id) {
     return document.getElementById(id);
 }
+
+function isInt(value) {
+    return !isNaN(value) && parseInt(Number(value)) == value && !isNaN(parseInt(value, 10));
+}

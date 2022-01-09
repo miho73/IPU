@@ -26,7 +26,7 @@
 		<p id="err" th:text="${error_text}"></p>
 		<div class="vh-center">
 			<form method="POST" onsubmit="return login()" th:action="${'/login?ret='+return}">
-				<label id="title">로그인</label>
+				<label class="title">로그인</label>
 				<input type="text" id="id" class="input" name="id" placeholder="ID" spellcheck="false" required autocomplete="username" title="ID" aria-required="true">
 				<input type="password" id="pwd" class="input" name="password" placeholder="Password" spellcheck="false" required autocomplete="current-password" title="암호" aria-required="true">
 				<input type="text" id="gtoken" style="display: none;" name="gToken" readonly required>

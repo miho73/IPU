@@ -26,7 +26,7 @@
 	<p id="err" th:utext="${error_text}"></p>
 		<div class="vh-center">
 			<form method="POST" action="/signup" onsubmit="return beforeSignup()">
-				<label id="title">가입</label>
+				<label class="title">가입</label>
 				<input type="text" id="name" class="input second" name="name" placeholder="Name" spellcheck="false" style="display: none;" required autocomplete="nickname" aria-required="true">
 				<label id="ni" for="name" class="form-error" style="display: none;">이름은 50자 이내여야 해요.</label>
 				<input type="text" id="id" class="input second" name="id" placeholder="ID" spellcheck="false" style="display: none;" required autocomplete="username" aria-required="true">

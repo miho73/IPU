@@ -10,7 +10,7 @@
         </noscript>
         <nav id="navigation">
             <a href="/">
-                <p id="title">IPU</p>
+                <p class="title">IPU</p>
             </a>
             <div class="hide-on-mobile nav-hrefs">
                 <a href="/problem">
@@ -18,6 +18,9 @@
                 </a>
                 <a href="/users">
                     <p class="nav">랭킹</p>
+                </a>
+                <a href="/issue" th:if="${logged}">
+                    <p class="nav">이슈</p>
                 </a>
                 <a href="/root" th:if="${root}">
                     <p class="nav">루트</p>
@@ -63,6 +66,7 @@
             <div id="ham-hrefs-list">
                 <a href="/problem" class="ham-href">문제</a>
                 <a href="/users" class="ham-href">랭킹</a>
+                <a href="/issue" class="ham-href" th:if="${logged}">이슈</a>
                 <a href="/docs" class="ham-href">문서</a>
             </div>
         </nav>

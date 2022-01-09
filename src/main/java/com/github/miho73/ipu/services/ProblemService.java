@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpSession;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Hashtable;
@@ -60,7 +59,7 @@ public class ProblemService {
         return problem;
     }
 
-    public void registerProblem(Problem problem, HttpSession session) throws SQLException {
+    public void registerProblem(Problem problem) throws SQLException {
         Connection connection = problemRepository.openConnectionForEdit();
         try {
             problemRepository.registerProblem(problem, connection);

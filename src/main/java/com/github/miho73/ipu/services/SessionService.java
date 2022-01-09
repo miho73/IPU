@@ -120,6 +120,15 @@ public class SessionService {
         session.invalidate();
     }
 
+    public void addToSessionTable(HttpSession session) {
+        String id = getId(session);
+        if(sessionRepository.exists(id)) {
+            sessionRepository.remove(id);
+        }
+        LOGGER.debug("Registering session to table. ID="+id);
+        sessionRepository.add(session, id);
+    }
+
     public HttpSession getSessonById(String id) {
         return sessionRepository.get(id);
     }

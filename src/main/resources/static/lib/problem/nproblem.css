@@ -1,6 +1,7 @@
 textarea.editor {
     width: 100%;
     height: 300px;
+    max-width: unset;
     box-sizing: border-box;
     resize: vertical;
     outline: none;
@@ -102,7 +103,7 @@ input#name {
     width: 40%;
 }
 div#tools {
-    margin: 10px 0;
+    margin: 10px;
 }
 input.tag-input {
     width: 60%;

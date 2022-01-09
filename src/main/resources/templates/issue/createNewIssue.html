@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+
+<html lang="ko" xmlns:th="https://www.thymeleaf.org">
+    <head>
+        <title>이슈 제기 - IPU</title>
+        <th:block th:replace="fragments/header-comp.html :: header-comp"></th:block>
+        <link rel="stylesheet" type="text/css" href="/lib/problem/nproblem.css">
+        <meta name="title" content="IPU - 이슈">
+        <meta name="description" content="IPU - 이슈 제기">
+        <meta property="og:title" content="IPU - 이슈">
+        <meta property="og:description" content="IPU - 이슈 제기">
+        <meta name="twitter:title" content="IPU - 이슈">
+        <meta name="twitter:description" content="IPU - 이슈 제기">
+    </head>
+    <body>
+        <th:block th:replace="fragments/header.html :: navigation"></th:block>
+        <h1 class="title">이슈 제기</h1>
+        <p class="subtitle">모든 문제는 꼼꼼하게 확인한 후 수정할께요! 더 나은 커뮤니티를 위한 노력에 미리 감사드립니다!</p>
+        <div class="container">
+            <div id="top-menu">
+                <input type="text" id="name" class="univ-input" spellcheck="false" placeholder="이슈 제목">
+                <select id="issue-type" class="univ-sel">
+                    <option disabled selected>이슈 종류</option>
+                    <option value="mist">오타</option>
+                    <option value="ambi">모호한 조건·표현</option>
+                    <option value="insu">불충분한 문제 조건</option>
+                    <option value="solu">잘못되거나 더 나은 풀이</option>
+                    <option value="copy">저작권 문제 제기</option>
+                </select>
+            </div>
+            <div id="tools">
+                <input type="number" id="prob-code" class="univ-input" spellcheck="false" placeholder="문제 번호" onchange="loadProblem()">
+                <span id="problem_name" style="margin-left: 10px;"></span>
+            </div>
+            <h3 id="pro-cont" class="sub-title">이슈 내용*</h3>
+            <div class="editor-container">
+                <textarea id="content" class="editor univ-text" placeholder="이슈에 관한 자세한 설명을 포함해 주세요."></textarea>
+            </div>
+            <p class="subtitle">이슈가 제기되면 문제가 수정되기 전에 꼼꼼하게 확인될꺼에요. 작성하신 내용을 다시 한번 검토해주세요!</p>
+            <ul class="univ-list">
+                <li class="univ-le">작성하신 내용은 정말로 오류 또는 논의할 사안이며, 이슈를 만들어야 할 정도로 중대한가요?</li>
+                <li class="univ-le">작성하신 내용은 이 이슈가 말하고자 하는 문제점을 잘 설명하나요?</li>
+                <li class="univ-le">이슈는 논리적으로 문제를 지적하고 있나요?</li>
+            </ul>
+        </div>
+        <div style="text-align: center;">
+            <button class="mpb" onclick="confirmIssue()">등록</button>
+        </div>
+        <th:block th:replace="fragments/footer.html :: footer"></th:block>
+    </body>
+    <script>
+        existsProblem = false;
+
+        function loadProblem() {
+            let code = gei('prob-code').value;
+            $.ajax({
+                type: 'GET',
+                url: '/problem/api/get',
+                dataType: 'json',
+                data: {
+                    code: code
+                },
+                error: function(error) {
+                    if(error.responseJSON.status == 404) {
+                        gei('problem_name').innerText = `문제 번호 ${code}를 찾지 못했어요...`
+                    }
+                    else {
+                        gei('problem_name').innerText = `문제 번호 ${code}를 받아오지 못했어요...`
+                    }
+                    existsProblem = false;
+                },
+                success: function(json) {
+                    problem = json.result;
+                    gei('problem_name').innerHTML = `<a href="/problem/${code}" class="univ">${problem.prob_name}</a>`;
+                    existsProblem = true;
+                }
+            });
+        }
+
+        function confirmIssue() {
+            let title = gei('name').value;
+            let type = gei('issue-type').selectedIndex;
+            let pCode = gei('prob-code').value;
+            let content = gei('content').value;
+
+            let precond = true;
+            if(title == '' || title == undefined) {
+                gei('name').classList.add('formthis');
+                location.href = "#name";
+                precond = false;
+            }
+            else {
+                gei('name').classList.remove('formthis');
+            }
+            if(type == 0) {
+                gei('issue-type').classList.add('formthis');
+                location.href = "#issue-type";
+                precond = false;
+            }
+            else {
+                gei('issue-type').classList.remove('formthis');
+            }
+            if(isInt(pCode) == false || !existsProblem) {
+                gei('prob-code').classList.add('formthis');
+                location.href = "#prob-code";
+                precond = false;
+            }
+            else {
+                gei('prob-code').classList.remove('formthis');
+            }
+            if(content == '' || content == undefined) {
+                gei('content').classList.add('formthis');
+                location.href = "#content";
+                precond = false;
+            }
+            else {
+                gei('content').classList.remove('formthis');
+            }            
+            
+            if(!precond) return;
+            $.ajax({
+                type: 'POST',
+                url: '/issue/api/create-new',
+                dataType: 'json',
+                data: {
+                    name: title,
+                    type: type,
+                    pCode: pCode,
+                    content: content
+                },
+                success: function(data) {
+                    
+                },
+                error: function(err) {
+                    
+                }
+            })
+        }
+    </script>
+</html>

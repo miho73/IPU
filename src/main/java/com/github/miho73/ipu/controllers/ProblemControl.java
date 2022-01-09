@@ -41,7 +41,7 @@ public class ProblemControl {
     @Autowired private Renderer renderer = new Renderer();
     @Autowired private SHA sha = new SHA();
 
-    private int NUMBER_OF_PROBLEMS;
+    public int NUMBER_OF_PROBLEMS;
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
@@ -56,7 +56,7 @@ public class ProblemControl {
         sessionService.loadSessionToModel(session, model);
         int page = Integer.parseInt(pagex);
         int PROBLEM_PER_PAGE = 30;
-        int frm = page* PROBLEM_PER_PAGE +1;
+        int frm = page*PROBLEM_PER_PAGE+1;
         if(frm<=0) {
             response.sendError(400);
             return null;
@@ -168,6 +168,10 @@ public class ProblemControl {
     @PostMapping(value = "/make/upload", produces = "text/plain; charset=utf-8")
     @ResponseBody
     public String imageUpload(@RequestParam(value = "img")MultipartFile resource, HttpSession session, HttpServletResponse response) throws IOException {
+        if(sessionService.hasPrivilege(SessionService.PRIVILEGES.PROBLEM_MAKE, session)) {
+            response.setStatus(403);
+            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.FORBIDDEN, "forbidden");
+        }
         if(resource.getSize() > 5000000) {
             response.setStatus(400);
             return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.BAD_REQUEST, "file too large");
@@ -212,7 +216,7 @@ public class ProblemControl {
         problem.setTags        (request.getParameter("tags"));
         problem.setActive      (Boolean.parseBoolean(request.getParameter("active")));
         problem.setAuthor_name (sessionService.getName(session));
-        problemService.registerProblem(problem, session);
+        problemService.registerProblem(problem);
         NUMBER_OF_PROBLEMS++;
         LOGGER.debug("Problem registered. Problem count now set to "+NUMBER_OF_PROBLEMS);
         return "redirect:/problem";
@@ -229,19 +233,29 @@ public class ProblemControl {
         return "problem/editProblem";
     }
 
-    @PostMapping(value = "/api/get-detail", produces = "application/json; charset=utf-8")
+    @GetMapping(value = "/api/get", produces = "application/json; charset=utf-8")
     @ResponseBody
-    public String problemDetail(HttpServletRequest request, HttpServletResponse response, @RequestParam("code") int code) throws SQLException {
-        JSONObject detail = new JSONObject();
-        Problem problem = problemService.getFullProblem(code);
-        detail.put("cate", problem.getCategoryCode());
-        detail.put("diff", problem.getDifficultyCode());
-        detail.put("prob_cont", problem.getContent());
-        detail.put("prob_exp", problem.getSolution());
-        detail.put("prob_name", problem.getName());
-        detail.put("tags", problem.getTags());
-        detail.put("active", problem.isActive());
-        return detail.toString();
+    public String problemDetail(HttpServletRequest request, HttpServletResponse response, @RequestParam("code") int code) {
+        try {
+            JSONObject detail = new JSONObject();
+            Problem problem = problemService.getFullProblem(code);
+            if(problem == null) {
+                response.setStatus(404);
+                return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.NOT_FOUND, "database error");
+            }
+            detail.put("cate", problem.getCategoryCode());
+            detail.put("diff", problem.getDifficultyCode());
+            detail.put("prob_cont", problem.getContent());
+            detail.put("prob_exp", problem.getSolution());
+            detail.put("prob_name", problem.getName());
+            detail.put("tags", problem.getTags());
+            detail.put("active", problem.isActive());
+            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.OK, detail);
+        }
+        catch (SQLException e) {
+            response.setStatus(500);
+            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR, "database error");
+        }
     }
 
     @PutMapping("/update")

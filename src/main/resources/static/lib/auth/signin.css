@@ -19,7 +19,7 @@ form {
     align-items: center;   
 }
 
-label#title {
+label.title {
     font-family: 'Cafe24Shiningstar', 'Cafe24Oneprettynight', 'Spoqa Han Sans Neo', 'sans-serif';
     font-weight: 400;
     font-size: 4em;
@@ -139,7 +139,7 @@ div#captcha {
 }
 
 @media (max-width: 900px) {
-    label#title {
+    label.title {
         font-size: 2em;
     }
     input,button.input {

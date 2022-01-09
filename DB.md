@@ -86,11 +86,25 @@ IPU uses postgresql as DBMS. Here's the structure and user spec for IPU.
 > ```sql
 > CREATE TABLE IF NOT EXISTS prob_issue(
 > issue_code SERIAL PRIMARY KEY NOT NULL,
+> issue_name VARCHAR(100) NOT NULL,
 > issue_content TEXT NOT NULL,
 > vote INTEGER NOT NULL DEFAULT 0,
 > status INTEGER NOT NULL DEFAULT 0,
 > for_problem INTEGER NOT NULL,
-> author VARCHAR(50) NOT NULL
+> issue_type INTEGER NOT NULL,
+> author VARCHAR(50) NOT NULL,
+> written_at TIMESTAMP WITH TIME ZONE NOT NULL
+> );
+> ```
+### Issue commects table
+> Table name: issue_comments
+> ```sql
+> CREATE TABLE IF NOT EXISTS issue_comments (
+> comment_code SERIAL PRIMARY KEY NOT NULL,
+> comment_content TEXT NOT NULL,
+> related_issue INTEGER NOT NULL,
+> author VARCHAR(50) NOT NULL,
+> written_at TIMESTAMP WITH TIME ZONE NOT NULL
 > );
 > ```
 

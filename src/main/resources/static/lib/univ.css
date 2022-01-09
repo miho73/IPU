@@ -157,7 +157,7 @@ div.nav-hrefs {
 p.nav {
     margin: 10px;
 }
-p#title {
+p.title {
     border-width: 0;
     font-size: 4em; 
     margin: 0;
@@ -281,7 +281,7 @@ p.nav-top {
     nav#navigation,button.nav-ham {
         height: 10vh;
     }
-    p#title {
+    p.title {
         font-size: 2.5em;
     }
     p.nav {
@@ -397,7 +397,7 @@ code.inline {
 }
 
 @media (max-width: 900px) {
-    h1#title {
+    h1.title {
         font-size: 1.3em;
     }
     div.container,div.non-container {
@@ -409,10 +409,10 @@ code.inline {
 *.formthis {
     border-width: 1px;
     border-style: solid;
-    border-color: #f00;
-    -moz-box-shadow: 0 0 5px #f00;
-    -webkit-box-shadow: 0 0 5px #f00;
-    box-shadow: 0 0 5px #f00;
+    border-color: #f00 inset;
+    -moz-box-shadow: 0 0 3px #f00 inset;
+    -webkit-box-shadow: 0 0 3px #f00 inset;
+    box-shadow: 0 0 3px #f00 inset;
 }
 
 *.okthis {
@@ -422,6 +422,22 @@ code.inline {
     -moz-box-shadow: 0 0 5px #0f0;
     -webkit-box-shadow: 0 0 5px #0f0;
     box-shadow: 0 0 5px #0f0;
+}
+
+h1.title {
+    font-weight: 500;
+}
+p.subtitle {
+    text-align: center;
+    font-size: 1.1em;
+    font-weight: 400;
+}
+
+a.univ {
+    color: #0076C0;
+}
+a.univ:hover {
+    text-decoration: underline;
 }
 
 button {
@@ -463,12 +479,19 @@ select.univ-sel {
     background: url('/lib/imgs/down-arrow.svg') no-repeat 95% 50%;
 }
 
-input[type=text].univ-input,input[type=password].univ-input {
+input[type=text].univ-input,input[type=password].univ-input,input[type=number].univ-input {
     outline: none;
     padding: 7px;
     box-sizing: border-box;
     border: #aaa 1px solid;
     border-radius: 5px;
+}
+input[type=number].univ-input::-webkit-outer-spin-button, input[type=number].univ-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type=number].univ-input {
+  -moz-appearance: textfield;
 }
 input[type=password] {
     letter-spacing: 4px;
@@ -562,6 +585,14 @@ a.menu-element-selected {
 a.menu-element-selected:hover {
     background-color: #1a8bfc;
 }
+ul.univ-list, ol.univ-list {
+    padding-left: 20px;
+    margin: 10px 0;
+}
+li.univ-le {
+    margin: 2px 0;
+}
+
 @media (max-width: 800px) {
     div.menu-container {
         flex-direction: column;
@@ -575,5 +606,9 @@ a.menu-element-selected:hover {
     }
     a.menu-element {
         padding: 10px 20px;
+    }
+    p.subtitle {
+        font-size: 0.8em;
+        padding: 0 10px;
     }
 }

@@ -20,6 +20,8 @@ function selectLocalImage(forwhat) {
             error: function(err) {
                 switch(err.responseJSON.result) {
                     case "file too large":
+                        gei('image-upload-result').innerText = '이미지를 업로드할 수 있는 권한이 없어요.';
+                    case "file too large":
                         gei('image-upload-result').innerText = '업로드 가능한 크기는 최대 5MB에요. 크기를 줄여주세요.';
                     case "database error":
                         gei('image-upload-result').innerText = '이미지를 등록하지 못했어요. 잠시 후에 다시 시도해주세요.';
