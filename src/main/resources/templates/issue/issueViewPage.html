@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+
+<html lang="ko" xmlns:th="https://www.thymeleaf.org">
+    <head>
+        <title>이슈 - IPU</title>
+        <th:block th:replace="fragments/header-comp.html :: header-comp"></th:block>
+        <link rel="stylesheet" type="text/css" href="/lib/ipuac/ipuac.css">
+        <link rel="stylesheet" type="text/css" href="/lib/issue/issuePage.css">
+        <meta name="title" content="IPU - 이슈">
+        <meta name="description" content="IPU - 이슈 목록">
+        <meta property="og:title" content="IPU - 이슈">
+        <meta property="og:description" content="IPU - 이슈 목록">
+        <meta name="twitter:title" content="IPU - 이슈">
+        <meta name="twitter:description" content="IPU - 이슈 목록">
+        <script src="/lib/issue/issuePage.js"></script>
+    </head>
+    <body>
+        <th:block th:replace="fragments/header.html :: navigation"></th:block>
+        <div class="container">
+            <h1 id="issue-title" class="issue-title" th:text="${issueName}" onclick="editTitle()"></h1>
+            <input type="text" id="edit-issue-title" th:value="${issueName}" class="univ-input issue-title" th:onchange="updateTitle([[${issueCode}]])" onfocusout="nameEditCancel()">
+            <div class="issue-data-bar">
+                <p class="issue-author" th:text="${issueAuthor}"></p>
+            </div>
+            <div th:utext="${issueContent}" class="issue-content"></div>
+        </div>
+        <th:block th:replace="fragments/footer.html :: footer"></th:block>
+    </body>
+</html>

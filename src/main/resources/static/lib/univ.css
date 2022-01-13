@@ -593,6 +593,10 @@ li.univ-le {
     margin: 2px 0;
 }
 
+*.text-left {
+    text-align: left !important;
+}
+
 @media (max-width: 800px) {
     div.menu-container {
         flex-direction: column;

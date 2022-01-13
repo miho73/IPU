@@ -1,0 +1,30 @@
+div.issue-content {
+    border: 1px #ccc solid;
+    padding: 10px;
+    border-width: 1px 0 0 0;
+}
+
+div.issue-data-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+h1.issue-title,input.issue-title {
+    font-weight: 500;
+    text-align: left;
+    margin: 10px 0;
+    max-width: 100%;
+}
+input.issue-title {
+    font-size: 2em;
+    display: none;
+}
+h1.issue-title:hover::after {
+    opacity: 1;
+}
+
+p.issue-author {
+    font-size: 1.1em;
+    font-weight: 400;
+    margin: 10px 0;
+}

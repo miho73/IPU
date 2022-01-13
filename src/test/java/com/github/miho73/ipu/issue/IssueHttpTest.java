@@ -12,8 +12,10 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import java.util.Date;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
@@ -45,6 +47,15 @@ public class IssueHttpTest {
                 .andExpect(status().isOk());
     }
 
+    @DisplayName("Get issue view page (Success)")
+    @Test
+    public void getIssueViewPageTest() throws Exception {
+        mockMvc.perform(
+                get("/issue/1")
+                )
+                .andExpect(status().isOk());
+    }
+
     @DisplayName("Create new issue (Success)")
     @Test
     public void createNewIssueGreen() throws Exception {
@@ -61,8 +72,6 @@ public class IssueHttpTest {
     @DisplayName("Create new issue (Fail)")
     @Test
     public void createNewIssueRed() throws Exception {
-
-
         mockMvc.perform(
                         post("/issue/api/create-new")
                                 .param("name", "Test Issue")
@@ -72,5 +81,26 @@ public class IssueHttpTest {
                                 .session(session)
                 )
                 .andExpect(status().isBadRequest());
+    }
+
+    @DisplayName("Change issue name (Success)")
+    @Test
+    public void changeIssueNameGreen() throws Exception {
+        String newName = "Title for test changed at "+(new Date().toString());
+
+        mockMvc.perform(
+                patch("/issue/api/name/update")
+                        .param("issue-code", "1")
+                        .param("new-name", newName)
+                        .session(session)
+        )
+        .andExpect(status().isOk());
+
+        mockMvc.perform(
+                get("/issue/api/get/name")
+                        .param("issue-code", "1")
+        )
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.result").value(newName));
     }
 }

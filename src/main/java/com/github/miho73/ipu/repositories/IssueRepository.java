@@ -16,15 +16,15 @@ public class IssueRepository extends com.github.miho73.ipu.repositories.Reposito
     @Value("${db.problem.username}") private String DB_USERNAME;
     @Value("${db.problem.password}") private String DB_PASSWORD;
 
-    private final String ISSUE_CODE = "issue_code";
-    private final String ISSUE_NANE = "issue_name";
-    private final String ISSUE_CONTENT = "issue_content";
-    private final String VOTE = "vote";
-    private final String FOR_PROBLEM = "for_problem";
-    private final String ISSUE_TYPE = "issue_type";
-    private final String AUTHOR = "author";
-    private final String WRITTEN_AT = "written_at";
-    private final String ISSUE_STATUS = "status";
+    public final String ISSUE_CODE = "issue_code";
+    public final String ISSUE_NANE = "issue_name";
+    public final String ISSUE_CONTENT = "issue_content";
+    public final String VOTE = "vote";
+    public final String FOR_PROBLEM = "for_problem";
+    public final String ISSUE_TYPE = "issue_type";
+    public final String AUTHOR = "author";
+    public final String WRITTEN_AT = "written_at";
+    public final String ISSUE_STATUS = "status";
 
     @Override
     @PostConstruct
@@ -40,7 +40,7 @@ public class IssueRepository extends com.github.miho73.ipu.repositories.Reposito
 
 
     public List<Issue> getIssueBriefly(int from, int len, Connection conn) throws SQLException {
-        String sql = "SELECT issue_code, issue_name, status, for_problem, issue_type FROM prob_issue WHERE issue_code>=? ORDER BY issue_code LIMIT ?;";
+        String sql = "SELECT issue_code, issue_name, status, for_problem, issue_type, author FROM prob_issue WHERE issue_code>=? ORDER BY issue_code LIMIT ?;";
         PreparedStatement psmt = conn.prepareStatement(sql);
         psmt.setInt(1, from);
         psmt.setInt(2, len);
@@ -54,6 +54,7 @@ public class IssueRepository extends com.github.miho73.ipu.repositories.Reposito
             issue.setStatus(rs.getInt(ISSUE_STATUS));
             issue.setForProblem(rs.getInt(FOR_PROBLEM));
             issue.setType(rs.getInt(ISSUE_TYPE));
+            issue.setAuthor(rs.getString(AUTHOR));
             pList.add(issue);
         }
         return pList;
@@ -72,6 +73,36 @@ public class IssueRepository extends com.github.miho73.ipu.repositories.Reposito
         psmt.setString(6, authorId);
         psmt.setTimestamp(7, timestamp);
 
+        psmt.execute();
+    }
+
+    public Issue getIssue(int issueCode, Connection connection) throws SQLException {
+        String sql = "SELECT * FROM prob_issue WHERE issue_code=?;";
+        PreparedStatement psmt = connection.prepareStatement(sql);
+
+        psmt.setInt(1, issueCode);
+        ResultSet rs = psmt.executeQuery();
+
+        if(!rs.next()) return null;
+        Issue issue = new Issue();
+        issue.setIssueCode(rs.getInt(ISSUE_CODE));
+        issue.setContent(rs.getString(ISSUE_CONTENT));
+        issue.setIssueName(rs.getString(ISSUE_NANE));
+        issue.setStatus(rs.getInt(ISSUE_STATUS));
+        issue.setForProblem(rs.getInt(FOR_PROBLEM));
+        issue.setType(rs.getInt(ISSUE_TYPE));
+        issue.setOpenAt(rs.getTimestamp(WRITTEN_AT));
+        issue.setVote(rs.getInt(VOTE));
+        issue.setAuthor(rs.getString(AUTHOR));
+        return issue;
+    }
+
+    public void updateValue(String column, String newName, int issueCode, Connection connection) throws SQLException {
+        String sql = "UPDATE prob_issue SET "+column+"=? WHERE issue_code=?;";
+        PreparedStatement psmt = connection.prepareStatement(sql);
+
+        psmt.setString(1, newName);
+        psmt.setInt(2, issueCode);
         psmt.execute();
     }
 }

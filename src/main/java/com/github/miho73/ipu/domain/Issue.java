@@ -57,24 +57,63 @@ public class Issue {
         }
     }
 
-    private String openBy, issueName, content;
+    private String issueName, content, author;
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
     private Timestamp openAt;
     private ISSUE_STATUS status;
     private ISSUE_TYPE type;
 
     public enum ISSUE_STATUS {
-        OPEN,
-        PENDING_APPLY,
-        CLOSED,
-        NEED_DISCUSSION
+        OPEN("OPEN"),
+        PENDING_APPLY("PENDING APPLY"),
+        CLOSED("CLOSED"),
+        NEED_DISCUSSION("NEED DISCUSSION");
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        private String name;
+
+        ISSUE_STATUS(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String toString() {
+            return name;
+        }
     }
     enum ISSUE_TYPE {
-        MISTYPE,
-        AMBIGUOUS_MEANING,
-        INSUFFICIENT_PROBLEM,
-        SOLUTION_NOT_CORRECT,
-        ETC,
-        COPYRIGHT
+        MISTYPE("오타"),
+        AMBIGUOUS_MEANING("모호한 조건·표현"),
+        INSUFFICIENT_PROBLEM("불충분한 문제 조건"),
+        SOLUTION_NOT_CORRECT("잘못되거나 더 나은 풀이"),
+        ETC("기타"),
+        COPYRIGHT("저작권");
+
+        private String name;
+
+        ISSUE_TYPE(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String toString() {
+            return name;
+        }
     }
 
     public int getIssueCode() {
@@ -83,14 +122,6 @@ public class Issue {
 
     public void setIssueCode(int issueCode) {
         this.issueCode = issueCode;
-    }
-
-    public String getOpenBy() {
-        return openBy;
-    }
-
-    public void setOpenBy(String openBy) {
-        this.openBy = openBy;
     }
 
     public Timestamp getOpenAt() {
