@@ -35,7 +35,7 @@ window.addEventListener('load', ()=>{
 
 function updateFooterOnInit() {
     if ($(document.body).height() > $(window).height()) {
-        $('#footer').attr('style', 'opacity:1;');
+        $('#footer').attr('style', 'display: block;');
     }
 }
 

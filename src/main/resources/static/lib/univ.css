@@ -302,7 +302,7 @@ footer {
     justify-content: flex-start;
     align-items: flex-start;
     gap: 6px;
-    opacity: 0;
+    display: none;
     -webkit-transition: opacity .1s ease-out;
     -moz-transition: opacity .1s ease-out;
     -ms-transition: opacity .1s ease-out;
@@ -312,6 +312,9 @@ footer {
 *.footer-text {
     color: #898989;
     font-size: 0.9em;
+}
+a.footer-text {
+    font-size: 1.1em;
 }
 
 /* universal design */
