@@ -53,7 +53,9 @@
         <p id="not" th:if="${nothing}">페이지가 비어있어요.</p>
         <div id="nav">
             <a id="prev" class="previous round" th:if="${hasPrev}" th:href="${'/problem/?page='+(page-1)}">이전</a>
-            <span id="pnsep" th:if="${hasPrev && hasNext}">······</span>
+            <th:block th:each="i: ${#numbers.sequence(1, pages)}">
+                <a th:href="${'/problem/?page='+(i-1)}" th:text="${i}" class="list-page round" style="font-size: 1em;"></a>
+            </th:block>
             <a id="next" class="next round" th:if="${hasNext}" th:href="${'/problem/?page='+(page+1)}">다음</a>
         </div>
         <th:block th:replace="fragments/footer.html :: footer"></th:block>

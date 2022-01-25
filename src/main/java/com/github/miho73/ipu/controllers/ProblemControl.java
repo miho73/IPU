@@ -69,6 +69,7 @@ public class ProblemControl {
         model.addAttribute("hasPrev", page != 0);
         model.addAttribute("hasNext", (NUMBER_OF_PROBLEMS-(page+1)*PROBLEM_PER_PAGE)>0);
         model.addAttribute("page", page);
+        model.addAttribute("pages", Math.ceil((float)NUMBER_OF_PROBLEMS/PROBLEM_PER_PAGE));
         return "problem/problemList";
     }
     @GetMapping("/category")
