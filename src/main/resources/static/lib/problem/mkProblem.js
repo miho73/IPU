@@ -115,7 +115,7 @@ function confirme() {
         },
         success: function(data) {
             window.onbeforeunload = undefined;
-            window.location.href = "/problem";
+            window.location.href = "/problem/latest";
         },
         error: function(err) {
             if(err.status == 403) {

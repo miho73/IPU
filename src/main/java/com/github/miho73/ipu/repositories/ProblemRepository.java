@@ -232,4 +232,18 @@ public class ProblemRepository extends com.github.miho73.ipu.repositories.Reposi
         }
         return ret;
     }
+
+    public int getRandomProblemInBranch(String category, Connection conn) throws SQLException {
+        String sql = "SELECT problem_code FROM prob WHERE (problem_category=?) ORDER BY RANDOM() LIMIT 1;";
+        PreparedStatement psmt = conn.prepareStatement(sql);
+        psmt.setString(1, category);
+        ResultSet rs = psmt.executeQuery();
+
+        if(rs.next()) {
+            return rs.getInt("problem_code");
+        }
+        else {
+            return -1;
+        }
+    }
 }

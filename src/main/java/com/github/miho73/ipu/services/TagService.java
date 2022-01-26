@@ -59,7 +59,7 @@ public class TagService {
                             .append(converters.convertDiff(tag.getString("content")))
                             .append("</span>");
                 }
-                else {
+                else if("custom".equals(key)) {
                     html.append("<span class=\"tag tag-custom\" style=\"background-color: #")
                             .append(tag.get("back"))
                             .append("; color: #")

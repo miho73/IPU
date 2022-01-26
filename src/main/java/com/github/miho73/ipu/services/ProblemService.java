@@ -176,7 +176,14 @@ public class ProblemService {
     public int getNumberOfProblems() throws SQLException {
         Connection connection = problemRepository.openConnection();
         int cnt = problemRepository.getNumberOfProblems(connection);
-        connection.close();
+        problemRepository.close(connection);
         return cnt;
+    }
+
+    public int getRandomProblemInBranch(String category) throws SQLException {
+        Connection connection = problemRepository.openConnection();
+        int pCode = problemRepository.getRandomProblemInBranch(category, connection);
+        problemRepository.close(connection);
+        return pCode;
     }
 }

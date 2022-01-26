@@ -58,6 +58,7 @@ span#pnsep {
 a.round {
     color: #0076C0;
     font-size: 1.2em;
+    margin: 0 4px;
 }
 a.round:hover {
     text-decoration: underline;

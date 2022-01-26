@@ -13,7 +13,7 @@
                 <p class="title">IPU</p>
             </a>
             <div class="hide-on-mobile nav-hrefs">
-                <a href="/problem">
+                <a href="/problem/latest">
                     <p class="nav">문제</p>
                 </a>
                 <a href="/users">
@@ -25,7 +25,7 @@
                 <a href="/root" th:if="${root}">
                     <p class="nav">루트</p>
                 </a>
-                <a href="/login" th:unless="${logged}">
+                <a th:href="${'/login/?ret='+(#httpServletRequest.requestURI)}" th:unless="${logged}">
                     <p class="nav">로그인</p>
                 </a>
                 <a href="/signup" th:unless="${logged}">
@@ -59,12 +59,12 @@
                     <a href="/settings" class="ham-usr-btn">설정</a>
                     <a href="/root" th:if="${root}" class="ham-usr-btn">루트</a>
                 </div>
-                <a href="/login" class="ham-usr-btn" th:unless="${logged}">로그인</a>
+                <a th:href="${'/login/?ret='+(#httpServletRequest.requestURI)}" class="ham-usr-btn" th:unless="${logged}">로그인</a>
                 <a href="/signup" class="ham-usr-btn" th:unless="${logged}">가입</a>
             </div>
             <hr class="univ">
             <div id="ham-hrefs-list">
-                <a href="/problem" class="ham-href">문제</a>
+                <a href="/problem/latest" class="ham-href">문제</a>
                 <a href="/users" class="ham-href">랭킹</a>
                 <a href="/issue" class="ham-href" th:if="${logged}">이슈</a>
                 <a href="/docs" class="ham-href">문서</a>

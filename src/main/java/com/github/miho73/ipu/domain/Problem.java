@@ -30,7 +30,7 @@ public class Problem {
         PHYSICS,
         CHEMISTRY,
         BIOLOGY,
-        EARTH_SCIENCE
+        EARTH_SCIENCE;
     }
     private int code;
     private String name;

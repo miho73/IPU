@@ -22,6 +22,7 @@
                 <a class="vi-cho" href="/problem">전체</a>
                 <a class="vi-cho" href="/problem/category">분류</a>
                 <a class="vi-cho" href="/problem/random">랜덤</a>
+                <a class="vi-cho" th:href="${'/problem/random/branch/?branch='+cate}" th:unless="${cate == ''}">이 분야에서 랜덤</a>
                 <a class="vi-sel" href="/problem/search">검색</a>
             </div>
             <form action="/problem/search" method="GET" id="search-form">

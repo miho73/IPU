@@ -25,9 +25,7 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.Hashtable;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 @Controller("ProblemControl")
 @RequestMapping("/problem")
@@ -42,6 +40,7 @@ public class ProblemControl {
     @Autowired private SHA sha = new SHA();
 
     public int NUMBER_OF_PROBLEMS;
+    public int PROBLEM_PER_PAGE = 30;
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
@@ -55,7 +54,6 @@ public class ProblemControl {
     public String getProblemListPage(@RequestParam(value = "page", required = false, defaultValue = "0") String pagex, Model model, HttpSession session, HttpServletResponse response) throws IOException, SQLException {
         sessionService.loadSessionToModel(session, model);
         int page = Integer.parseInt(pagex);
-        int PROBLEM_PER_PAGE = 30;
         int frm = page*PROBLEM_PER_PAGE+1;
         if(frm<=0) {
             response.sendError(400);
@@ -71,6 +69,11 @@ public class ProblemControl {
         model.addAttribute("page", page);
         model.addAttribute("pages", Math.ceil((float)NUMBER_OF_PROBLEMS/PROBLEM_PER_PAGE));
         return "problem/problemList";
+    }
+    @GetMapping("/latest")
+    public String getLastPageOfProblem(Model model, HttpSession session, HttpServletResponse response) {
+        int page = (int) Math.floor((float)NUMBER_OF_PROBLEMS/PROBLEM_PER_PAGE);
+        return "redirect:/problem/?page="+page;
     }
     @GetMapping("/category")
     public String getProblemCategoryPage(@RequestParam(value = "page", required = false, defaultValue = "0") String page, Model model, HttpSession session) throws SQLException {
@@ -103,15 +106,32 @@ public class ProblemControl {
         model.addAttribute("pList", processedResult.toList());
         model.addAttribute("query", contains);
         model.addAttribute("nothing", processedResult.length()==0);
+        model.addAttribute("cate", category);
         return "problem/problemSearch";
     }
     Random rand = new Random();
     @GetMapping("/random")
     public void getRandomProblem(Model model, HttpSession session, HttpServletResponse response) throws IOException {
         sessionService.loadSessionToModel(session, model);
-
-         rand.setSeed(System.nanoTime());
+        rand.setSeed(System.nanoTime());
         response.sendRedirect("/problem/"+(rand.nextInt(NUMBER_OF_PROBLEMS)+1));
+    }
+    private final List<String> acceptedBranches = Arrays.asList("alge", "numb", "comb", "geom", "phys", "chem", "biol", "eart");
+    @GetMapping("/random/branch")
+    public void getRandomProblemInBranch(@RequestParam("branch") String branch,
+                                         Model model, HttpSession session, HttpServletResponse response) throws IOException, SQLException {
+        sessionService.loadSessionToModel(session, model);
+        if(!acceptedBranches.contains(branch)) {
+            response.sendError(400);
+            return;
+        }
+        int pCode = problemService.getRandomProblemInBranch(branch);
+        if(pCode == -1) {
+            response.sendRedirect("/problem/search/?cate="+branch);
+        }
+        else {
+            response.sendRedirect("/problem/"+pCode);
+        }
     }
 
     @GetMapping("/{pCode}")
