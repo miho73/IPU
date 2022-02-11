@@ -10,13 +10,13 @@ public class ExperienceSystem {
     private final Hashtable<Problem.PROBLEM_DIFFICULTY, Integer> ExpTable = new Hashtable<>() {
         {
             put(Problem.PROBLEM_DIFFICULTY.UNSET, 0);
-            put(Problem.PROBLEM_DIFFICULTY.UNRATED, 1000);
-            put(Problem.PROBLEM_DIFFICULTY.BRONZE, 2000);
-            put(Problem.PROBLEM_DIFFICULTY.SILVER, 4000);
-            put(Problem.PROBLEM_DIFFICULTY.GOLD, 8000);
-            put(Problem.PROBLEM_DIFFICULTY.SAPPHIRE, 16000);
-            put(Problem.PROBLEM_DIFFICULTY.RUBY, 32000);
-            put(Problem.PROBLEM_DIFFICULTY.DIAMOND, 64000);
+            put(Problem.PROBLEM_DIFFICULTY.UNRATED, 500);
+            put(Problem.PROBLEM_DIFFICULTY.BRONZE, 1000);
+            put(Problem.PROBLEM_DIFFICULTY.SILVER, 2000);
+            put(Problem.PROBLEM_DIFFICULTY.GOLD, 4000);
+            put(Problem.PROBLEM_DIFFICULTY.SAPPHIRE, 8000);
+            put(Problem.PROBLEM_DIFFICULTY.RUBY, 16000);
+            put(Problem.PROBLEM_DIFFICULTY.DIAMOND, 32000);
         }
     };
 
@@ -24,12 +24,12 @@ public class ExperienceSystem {
         {
             put(Problem.PROBLEM_DIFFICULTY.UNSET, 0);
             put(Problem.PROBLEM_DIFFICULTY.UNRATED, 2);
-            put(Problem.PROBLEM_DIFFICULTY.BRONZE, 4);
-            put(Problem.PROBLEM_DIFFICULTY.SILVER, 8);
-            put(Problem.PROBLEM_DIFFICULTY.GOLD, 16);
-            put(Problem.PROBLEM_DIFFICULTY.SAPPHIRE, 32);
-            put(Problem.PROBLEM_DIFFICULTY.RUBY, 64);
-            put(Problem.PROBLEM_DIFFICULTY.DIAMOND, 128);
+            put(Problem.PROBLEM_DIFFICULTY.BRONZE, 2);
+            put(Problem.PROBLEM_DIFFICULTY.SILVER, 4);
+            put(Problem.PROBLEM_DIFFICULTY.GOLD, 4);
+            put(Problem.PROBLEM_DIFFICULTY.SAPPHIRE, 8);
+            put(Problem.PROBLEM_DIFFICULTY.RUBY, 8);
+            put(Problem.PROBLEM_DIFFICULTY.DIAMOND, 16);
         }
     };
 
@@ -61,6 +61,6 @@ public class ExperienceSystem {
     }
 
     public int toWa(int exp, Problem.PROBLEM_DIFFICULTY difficulty) {
-        return exp*waDiv.get(difficulty);
+        return exp/waDiv.get(difficulty);
     }
 }

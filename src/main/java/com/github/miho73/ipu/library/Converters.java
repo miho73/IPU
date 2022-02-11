@@ -35,7 +35,7 @@ public class Converters {
         };
     }
 
-    public int[] cutTable = {0, 3000, 15000, 40000, 80000, 150000, 200000, 300000};
+    public int[] cutTable = {0, 5000, 25000, 50000, 90000, 160000, 250000, 400000};
 
     public Map<Integer, String> codeTableRl = new HashMap<>() {{
         put(1, "Unrated");

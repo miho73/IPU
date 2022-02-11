@@ -45,7 +45,7 @@ function wa(cod) {
                     ec = "권한이 없어요.";
                     break;
                 case "time":
-                    ec = "제출은 1분마다 할 수 있어요. 빨리 푸는데요?!";
+                    ec = "제출은 1분마다 할 수 있어요.";
                     break;
                 default: 
                     ec = "제출하지 못했어요."+suf;
@@ -81,7 +81,7 @@ function ac(cod) {
                     ec = "권한이 없어요.";
                     break;
                 case "time":
-                    ec = "제출은 1분마다 할 수 있어요. 빨리 푸는데요?!";
+                    ec = "제출은 1분마다 할 수 있어요.";
                     break;
                 default:
                     ec = "제출하지 못했어요. "+suf;
