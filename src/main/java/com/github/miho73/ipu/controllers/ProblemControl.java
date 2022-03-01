@@ -11,6 +11,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -38,6 +39,8 @@ public class ProblemControl {
     @Autowired private TagService tagService;
     @Autowired private Renderer renderer = new Renderer();
     @Autowired private SHA sha = new SHA();
+
+    @Value("${ipu.access.force-login-for-problem}") private boolean forceLoginForProblem;
 
     public int NUMBER_OF_PROBLEMS;
     public int PROBLEM_PER_PAGE = 30;
@@ -137,6 +140,9 @@ public class ProblemControl {
     @GetMapping("/{pCode}")
     public String getProblem(@PathVariable("pCode") String code, Model model, HttpSession session, HttpServletResponse response) throws IOException {
         try {
+            if(forceLoginForProblem && !sessionService.checkLogin(session)) {
+                return "redirect:/login/?ret=/problem";
+            }
             Problem problem = problemService.getProblem(Integer.parseInt(code));
             if(problem == null) {
                 response.sendError(404);
@@ -214,7 +220,11 @@ public class ProblemControl {
     }
     @GetMapping(value = "/lib/{src}", produces = "application/octet-stream; charset=utf-8")
     @ResponseBody
-    public byte[] resourceRequest(HttpServletResponse response, @PathVariable("src")String hash) throws SQLException, IOException {
+    public byte[] resourceRequest(HttpServletResponse response, HttpSession session, @PathVariable("src")String hash) throws SQLException, IOException {
+        if(forceLoginForProblem && !sessionService.checkLogin(session)) {
+            response.sendError(403);
+        }
+
         byte[] resource = resourceService.getResource(hash);
         if(resource == null) {
             response.sendError(404);
@@ -256,8 +266,13 @@ public class ProblemControl {
 
     @GetMapping(value = "/api/get", produces = "application/json; charset=utf-8")
     @ResponseBody
-    public String problemDetail(HttpServletRequest request, HttpServletResponse response, @RequestParam("code") int code) {
+    public String problemDetail(HttpServletRequest request, HttpServletResponse response, HttpSession session, @RequestParam("code") int code) {
         try {
+            if(forceLoginForProblem && !sessionService.checkLogin(session)) {
+                response.setStatus(403);
+                return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.FORBIDDEN, "you must be logged in");
+            }
+
             JSONObject detail = new JSONObject();
             Problem problem = problemService.getFullProblem(code);
             if(problem == null) {
