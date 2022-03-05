@@ -71,7 +71,8 @@
                 },
                 success: function(json) {
                     problem = json.result;
-                    gei('problem_name').innerHTML = `<a href="/problem/${code}" class="univ">${problem.prob_name}</a>`;
+                    pName = escapeHtml(problem.prob_name)
+                    gei('problem_name').innerHTML = `<a href="/problem/${code}" class="univ">${pName}</a>`;
                     existsProblem = true;
                 }
             });
