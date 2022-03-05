@@ -297,6 +297,20 @@ public class Renderer {
             else html = new StringBuilder("<p class=\"ipuac\">" + line + "</p>");
             finalDom.add(html.toString());
         }
+
+        // 해석이 끝나면 인용, 테이블, 리스트 끊기
+        if(quoteFlag) {
+            finalDom.setElementAt(finalDom.elementAt(finalDom.size()-1)+"</blockquote>", finalDom.size()-1);
+            quoteFlag = false;
+        }
+        if(tableFlag) {
+            finalDom.setElementAt(finalDom.elementAt(finalDom.size()-1)+"</tbody></table>", finalDom.size()-1);
+            tableFlag = false;
+        }
+        if(uListFlag) {
+            finalDom.setElementAt(finalDom.get(finalDom.size()-1)+"</ul>", finalDom.size()-1);
+            uListFlag = false;
+        }
         StringBuilder finalHtml = new StringBuilder();
         for (String line : finalDom) {
             finalHtml.append(line);
