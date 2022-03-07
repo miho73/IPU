@@ -1,29 +1,29 @@
-div#index-dots-container {
-    width: 100%;
-    height: 60vh;
-    background-color: #e39ff6;
-    background: -webkit-linear-gradient(to right, #8e2de2, #4a00e0);
-    background: linear-gradient(to right, #8e2de2, #4a00e0);
-    position: relative;
-}
-
-svg.dot-screen {
+body {
     position: absolute;
     top: 0;
     left: 0;
-    fill: transparent;
-    stroke-linecap: round;
-    stroke-width: 5px;
-    stroke: #fff;
-}
-
-p.main-text {
-    width: 100%;
-    font-size: 3.5em;
-    font-weight: 470;
-    text-align: left;
-    color: #fff;
-    margin: 0 0 5vh 5vw;
-    position: absolute;
+    right: 0;
     bottom: 0;
+}
+div.index-div {
+    width: 100%;
+    text-align: center;
+}
+p.index-title {
+    font-size: 2.3em;
+    margin: 10px;
+    font-weight: 500;
+}
+canvas#round-clock {
+    width: 30%;
+    aspect-ratio: 1;
+}
+@media (max-width: 780px) {
+    canvas#round-clock {
+        width: 70%;
+    }
+    p.index-title {
+        font-size: 1.5em;
+        font-weight: 400;
+    }
 }
