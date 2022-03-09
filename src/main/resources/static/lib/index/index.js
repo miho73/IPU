@@ -1,5 +1,4 @@
 const REV = Math.PI * 2;
-const deg150 = 2*Math.PI/360 *150;
 
 var canvas;
 var angleSec = 0;
@@ -13,19 +12,14 @@ var R, r;
 function loadGraphics() {
     canvas = document.getElementById('round-clock');
 
-    var now = new Date();
-    h = now.getHours();
-    m = now.getMinutes();
-    if(h >= 12) h -= 12;
-    angleSec = h / 12 * REV;
-    angleSec += m * 0.5 * REV / 360;
+    angleSec = 0;
 
     ctx = canvas.getContext('2d');
 
     setInterval(()=>{
-        angleSec += REV/43200;
+        angleSec += REV/6000;
         updateRender();
-    }, 1000);
+    }, 10);
 
     document.addEventListener('resize', ()=>{
         updateRender();
@@ -45,14 +39,11 @@ function updateRender() {
     R = x/2-20;
     r = 60;
 
-    delta = R/r * angleSec - deg150;
+    delta = R/r * angleSec;
 
     ctx.lineWidth = 2;
     ctx.arc(x/2, y/2, R, 0, REV);
     ctx.closePath();
-    //ctx.moveTo(x/2 + R-2*r, y/2);
-    //ctx.arc(x/2, y/2, R-2*r, 0, REV);
-    //ctx.closePath();
     ctx.stroke();
 
     ctx.lineWidth = 1;
@@ -60,8 +51,33 @@ function updateRender() {
     ctx.arc(s, c, r, 0, REV);
     ctx.closePath();
 
-    ctx.moveTo(s + r * Math.sin(delta), c + r * Math.cos(delta));
-    ctx.lineTo(s - r * Math.sin(delta), c - r * Math.cos(delta));
+    sd = Math.sin(delta) * r;
+    cd = Math.cos(delta) * r;
+
+    ctx.moveTo(s + sd, c + cd);
+    ctx.lineTo(s - sd, c - cd);
     ctx.closePath();
+
+    l = R - 2*r;
+    for(i=0; i<12; i++) {
+        ctx.moveTo(x/2, y/2);
+        ctx.lineTo(x/2 + l * sincos[i][0], y/2 - l * sincos[i][1]);
+    }
     ctx.stroke();
 }
+
+sincos = [
+    // sin cos
+    [0, 1], // 0
+    [0.5, 0.86602540378443864676372317075294], // 30
+    [0.86602540378443864676372317075294, 0.5], // 60
+    [1, 0], // 90
+    [0.86602540378443864676372317075294, -0.5], // 120
+    [0.5, -0.86602540378443864676372317075294], // 150
+    [0, -1], // 180
+    [-0.5, -0.86602540378443864676372317075294], // 210
+    [-0.86602540378443864676372317075294, -0.5], // 240
+    [-1, 0], // 270
+    [-0.5, 0.86602540378443864676372317075294], // 300
+    [-0.86602540378443864676372317075294, 0.5], // 330
+]
