@@ -104,6 +104,7 @@ function confirme() {
     $.ajax({
         type: 'POST',
         url: '/problem/register',
+        dataType: 'json',
         data: {
             name: namep,
             cate: cat.value,
@@ -114,8 +115,9 @@ function confirme() {
             active: gei('pActive').checked
         },
         success: function(data) {
+            code = data.result;
             window.onbeforeunload = undefined;
-            window.location.href = "/problem/latest";
+            window.location.href = "/problem/"+code;
         },
         error: function(err) {
             if(err.status == 403) {

@@ -32,20 +32,53 @@ public class Problem {
         BIOLOGY,
         EARTH_SCIENCE;
     }
+    public enum JUDGEMENT_TYPE {
+        SELF_JUDGE,
+        TEXT_JUDGE,
+        FRACTION_JUDGE,
+        CASES_JUDGE
+    }
     private int code;
     private String name;
     private PROBLEM_DIFFICULTY difficulty;
     private PROBLEM_CATEGORY category;
+    private JUDGEMENT_TYPE judgementType;
+
+    public JUDGEMENT_TYPE getJudgementType() {
+        return judgementType;
+    }
+    public void setJudgementType(JUDGEMENT_TYPE judgementType) {
+        this.judgementType = judgementType;
+    }
+    public void setJudgementType(int judgementType) {
+        this.judgementType = JUDGEMENT_TYPE.values()[judgementType];
+    }
+
     private String content, solution;
-    private boolean active;
+    private boolean active, hasObjective;
     private String tags, author_name;
     private Timestamp added_at, last_modified;
+    private String answer;
 
     public String getAuthor_name() {
         return author_name;
     }
     public void setAuthor_name(String author_name) {
         this.author_name = author_name;
+    }
+
+    public boolean isHasObjective() {
+        return hasObjective;
+    }
+    public void setHasObjective(boolean hasObjective) {
+        this.hasObjective = hasObjective;
+    }
+
+    public String getAnswer() {
+        return answer;
+    }
+    public void setAnswer(String answer) {
+        this.answer = answer;
     }
 
     public Timestamp getAdded_at() {

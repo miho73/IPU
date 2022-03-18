@@ -168,7 +168,7 @@ public class ProblemControl {
         }
     }
 
-    @PostMapping("/api/ipuac-translation")
+    @PostMapping(value = "/api/ipuac-translation", produces = "application/json; charset=utf-8")
     @ResponseBody
     public String ipuacTranslation(HttpSession session, HttpServletResponse response, @RequestParam("code") String ipuacs) throws IOException {
         if(sessionService.hasPrivilege(SessionService.PRIVILEGES.PROBLEM_MAKE, session)) {
@@ -192,7 +192,7 @@ public class ProblemControl {
         }
         return "problem/mkProblem";
     }
-    @PostMapping(value = "/make/upload", produces = "text/plain; charset=utf-8")
+    @PostMapping(value = "/make/upload", produces = "application/json; charset=utf-8")
     @ResponseBody
     public String imageUpload(@RequestParam(value = "img")MultipartFile resource, HttpSession session, HttpServletResponse response) throws IOException {
         if(sessionService.hasPrivilege(SessionService.PRIVILEGES.PROBLEM_MAKE, session)) {
@@ -232,25 +232,34 @@ public class ProblemControl {
         }
         return resource;
     }
-    @PostMapping("/register")
-    public String problemRegister(HttpServletRequest request, Model model, HttpSession session, HttpServletResponse response) throws SQLException, IOException {
+    @PostMapping(value = "/register", produces = "application/json; charset=utf-8")
+    @ResponseBody
+    public String problemRegister(HttpServletRequest request, Model model, HttpSession session, HttpServletResponse response) throws IOException {
         if(sessionService.hasPrivilege(SessionService.PRIVILEGES.PROBLEM_MAKE, session)) {
             response.sendError(404);
-            return null;
+            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.FORBIDDEN);
         }
-        Problem problem = new Problem();
-        problem.setName        (request.getParameter("name"));
-        problem.setCategory    (request.getParameter("cate"));
-        problem.setDifficulty  (request.getParameter("diff"));
-        problem.setContent     (request.getParameter("cont"));
-        problem.setSolution    (request.getParameter("solu"));
-        problem.setTags        (request.getParameter("tags"));
-        problem.setActive      (Boolean.parseBoolean(request.getParameter("active")));
-        problem.setAuthor_name (sessionService.getName(session));
-        problemService.registerProblem(problem);
-        NUMBER_OF_PROBLEMS++;
-        LOGGER.debug("Problem registered. Problem count now set to "+NUMBER_OF_PROBLEMS);
-        return "redirect:/problem";
+        try {
+            Problem problem = new Problem();
+            problem.setName        (request.getParameter("name"));
+            problem.setCategory    (request.getParameter("cate"));
+            problem.setDifficulty  (request.getParameter("diff"));
+            problem.setContent     (request.getParameter("cont"));
+            problem.setSolution    (request.getParameter("solu"));
+            problem.setTags        (request.getParameter("tags"));
+            problem.setActive      (Boolean.parseBoolean(request.getParameter("active")));
+            problem.setAuthor_name (sessionService.getName(session));
+            problemService.registerProblem(problem);
+            NUMBER_OF_PROBLEMS++;
+            LOGGER.debug("Problem registered. Problem count now set to "+NUMBER_OF_PROBLEMS);
+
+            response.setStatus(201);
+            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.CREATED, NUMBER_OF_PROBLEMS);
+        }
+        catch (SQLException e) {
+            response.setStatus(500);
+            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR, "database error");
+        }
     }
 
     @GetMapping("/edit/{pCode}")
@@ -266,7 +275,8 @@ public class ProblemControl {
 
     @GetMapping(value = "/api/get", produces = "application/json; charset=utf-8")
     @ResponseBody
-    public String problemDetail(HttpServletRequest request, HttpServletResponse response, HttpSession session, @RequestParam("code") int code) {
+    public String problemDetail(HttpServletRequest request, HttpServletResponse response, HttpSession session,
+                                @RequestParam("code") int code) {
         try {
             if(forceLoginForProblem && !sessionService.checkLogin(session)) {
                 response.setStatus(403);

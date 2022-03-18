@@ -144,6 +144,10 @@ public class ProblemRepository extends com.github.miho73.ipu.repositories.Reposi
         problem.setAdded_at(rs.getTimestamp("added_at"));
         problem.setLast_modified((rs.getTimestamp("last_modified")));
         problem.setActive(rs.getBoolean("active"));
+        problem.setHasObjective(rs.getBoolean("has_objective"));
+        problem.setJudgementType(rs.getInt("judge_type"));
+        problem.setAnswer(rs.getString("answer"));
+
         return problem;
     }
 
