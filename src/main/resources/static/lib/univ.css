@@ -548,6 +548,13 @@ div.section {
     align-items: flex-start;
     gap: 6px;
 }
+div.stack {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 6px;
+}
 p.section-title {
     font-size: 1.2em;
     font-weight: 500;
@@ -598,6 +605,15 @@ li.univ-le {
 
 *.text-left {
     text-align: left !important;
+}
+
+div.left-indicate-red {
+    border-left: #f31d1d solid 3px;
+    padding-left: 8px;
+}
+div.left-indicate-green {
+    border-left: #05d852 solid 3px;
+    padding-left: 8px;
 }
 
 @media (max-width: 800px) {

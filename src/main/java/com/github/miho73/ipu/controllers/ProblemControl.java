@@ -170,17 +170,17 @@ public class ProblemControl {
 
     @PostMapping(value = "/api/ipuac-translation", produces = "application/json; charset=utf-8")
     @ResponseBody
-    public String ipuacTranslation(HttpSession session, HttpServletResponse response, @RequestParam("code") String ipuacs) throws IOException {
+    public String ipuacTranslation(HttpSession session, HttpServletResponse response, @RequestParam("code") String ipuacs) {
         if(sessionService.hasPrivilege(SessionService.PRIVILEGES.PROBLEM_MAKE, session)) {
-            response.sendError(403);
-            return null;
+            response.setStatus(403);
+            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.FORBIDDEN, "forbidden");
         }
         JSONArray codes = new JSONArray(ipuacs);
         JSONArray html = new JSONArray();
         for(int i=0; i<codes.length(); i++) {
             html.put(renderer.IPUACtoHTML(codes.getString(i)));
         }
-        return html.toString();
+        return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.OK, html);
     }
 
     @GetMapping("/make")
@@ -240,15 +240,20 @@ public class ProblemControl {
             return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.FORBIDDEN);
         }
         try {
+            boolean hasObjective = !request.getParameter("judgeType").equals("self");
+
             Problem problem = new Problem();
-            problem.setName        (request.getParameter("name"));
-            problem.setCategory    (request.getParameter("cate"));
-            problem.setDifficulty  (request.getParameter("diff"));
-            problem.setContent     (request.getParameter("cont"));
-            problem.setSolution    (request.getParameter("solu"));
-            problem.setTags        (request.getParameter("tags"));
-            problem.setActive      (Boolean.parseBoolean(request.getParameter("active")));
-            problem.setAuthor_name (sessionService.getName(session));
+            problem.setName         (request.getParameter("name"));
+            problem.setCategory     (request.getParameter("cate"));
+            problem.setDifficulty   (request.getParameter("diff"));
+            problem.setContent      (request.getParameter("cont"));
+            problem.setSolution     (request.getParameter("solu"));
+            problem.setTags         (request.getParameter("tags"));
+            problem.setActive       (Boolean.parseBoolean(request.getParameter("active")));
+            problem.setJudgementType(request.getParameter("judgeType"));
+            problem.setHasObjective (hasObjective);
+            problem.setAnswer       (hasObjective?request.getParameter("answer"):null);
+            problem.setAuthor_name  (sessionService.getName(session));
             problemService.registerProblem(problem);
             NUMBER_OF_PROBLEMS++;
             LOGGER.debug("Problem registered. Problem count now set to "+NUMBER_OF_PROBLEMS);
@@ -259,6 +264,9 @@ public class ProblemControl {
         catch (SQLException e) {
             response.setStatus(500);
             return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR, "database error");
+        } catch (ClassNotFoundException e) {
+            response.setStatus(500);
+            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR, "unknown judge type");
         }
     }
 
@@ -287,7 +295,7 @@ public class ProblemControl {
             Problem problem = problemService.getFullProblem(code);
             if(problem == null) {
                 response.setStatus(404);
-                return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.NOT_FOUND, "database error");
+                return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.NOT_FOUND, "resource not found");
             }
             detail.put("cate", problem.getCategoryCode());
             detail.put("diff", problem.getDifficultyCode());
@@ -296,6 +304,9 @@ public class ProblemControl {
             detail.put("prob_name", problem.getName());
             detail.put("tags", problem.getTags());
             detail.put("active", problem.isActive());
+            detail.put("has_objective", problem.isHasObjective());
+            detail.put("judge_type", problem.getJudgementTypeInt());
+            detail.put("answer", problem.getAnswer());
             return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.OK, detail);
         }
         catch (SQLException e) {

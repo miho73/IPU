@@ -64,6 +64,23 @@
 
 == 정답 ==</textarea>
             </div>
+            <h3 class="sub-title" style="margin-bottom: 10px;">정답 및 채점</h3>
+            <div>
+                <select id="judge-type" class="univ-sel" title="채점 종류" onchange="judgeTypeChange()">
+                    <option value="self" selected>직접 채점</option>
+                    <option value="text">수 또는 텍스트 채점</option>
+                    <option value="frac">분수 채점</option>
+                </select>
+                <div class="left-indicate-red" id="text-judge-field">
+                    <p class="answer-guide">수 또는 텍스트 채점</p>
+                    <th:block th:replace="fragments/answerForm.html :: textAnswer"></th:block>
+                </div>
+                <div class="left-indicate-red" id="frac-judge-field">
+                    <p class="answer-guide">분수 채점</p>
+                    <th:block th:replace="fragments/answerForm.html :: fracAnswer"></th:block>
+                </div>
+                <p>정답은 반드시 <a href="/docs/mpp" class="univ" target="_blank">IPU 출제규칙</a>에 맞게 작성해주세요.</p>
+            </div>
             <h3 id="pro-tags" class="sub-title" style="margin-bottom: 10px;">태그</h3>
             <div id="addc-tags-cont">
                 <div id="tags-cont"></div>
@@ -88,7 +105,7 @@
                 </div>
                 <div id="preset-tags">
                     <div class="tag-preset">
-                        <input id="pActive" type="checkbox">
+                        <input id="pActive" type="checkbox" checked>
                         <label for="pActive">문제 활성화</label>
                     </div>
                 </div>

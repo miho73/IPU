@@ -153,8 +153,8 @@ public class ProblemRepository extends com.github.miho73.ipu.repositories.Reposi
 
     public void registerProblem(Problem problem, Connection conn) throws SQLException {
         String sql = "INSERT INTO prob" +
-                "(problem_name, problem_category, problem_difficulty, problem_content, problem_solution, author_name, added_at, last_modified, tags, active) VALUES " +
-                "(?, ?, ?, ?, ?, ?, ?, ?, ?, true);";
+                "(problem_name, problem_category, problem_difficulty, problem_content, problem_solution, author_name, added_at, last_modified, tags, active, has_objective, judge_type, answer) VALUES " +
+                "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
@@ -168,6 +168,10 @@ public class ProblemRepository extends com.github.miho73.ipu.repositories.Reposi
         psmt.setTimestamp(7, timestamp);
         psmt.setTimestamp(8, timestamp);
         psmt.setString(9, problem.getTags());
+        psmt.setBoolean(10, problem.isActive());
+        psmt.setBoolean(11, problem.isHasObjective());
+        psmt.setInt(12, problem.getJudgementTypeInt());
+        psmt.setString(13, problem.getAnswer());
 
         psmt.execute();
     }

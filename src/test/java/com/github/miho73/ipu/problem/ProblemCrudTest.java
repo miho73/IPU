@@ -53,6 +53,8 @@ public class ProblemCrudTest {
                         .param("solu", "THIS IS SOLUTION")
                         .param("tags", "[]")
                         .param("active", "true")
+                        .param("judgeType", "frac")
+                        .param("answer", "245/2")
                 )
                 .andExpect(status().isCreated())
                 .andReturn();
@@ -73,12 +75,10 @@ public class ProblemCrudTest {
                         jsonPath("$.result.prob_exp").value("THIS IS SOLUTION"),
                         jsonPath("$.result.prob_name").value("test problem"),
                         jsonPath("$.result.tags").value("[]"),
-                        jsonPath("$.result.active").value(true)
-                        /*
-                        jsonPath("$.result.has_objective").value("test problem"),
-                        jsonPath("$.result.judge_type").value("test problem"),
-                        jsonPath("$.result.answer").value("test problem"),
-                         */
+                        jsonPath("$.result.active").value(true),
+                        jsonPath("$.result.has_objective").value(true),
+                        jsonPath("$.result.judge_type").value(2),
+                        jsonPath("$.result.answer").value("245/2")
                 );
     }
 }

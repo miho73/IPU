@@ -143,6 +143,11 @@ button.mpb:disabled {
     background-color: #b3441c;
 }
 
+p.answer-guide {
+    margin-top: 9px;
+    margin-bottom: 3px;
+}
+
 @media (max-width: 700px) {
     input.tag-input {
         width: 92%;

@@ -43,8 +43,9 @@ function preview() {
        data: {
            code: JSON.stringify(payload)
        },
+       dataType: 'json',
        success: function(data) {
-           translated = JSON.parse(data);
+           translated = data['result'];
            content = translated[0],
            exp = translated[1];
            namex = gei('name').value;
@@ -58,8 +59,8 @@ function preview() {
            MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
            location.href = '#confirm'
        },
-       error: function(err) {
-           alert(err.responseText+". IPUAC 번역에 실패했어요.");
+       error: function() {
+           alert("IPUAC 번역에 실패했어요.");
        }
     });
 }
@@ -71,6 +72,8 @@ function confirme() {
     content = gei('content').value;
     exp = gei('solution').value;
     namep = gei('name').value;
+    judgeType = gei('judge-type').value;
+    hasJudge = judgeType != 'self';
     if(namep == "" || namep == undefined) {
         gei('name').classList.add('formthis');
         location.href = "#name";
@@ -97,9 +100,46 @@ function confirme() {
     else {
         gei('diffi').classList.remove('formthis');
     }
+    if(hasJudge) {
+        switch(judgeType) {
+            case 'text':
+                gei('judge-type').classList.remove('formthis');
+                if(gei('answer').value == '') {
+                    gei('answer').classList.add('formthis');
+                }
+                else {
+                    gei('answer').classList.remove('formthis');
+                }
+                break;
+            case 'frac':
+                gei('judge-type').classList.remove('formthis');
+                if(gei('answer-frac1').value == '') {
+                    gei('answer-frac1').classList.add('formthis');
+                }
+                else {
+                    gei('answer-frac1').classList.remove('formthis');
+                }
+                if(gei('answer-frac2').value == '') {
+                    gei('answer-frac2').classList.add('formthis');
+                }
+                else {
+                    gei('answer-frac2').classList.remove('formthis');
+                }
+                break;
+            default:
+                gei('judge-type').classList.add('formthis');
+        }
+    }
     if(!precond) {
         gei('confirm').disabled = false;
         return;
+    }
+    var ans;
+    if(hasJudge) {
+        if(judgeType == 'text') ans = gei('answer').value;
+        else {
+            ans = gei('answer-frac1').value+"/"+gei('answer-frac2').value
+        }
     }
     $.ajax({
         type: 'POST',
@@ -112,7 +152,9 @@ function confirme() {
             cont: content,
             solu: exp,
             tags: JSON.stringify(tag),
-            active: gei('pActive').checked
+            active: gei('pActive').checked,
+            judgeType: judgeType,
+            answer: ans
         },
         success: function(data) {
             code = data.result;
@@ -176,7 +218,24 @@ function updateColor(id) {
 window.onbeforeunload = function (e) {
     e = e || window.event;
     if (e) {
-        e.returnValue = '문제가 저장되지 않아요!. 정말 닫을까요?';
+        e.returnValue = '문제가 저장되지 않아요. 정말 닫을까요?';
     }
-    return '문제가 저장되지 않아요!. 정말 닫을까요?';
+    return '문제가 저장되지 않아요. 정말 닫을까요?';
 };
+
+function judgeTypeChange() {
+    let type = gei('judge-type').value;
+    switch(type) {
+        case 'text':
+            gei('text-judge-field').classList = ['left-indicate-green'];
+            gei('frac-judge-field').classList = ['left-indicate-red'];
+            break;
+        case 'frac':
+            gei('text-judge-field').classList = ['left-indicate-red'];
+            gei('frac-judge-field').classList = ['left-indicate-green'];
+            break;
+        default:
+            gei('text-judge-field').classList = ['left-indicate-red'];
+            gei('frac-judge-field').classList = ['left-indicate-red'];
+    }
+}

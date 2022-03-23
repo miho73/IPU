@@ -35,8 +35,7 @@ public class Problem {
     public enum JUDGEMENT_TYPE {
         SELF_JUDGE,
         TEXT_JUDGE,
-        FRACTION_JUDGE,
-        CASES_JUDGE
+        FRACTION_JUDGE
     }
     private int code;
     private String name;
@@ -47,11 +46,26 @@ public class Problem {
     public JUDGEMENT_TYPE getJudgementType() {
         return judgementType;
     }
+    public int getJudgementTypeInt() {
+        return switch (this.judgementType) {
+            case SELF_JUDGE -> 0;
+            case TEXT_JUDGE -> 1;
+            case FRACTION_JUDGE -> 2;
+        };
+    }
     public void setJudgementType(JUDGEMENT_TYPE judgementType) {
         this.judgementType = judgementType;
     }
     public void setJudgementType(int judgementType) {
         this.judgementType = JUDGEMENT_TYPE.values()[judgementType];
+    }
+    public void setJudgementType(String judgeType) throws ClassNotFoundException {
+        switch (judgeType) {
+            case "self" -> this.judgementType = JUDGEMENT_TYPE.SELF_JUDGE;
+            case "text" -> this.judgementType = JUDGEMENT_TYPE.TEXT_JUDGE;
+            case "frac" -> this.judgementType = JUDGEMENT_TYPE.FRACTION_JUDGE;
+            default -> throw new ClassNotFoundException();
+        }
     }
 
     private String content, solution;
