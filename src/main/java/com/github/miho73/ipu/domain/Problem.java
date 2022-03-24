@@ -59,14 +59,6 @@ public class Problem {
     public void setJudgementType(int judgementType) {
         this.judgementType = JUDGEMENT_TYPE.values()[judgementType];
     }
-    public void setJudgementType(String judgeType) throws ClassNotFoundException {
-        switch (judgeType) {
-            case "self" -> this.judgementType = JUDGEMENT_TYPE.SELF_JUDGE;
-            case "text" -> this.judgementType = JUDGEMENT_TYPE.TEXT_JUDGE;
-            case "frac" -> this.judgementType = JUDGEMENT_TYPE.FRACTION_JUDGE;
-            default -> throw new ClassNotFoundException();
-        }
-    }
 
     private String content, solution;
     private boolean active, hasObjective;

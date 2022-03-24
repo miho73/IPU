@@ -40,7 +40,7 @@ public class ProblemCrudTest {
         sessionService.addToSessionTable(session);
     }
 
-    @DisplayName("CRUD of problem test")
+    @DisplayName("Create of problem test")
     @Test
     public void createProblemTest() throws Exception {
         MvcResult result = mockMvc.perform(
@@ -53,7 +53,7 @@ public class ProblemCrudTest {
                         .param("solu", "THIS IS SOLUTION")
                         .param("tags", "[]")
                         .param("active", "true")
-                        .param("judgeType", "frac")
+                        .param("judgeType", "1")
                         .param("answer", "245/2")
                 )
                 .andExpect(status().isCreated())
@@ -77,8 +77,57 @@ public class ProblemCrudTest {
                         jsonPath("$.result.tags").value("[]"),
                         jsonPath("$.result.active").value(true),
                         jsonPath("$.result.has_objective").value(true),
-                        jsonPath("$.result.judge_type").value(2),
+                        jsonPath("$.result.judge_type").value(1),
                         jsonPath("$.result.answer").value("245/2")
                 );
+    }
+
+    @Test
+    @DisplayName("Problem add fraction format error")
+    public void fractionFormatError() throws Exception {
+        mockMvc.perform(
+                post("/problem/register")
+                        .session(session)
+                        .param("name", "test problem")
+                        .param("cate", "etce")
+                        .param("diff", "diam")
+                        .param("cont", "THIS IS PROBLEM")
+                        .param("solu", "THIS IS SOLUTION")
+                        .param("tags", "[]")
+                        .param("active", "true")
+                        .param("judgeType", "2")
+                        .param("answer", "2453")
+                )
+                .andExpect(status().isBadRequest());
+
+        mockMvc.perform(
+                        post("/problem/register")
+                                .session(session)
+                                .param("name", "test problem")
+                                .param("cate", "etce")
+                                .param("diff", "diam")
+                                .param("cont", "THIS IS PROBLEM")
+                                .param("solu", "THIS IS SOLUTION")
+                                .param("tags", "[]")
+                                .param("active", "true")
+                                .param("judgeType", "2")
+                                .param("answer", "24//53")
+                )
+                .andExpect(status().isBadRequest());
+
+        mockMvc.perform(
+                        post("/problem/register")
+                                .session(session)
+                                .param("name", "test problem")
+                                .param("cate", "etce")
+                                .param("diff", "diam")
+                                .param("cont", "THIS IS PROBLEM")
+                                .param("solu", "THIS IS SOLUTION")
+                                .param("tags", "[]")
+                                .param("active", "true")
+                                .param("judgeType", "2")
+                                .param("answer", "24/53/")
+                )
+                .andExpect(status().isBadRequest());
     }
 }

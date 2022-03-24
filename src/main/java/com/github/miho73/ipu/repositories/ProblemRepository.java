@@ -184,7 +184,10 @@ public class ProblemRepository extends com.github.miho73.ipu.repositories.Reposi
                 "problem_solution=?,"+
                 "last_modified=?," +
                 "tags=?," +
-                "active=?" +
+                "active=?," +
+                "has_objective=?," +
+                "judge_type=?," +
+                "answer=?"+
                 " WHERE problem_code=?;";
 
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -198,7 +201,10 @@ public class ProblemRepository extends com.github.miho73.ipu.repositories.Reposi
         psmt.setTimestamp(6, timestamp);
         psmt.setString(7, problem.getTags());
         psmt.setBoolean(8, problem.isActive());
-        psmt.setInt(9, problem.getCode());
+        psmt.setBoolean(9, problem.isHasObjective());
+        psmt.setInt(10, problem.getJudgementTypeInt());
+        psmt.setString(11, problem.getAnswer());
+        psmt.setInt(12, problem.getCode());
 
         psmt.execute();
     }

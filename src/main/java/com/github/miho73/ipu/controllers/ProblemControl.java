@@ -236,11 +236,17 @@ public class ProblemControl {
     @ResponseBody
     public String problemRegister(HttpServletRequest request, Model model, HttpSession session, HttpServletResponse response) throws IOException {
         if(sessionService.hasPrivilege(SessionService.PRIVILEGES.PROBLEM_MAKE, session)) {
-            response.sendError(404);
+            response.setStatus(404);
             return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.FORBIDDEN);
         }
         try {
-            boolean hasObjective = !request.getParameter("judgeType").equals("self");
+            String answer = request.getParameter("answer");
+            if(request.getParameter("judgeType").equals("2") && (answer.split("/").length != 2 || answer.charAt(answer.length()-1) == '/')) {
+                response.setStatus(400);
+                return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.BAD_REQUEST, "wrong answer format");
+            }
+
+            boolean hasObjective = !request.getParameter("judgeType").equals("0");
 
             Problem problem = new Problem();
             problem.setName         (request.getParameter("name"));
@@ -250,9 +256,9 @@ public class ProblemControl {
             problem.setSolution     (request.getParameter("solu"));
             problem.setTags         (request.getParameter("tags"));
             problem.setActive       (Boolean.parseBoolean(request.getParameter("active")));
-            problem.setJudgementType(request.getParameter("judgeType"));
+            problem.setJudgementType(Integer.parseInt(request.getParameter("judgeType")));
             problem.setHasObjective (hasObjective);
-            problem.setAnswer       (hasObjective?request.getParameter("answer"):null);
+            problem.setAnswer       (hasObjective?answer:null);
             problem.setAuthor_name  (sessionService.getName(session));
             problemService.registerProblem(problem);
             NUMBER_OF_PROBLEMS++;
@@ -264,7 +270,7 @@ public class ProblemControl {
         catch (SQLException e) {
             response.setStatus(500);
             return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR, "database error");
-        } catch (ClassNotFoundException e) {
+        } catch (NumberFormatException e) {
             response.setStatus(500);
             return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR, "unknown judge type");
         }
@@ -317,23 +323,43 @@ public class ProblemControl {
 
     @PutMapping("/update")
     @ResponseBody
-    public String problemUpdate(HttpServletRequest request, Model model, HttpSession session, HttpServletResponse response) throws SQLException, IOException {
+    public String problemUpdate(HttpServletRequest request, Model model, HttpSession session, HttpServletResponse response) throws IOException {
         if(sessionService.hasPrivilege(SessionService.PRIVILEGES.PROBLEM_MAKE, session)) {
             String ret = RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.FORBIDDEN);
             response.sendError(403);
             return ret;
         }
-        Problem problem = new Problem();
-        problem.setCode        (Integer.parseInt(request.getParameter("code")));
-        problem.setName        (request.getParameter("name"));
-        problem.setCategory    (request.getParameter("cate"));
-        problem.setDifficulty  (request.getParameter("diff"));
-        problem.setContent     (request.getParameter("cont"));
-        problem.setSolution    (request.getParameter("solu"));
-        problem.setTags        (request.getParameter("tags"));
-        problem.setActive      (Boolean.parseBoolean(request.getParameter("active")));
-        problemService.updateProblem(problem);
-        return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.OK);
+
+        try {
+            String answer = request.getParameter("answer");
+            if(request.getParameter("judgeType").equals("2") && (answer.split("/").length != 2 || answer.charAt(answer.length()-1) == '/')) {
+                response.setStatus(400);
+                return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.BAD_REQUEST, "wrong answer format");
+            }
+
+            boolean hasObjective = !request.getParameter("judgeType").equals("0");
+
+            Problem problem = new Problem();
+            problem.setCode         (Integer.parseInt(request.getParameter("code")));
+            problem.setName         (request.getParameter("name"));
+            problem.setCategory     (request.getParameter("cate"));
+            problem.setDifficulty   (request.getParameter("diff"));
+            problem.setContent      (request.getParameter("cont"));
+            problem.setSolution     (request.getParameter("solu"));
+            problem.setTags         (request.getParameter("tags"));
+            problem.setActive       (Boolean.parseBoolean(request.getParameter("active")));
+            problem.setJudgementType(Integer.parseInt(request.getParameter("judgeType")));
+            problem.setHasObjective (hasObjective);
+            problem.setAnswer       (hasObjective?answer:null);
+            problemService.updateProblem(problem);
+            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.OK);
+        } catch (SQLException e) {
+            response.setStatus(500);
+            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR, "database error");
+        } catch (NumberFormatException e) {
+            response.setStatus(500);
+            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR, "unknown judge type");
+        }
     }
 
     @PostMapping("/api/solrep")

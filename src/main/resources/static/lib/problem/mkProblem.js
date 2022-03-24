@@ -73,7 +73,7 @@ function confirme() {
     exp = gei('solution').value;
     namep = gei('name').value;
     judgeType = gei('judge-type').value;
-    hasJudge = judgeType != 'self';
+    hasJudge = judgeType != 0;
     if(namep == "" || namep == undefined) {
         gei('name').classList.add('formthis');
         location.href = "#name";
@@ -102,32 +102,38 @@ function confirme() {
     }
     if(hasJudge) {
         switch(judgeType) {
-            case 'text':
+            case '1':
                 gei('judge-type').classList.remove('formthis');
                 if(gei('answer').value == '') {
+                    precond = false;
                     gei('answer').classList.add('formthis');
                 }
                 else {
                     gei('answer').classList.remove('formthis');
                 }
                 break;
-            case 'frac':
+            case '2':
                 gei('judge-type').classList.remove('formthis');
-                if(gei('answer-frac1').value == '') {
-                    gei('answer-frac1').classList.add('formthis');
+                f1 = gei('answer-frac1');
+                f2 = gei('answer-frac2');
+                if(f1.value == '' || f1.value.includes('/')) {
+                    precond = false;
+                    f1.classList.add('formthis');
                 }
                 else {
-                    gei('answer-frac1').classList.remove('formthis');
+                    f1.classList.remove('formthis');
                 }
-                if(gei('answer-frac2').value == '') {
-                    gei('answer-frac2').classList.add('formthis');
+                if(f2.value == '' || f2.value.includes('/')) {
+                    precond = false;
+                    f2.classList.add('formthis');
                 }
                 else {
-                    gei('answer-frac2').classList.remove('formthis');
+                    f2.classList.remove('formthis');
                 }
                 break;
             default:
                 gei('judge-type').classList.add('formthis');
+                precond = false;
         }
     }
     if(!precond) {
@@ -226,11 +232,11 @@ window.onbeforeunload = function (e) {
 function judgeTypeChange() {
     let type = gei('judge-type').value;
     switch(type) {
-        case 'text':
+        case '1':
             gei('text-judge-field').classList = ['left-indicate-green'];
             gei('frac-judge-field').classList = ['left-indicate-red'];
             break;
-        case 'frac':
+        case '2':
             gei('text-judge-field').classList = ['left-indicate-red'];
             gei('frac-judge-field').classList = ['left-indicate-green'];
             break;
