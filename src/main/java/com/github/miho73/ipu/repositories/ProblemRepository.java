@@ -30,7 +30,7 @@ public class ProblemRepository extends com.github.miho73.ipu.repositories.Reposi
     }
 
     public Problem getProblemSimple(int pCode, Connection conn) throws SQLException {
-        String sql = "SELECT problem_name, problem_category, problem_difficulty, tags, active FROM prob WHERE problem_code=?;";
+        String sql = "SELECT problem_name, problem_category, problem_difficulty, tags, active, judge_type, answer FROM prob WHERE problem_code=?;";
         PreparedStatement psmt = conn.prepareStatement(sql);
         psmt.setInt(1, pCode);
         ResultSet rs = psmt.executeQuery();
@@ -43,6 +43,8 @@ public class ProblemRepository extends com.github.miho73.ipu.repositories.Reposi
         ret.setDifficulty(rs.getString("problem_difficulty"));
         ret.setTags(rs.getString("tags"));
         ret.setActive(rs.getBoolean("active"));
+        ret.setJudgementType(rs.getInt("judge_type"));
+        ret.setAnswer(rs.getString("answer"));
         return ret;
     }
 
@@ -106,7 +108,7 @@ public class ProblemRepository extends com.github.miho73.ipu.repositories.Reposi
     }
 
     public Problem getProblem(int code, Connection conn) throws SQLException {
-        String sql = "SELECT problem_code, problem_name, problem_content, problem_solution, problem_difficulty, tags, active FROM prob WHERE problem_code=?;";
+        String sql = "SELECT problem_code, problem_name, problem_content, problem_solution, problem_difficulty, tags, active, judge_type FROM prob WHERE problem_code=?;";
         PreparedStatement psmt = conn.prepareStatement(sql);
         psmt.setInt(1, code);
         ResultSet rs = psmt.executeQuery();
@@ -121,6 +123,7 @@ public class ProblemRepository extends com.github.miho73.ipu.repositories.Reposi
         problem.setDifficulty(rs.getString("problem_difficulty"));
         problem.setTags(rs.getString("tags"));
         problem.setActive(rs.getBoolean("active"));
+        problem.setJudgementType(rs.getInt("judge_type"));
         return problem;
     }
 

@@ -23,9 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.*;
 
 @Controller("ProblemControl")
@@ -157,6 +155,7 @@ public class ProblemControl {
                     "problem_ipuac", renderer.IPUACtoHTML(problem.getContent()),
                     "solution_ipuac", renderer.IPUACtoHTML(problem.getSolution()),
                     "tags", tagService.processTagsToHtml(problem),
+                    "judge_type", problem.getJudgementTypeInt(),
                     "stared", isStared
             ));
             return "problem/problemPage";
@@ -362,40 +361,44 @@ public class ProblemControl {
         }
     }
 
-    @PostMapping("/api/solrep")
+    @PostMapping("/api/solution/post")
     @ResponseBody
-    public String registerSolve(HttpServletRequest request, HttpSession session, HttpServletResponse response, @RequestParam("code") int code, @RequestParam("time") int time, @RequestParam("res") boolean result) throws SQLException {
-        Connection connection = userRepository.openConnectionForEdit();
+    public String registerSolve(HttpServletRequest request, HttpSession session, HttpServletResponse response,
+                                @RequestParam("code") int code,
+                                @RequestParam("time") int time,
+                                @RequestParam(value = "answer", defaultValue = "") String answer) {
+
         try {
             if(!sessionService.checkLogin(session) || sessionService.hasPrivilege(SessionService.PRIVILEGES.USER, session)) {
                 response.setStatus(403);
-                return "forb";
+                return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.FORBIDDEN, "forb");
             }
 
-            String uid = sessionService.getId(session);
-            Timestamp last_submit = (Timestamp) userRepository.getUserDataById(uid, "last_solve", connection);
-            Timestamp now = new Timestamp(System.currentTimeMillis());
-            if(last_submit != null ){
-                if((now.getTime()-last_submit.getTime())/1000 < 60) {
-                    response.setStatus(429);
-                    return "time";
+            int uCode = sessionService.getCode(session);
+            boolean aw = problemService.registerSolution(code, time, answer, uCode);
+            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.OK, aw);
+        } catch (Exception e) {
+            response.setStatus(500);
+            String msg;
+            switch (e.getMessage()) {
+                case "disabled_problem" -> {
+                    msg = "dis";
+                    response.setStatus(400);
+                }
+                case "unexpected_acwa" -> {
+                    msg = "ueaw";
+                    response.setStatus(400);
+                }
+                case "unknown_judge" -> {
+                    msg = "unkj";
+                    response.setStatus(500);
+                }
+                default -> {
+                    msg = "unkn";
+                    response.setStatus(500);
                 }
             }
-            userRepository.updateUserTSById(uid, "last_solve", now, connection);
-
-            int userCode = sessionService.getCode(session);
-            problemService.registerSolution(code, time, result, userCode, connection);
-            userRepository.commit(connection);
-            return "ok";
-        }
-        catch (Exception e) {
-            userRepository.rollback(connection);
-            LOGGER.error("Cannot register solution", e);
-            response.setStatus(500);
-            return "error";
-        }
-        finally {
-            userRepository.close(connection);
+            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR, msg);
         }
     }
 

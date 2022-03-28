@@ -615,6 +615,32 @@ div.left-indicate-green {
     border-left: #05d852 solid 3px;
     padding-left: 8px;
 }
+div.left-indicate-black {
+    border-left: #484848 solid 3px;
+    padding-left: 8px;
+}
+p.answer-guide {
+    margin: 10px 0 5px 0;
+}
+
+svg.loading {
+    -webkit-animation: rotate 2s linear infinite;
+    animation: rotate 2s linear infinite;
+    -webkit-transform-origin: center;
+    -ms-transform-origin: center;
+    transform-origin: center;
+    max-width: 30px;
+    aspect-ratio: 1;
+}
+circle.loading {
+    stroke-dasharray: 32;
+    stroke-dashoffset: 31.5;
+    -webkit-animation: dash 1.5s ease-in-out infinite;
+    animation: dash 1.5s ease-in-out infinite;
+    stroke-linecap: round;
+    fill: none;
+    stroke-width: 2px;
+}
 
 @media (max-width: 800px) {
     div.menu-container {

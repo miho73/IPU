@@ -1,6 +1,8 @@
 package com.github.miho73.ipu.services;
 
 import com.github.miho73.ipu.domain.Problem;
+import com.github.miho73.ipu.exceptions.CannotJudgeException;
+import com.github.miho73.ipu.exceptions.InvalidJudgeType;
 import com.github.miho73.ipu.library.ExperienceSystem;
 import com.github.miho73.ipu.repositories.ProblemRepository;
 import com.github.miho73.ipu.repositories.SolutionRepository;
@@ -84,32 +86,61 @@ public class ProblemService {
         }
     }
 
-    public void registerSolution(int code, int time, boolean result, int userCode, Connection usrConnection) throws SQLException {
+    public boolean registerSolution(int code, int time, String answer, int userCode) throws SQLException, InvalidJudgeType, CannotJudgeException {
         Connection probConnection = problemRepository.openConnection(),
-                   solvesConnection = solutionRepository.openConnectionForEdit();
+                   solvesConnection = solutionRepository.openConnectionForEdit(),
+                   userConnection = userRepository.openConnectionForEdit();
+        boolean result;
         try {
             Problem problem = problemRepository.getProblemSimple(code, probConnection);
             if(!problem.isActive()) {
-                return;
+                throw new CannotJudgeException("disabled_problem");
             }
+
+            if(problem.getJudgementTypeInt() == 0) {
+                if(answer.equals("true")) result = true;
+                else if(answer.equals("false")) result = false;
+                else throw new CannotJudgeException("unexpected_acwa");
+            }
+            else {
+                result = switch (problem.getJudgementTypeInt()) {
+                    case 1, 2 -> answer.equals(problem.getAnswer());
+                    default -> throw new InvalidJudgeType("unknown_judge");
+                };
+            }
+
             solutionRepository.addSolution(code, time, result, userCode, solvesConnection);
             Problem.PROBLEM_DIFFICULTY difficulty = problem.getDifficulty();
+
             int solves = solutionRepository.getNumberOfSolves(userCode, code, solvesConnection);
             int exp = experienceSystem.getExp(difficulty, solves);
             if(!result) exp=experienceSystem.toWa(exp, difficulty);
-            userRepository.addExperience(exp, userCode, usrConnection);
-            userRepository.commit(usrConnection);
+            userRepository.addExperience(exp, userCode, userConnection);
+
+            userRepository.commit(userConnection);
             solutionRepository.commit(solvesConnection);
         }
-        catch (Exception e) {
+        catch (SQLException e) {
             solutionRepository.rollback(solvesConnection);
+            userRepository.rollback(userConnection);
             LOGGER.error("Cannot register new solution(error while completing db transaction)", e);
             throw e;
-        }
-        finally {
+        } catch (InvalidJudgeType e) {
+            solutionRepository.rollback(solvesConnection);
+            userRepository.rollback(userConnection);
+            LOGGER.error("Unknown judge type", e);
+            throw e;
+        } catch (CannotJudgeException e) {
+            solutionRepository.rollback(solvesConnection);
+            userRepository.rollback(userConnection);
+            LOGGER.error("Cannot judege problem", e);
+            throw e;
+        } finally {
             solutionRepository.close(solvesConnection);
             problemRepository.close(probConnection);
+            userRepository.close(userConnection);
         }
+        return result;
     }
 
     public Hashtable<Problem.PROBLEM_CATEGORY, Integer> getNumberOfProblemsInCategory() throws SQLException {

@@ -46,22 +46,6 @@ svg.star-icon {
 svg.stared {
     fill: #ffcd3c;
 }
-svg.loading {
-    -webkit-animation: rotate 2s linear infinite;
-    animation: rotate 2s linear infinite;
-    -webkit-transform-origin: center;
-    -ms-transform-origin: center;
-    transform-origin: center;
-}
-circle.loading {
-    stroke-dasharray: 32;
-    stroke-dashoffset: 31.5;
-    -webkit-animation: dash 1.5s ease-in-out infinite;
-    animation: dash 1.5s ease-in-out infinite;
-    stroke-linecap: round;
-    fill: none;
-    stroke-width: 2px;
-}
 @-webkit-keyframes rotate {
     100% {
         -webkit-transform: rotate(360deg);
@@ -100,7 +84,7 @@ circle.loading {
         stroke-dasharray: 32;
     }
 }
-div#after-sol {
+div#answer-context {
     transform: scaleY(0);
     transform-origin: top;
     transition: transform 0.25s ease;
@@ -109,19 +93,19 @@ button#show-ans-btn,button#ac-btn {
     background-color: #00b040;
 }
 button#show-ans-btn:hover,button#ac-btn:hover {
-    background-color: #099134;
+    background-color: #13c554;
 }
 button#show-ans-btn:disabled, button#ac-btn:disabled {
     background-color: #085e23;
 }
 button#wa-btn {
-    background-color: #dd4124;
+    background-color: #f03b1b;
 }
 button#wa-btn:hover {
-    background-color: #b1230a;
+    background-color: #fd5234;
 }
 button#wa-btn:disabled {
-    background-color: #8d1c08;
+    background-color: #e03010;
 }
 button.end-btn {
     padding: 7px 12px;
@@ -136,18 +120,18 @@ button.end-btn {
     -o-transition: background-color .15s linear;
     transition: background-color .15s linear;
 }
-div#prob-control {
+div#finish-solve {
     text-align: center;
     margin-top: 20px;
     padding-bottom: 20px;
 }
-div#prob-control-nd {
+div#self-judge {
     text-align: center;
     margin-top: 20px;
     display: none;
     padding-bottom: 20px;
 }
-div#final-sol {
+div#solve-time-div {
     display: none;
     margin-top: 40px;
     opacity: 0;
@@ -161,7 +145,6 @@ p#sol-time-took {
     font-weight: 500;
     text-align: center;
     margin: 0;
-    display: block;
 }
 p#sol-time {
     font-size: 3.2em;
@@ -173,6 +156,40 @@ p#sol-time::after {
     content: '초';
     font-size: 0.5em;
     font-weight: 600;
+}
+p#sol-comment {
+    font-size: 1.2em;
+    text-align: center;
+    margin: 0;
+}
+div#cannot-submit {
+    display: none;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+}
+p#was-error-submit {
+    text-align: center;
+    font-size: 1.2em;
+    margin: 10px 20px;
+    
+}
+button#resubmit {
+    padding: 8px 15px;
+    font-size: 1em;
+}
+
+p.obj-result {
+    text-align: center;
+    font-size: 1.6em;
+    font-weight: 500;
+    display: none;
+}
+p.obj-ac {
+    color: #099134;
+}
+p.obj-wa {
+    color: #f03b1b;
 }
 
 @media (max-width: 900px) {

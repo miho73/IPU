@@ -142,10 +142,8 @@ function confirme() {
     }
     var ans;
     if(hasJudge) {
-        if(judgeType == 'text') ans = gei('answer').value;
-        else {
-            ans = gei('answer-frac1').value+"/"+gei('answer-frac2').value
-        }
+        if(judgeType == 1) ans = gei('answer').value;
+        else if(judgeType == 2) ans = gei('answer-frac1').value+"/"+gei('answer-frac2').value;
     }
     $.ajax({
         type: 'POST',

@@ -88,9 +88,9 @@
             <div th:if="${tab == 'solved'}">
                 <p id="not" th:if="${nothing}">페이지가 비어있어요.</p>
                 <div id="nav">
-                    <a id="prev" class="previous round" th:if="${hasPrev}" th:href="${'./?page='+(pg-1)}">이전</a>
+                    <a id="prev" class="previous round" th:if="${hasPrev}" th:href="${'?page='+(pg-1)}">이전</a>
                     <span id="pnsep" style="user-select: none;" th:if="${hasPrev && hasNext}">······</span>
-                    <a id="next" class="next round" th:if="${hasNext}" th:href="${'./?page='+(pg+1)}">다음</a>
+                    <a id="next" class="next round" th:if="${hasNext}" th:href="${'?page='+(pg+1)}">다음</a>
                 </div>
             </div>
         </div>

@@ -90,7 +90,7 @@ public class AuthControl {
             result = userService.checkLogin(loginForm, session);
         } catch (Exception e) {
             LOGGER.error("Login error: "+e.getMessage()+" Form: id="+loginForm.getId()+", gVers="+loginForm.getgVers()+", gToken="+loginForm.getgToken(), e);
-            model.addAttribute("error_text", "로그인하지 못했어요. 잠시 후에 다시 해주세요.");
+            model.addAttribute("error_text", "로그인하지 못했어요. 잠시 후에 다시 시도해주세요.");
             return "auth/signin";
         }
 
