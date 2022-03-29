@@ -13,6 +13,7 @@ public class RestfulReponse {
         INTERNAL_SERVER_ERROR,
         NOT_IMPLEMENTED,
         SERVICE_UNAVAILABLE,
+        TOO_MANY_REQUESTS
     }
 
     public static String createRestfulResponse(HTTP_CODE status) {
@@ -27,6 +28,7 @@ public class RestfulReponse {
             case INTERNAL_SERVER_ERROR -> 500;
             case NOT_IMPLEMENTED -> 501;
             case SERVICE_UNAVAILABLE -> 503;
+            case TOO_MANY_REQUESTS -> 429;
         };
         response.put("code", code);
         response.put("message", status.name());
@@ -45,6 +47,7 @@ public class RestfulReponse {
             case INTERNAL_SERVER_ERROR -> 500;
             case NOT_IMPLEMENTED -> 501;
             case SERVICE_UNAVAILABLE -> 503;
+            case TOO_MANY_REQUESTS -> 429;
         };
         response.put("code", code);
         response.put("message", status.name());

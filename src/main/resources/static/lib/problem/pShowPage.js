@@ -117,6 +117,9 @@ function afterSubmitFailure(error) {
         case 'unkn':
             msg = '알 수 없는 이유로 '
             break;
+        case 'intr':
+            msg = '마지막 제출 후 1분이 지나지 않았기 때문에';
+            break;
         case 'forb':
             msg = '문제를 제출하려면 로그인해야 해요. 인증에 실패했기 때문에'
             break;

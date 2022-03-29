@@ -17,10 +17,20 @@
     <body>
         <th:block th:replace="fragments/header.html :: navigation"></th:block>
         <div class="container">
-            <h1 id="issue-title" class="issue-title" th:text="${issueName}" onclick="editTitle()"></h1>
-            <input type="text" id="edit-issue-title" th:value="${issueName}" class="univ-input issue-title" th:onchange="updateTitle([[${issueCode}]])" onfocusout="nameEditCancel()">
+            <h1 id="issue-title" class="issue-title" th:if="${isYours}" th:text="${issueName}" onclick="editTitle()"></h1>
+            <h1 id="issue-title" class="issue-title" th:unless="${isYours}" th:text="${issueName}"></h1>
+            <input type="text" id="edit-issue-title" th:if="${isYours}" th:value="${issueName}" class="univ-input issue-title" th:onchange="updateTitle([[${issueCode}]])" onfocusout="nameEditCancel()">
             <div class="issue-data-bar">
-                <p class="issue-author" th:text="${issueAuthor}"></p>
+                <div class="issue-left-tools">
+                    <p class="issue-author" th:text="${issueAuthor}"></p>
+                </div>
+                <div class="issue-right-tools">
+                    <button class="delete-button" th:if="${isYours}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="0" fill="#f34541">
+                            <path d="M21 6l-3 18h-12l-3-18h2.028l2.666 16h8.611l2.666-16h2.029zm-4.711-4c-.9 0-1.631-1.099-1.631-2h-5.316c0 .901-.73 2-1.631 2h-5.711v2h20v-2h-5.711z"/>
+                        </svg>
+                    </button>
+                </div>
             </div>
             <div th:utext="${issueContent}" class="issue-content"></div>
         </div>

@@ -97,6 +97,24 @@ public class UserRepository extends com.github.miho73.ipu.repositories.Repositor
 
         return rs.getObject(column);
     }
+    public Object getUserDataByCode(int code, String column, Connection conn) throws SQLException {
+        String sql = "SELECT "+column+" FROM iden WHERE user_code=?";
+        PreparedStatement psmt = conn.prepareStatement(sql);
+        psmt.setInt(1, code);
+        ResultSet rs = psmt.executeQuery();
+
+        if(!rs.next()) return null;
+        return rs.getObject(column);
+    }
+    public Object queryUserByCode(int code, String column, Connection conn) throws SQLException {
+        String sql = "SELECT ? FROM iden WHERE user_code=?;";
+        PreparedStatement psmt = conn.prepareStatement(sql);
+        psmt.setString(1, column);
+        psmt.setInt(2, code);
+        ResultSet rs = psmt.executeQuery();
+
+        return rs.getObject(column);
+    }
 
     public void addUser(User user, Connection conn) throws SQLException {
         String sql = "INSERT INTO iden" +
@@ -130,6 +148,13 @@ public class UserRepository extends com.github.miho73.ipu.repositories.Repositor
         PreparedStatement psmt = conn.prepareStatement(sql);
         psmt.setTimestamp(1, timestamp);
         psmt.setString(2, id);
+        psmt.execute();
+    }
+    public void updateUserTSByCode(int code, String column, Timestamp timestamp, Connection conn) throws SQLException {
+        String sql = "UPDATE iden SET "+column+"=? WHERE user_code=?;";
+        PreparedStatement psmt = conn.prepareStatement(sql);
+        psmt.setTimestamp(1, timestamp);
+        psmt.setInt(2, code);
         psmt.execute();
     }
 

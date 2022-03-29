@@ -2,7 +2,7 @@ package com.github.miho73.ipu.services;
 
 import com.github.miho73.ipu.domain.Problem;
 import com.github.miho73.ipu.exceptions.CannotJudgeException;
-import com.github.miho73.ipu.exceptions.InvalidJudgeType;
+import com.github.miho73.ipu.exceptions.InvalidJudgeTypeException;
 import com.github.miho73.ipu.library.ExperienceSystem;
 import com.github.miho73.ipu.repositories.ProblemRepository;
 import com.github.miho73.ipu.repositories.SolutionRepository;
@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -86,7 +87,7 @@ public class ProblemService {
         }
     }
 
-    public boolean registerSolution(int code, int time, String answer, int userCode) throws SQLException, InvalidJudgeType, CannotJudgeException {
+    public boolean registerSolution(int code, int time, String answer, int userCode) throws SQLException, InvalidJudgeTypeException, CannotJudgeException {
         Connection probConnection = problemRepository.openConnection(),
                    solvesConnection = solutionRepository.openConnectionForEdit(),
                    userConnection = userRepository.openConnectionForEdit();
@@ -97,6 +98,15 @@ public class ProblemService {
                 throw new CannotJudgeException("disabled_problem");
             }
 
+            Timestamp last_submit = (Timestamp) userRepository.getUserDataByCode(userCode, "last_solve", userConnection);
+            Timestamp now = new Timestamp(System.currentTimeMillis());
+            if(last_submit != null ){
+                if((now.getTime()-last_submit.getTime())/1000 < 60) {
+                    throw new CannotJudgeException("intermediate");
+                }
+            }
+            userRepository.updateUserTSByCode(userCode, "last_solve", now, userConnection);
+
             if(problem.getJudgementTypeInt() == 0) {
                 if(answer.equals("true")) result = true;
                 else if(answer.equals("false")) result = false;
@@ -105,7 +115,7 @@ public class ProblemService {
             else {
                 result = switch (problem.getJudgementTypeInt()) {
                     case 1, 2 -> answer.equals(problem.getAnswer());
-                    default -> throw new InvalidJudgeType("unknown_judge");
+                    default -> throw new InvalidJudgeTypeException("unknown_judge");
                 };
             }
 
@@ -120,20 +130,10 @@ public class ProblemService {
             userRepository.commit(userConnection);
             solutionRepository.commit(solvesConnection);
         }
-        catch (SQLException e) {
+        catch (SQLException | InvalidJudgeTypeException | CannotJudgeException e) {
+            if(e.getMessage().equals("intermediate")) userRepository.commit(userConnection);
+            else userRepository.rollback(userConnection);
             solutionRepository.rollback(solvesConnection);
-            userRepository.rollback(userConnection);
-            LOGGER.error("Cannot register new solution(error while completing db transaction)", e);
-            throw e;
-        } catch (InvalidJudgeType e) {
-            solutionRepository.rollback(solvesConnection);
-            userRepository.rollback(userConnection);
-            LOGGER.error("Unknown judge type", e);
-            throw e;
-        } catch (CannotJudgeException e) {
-            solutionRepository.rollback(solvesConnection);
-            userRepository.rollback(userConnection);
-            LOGGER.error("Cannot judege problem", e);
             throw e;
         } finally {
             solutionRepository.close(solvesConnection);

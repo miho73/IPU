@@ -384,21 +384,29 @@ public class ProblemControl {
                 case "disabled_problem" -> {
                     msg = "dis";
                     response.setStatus(400);
+                    return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.BAD_REQUEST, msg);
                 }
                 case "unexpected_acwa" -> {
                     msg = "ueaw";
                     response.setStatus(400);
+                    return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.BAD_REQUEST, msg);
                 }
                 case "unknown_judge" -> {
                     msg = "unkj";
                     response.setStatus(500);
+                    return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR, msg);
+                }
+                case "intermediate" -> {
+                    msg = "intr";
+                    response.setStatus(429);
+                    return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.TOO_MANY_REQUESTS, msg);
                 }
                 default -> {
                     msg = "unkn";
                     response.setStatus(500);
+                    return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR, msg);
                 }
             }
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR, msg);
         }
     }
 

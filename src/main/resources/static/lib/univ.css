@@ -467,6 +467,28 @@ button.univ-btn:active,a.univ-btn:active {
 button.univ-btn:disabled,a.univ-btn:disabled {
     background-color: #0003;
 }
+button.delete-button {
+    border: none;
+    outline: none;
+    background-color: transparent;
+    border-radius: 4px;
+    padding: 4px 7px;
+    margin: 4px;
+    -webkit-transition: background-color .1s linear;
+    -moz-transition: background-color .1s linear;
+    -ms-transition: background-color .1s linear;
+    -o-transition: background-color .1s linear;
+    transition: background-color .1s linear;
+}
+button.delete-button:hover {
+    background-color: #0001;
+}
+button.delete-button:active {
+    background-color: #0002;
+}
+button.delete-button:disabled {
+    background-color: #0005;
+}
 
 select.univ-sel {
     outline: none;

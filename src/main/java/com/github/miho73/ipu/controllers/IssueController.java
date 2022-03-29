@@ -58,7 +58,8 @@ public class IssueController {
                 "issueName", issue.getIssueName(),
                 "issueWritten", issue.getOpenAt(),
                 "issueAuthor", issue.getAuthor(),
-                "issueContent", renderer.IPUACtoHTML(issue.getContent())
+                "issueContent", renderer.IPUACtoHTML(issue.getContent()),
+                "isYours", issue.getAuthor().equals(sessionService.getId(session))
         ));
         return "issue/issueViewPage";
     }
