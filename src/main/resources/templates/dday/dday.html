@@ -6,11 +6,8 @@
         <th:block th:replace="fragments/header-comp.html :: header-comp"></th:block>
         <!--Custom meta-->
         <meta name="title" content="D-Day">
-        <meta name="description" content="<%=dd%>까지">
         <meta property="og:title" content="D-Day">
-        <meta property="og:description" content="<%=dd%>까지">
         <meta name="twitter:title" content="D-Day">
-        <meta name="twitter:description" content="<%=dd%>까지">
         <link rel="stylesheet" type="text/css" href="/lib/etc/dday/dday.css">
         <script>
             let dday_posix = [[${posix}]]*1000;
@@ -46,9 +43,7 @@
         </script>
     </head>
     <body>
-        <div class="vh-center">
-            <p id="to-what" th:text="${forwhat}"></p>
-            <p id="tm">D-DAY</p>
-        </div>
+        <p id="to-what">영재학교 2차 시험</p>
+        <p id="tm">D-DAY</p>
     </body>
 </html>

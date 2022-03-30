@@ -16,11 +16,33 @@
         <link rel="stylesheet" type="text/css" href="/lib/fonts/montserrat.css">
         <script src="/lib/index/index.js"></script>
     </head>
-    <body onload="loadGraphics()">
+    <body>
         <th:block th:replace="fragments/header.html :: navigation"></th:block>
-        <div class="index-div">
-            <canvas id="round-clock">브라우저가 필요한 기능을 지원하지 않아요.</canvas>
-            <p class="index-title">Think. Solve. Improve</p>
+        <div class="index">
+            <div class="cube" style="--bottom-color: #f31d1d;">
+                <div class="cube-top"></div>
+                <span class="face" style="--i:0;"></span>
+                <span class="face" style="--i:1;"></span>
+                <span class="face" style="--i:2;"></span>
+                <span class="face" style="--i:3;"></span>
+                <div class="cube-light"></div>
+            </div>
+            <div class="cube" style="--bottom-color: #21f021;">
+                <div class="cube-top"></div>
+                <span class="face" style="--i:0;"></span>
+                <span class="face" style="--i:1;"></span>
+                <span class="face" style="--i:2;"></span>
+                <span class="face" style="--i:3;"></span>
+                <div class="cube-light"></div>
+            </div>
+            <div class="cube" style="--bottom-color: #1381fd;">
+                <div class="cube-top"></div>
+                <span class="face" style="--i:0;"></span>
+                <span class="face" style="--i:1;"></span>
+                <span class="face" style="--i:2;"></span>
+                <span class="face" style="--i:3;"></span>
+                <div class="cube-light"></div>
+            </div>
         </div>
         <th:block th:replace="fragments/footer.html :: footer"></th:block>
     </body>

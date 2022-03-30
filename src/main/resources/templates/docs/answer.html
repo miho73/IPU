@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+
+<html lang="ko" xmlns:th="https://www.thymeleaf.org">
+    <head>
+        <title>IPU -출제 규칙</title>
+        <th:block th:replace="fragments/header-comp.html :: header-comp"></th:block>
+        <link rel="stylesheet" type="text/css" href="/lib/docs/docs.css">
+        <link rel="stylesheet" type="text/css" href="/lib/table.css">
+        <meta name="title" content="IPU - 정답 입력과 채점">
+        <meta property="og:title" content="IPU - 정답 입력과 채점">
+        <meta name="twitter:title" content="IPU - 정답 입력과 채점">
+        <meta name="description" content="IPU - 정답 입력과 채점">
+        <meta property="og:description" content="IPU - 정답 입력과 채점">
+        <meta name="twitter:description" content="IPU - 정답 입력과 채점">
+    </head>
+    <body>
+        <th:block th:replace="fragments/header.html :: navigation"></th:block>
+        <div class="container mathjax">
+            <h1 class="title">정답 입력과 채점</h1>
+            <h3 class="head-pt">이 규칙은 IPU의 채점 규칙과 방식을 설명하여 정답이 오답으로 잘못 판정되는 일이 없도록 합니다.</h3>
+            <ol>
+                <li class="li" type="A">
+                    <h3 class="pt">채점의 방식</h3>
+                    <p>채점이 가능한 문제는 다음중 한 가지 방법으로 정답을 입력받습니다.</p>
+                    <ul>
+                        <li class="li">수 또는 텍스트 채점</li>
+                        <li class="li">분수 채점</li>
+                    </ul>
+                </li>
+                <li class="li" type="A">
+                    <h3 class="pt">수 또는 텍스트 채점</h3>
+                    <p>"수 또는 텍스트 채점"의 정답 입력란은 다음과 같이 생겼습니다.</p>
+                    <div class="left-indicate-black" id="text-judge-field">
+                        <p class="answer-guide">수 또는 텍스트 채점</p>
+                        <th:block th:replace="fragments/answerForm.html :: textAnswer"></th:block>
+                    </div>
+                    <p>하나의 입력 칸이 주어지며, 입력칸에 문제의 정답을 적습니다. 이때 문제에 특별한 지시가 없는 한 다음과 같이 정답을 적습니다.</p>
+                    <ul>
+                        <li class="li">가짓수, 경우의 수, 개수, 각도 등은 단위를 적지 않습니다.</li>
+                        <li class="li">길이, 넓이, 부피, 압력, 속도 등 단위를 붙여야 하는 경우 문제에서 정한 단위를 사용하고 답에는 단위를 적지 않습니다. 만약 문제에서 단위를 정하지 않은 경우 풀이중 단위의 접두어를 바꾸지 않습니다.</li>
+                        <li class="li">양수를 뜻하는 +기호는 반드시 생략합니다.</li>
+                        <li class="li">소수점은 '.'으로 적습니다.</li>
+                        <li class="li">정답 외의 문자(정답 앞뒤의 공백 등)은 적지 않습니다.</li>
+                    </ul>
+                </li>
+                <li class="li" type="A">
+                    <h3 class="pt">수 또는 텍스트 채점</h3>
+                    <p>"수 또는 텍스트 채점"의 정답 입력란은 다음과 같이 생겼습니다.</p>
+                    <div class="left-indicate-black" id="frac-judge-field">
+                        <p class="answer-guide">분수 채점</p>
+                        <th:block th:replace="fragments/answerForm.html :: fracAnswer"></th:block>
+                    </div>
+                    <p>두 개의 입력 칸이 주어지며, 첫번째 입력 칸에는 문제의 정답 중 분자 부분을, 두번째 입력 칸에는 분모 부분을 적습니다. 이때 문제에 특별한 지시가 없는 한 다음과 같이 정답을 적습니다.</p>
+                    <ul>
+                        <li class="li">분자와 분모 둘 모두 단위를 적지 않습니다.</li>
+                        <li class="li">분자와 분모는 정수로 적습니다.</li>
+                        <li class="li">정답은 기약분수로 약분되어 있어야 합니다.</li>
+                        <li class="li">정답이 음의 유리수인 경우 부호는 분자에 적습니다.</li>
+                        <li class="li">정답 외의 문자(정답 앞뒤의 공백 등)은 적지 않습니다.</li>
+                    </ul>
+                </li>
+                <li class="li" type="A">
+                    <h3 class="pt">예시</h3>
+                    <p>다음은 정답과 정답칸에 적는 정답의 예시입니다.</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <td>문제</td>
+                                <td>정답</td>
+                                <td>써야 하는 정답</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>6이하인 자연수의 개수를 구하시오. 주사위를 던져서 나올 수 있는 눈의 경우를 구하시오.</td>
+                                <td>6개</td>
+                                <td>6</td>
+                            </tr>
+                            <tr>
+                                <td>1A의 전류가 5&Omega;인 저항의 양단의 전위차(V)를 구하시오. 10V의 전원에 연결된 크기가 같은 두 저항 중 하나에 걸리는 전압을 구하시오.</td>
+                                <td>5V</td>
+                                <td>5</td>
+                            </tr>
+                            <tr>
+                                <td>AB의 길이가 3cm, BC의 길이가 3cm인 정삼각형 ABC의 한 변 CA의 길이(cm)를 구하시오.</td>
+                                <td>3cm</td>
+                                <td>3</td>
+                            </tr>
+                            <tr>
+                                <td>AB의 길이가 3, BC의 길이가 3인 정삼각형 ABC의 한 변 CA의 길이를 구하시오</td>
+                                <td>3</td>
+                                <td>3</td>
+                            </tr>
+                            <tr>
+                                <td>5보다 10 작은 수를 구하시오.</td>
+                                <td>-5</td>
+                                <td>-5</td>
+                            </tr>
+                            <tr>
+                                <td>동전을 던져 앞면이 나올 확률을 구하시오.</td>
+                                <td>$\frac{1}{2}$</td>
+                                <td>분자: "1", 분모: "2"</td>
+                            </tr>
+                            <tr>
+                                <td>기울기가 4인 직선과 수직한 직선의 기울기를 구하시오.</td>
+                                <td>$-\frac{1}{4}$</td>
+                                <td>분자: "-1", 분모: "4"</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </li>
+            </ol>
+        </div>
+        <th:block th:replace="fragments/footer.html :: footer"></th:block>
+    </body>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                processEscapes: true,
+                processClass: "mathjax",
+                ignoreClass: "no-mathjax"
+            },
+            CommonHTML: {
+                scale: 90
+            }
+        });
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML'></script>
+</html>

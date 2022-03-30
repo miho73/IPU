@@ -1,29 +1,82 @@
-body {
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+html, body {
+    background-color: #000;
+    width: 100%;
+    height: 100%;
+    overflow-y: hidden;
+}
+
+div.index {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 200px;
+}
+
+div.cube {
+    width: var(--size);
+    height: var(--size);
+    transform-style: preserve-3d;
+    animation: animate 12s linear infinite;
+    --size: 200px;
+}
+@media (max-width: 1100px) {
+    div.cube {
+        --size: 100px;
+    }
+    div.index {
+        gap: 100px;
+    }
+}
+@media (max-width: 650px) {
+    div.index {
+        flex-direction: column;
+    }
+}
+@keyframes animate {
+    0% {
+        transform: rotateX(-30deg) rotateY(0deg);
+    }
+    100% {
+        transform: rotateX(-30deg) rotateY(360deg);
+    }
+}
+div.face {
+    --bottom-color: inherit;
+    --size: inherit;
+}
+div.cube > span {
     position: absolute;
     top: 0;
     left: 0;
-    right: 0;
-    bottom: 0;
-}
-div.index-div {
     width: 100%;
-    text-align: center;
+    height: 100%;
+    background: linear-gradient(#151515, var(--bottom-color));
+    transform: rotateY(calc(90deg * var(--i))) translateZ(calc(var(--size) / 2));
 }
-p.index-title {
-    font-size: 2.3em;
-    margin: 10px;
-    font-weight: 500;
+div.cube-top {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: var(--size);
+    height: var(--size);
+    background-color: #222;
+    transform: rotateX(90deg) translateZ(calc(var(--size)/2));
 }
-canvas#round-clock {
-    width: 30%;
-    aspect-ratio: 1;
-}
-@media (max-width: 780px) {
-    canvas#round-clock {
-        width: 70%;
-    }
-    p.index-title {
-        font-size: 1.5em;
-        font-weight: 400;
-    }
+div.cube-light {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: var(--size);
+    height: var(--size);
+    background: var(--bottom-color);
+    transform: rotateX(90deg) translateZ(calc(-1 * var(--size)));
+    filter: blur(80px);
+    --bottom-color: inherit;
 }
