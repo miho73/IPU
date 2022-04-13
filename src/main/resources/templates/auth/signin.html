@@ -30,7 +30,7 @@
 				<input type="text" id="id" class="input" name="id" placeholder="ID" spellcheck="false" required autocomplete="username" title="ID" aria-required="true">
 				<input type="password" id="pwd" class="input" name="password" placeholder="Password" spellcheck="false" required autocomplete="current-password" title="암호" aria-required="true">
 				<input type="text" id="gtoken" style="display: none;" name="gToken" readonly required>
-				<button type="submit" id="submit" class="input">Login</button>
+				<button type="submit" id="submit" class="input submit">Login</button>
 				<input type="text" id="gVers" style="display: none;" name="gVers" th:value="${captcha_version}">
 				<div id="captcha" class="g-recaptcha" th:if="${captcha_version.equals('v2')}" th:data-sitekey="${capt_site}" data-theme="dark"></div>
 			</form>

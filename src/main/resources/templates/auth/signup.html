@@ -6,6 +6,7 @@
 		<th:block th:replace="fragments/header-comp.html :: header-comp"></th:block>
 		<link rel="stylesheet" type="text/css" href="/lib/auth/signin.css">
 		<script th:src="${'https://www.google.com/recaptcha/api.js?render=' + capt_site}"></script>
+		<script src="/lib/auth/signup.js"></script>
 		<meta property="og:title" content="IPU - 회원가입">
         <meta name="twitter:title" content="IPU - 회원가입">
         <meta name="description" content="IPU - 회원가입">
@@ -23,9 +24,9 @@
 		</style>
 	</head>
 	<body>
-	<p id="err" th:utext="${error_text}"></p>
+	<p id="err"></p>
 		<div class="vh-center">
-			<form method="POST" action="/signup" onsubmit="return beforeSignup()">
+			<form>
 				<label class="title">가입</label>
 				<input type="text" id="name" class="input second" name="name" placeholder="Name" spellcheck="false" style="display: none;" required autocomplete="nickname" aria-required="true">
 				<label id="ni" for="name" class="form-error" style="display: none;">이름은 50자 이내여야 해요.</label>
@@ -37,7 +38,8 @@
 				<input type="text" id="gtoken" style="display: none;" name="gToken" readonly required>
 				<label id="errdisplay" style="display: none;"></label>
 				<p id="eula-alert">회원가입하면 <a class="href" href="/docs/eula" target="_blank">IPU의 약관</a>에 동의하는 하는겁니다!</p>
-				<button type="button" id="submit" class="input" onclick="formNxt()">Proceed</button>
+				<button type="button" id="code-check" class="input submit" onclick="checkCode()" style="display: block;">Proceed</button>
+				<button type="button" id="submit" class="input submit" onclick="create()" style="display: none;">Sign up</button>
 				<div id="captcha" style="display: none;" class="g-recaptcha" th:data-sitekey="${capt_site}" data-theme="dark"></div>
 			</form>
 		</div>
@@ -45,101 +47,14 @@
 			This site is protected by reCAPTCHA and the Google <a href="https://policies.google.com/privacy" class="recaptch-a">Privacy Policy</a> and <a href="https://policies.google.com/terms" class="recaptch-a">Terms of Service</a> apply.
 		</div>
 	</body>
-	<script>
-		function keyDwn() {
-			if(event.keyCode == 13) {
-				formNxt();
-			}
-		}
-		function formNxt() {
-			gei('submit').disabled = true;
-			$.ajax({
-				url: "/api/invite-check",
-				data: {"code": gei('invite').value},
-				type: "POST",
-				dataType: "json",
-				success: function(data) {
-					if(data == true) {
-						gei('invite').style.opacity = 0;
-						gei('errdisplay').style.display = "none";
-						gei('submit').onclick = undefined;
-						setTimeout(()=>{
-							gei('invite').style.display = 'none';
-							gei('name').style.display = 'inline-block';
-							gei('id').style.display = 'inline-block';
-							gei('pwd').style.display = 'inline-block';
-							gei('captcha').style.display = "block";
-							setTimeout(()=>{
-								gei('name').style.opacity = 1;
-								gei('name').focus();
-								gei('id').style.opacity = 1;
-								gei('pwd').style.opacity = 1;
-								gei('submit').type = 'submit';
-								gei('captcha').style.opacity = 1;
-								gei('submit').innerText = "Sign up";
-								gei('submit').disabled = false
-							}, 50);
-						}, 300);
-					}
-					else {
-						gei('errdisplay').innerText = "초대코드를 확인할 수 없어요.\n코드가 정확한가요?";
-						gei('errdisplay').style.display = "inline-block";
-						gei('invite').value = "";
-						gei('submit').disabled = false
-					};
-				},
-				error: function(err) {
-					gei('errdisplay').innerText = "인증 중 문제가 발생했어요.\n잠시 후에 다시 시도해주세요.";
-					gei('errdisplay').style.display = "inline-block";
-					gei('invite').value = "";
-					gei('submit').disabled = false
-				}
+	<script th:inline="javascript">
+		function setCaptcha() {
+			grecaptcha.ready(function() {
+				grecaptcha.execute([[${capt_site}]], {action: 'signup'}).then(function(token) {
+					gei('gtoken').value = token;
+			  	});
 			});
 		}
-
-		const idValidator = new RegExp('^(?=.*[A-Za-z])[A-Za-z0-9]{0,50}$');
-		const pwdValidator = new RegExp('^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d!"#$%&\'()*+,\\-./:;<=>?@\\[\\]^_`{|}~\\\\\\)]{6,}$');
-
-		function beforeSignup() {
-			let id = gei("id").value, pwd = gei("pwd").value, name = gei("name").value;
-			let ret = true;
-			if(!idValidator.test(id)) {
-				gei("id").classList.add("wrong-form");
-				gei("ii").style.display="block";
-				ret = false;
-			}
-			else {
-				gei("id").classList.remove("wrong-form");
-				gei("ii").style.display="none";
-			}
-			if(name.length>50) {
-				gei("name").classList.add("wrong-form");
-				gei("ni").style.display="block";
-				ret = false;
-			}
-			else {
-				gei("name").classList.remove("wrong-form");
-				gei("ni").style.display="none";
-			}
-			if(!pwdValidator.test(pwd)) {
-				gei("pwd").classList.add("wrong-form");
-				gei("pi").style.display="block";
-				ret = false;
-			}
-			else {
-				gei("pwd").classList.remove("wrong-form");
-				gei("pi").style.display="none";
-			}
-			gei('gtoken').value = gei('g-recaptcha-response').value;
-			gei('g-recaptcha-response').remove();
-			return ret;
-		}
-	</script>
-	<script th:inline="javascript">
-		grecaptcha.ready(function() {
-			grecaptcha.execute([[${capt_site}]], {action: 'signup'}).then(function(token) {
-				gei('gtoken').value = token;
-		  	});
-		});
+		setCaptcha();
 	</script>
 </html>

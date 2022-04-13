@@ -1,10 +1,14 @@
 package com.github.miho73.ipu.controllers;
 
 import com.github.miho73.ipu.domain.LoginForm;
-import com.github.miho73.ipu.domain.SignupForm;
 import com.github.miho73.ipu.domain.User;
+import com.github.miho73.ipu.exceptions.InvalidInputException;
 import com.github.miho73.ipu.library.events.AuthenticationFailureBadCredentialsEvent;
 import com.github.miho73.ipu.library.events.AuthenticationSuccessEvent;
+import com.github.miho73.ipu.library.exceptions.CaptchaFailureException;
+import com.github.miho73.ipu.library.exceptions.DuplicatedException;
+import com.github.miho73.ipu.library.exceptions.ForbiddenException;
+import com.github.miho73.ipu.library.rest.response.RestfulReponse;
 import com.github.miho73.ipu.library.security.bruteforce.LoginAttemptService;
 import com.github.miho73.ipu.services.AuthService;
 import com.github.miho73.ipu.services.InviteService;
@@ -19,7 +23,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.sql.SQLException;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -37,7 +45,7 @@ public class AuthControl {
     @Autowired private ApplicationEventPublisher publisher;
     @Autowired private LoginAttemptService loginAttemptService;
 
-    private final Pattern IdNameValidator = Pattern.compile("^(?=.*[A-Za-z])[A-Za-z0-9]{0,50}$");
+    private final Pattern IdValidator = Pattern.compile("^(?=.*[A-Za-z])[A-Za-z0-9]{0,50}$");
     private final Pattern PasswordValidator = Pattern.compile("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d!\"#$%&'()*+,\\-./:;<=>?@\\[\\]^_`{|}~\\\\\\)]{6,}$");
 
     @GetMapping("/login")
@@ -67,7 +75,7 @@ public class AuthControl {
         ));
 
         // Login form validator
-        if(!IdNameValidator.matcher(loginForm.getId()).matches() || !PasswordValidator.matcher(loginForm.getPassword()).matches()) {
+        if(!IdValidator.matcher(loginForm.getId()).matches() || !PasswordValidator.matcher(loginForm.getPassword()).matches()) {
             LOGGER.debug("Invalid login form: id="+loginForm.getId());
             model.addAttribute("error_text", "ID 또는 암호가 형식에 맞지 않아요.");
             return "auth/signin";
@@ -133,58 +141,52 @@ public class AuthControl {
     @GetMapping("/signup")
     public String getSignup(Model model) {
         model.addAllAttributes(Map.of(
-                "capt_site", CAPTCHA_V2_SITE_KEY,
-                "error_text", ""
+                "capt_site", CAPTCHA_V2_SITE_KEY
         ));
         return "auth/signup";
     }
 
-    @PostMapping("/signup")
-    public String signup(@ModelAttribute SignupForm form,
-                         Model model,
-                         HttpSession session) throws Exception {
-        boolean wasError = false;
-        StringBuilder errTxt = new StringBuilder();
+    @PostMapping("/api/account/create")
+    @ResponseBody
+    public String signup(@RequestParam("id") String id,
+                         @RequestParam("password") String pwd,
+                         @RequestParam("name") String name,
+                         @RequestParam("invite") String invite,
+                         @RequestParam("gToken") String gToken,
+                         HttpServletResponse response, HttpSession session) {
 
-        model.addAttribute("capt_site", CAPTCHA_V2_SITE_KEY);
-        if(!IdNameValidator.matcher(form.getId()).matches()) {
-            errTxt.append("ID는 50자 이내의 알파벳이나 숫자여야 해요.<br/>");
-            LOGGER.debug("Signup id regex failure: "+form.getId());
-            wasError = true;
+        if(!IdValidator.matcher(id).matches()) {
+            response.setStatus(400);
+            LOGGER.debug("Signup id regex failure: "+id);
+            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.BAD_REQUEST, "badform");
         }
-        if(!IdNameValidator.matcher(form.getId()).matches()) {
-            errTxt.append("이름은 50자 이내의 알파벳이나 숫자여야 해요.<br/>");
-            LOGGER.debug("Signup name regex failure: "+form.getName());
-            wasError = true;
+        if(name.length() > 50) {
+            response.setStatus(400);
+            LOGGER.debug("Signup name regex failure: "+name);
+            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.BAD_REQUEST, "badform");
         }
-        if(!PasswordValidator.matcher(form.getPassword()).matches()) {
-            errTxt.append("암호는 6글자 이상에 영어, 숫자 한 글자 이상을 가져야 해요.<br/>");
+        if(!PasswordValidator.matcher(pwd).matches()) {
+            response.setStatus(400);
             LOGGER.debug("Signup password regex failure");
-            wasError = true;
-        }
-        if(wasError) {
-            model.addAttribute("error_text", errTxt.toString());
-            return "auth/signup";
+            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.BAD_REQUEST, "badform");
         }
 
-        AuthService.SIGNUP_RESULT result = userService.addUser(new User(form.getId(), form.getName(), form.getPassword(), form.getInvite()), form.getgToken());
-        if(result == AuthService.SIGNUP_RESULT.CAPTCHA_FAILED) {
-            model.addAttribute("error_text", "CAPTCHA 인증에 실패했어요. 다시 시도해주세요.");
-            return "auth/signup";
+        try {
+            userService.addUser(new User(id, name, pwd, invite), gToken);
+            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.OK);
+        } catch (IOException | SQLException | InvalidInputException | NoSuchAlgorithmException e) {
+            response.setStatus(500);
+            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR);
+        } catch (CaptchaFailureException e) {
+            response.setStatus(400);
+            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.BAD_REQUEST, "captcha");
+        } catch (ForbiddenException e) {
+            response.setStatus(400);
+            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.BAD_REQUEST, "invite");
+        } catch (DuplicatedException e) {
+            response.setStatus(400);
+            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.BAD_REQUEST, "id_dupl");
         }
-        if(result == AuthService.SIGNUP_RESULT.INVALID_INVITE) {
-            model.addAttribute("error_text", "유효하지 않은 초대코드에요.");
-            return "auth/signup";
-        }
-        if(result == AuthService.SIGNUP_RESULT.DUPLICATED_ID) {
-            model.addAttribute("error_text", "이미 사용중인 ID에요. 조금 더 개성을 담아 ID를 지어주세요!");
-            return "auth/signup";
-        }
-        if(result == AuthService.SIGNUP_RESULT.ERROR) {
-            model.addAttribute("error_text", "계정을 만들지 못했어요. 잠시 후에 다시 시도해주세요.");
-            return "auth/signup";
-        }
-        return "redirect:/";
     }
 
     @PostMapping("/api/invite-check")

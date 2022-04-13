@@ -1,11 +1,9 @@
 package com.github.miho73.ipu.library.security;
 
-import com.github.miho73.ipu.repositories.UserRepository;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -49,6 +47,10 @@ public class Captcha {
         wr.close();
 
         int responseCode = con.getResponseCode();
+        if(responseCode != 200) {
+            LOGGER.error("Cannot retrieve CAPTCHA result. status: "+responseCode);
+            return false;
+        }
 
         BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
         String inputLine;
@@ -58,6 +60,7 @@ public class Captcha {
             response.append(inputLine);
         }
         in.close();
+        LOGGER.debug("CAPTCHA result response: "+ response);
 
         JSONObject resp = new JSONObject(response.toString());
 

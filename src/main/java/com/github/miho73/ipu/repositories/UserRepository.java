@@ -119,7 +119,7 @@ public class UserRepository extends com.github.miho73.ipu.repositories.Repositor
     public void addUser(User user, Connection conn) throws SQLException {
         String sql = "INSERT INTO iden" +
                 "(user_id, user_name, user_password, user_salt, invite_code, bio, privilege, joined, experience, stared_problem) VALUES " +
-                "(?, ?, ?, ?, ?, '', 'u', ? , 0);";
+                "(?, ?, ?, ?, ?, '', 'u', ? , 0, '');";
 
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 

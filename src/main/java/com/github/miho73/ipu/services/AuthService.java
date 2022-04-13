@@ -3,6 +3,9 @@ package com.github.miho73.ipu.services;
 import com.github.miho73.ipu.domain.LoginForm;
 import com.github.miho73.ipu.domain.User;
 import com.github.miho73.ipu.exceptions.InvalidInputException;
+import com.github.miho73.ipu.library.exceptions.CaptchaFailureException;
+import com.github.miho73.ipu.library.exceptions.DuplicatedException;
+import com.github.miho73.ipu.library.exceptions.ForbiddenException;
 import com.github.miho73.ipu.library.security.Captcha;
 import com.github.miho73.ipu.library.security.SHA;
 import com.github.miho73.ipu.library.security.SecureTools;
@@ -128,30 +131,24 @@ public class AuthService {
         ERROR
     }
 
-    public SIGNUP_RESULT addUser(User user, String captchaToken) throws Exception {
-        try {
-            if(!captcha.getV2Result(captchaToken)) {
-                LOGGER.debug("Signup request: id="+user.getId()+", name="+user.getName()+", result=CAPTCHA failed");
-                return SIGNUP_RESULT.CAPTCHA_FAILED;
-            }
-            if(!inviteService.checkExists(user.getInviteCode())) {
-                LOGGER.debug("Signup request: id="+user.getId()+", name="+user.getName()+", result=Invalid invite");
-                return SIGNUP_RESULT.INVALID_INVITE;
-            }
-            if(!IdDuplicationTest(user.getId())) {
-                LOGGER.debug("Signup request: id="+user.getId()+", name="+user.getName()+", result=ID Duplicated");
-                return SIGNUP_RESULT.DUPLICATED_ID;
-            }
+    public void addUser(User user, String captchaToken) throws IOException, CaptchaFailureException, SQLException, ForbiddenException, DuplicatedException, NoSuchAlgorithmException, InvalidInputException {
+        if(!captcha.getV2Result(captchaToken)) {
+            LOGGER.debug("Signup request: id="+user.getId()+", name="+user.getName()+", result=CAPTCHA failed");
+            throw new CaptchaFailureException("for token "+captchaToken);
+        }
+        if(!inviteService.checkExists(user.getInviteCode())) {
+            LOGGER.debug("Signup request: id="+user.getId()+", name="+user.getName()+", result=Invalid invite");
+            throw new ForbiddenException("unknown invite code " +user.getInviteCode());
+        }
+        if(!IdDuplicationTest(user.getId())) {
+            LOGGER.debug("Signup request: id="+user.getId()+", name="+user.getName()+", result=ID Duplicated");
+            throw new DuplicatedException(String.format("id %s already exists", user.getId()));
+        }
 
-            byte[] salt = SecureTools.getSecureRandom(64);
-            String hash = sha.SHA512(user.getPwd(), salt);
-            user.setPwd(hash);
-            user.setSalt(Base64.getEncoder().encodeToString(salt));
-        }
-        catch (Exception e) {
-            LOGGER.debug("Cannot creat user: "+e.getMessage()+". id="+user.getId()+"; name="+user.getName()+"; invite="+user.getInviteCode());
-            return SIGNUP_RESULT.ERROR;
-        }
+        byte[] salt = SecureTools.getSecureRandom(64);
+        String hash = sha.SHA512(user.getPwd(), salt);
+        user.setPwd(hash);
+        user.setSalt(Base64.getEncoder().encodeToString(salt));
         Connection userConnection = null, solvesConnection = null;
         try {
             userConnection = userRepository.openConnectionForEdit();
@@ -162,15 +159,14 @@ public class AuthService {
             userRepository.commitAndClose(userConnection);
             solutionRepository.commitAndClose(solvesConnection);
             LOGGER.debug("Signup request: id="+user.getId()+", name="+user.getName()+", result=ok");
-            return SIGNUP_RESULT.OK;
         }
         catch (Exception e) {
-            LOGGER.error("Signup request: id="+user.getId()+", name="+user.getName()+", result=Internal error");
+            LOGGER.error("Signup request: id="+user.getId()+", name="+user.getName()+", result=Internal error", e);
             if(userConnection != null) userRepository.rollback(userConnection);
             if(solvesConnection != null) solutionRepository.rollback(solvesConnection);
             if(userConnection != null) userRepository.close(userConnection);
             if(solvesConnection != null) solutionRepository.close(solvesConnection);
-            return SIGNUP_RESULT.ERROR;
+            throw e;
         }
     }
 

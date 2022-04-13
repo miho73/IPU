@@ -77,7 +77,7 @@ label.form-error {
     opacity: 0;
 }
 
-button#submit {
+button.submit {
     margin-top: 20px;
     background-color: #fffb;
     color: black;
@@ -86,14 +86,14 @@ button#submit {
     -webkit-transition: background-color .15s linear;
     -o-transition: background-color .15s linear;
 }
-#submit:hover{
+button.submit:hover{
     transition: background-color .15s linear;
     -moz-transition: background-color .15s linear;
     -webkit-transition: background-color .15s linear;
     -o-transition: background-color .15s linear;
     background-color: #fffe;
 }
-#submit:disabled{
+button.submit:disabled{
     transition: background-color .15s linear;
     -moz-transition: background-color .15s linear;
     -webkit-transition: background-color .15s linear;
