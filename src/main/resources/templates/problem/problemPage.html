@@ -35,14 +35,20 @@
             <div id="problem-context" th:utext="${problem_ipuac}"></div>
             <div id="answer-context" style="display: none;" th:utext="${solution_ipuac}"></div>
 
+            <span class="prob-title ipuac"> 채점 </span>
+            <hr class="prob-hr ipuac">
             <div id="answer-field">
-                <div class="left-indicate-black" id="text-judge-field" th:if="${judge_type == 1}">
-                    <p class="answer-guide">수 또는 텍스트 채점</p>
-                    <th:block th:replace="fragments/answerForm.html :: textAnswer"></th:block>
-                </div>
-                <div class="left-indicate-black" id="frac-judge-field" th:if="${judge_type == 2}">
-                    <p class="answer-guide">분수 채점</p>
-                    <th:block th:replace="fragments/answerForm.html :: fracAnswer"></th:block>
+                <div th:each="ans,index: ${answer}">
+                    <div class="left-indicate-black" th:if="${ans.method == 1}">
+                        <p class="answer-guide" th:text="${ans.name}"></p>
+                        <input type="text" th:id="${'a'+index.index}" class="univ-input">
+                    </div>
+                    <div class="left-indicate-black" th:if="${ans.method == 2}">
+                        <p class="answer-guide" th:text="${ans.name}"></p>
+                        <input type="text" th:id="${'a1f'+index}" class="univ-input">
+                        <label>/</label>
+                        <input type="text" th:id="${'a2f'+index.index}" class="univ-input">
+                    </div>
                 </div>
             </div>
         </div>

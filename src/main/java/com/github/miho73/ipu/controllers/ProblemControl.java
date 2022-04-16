@@ -155,13 +155,13 @@ public class ProblemControl {
                     "problem_ipuac", renderer.IPUACtoHTML(problem.getContent()),
                     "solution_ipuac", renderer.IPUACtoHTML(problem.getSolution()),
                     "tags", tagService.processTagsToHtml(problem),
-                    "judge_type", problem.getJudgementTypeInt(),
+                    "answer", problem.getAnswer().toList(),
                     "stared", isStared
             ));
             return "problem/problemPage";
         }
         catch (Exception e) {
-            response.sendError(404);
+            response.sendError(500);
             LOGGER.error("Cannot open problem '" +code+"'", e);
             return null;
         }
@@ -240,12 +240,8 @@ public class ProblemControl {
         }
         try {
             String answer = request.getParameter("answer");
-            if(request.getParameter("judgeType").equals("2") && (answer.split("/").length != 2 || answer.charAt(answer.length()-1) == '/')) {
-                response.setStatus(400);
-                return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.BAD_REQUEST, "wrong answer format");
-            }
 
-            boolean hasObjective = !request.getParameter("judgeType").equals("0");
+            //TODO: Answer json check implementation
 
             Problem problem = new Problem();
             problem.setName         (request.getParameter("name"));
@@ -254,10 +250,8 @@ public class ProblemControl {
             problem.setContent      (request.getParameter("cont"));
             problem.setSolution     (request.getParameter("solu"));
             problem.setTags         (request.getParameter("tags"));
+            problem.setAnswer       (answer);
             problem.setActive       (Boolean.parseBoolean(request.getParameter("active")));
-            problem.setJudgementType(Integer.parseInt(request.getParameter("judgeType")));
-            problem.setHasObjective (hasObjective);
-            problem.setAnswer       (hasObjective?answer:null);
             problem.setAuthor_name  (sessionService.getName(session));
             problemService.registerProblem(problem);
             NUMBER_OF_PROBLEMS++;
@@ -309,9 +303,7 @@ public class ProblemControl {
             detail.put("prob_name", problem.getName());
             detail.put("tags", problem.getTags());
             detail.put("active", problem.isActive());
-            detail.put("has_objective", problem.isHasObjective());
-            detail.put("judge_type", problem.getJudgementTypeInt());
-            detail.put("answer", problem.getAnswer());
+            detail.put("answer", problem.getAnswer().toString());
             return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.OK, detail);
         }
         catch (SQLException e) {
@@ -322,7 +314,7 @@ public class ProblemControl {
 
     @PutMapping("/update")
     @ResponseBody
-    public String problemUpdate(HttpServletRequest request, Model model, HttpSession session, HttpServletResponse response) throws IOException {
+    public String problemUpdate(HttpServletRequest request, HttpSession session, HttpServletResponse response) throws IOException {
         if(sessionService.hasPrivilege(SessionService.PRIVILEGES.PROBLEM_MAKE, session)) {
             String ret = RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.FORBIDDEN);
             response.sendError(403);
@@ -331,12 +323,8 @@ public class ProblemControl {
 
         try {
             String answer = request.getParameter("answer");
-            if(request.getParameter("judgeType").equals("2") && (answer.split("/").length != 2 || answer.charAt(answer.length()-1) == '/')) {
-                response.setStatus(400);
-                return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.BAD_REQUEST, "wrong answer format");
-            }
 
-            boolean hasObjective = !request.getParameter("judgeType").equals("0");
+            //TODO: Answer json check implementation
 
             Problem problem = new Problem();
             problem.setCode         (Integer.parseInt(request.getParameter("code")));
@@ -346,10 +334,8 @@ public class ProblemControl {
             problem.setContent      (request.getParameter("cont"));
             problem.setSolution     (request.getParameter("solu"));
             problem.setTags         (request.getParameter("tags"));
+            problem.setAnswer       (answer);
             problem.setActive       (Boolean.parseBoolean(request.getParameter("active")));
-            problem.setJudgementType(Integer.parseInt(request.getParameter("judgeType")));
-            problem.setHasObjective (hasObjective);
-            problem.setAnswer       (hasObjective?answer:null);
             problemService.updateProblem(problem);
             return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.OK);
         } catch (SQLException e) {

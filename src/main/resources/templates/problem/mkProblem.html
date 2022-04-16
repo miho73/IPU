@@ -12,6 +12,7 @@
         <link rel="stylesheet" type="text/css" href="/lib/problem/nproblem.css">
         <link rel="stylesheet" type="text/css" href="/lib/problem/problem-solve.css">
         <link rel="stylesheet" type="text/css" href="/lib/ipuac/ipuac.css">
+
         <script src="/lib/problem/mkProblem.js"></script>
         <script src="/lib/ipuac/ipuac.js"></script>
     </head>
@@ -64,22 +65,10 @@
 
 == 정답 ==</textarea>
             </div>
-            <h3 class="sub-title" style="margin-bottom: 10px;">정답 및 채점</h3>
+            <h3 class="sub-title" style="margin-bottom: 7px;">정답 및 채점</h3>
             <div>
-                <select id="judge-type" class="univ-sel" title="채점 종류" onchange="judgeTypeChange()">
-                    <option value="0" selected>직접 채점</option>
-                    <option value="1">수 또는 텍스트 채점</option>
-                    <option value="2">분수 채점</option>
-                </select>
-                <div class="left-indicate-red" id="text-judge-field">
-                    <p class="answer-guide">수 또는 텍스트 채점</p>
-                    <th:block th:replace="fragments/answerForm.html :: textAnswer"></th:block>
-                </div>
-                <div class="left-indicate-red" id="frac-judge-field">
-                    <p class="answer-guide">분수 채점</p>
-                    <th:block th:replace="fragments/answerForm.html :: fracAnswer"></th:block>
-                </div>
-                <p>정답은 반드시 <a href="/docs/mpp" class="univ" target="_blank">IPU 출제규칙</a>에 맞게 작성해주세요.</p>
+                <p style="margin: 10px 0 5px 0">정답은 반드시 <a href="/docs/mpp" class="univ" target="_blank">IPU 출제규칙</a>에 맞게 작성해주세요.</p>
+                <textarea id="answer" class="editor univ-text">[]</textarea>
             </div>
             <h3 id="pro-tags" class="sub-title" style="margin-bottom: 10px;">태그</h3>
             <div id="addc-tags-cont">

@@ -239,7 +239,7 @@ public class UserControl {
             }
         }
         catch (Exception e) {
-            LOGGER.error("Cannot update user settings: "+e.getMessage());
+            LOGGER.error("Cannot update user settings", e);
             return "error";
         }
     }

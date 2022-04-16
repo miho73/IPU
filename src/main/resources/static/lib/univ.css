@@ -664,6 +664,14 @@ circle.loading {
     stroke-width: 2px;
 }
 
+details {
+    cursor: pointer;
+    font-size: 0.9em;
+}
+summary {
+    margin-bottom: 3px;
+}
+
 @media (max-width: 800px) {
     div.menu-container {
         flex-direction: column;

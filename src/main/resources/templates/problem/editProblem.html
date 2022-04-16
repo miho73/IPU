@@ -63,20 +63,8 @@
             </div>
             <h3 class="sub-title" style="margin-bottom: 10px;">정답 및 채점</h3>
             <div>
-                <select id="judge-type" class="univ-sel" title="채점 종류" onchange="judgeTypeChange()">
-                    <option value="0" selected>직접 채점</option>
-                    <option value="1">수 또는 텍스트 채점</option>
-                    <option value="2">분수 채점</option>
-                </select>
-                <div class="left-indicate-red" id="text-judge-field">
-                    <p class="answer-guide">수 또는 텍스트 채점</p>
-                    <th:block th:replace="fragments/answerForm.html :: textAnswer"></th:block>
-                </div>
-                <div class="left-indicate-red" id="frac-judge-field">
-                    <p class="answer-guide">분수 채점</p>
-                    <th:block th:replace="fragments/answerForm.html :: fracAnswer"></th:block>
-                </div>
-                <p>정답은 반드시 <a href="/docs/mpp" class="univ" target="_blank">IPU 출제규칙</a>에 맞게 작성해주세요.</p>
+                <p style="margin: 10px 0 5px 0">정답은 반드시 <a href="/docs/mpp" class="univ" target="_blank">IPU 출제규칙</a>에 맞게 작성해주세요.</p>
+                <textarea id="answer" class="editor univ-text">[]</textarea>
             </div>
             <h3 id="pro-tags" class="sub-title" style="margin-bottom: 10px;">태그</h3>
             <div id="addc-tags-cont">
@@ -162,16 +150,7 @@
                         gei('tags-cont').appendChild(ntag);
                     });
                     gei('edit-tags').value = apply.tags;
-                    gei('judge-type').value = apply.judge_type;
-                    if(apply.judge_type == 1) {
-                        gei('answer').value = apply.answer;
-                    }
-                    else if(apply.judge_type == 2) {
-                        sect = apply.answer.split('/');
-                        gei('answer-frac1').value = sect[0];
-                        gei('answer-frac2').value = sect[1];
-                    }
-                    judgeTypeChange();
+                    gei('answer').value = apply.answer;
                 }
             });
         }
@@ -182,8 +161,7 @@
             content = gei('content').value;
             exp = gei('solution').value;
             namep = gei('name').value;
-            judgeType = gei('judge-type').value;
-            hasJudge = judgeType != 0;
+            answer = gei('answer').value;
             if(namep == "" || namep == undefined) {
                 gei('name').classList.add('formthis');
                 location.href = "#name";
@@ -210,48 +188,7 @@
             else {
                 gei('diffi').classList.remove('formthis');
             }
-            if(hasJudge) {
-                switch(judgeType) {
-                    case '1':
-                        gei('judge-type').classList.remove('formthis');
-                        if(gei('answer').value == '') {
-                            precond = false;
-                            gei('answer').classList.add('formthis');
-                        }
-                        else {
-                            gei('answer').classList.remove('formthis');
-                        }
-                        break;
-                    case '2':
-                        gei('judge-type').classList.remove('formthis');
-                        f1 = gei('answer-frac1');
-                        f2 = gei('answer-frac2');
-                        if(f1.value == '' || f1.value.includes('/')) {
-                            precond = false;
-                            f1.classList.add('formthis');
-                        }
-                        else {
-                            f1.classList.remove('formthis');
-                        }
-                        if(f2.value == '' || f2.value.includes('/')) {
-                            precond = false;
-                            f2.classList.add('formthis');
-                        }
-                        else {
-                            f2.classList.remove('formthis');
-                        }
-                        break;
-                    default:
-                        gei('judge-type').classList.add('formthis');
-                        precond = false;
-                }
-            }
             if(!precond) return;
-            var ans;
-            if(hasJudge) {
-                if(judgeType == 1) ans = gei('answer').value;
-                else if(judgeType == 2) ans = gei('answer-frac1').value+"/"+gei('answer-frac2').value;
-            }
             $.ajax({
                 type: 'PUT',
                 url: '/problem/update',
@@ -265,8 +202,7 @@
                     solu: exp,
                     tags: JSON.stringify(tag),
                     active: gei('pActive').checked,
-                    judgeType: judgeType,
-                    answer: ans
+                    answer: answer
                 },
                 success: function(data) {
                     window.onbeforeunload = undefined;

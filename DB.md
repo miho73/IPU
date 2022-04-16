@@ -68,9 +68,7 @@ IPU uses postgresql as DBMS. Here's the structure and user spec for IPU.
 > added_at TIMESTAMP WITH TIME ZONE NOT NULL,
 > last_modified TIMESTAMP WITH TIME ZONE NOT NULL,
 > tags TEXT NOT NULL,
-> has_objective BOOLEAN NOT NULL,
-> judge_type INTEGER NOT NULL,
-> answer VARCHAR(100)
+> answer TEXT
 > );
 > ```
 ### 4.2. resource table

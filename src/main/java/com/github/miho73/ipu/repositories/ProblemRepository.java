@@ -30,7 +30,7 @@ public class ProblemRepository extends com.github.miho73.ipu.repositories.Reposi
     }
 
     public Problem getProblemSimple(int pCode, Connection conn) throws SQLException {
-        String sql = "SELECT problem_name, problem_category, problem_difficulty, tags, active, judge_type, answer FROM prob WHERE problem_code=?;";
+        String sql = "SELECT problem_name, problem_category, problem_difficulty, tags, active, answer FROM prob WHERE problem_code=?;";
         PreparedStatement psmt = conn.prepareStatement(sql);
         psmt.setInt(1, pCode);
         ResultSet rs = psmt.executeQuery();
@@ -43,7 +43,6 @@ public class ProblemRepository extends com.github.miho73.ipu.repositories.Reposi
         ret.setDifficulty(rs.getString("problem_difficulty"));
         ret.setTags(rs.getString("tags"));
         ret.setActive(rs.getBoolean("active"));
-        ret.setJudgementType(rs.getInt("judge_type"));
         ret.setAnswer(rs.getString("answer"));
         return ret;
     }
@@ -108,7 +107,7 @@ public class ProblemRepository extends com.github.miho73.ipu.repositories.Reposi
     }
 
     public Problem getProblem(int code, Connection conn) throws SQLException {
-        String sql = "SELECT problem_code, problem_name, problem_content, problem_solution, problem_difficulty, tags, active, judge_type FROM prob WHERE problem_code=?;";
+        String sql = "SELECT problem_code, problem_name, problem_content, problem_solution, problem_difficulty, tags, active, answer FROM prob WHERE problem_code=?;";
         PreparedStatement psmt = conn.prepareStatement(sql);
         psmt.setInt(1, code);
         ResultSet rs = psmt.executeQuery();
@@ -123,7 +122,7 @@ public class ProblemRepository extends com.github.miho73.ipu.repositories.Reposi
         problem.setDifficulty(rs.getString("problem_difficulty"));
         problem.setTags(rs.getString("tags"));
         problem.setActive(rs.getBoolean("active"));
-        problem.setJudgementType(rs.getInt("judge_type"));
+        problem.setAnswer(rs.getString("answer"));
         return problem;
     }
 
@@ -147,8 +146,6 @@ public class ProblemRepository extends com.github.miho73.ipu.repositories.Reposi
         problem.setAdded_at(rs.getTimestamp("added_at"));
         problem.setLast_modified((rs.getTimestamp("last_modified")));
         problem.setActive(rs.getBoolean("active"));
-        problem.setHasObjective(rs.getBoolean("has_objective"));
-        problem.setJudgementType(rs.getInt("judge_type"));
         problem.setAnswer(rs.getString("answer"));
 
         return problem;
@@ -156,8 +153,8 @@ public class ProblemRepository extends com.github.miho73.ipu.repositories.Reposi
 
     public void registerProblem(Problem problem, Connection conn) throws SQLException {
         String sql = "INSERT INTO prob" +
-                "(problem_name, problem_category, problem_difficulty, problem_content, problem_solution, author_name, added_at, last_modified, tags, active, has_objective, judge_type, answer) VALUES " +
-                "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+                "(problem_name, problem_category, problem_difficulty, problem_content, problem_solution, author_name, added_at, last_modified, tags, active, answer) VALUES " +
+                "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
@@ -172,9 +169,7 @@ public class ProblemRepository extends com.github.miho73.ipu.repositories.Reposi
         psmt.setTimestamp(8, timestamp);
         psmt.setString(9, problem.getTags());
         psmt.setBoolean(10, problem.isActive());
-        psmt.setBoolean(11, problem.isHasObjective());
-        psmt.setInt(12, problem.getJudgementTypeInt());
-        psmt.setString(13, problem.getAnswer());
+        psmt.setString(11, problem.getAnswer().toString());
 
         psmt.execute();
     }
@@ -188,8 +183,6 @@ public class ProblemRepository extends com.github.miho73.ipu.repositories.Reposi
                 "last_modified=?," +
                 "tags=?," +
                 "active=?," +
-                "has_objective=?," +
-                "judge_type=?," +
                 "answer=?"+
                 " WHERE problem_code=?;";
 
@@ -204,10 +197,8 @@ public class ProblemRepository extends com.github.miho73.ipu.repositories.Reposi
         psmt.setTimestamp(6, timestamp);
         psmt.setString(7, problem.getTags());
         psmt.setBoolean(8, problem.isActive());
-        psmt.setBoolean(9, problem.isHasObjective());
-        psmt.setInt(10, problem.getJudgementTypeInt());
-        psmt.setString(11, problem.getAnswer());
-        psmt.setInt(12, problem.getCode());
+        psmt.setString(9, problem.getAnswer().toString());
+        psmt.setInt(10, problem.getCode());
 
         psmt.execute();
     }

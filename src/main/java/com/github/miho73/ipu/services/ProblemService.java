@@ -107,6 +107,7 @@ public class ProblemService {
             }
             userRepository.updateUserTSByCode(userCode, "last_solve", now, userConnection);
 
+            /*
             if(problem.getJudgementTypeInt() == 0) {
                 if(answer.equals("true")) result = true;
                 else if(answer.equals("false")) result = false;
@@ -118,6 +119,8 @@ public class ProblemService {
                     default -> throw new InvalidJudgeTypeException("unknown_judge");
                 };
             }
+             */
+            result = false;
 
             solutionRepository.addSolution(code, time, result, userCode, solvesConnection);
             Problem.PROBLEM_DIFFICULTY difficulty = problem.getDifficulty();
@@ -130,7 +133,7 @@ public class ProblemService {
             userRepository.commit(userConnection);
             solutionRepository.commit(solvesConnection);
         }
-        catch (SQLException | InvalidJudgeTypeException | CannotJudgeException e) {
+        catch (SQLException | CannotJudgeException e) {
             if(e.getMessage().equals("intermediate")) userRepository.commit(userConnection);
             else userRepository.rollback(userConnection);
             solutionRepository.rollback(solvesConnection);

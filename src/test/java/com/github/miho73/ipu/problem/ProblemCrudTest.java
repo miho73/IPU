@@ -53,7 +53,6 @@ public class ProblemCrudTest {
                         .param("solu", "THIS IS SOLUTION")
                         .param("tags", "[]")
                         .param("active", "true")
-                        .param("judgeType", "1")
                         .param("answer", "245/2")
                 )
                 .andExpect(status().isCreated())
@@ -95,7 +94,6 @@ public class ProblemCrudTest {
                         .param("solu", "THIS IS SOLUTION")
                         .param("tags", "[]")
                         .param("active", "true")
-                        .param("judgeType", "2")
                         .param("answer", "2453")
                 )
                 .andExpect(status().isBadRequest());
@@ -110,7 +108,6 @@ public class ProblemCrudTest {
                                 .param("solu", "THIS IS SOLUTION")
                                 .param("tags", "[]")
                                 .param("active", "true")
-                                .param("judgeType", "2")
                                 .param("answer", "24//53")
                 )
                 .andExpect(status().isBadRequest());
@@ -125,7 +122,6 @@ public class ProblemCrudTest {
                                 .param("solu", "THIS IS SOLUTION")
                                 .param("tags", "[]")
                                 .param("active", "true")
-                                .param("judgeType", "2")
                                 .param("answer", "24/53/")
                 )
                 .andExpect(status().isBadRequest());

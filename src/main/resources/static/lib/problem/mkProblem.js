@@ -72,8 +72,7 @@ function confirme() {
     content = gei('content').value;
     exp = gei('solution').value;
     namep = gei('name').value;
-    judgeType = gei('judge-type').value;
-    hasJudge = judgeType != 0;
+    answer = gei('answer').value;
     if(namep == "" || namep == undefined) {
         gei('name').classList.add('formthis');
         location.href = "#name";
@@ -100,50 +99,9 @@ function confirme() {
     else {
         gei('diffi').classList.remove('formthis');
     }
-    if(hasJudge) {
-        switch(judgeType) {
-            case '1':
-                gei('judge-type').classList.remove('formthis');
-                if(gei('answer').value == '') {
-                    precond = false;
-                    gei('answer').classList.add('formthis');
-                }
-                else {
-                    gei('answer').classList.remove('formthis');
-                }
-                break;
-            case '2':
-                gei('judge-type').classList.remove('formthis');
-                f1 = gei('answer-frac1');
-                f2 = gei('answer-frac2');
-                if(f1.value == '' || f1.value.includes('/')) {
-                    precond = false;
-                    f1.classList.add('formthis');
-                }
-                else {
-                    f1.classList.remove('formthis');
-                }
-                if(f2.value == '' || f2.value.includes('/')) {
-                    precond = false;
-                    f2.classList.add('formthis');
-                }
-                else {
-                    f2.classList.remove('formthis');
-                }
-                break;
-            default:
-                gei('judge-type').classList.add('formthis');
-                precond = false;
-        }
-    }
     if(!precond) {
         gei('confirm').disabled = false;
         return;
-    }
-    var ans;
-    if(hasJudge) {
-        if(judgeType == 1) ans = gei('answer').value;
-        else if(judgeType == 2) ans = gei('answer-frac1').value+"/"+gei('answer-frac2').value;
     }
     $.ajax({
         type: 'POST',
@@ -157,8 +115,7 @@ function confirme() {
             solu: exp,
             tags: JSON.stringify(tag),
             active: gei('pActive').checked,
-            judgeType: judgeType,
-            answer: ans
+            answer: answer
         },
         success: function(data) {
             code = data.result;
@@ -226,20 +183,3 @@ window.onbeforeunload = function (e) {
     }
     return '문제가 저장되지 않아요. 정말 닫을까요?';
 };
-
-function judgeTypeChange() {
-    let type = gei('judge-type').value;
-    switch(type) {
-        case '1':
-            gei('text-judge-field').classList = ['left-indicate-green'];
-            gei('frac-judge-field').classList = ['left-indicate-red'];
-            break;
-        case '2':
-            gei('text-judge-field').classList = ['left-indicate-red'];
-            gei('frac-judge-field').classList = ['left-indicate-green'];
-            break;
-        default:
-            gei('text-judge-field').classList = ['left-indicate-red'];
-            gei('frac-judge-field').classList = ['left-indicate-red'];
-    }
-}

@@ -1,5 +1,7 @@
 package com.github.miho73.ipu.domain;
 
+import org.json.JSONArray;
+
 import java.sql.Timestamp;
 
 public class Problem {
@@ -41,30 +43,12 @@ public class Problem {
     private String name;
     private PROBLEM_DIFFICULTY difficulty;
     private PROBLEM_CATEGORY category;
-    private JUDGEMENT_TYPE judgementType;
-
-    public JUDGEMENT_TYPE getJudgementType() {
-        return judgementType;
-    }
-    public int getJudgementTypeInt() {
-        return switch (this.judgementType) {
-            case SELF_JUDGE -> 0;
-            case TEXT_JUDGE -> 1;
-            case FRACTION_JUDGE -> 2;
-        };
-    }
-    public void setJudgementType(JUDGEMENT_TYPE judgementType) {
-        this.judgementType = judgementType;
-    }
-    public void setJudgementType(int judgementType) {
-        this.judgementType = JUDGEMENT_TYPE.values()[judgementType];
-    }
 
     private String content, solution;
-    private boolean active, hasObjective;
+    private boolean active;
     private String tags, author_name;
     private Timestamp added_at, last_modified;
-    private String answer;
+    private JSONArray answer;
 
     public String getAuthor_name() {
         return author_name;
@@ -73,17 +57,13 @@ public class Problem {
         this.author_name = author_name;
     }
 
-    public boolean isHasObjective() {
-        return hasObjective;
-    }
-    public void setHasObjective(boolean hasObjective) {
-        this.hasObjective = hasObjective;
-    }
-
-    public String getAnswer() {
+    public JSONArray getAnswer() {
         return answer;
     }
     public void setAnswer(String answer) {
+        this.answer = new JSONArray(answer);
+    }
+    public void setAnswer(JSONArray answer) {
         this.answer = answer;
     }
 
