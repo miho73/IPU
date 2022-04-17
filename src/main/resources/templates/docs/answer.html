@@ -2,10 +2,11 @@
 
 <html lang="ko" xmlns:th="https://www.thymeleaf.org">
     <head>
-        <title>IPU -출제 규칙</title>
+        <title>IPU -정답 입력과 채점</title>
         <th:block th:replace="fragments/header-comp.html :: header-comp"></th:block>
         <link rel="stylesheet" type="text/css" href="/lib/docs/docs.css">
         <link rel="stylesheet" type="text/css" href="/lib/table.css">
+        <link rel="stylesheet" type="text/css" href="/lib/problem/problem-solve.css">
         <meta name="title" content="IPU - 정답 입력과 채점">
         <meta property="og:title" content="IPU - 정답 입력과 채점">
         <meta name="twitter:title" content="IPU - 정답 입력과 채점">
@@ -23,16 +24,32 @@
                     <h3 class="pt">채점의 방식</h3>
                     <p>채점이 가능한 문제는 다음중 한 가지 방법으로 정답을 입력받습니다.</p>
                     <ul>
+                        <li class="li">직접 채점</li>
                         <li class="li">수 또는 텍스트 채점</li>
                         <li class="li">분수 채점</li>
                     </ul>
                 </li>
                 <li class="li" type="A">
+                    <h3 class="pt">직접 채점</h3>
+                    <p>"직접 채점"의 채점칸은 다음과 같이 생겼습니다.</p>
+                    <div class="left-indicate-black">
+                        <p class="answer-guide">직접 채점</p>
+                        <input type="button" class="end-btn ac-btn" value="정답">
+                        <input type="button" class="end-btn wa-btn" value="오답">
+                    </div>
+                    <p>정답을 입력하는 칸이 주어지지 않으며, 제출 전 자신의 답안과 문제의 답안을 비교하여 직접 정답 혹은 오답을 판단합니다. 이 종류의 문제를 채점할때는 다음과 같은 규칙에 맞게 채점해야 합니다.</p>
+                    <p>제출시 모든 직접 채점에 대해 정답/오답을 결정한 후 제출할 수 있습니다.</p>
+                    <ul>
+                        <li class="li">객관적이고 양심적으로 이성에 근거하야 채점해야 합니다. 채점을 제대로 하지 않는 것은 약관 위반입니다.</li>
+                        <li class="li">정답이 완전히 같지 않아도 맥락이 같고 충분히 맞다고 판단되는 경우 정답입니다.</li>
+                    </ul>
+                </li>
+                <li class="li" type="A">
                     <h3 class="pt">수 또는 텍스트 채점</h3>
                     <p>"수 또는 텍스트 채점"의 정답 입력란은 다음과 같이 생겼습니다.</p>
-                    <div class="left-indicate-black" id="text-judge-field">
+                    <div class="left-indicate-black">
                         <p class="answer-guide">수 또는 텍스트 채점</p>
-                        <th:block th:replace="fragments/answerForm.html :: textAnswer"></th:block>
+                        <input type="text" class="univ-input">
                     </div>
                     <p>하나의 입력 칸이 주어지며, 입력칸에 문제의 정답을 적습니다. 이때 문제에 특별한 지시가 없는 한 다음과 같이 정답을 적습니다.</p>
                     <ul>
@@ -44,11 +61,13 @@
                     </ul>
                 </li>
                 <li class="li" type="A">
-                    <h3 class="pt">수 또는 텍스트 채점</h3>
-                    <p>"수 또는 텍스트 채점"의 정답 입력란은 다음과 같이 생겼습니다.</p>
-                    <div class="left-indicate-black" id="frac-judge-field">
+                    <h3 class="pt">분수 채점</h3>
+                    <p>"분수 채점"의 정답 입력란은 다음과 같이 생겼습니다.</p>
+                    <div class="left-indicate-black">
                         <p class="answer-guide">분수 채점</p>
-                        <th:block th:replace="fragments/answerForm.html :: fracAnswer"></th:block>
+                        <input type="text" class="univ-input">
+                        <label>/</label>
+                        <input type="text" class="univ-input">
                     </div>
                     <p>두 개의 입력 칸이 주어지며, 첫번째 입력 칸에는 문제의 정답 중 분자 부분을, 두번째 입력 칸에는 분모 부분을 적습니다. 이때 문제에 특별한 지시가 없는 한 다음과 같이 정답을 적습니다.</p>
                     <ul>
@@ -62,52 +81,54 @@
                 <li class="li" type="A">
                     <h3 class="pt">예시</h3>
                     <p>다음은 정답과 정답칸에 적는 정답의 예시입니다.</p>
-                    <table>
-                        <thead>
-                            <tr>
-                                <td>문제</td>
-                                <td>정답</td>
-                                <td>써야 하는 정답</td>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>6이하인 자연수의 개수를 구하시오. 주사위를 던져서 나올 수 있는 눈의 경우를 구하시오.</td>
-                                <td>6개</td>
-                                <td>6</td>
-                            </tr>
-                            <tr>
-                                <td>1A의 전류가 5&Omega;인 저항의 양단의 전위차(V)를 구하시오. 10V의 전원에 연결된 크기가 같은 두 저항 중 하나에 걸리는 전압을 구하시오.</td>
-                                <td>5V</td>
-                                <td>5</td>
-                            </tr>
-                            <tr>
-                                <td>AB의 길이가 3cm, BC의 길이가 3cm인 정삼각형 ABC의 한 변 CA의 길이(cm)를 구하시오.</td>
-                                <td>3cm</td>
-                                <td>3</td>
-                            </tr>
-                            <tr>
-                                <td>AB의 길이가 3, BC의 길이가 3인 정삼각형 ABC의 한 변 CA의 길이를 구하시오</td>
-                                <td>3</td>
-                                <td>3</td>
-                            </tr>
-                            <tr>
-                                <td>5보다 10 작은 수를 구하시오.</td>
-                                <td>-5</td>
-                                <td>-5</td>
-                            </tr>
-                            <tr>
-                                <td>동전을 던져 앞면이 나올 확률을 구하시오.</td>
-                                <td>$\frac{1}{2}$</td>
-                                <td>분자: "1", 분모: "2"</td>
-                            </tr>
-                            <tr>
-                                <td>기울기가 4인 직선과 수직한 직선의 기울기를 구하시오.</td>
-                                <td>$-\frac{1}{4}$</td>
-                                <td>분자: "-1", 분모: "4"</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class="non-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <td>문제</td>
+                                    <td>정답</td>
+                                    <td>써야 하는 정답</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>6이하인 자연수의 개수를 구하시오. 주사위를 던져서 나올 수 있는 눈의 경우를 구하시오.</td>
+                                    <td>6개</td>
+                                    <td>6</td>
+                                </tr>
+                                <tr>
+                                    <td>1A의 전류가 5&Omega;인 저항의 양단의 전위차(V)를 구하시오. 10V의 전원에 연결된 크기가 같은 두 저항 중 하나에 걸리는 전압을 구하시오.</td>
+                                    <td>5V</td>
+                                    <td>5</td>
+                                </tr>
+                                <tr>
+                                    <td>AB의 길이가 3cm, BC의 길이가 3cm인 정삼각형 ABC의 한 변 CA의 길이(cm)를 구하시오.</td>
+                                    <td>3cm</td>
+                                    <td>3</td>
+                                </tr>
+                                <tr>
+                                    <td>AB의 길이가 3, BC의 길이가 3인 정삼각형 ABC의 한 변 CA의 길이를 구하시오</td>
+                                    <td>3</td>
+                                    <td>3</td>
+                                </tr>
+                                <tr>
+                                    <td>5보다 10 작은 수를 구하시오.</td>
+                                    <td>-5</td>
+                                    <td>-5</td>
+                                </tr>
+                                <tr>
+                                    <td>동전을 던져 앞면이 나올 확률을 구하시오.</td>
+                                    <td>$\frac{1}{2}$</td>
+                                    <td>분자: "1", 분모: "2"</td>
+                                </tr>
+                                <tr>
+                                    <td>기울기가 4인 직선과 수직한 직선의 기울기를 구하시오.</td>
+                                    <td>$-\frac{1}{4}$</td>
+                                    <td>분자: "-1", 분모: "4"</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </li>
             </ol>
         </div>

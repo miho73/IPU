@@ -1,89 +1,30 @@
 var timex = 0;
 var timer;
 
-var judgeType;
-
-var acwa;
-var answer;
-
-function load(_judgeType) {
+function load() {
     MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
     timer = setInterval(()=>timex++, 1000);
-    judgeType = _judgeType;
 }
 
+submitAcvited = false;
 function submitSolution(code) {
-    clearInterval(timer);
+    if(!submitAcvited) {
+        clearInterval(timer);
+        gei('show-ans-btn').disabled = true;
 
-    if(judgeType == 1) {
-        gei('answer').disabled = true;
+        gei('answer-context').style.display = 'block';
+        setTimeout(()=>gei('answer-context').style.transform = 'scaleY(1)', 2);
+        submitAcvited = true;
     }
-    else if(judgeType == 2) {
-        gei('answer-frac1').disabled = true;
-        gei('answer-frac2').disabled = true;
-    }
-    gei('show-ans-btn').disabled = true;
 
-    gei('answer-context').style.display = 'block';
-    setTimeout(()=>gei('answer-context').style.transform = 'scaleY(1)', 2);
-
-    showFinalDisplay();
-
-    if(judgeType == 0) {
-        gei('self-judge').style.display = 'block';
+    if(checkAllSubmitable()) {
+        showFinalDisplay();
+        gei('judge-result').style.display = 'block';
+        submitAll(code);
     }
     else {
-        gei('judge-result').style.display = 'block';
-        switch(judgeType) {
-            case 1:
-                answer = gei('answer').value;
-                break;
-            case 2:
-                answer = gei('answer-frac1').value + '/' + gei('answer-frac2').value;
-                break;
-
-        }
-        $.ajax({
-            method: 'POST',
-            url: '/problem/api/solution/post',
-            dataType: 'json',
-            data: {
-                code: code,
-                time: timex,
-                answer: answer
-            },
-            success: afterSubmitSuccess,
-            error: afterSubmitFailure
-        });
+        gei('show-ans-btn').disabled = false;
     }
-}
-
-function ac(code) {
-    acwa = true;
-    submitPerspective(code);
-}
-function wa(code) {
-    acwa = false;
-    submitPerspective(code);
-}
-function submitPerspective(code) {
-    gei('wa-btn').disabled = true;
-    gei('ac-btn').disabled = true;
-    gei('self-judge').style.display = 'none';
-    gei('judge-result').style.display = 'block';
-
-    $.ajax({
-        method: 'POST',
-        url: '/problem/api/solution/post',
-        dataType: 'json',
-        data: {
-            code: code,
-            time: timex,
-            answer: acwa
-        },
-        success: afterSubmitSuccess,
-        error: afterSubmitFailure
-    });
 }
 
 function afterSubmitSuccess(res) {
@@ -95,7 +36,7 @@ function afterSubmitSuccess(res) {
         gei('wa').style.display = 'block';
     }
     else {
-        gei('sol-comment').innerText = "문제가 생겨 정답 여부를 파악할 수 없었어요.";
+        gei('sol-comment').innerText = "문제가 생겨 채점결과를 받지 못했어요. 채점은 되었으니 안심하세요.";
         gei('solve-time-div').style.color = '#fec72e';
     }    
 }
@@ -137,48 +78,84 @@ function showFinalDisplay() {
     }, 5);
 }
 
+function checkAllSubmitable() {
+    answers = gei('answer-field').children;
+    idx = 0;
+    for(answerDiv of answers) {
+        inputs = answerDiv.getElementsByTagName('input');
+
+        if(inputs.length == 0) continue;
+        if(inputs[0].id == `a${idx}sa` && inputs.length != 1) {
+            return false;
+        }
+        idx++;
+    }
+    return true;
+}
+
+function ac(idx) {
+    if(!submitAcvited) return;
+    gei(`a${idx}sa`).disabled = true;
+    gei(`a${idx}sw`).disabled = true;
+    o = gei(`a${idx}sw`);
+    o.style.opacity = 0;
+    setTimeout(()=>{
+        o.remove();
+    }, 100);
+}
+function wa(idx) {
+    if(!submitAcvited) return;
+    gei(`a${idx}sa`).disabled = true;
+    gei(`a${idx}sw`).disabled = true;
+    o = gei(`a${idx}sa`);
+    o.style.opacity = 0;
+    setTimeout(()=>{
+        o.remove();
+        gei(`a${idx}sw`).style.transform = 'translate(53px, 0)'
+    }, 220);
+}
+
+function submitAll(code) {
+    answerJson = [];
+
+    answers = gei('answer-field').children;
+    idx = 0;
+    for(answerDiv of answers) {
+        inputs = answerDiv.getElementsByTagName('input');
+
+        if(inputs.length == 0) continue;
+        if(inputs[0].id == `a${idx}sa`) {
+            answerJson.push(0);
+        }
+        else if(inputs[0].id == `a${idx}sw`) {
+            answerJson.push(1);
+        }
+        else if(inputs[0].id == `a${idx}`) {
+            answerJson.push(inputs[0].value);
+        }
+        else if(inputs[0].id == `a${idx}f1`) {
+            answerJson.push(`${inputs[0].value}/${inputs[1].value}`);
+        }
+        idx++;
+    }
+    $.ajax({
+        method: 'POST',
+        url: '/problem/api/solution/post',
+        dataType: 'json',
+        data: {
+            code: code,
+            time: timex,
+            answer: JSON.stringify(answerJson)
+        },
+        success: afterSubmitSuccess,
+        error: afterSubmitFailure
+    })
+    console.log(answerJson)
+}
+
 function resubmit(code) {
     gei('resubmit').disabled = true;
-    if(judgeType == 0) {
-        $.ajax({
-            method: 'POST',
-            url: '/problem/api/solution/post',
-            dataType: 'json',
-            data: {
-                code: code,
-                time: timex,
-                answer: acwa
-            },
-            success: function(res) {
-                gei('cannot-submit').style.display = 'none';
-                afterSubmitSuccess(res)
-            },
-            error: afterSubmitFailure,
-            complete: function() {
-                gei('resubmit').disabled = false;
-            }
-        });
-    }
-    else {
-        $.ajax({
-            method: 'POST',
-            url: '/problem/api/solution/post',
-            dataType: 'json',
-            data: {
-                code: code,
-                time: timex,
-                answer: answer
-            },
-            success: function(res) {
-                gei('cannot-submit').style.display = 'none';
-                afterSubmitSuccess(res)
-            },
-            error: afterSubmitFailure,
-            complete: function() {
-                gei('resubmit').disabled = false;
-            }
-        });
-    }
+    submitAll();
 }
 
 function changeStar(code) {

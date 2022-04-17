@@ -352,7 +352,7 @@ public class ProblemControl {
     public String registerSolve(HttpServletRequest request, HttpSession session, HttpServletResponse response,
                                 @RequestParam("code") int code,
                                 @RequestParam("time") int time,
-                                @RequestParam(value = "answer", defaultValue = "") String answer) {
+                                @RequestParam(value = "answer") String answer) {
 
         try {
             if(!sessionService.checkLogin(session) || sessionService.hasPrivilege(SessionService.PRIVILEGES.USER, session)) {
