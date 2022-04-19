@@ -110,6 +110,7 @@ button#show-ans-btn:hover,input[type=button].ac-btn:hover {
 }
 button#show-ans-btn:disabled, input[type=button].ac-btn:disabled {
     background-color: #085e23;
+    cursor: default;
 }
 input[type=button].wa-btn {
     background-color: #f03b1b;
@@ -119,6 +120,7 @@ input[type=button].wa-btn:hover {
 }
 input[type=button].wa-btn:disabled {
     background-color: #e03010;
+    cursor: default;
 }
 input[type=button].ac-btn, input[type=button].wa-btn {
     font-size: 1em;

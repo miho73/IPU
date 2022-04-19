@@ -31,10 +31,6 @@ db:
     url: jdbc:postgresql://localhost:5432/invite
     username: ENC(5YI5toVnfFFWtq40VUAc0njuKv8IWWgRiKjBdRS0UGbQTv3bMU2v5MtgSNqn3wlt)
     password: ENC(qONxcaGxLHFqxnxqcmZQnRtLq3vdwMWelyqwuk2zFRaYz+CdYLud19uHBmFXCR7e)
-  solution:
-    url: jdbc:postgresql://localhost:5432/solves
-    username: ENC(JlfY2ysgy5BoQjfIWUuczFl4b4KDuU5F4+n/EE2QxAP4rJEYpBVLrTD1HnlcbnoA)
-    password: ENC(SDE8KpL8EtFepBZ7Ie68q+MAQ4Vhwrf3kqa49rFzd8tmLxwUQuSIO9SHN80rS7Fu)
 
 captcha:
   v3:

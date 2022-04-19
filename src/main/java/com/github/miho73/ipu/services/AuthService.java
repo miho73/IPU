@@ -1,6 +1,5 @@
 package com.github.miho73.ipu.services;
 
-import com.github.miho73.ipu.domain.LoginForm;
 import com.github.miho73.ipu.domain.User;
 import com.github.miho73.ipu.exceptions.InvalidInputException;
 import com.github.miho73.ipu.library.exceptions.CaptchaFailureException;
@@ -53,45 +52,45 @@ public class AuthService {
         BLOCKED
     }
 
-    public LOGIN_RESULT checkLogin(LoginForm form, HttpSession session) throws SQLException, NoSuchAlgorithmException, InvalidInputException, IOException {
-        if(form.getId().equals("") || form.getPassword().equals("")) throw new InvalidInputException("");
+    public LOGIN_RESULT checkLogin(String id, String password, String gToken, String gVers, HttpSession session) throws SQLException, NoSuchAlgorithmException, InvalidInputException, IOException {
+        if(id.equals("") || password.equals("")) throw new InvalidInputException("");
 
         boolean captchaFlag = false;
-        if(form.getgVers().equals("v3") && captcha.getV3Result(form.getgToken())) captchaFlag = true;
-        else if(form.getgVers().equals("v2") && captcha.getV2Result(form.getgToken())) captchaFlag = true;
+        if(gVers.equals("v3") && captcha.getV3Result(gToken)) captchaFlag = true;
+        else if(gVers.equals("v2") && captcha.getV2Result(gToken)) captchaFlag = true;
 
         if (captchaFlag) {
             Connection connection = userRepository.openConnection();
 
-            User user = userRepository.getUserForAuthentication(form.getId(), connection);
+            User user = userRepository.getUserForAuthentication(id, connection);
             if (user == null) {
-                LOGGER.debug("Login attempt: id=" + form.getId() + ", result=id not found");
+                LOGGER.debug("Login attempt: id=" + id + ", result=id not found");
                 userRepository.close(connection);
                 return LOGIN_RESULT.ID_NOT_FOUND;
             }
             if (!user.getPrivilege().contains("u")) {
-                LOGGER.debug("Login attempt: id=" + form.getId() + ", result=blocked");
+                LOGGER.debug("Login attempt: id=" + id + ", result=blocked");
                 userRepository.close(connection);
                 return LOGIN_RESULT.BLOCKED;
             }
-            String hash = sha.SHA512(form.getPassword(), user.getSalt());
+            String hash = sha.SHA512(password, user.getSalt());
             if (user.getPwd().equals(hash)) {
-                LOGGER.debug("Login attempt: id=" + form.getId() + ", result=ok");
-                user = userRepository.getUserById(form.getId(), connection);
-                LOGGER.debug("Queried user data to set session. id "+form.getId());
-                userRepository.updateUserTSById(form.getId(), "last_login", new Timestamp(System.currentTimeMillis()), connection);
-                LOGGER.debug("Updated last login. id "+form.getId());
+                LOGGER.debug("Login attempt: id=" + id + ", result=ok");
+                user = userRepository.getUserById(id, connection);
+                LOGGER.debug("Queried user data to set session. id "+id);
+                userRepository.updateUserTSById(id, "last_login", new Timestamp(System.currentTimeMillis()), connection);
+                LOGGER.debug("Updated last login. id "+id);
                 sessionService.setAttribute(session, "isLoggedIn", true);
                 sessionService.setUserSession(session, user);
                 LOGGER.debug("Set session for session id "+session.getId());
                 userRepository.close(connection);
                 return LOGIN_RESULT.OK;
             }
-            LOGGER.debug("Login attempt: id=" + form.getId() + ", result=wrong password");
+            LOGGER.debug("Login attempt: id=" + id + ", result=wrong password");
             userRepository.close(connection);
             return LOGIN_RESULT.BAD_PASSWORD;
         } else {
-            LOGGER.debug("Login attempt: id=" + form.getId() + ", result=CAPTCHA failed");
+            LOGGER.debug("Login attempt: id=" + id + ", result=CAPTCHA failed");
             return LOGIN_RESULT.CAPTCHA_FAILED;
         }
     }
@@ -149,23 +148,18 @@ public class AuthService {
         String hash = sha.SHA512(user.getPwd(), salt);
         user.setPwd(hash);
         user.setSalt(Base64.getEncoder().encodeToString(salt));
-        Connection userConnection = null, solvesConnection = null;
+        Connection userConnection = null;
         try {
             userConnection = userRepository.openConnectionForEdit();
-            solvesConnection = solutionRepository.openConnectionForEdit();
             userRepository.addUser(user, userConnection);
             int code = (int) userRepository.getUserDataById(user.getId(), "user_code", userConnection);
-            solutionRepository.addUser(code, solvesConnection);
             userRepository.commitAndClose(userConnection);
-            solutionRepository.commitAndClose(solvesConnection);
             LOGGER.debug("Signup request: id="+user.getId()+", name="+user.getName()+", result=ok");
         }
         catch (Exception e) {
             LOGGER.error("Signup request: id="+user.getId()+", name="+user.getName()+", result=Internal error", e);
             if(userConnection != null) userRepository.rollback(userConnection);
-            if(solvesConnection != null) solutionRepository.rollback(solvesConnection);
             if(userConnection != null) userRepository.close(userConnection);
-            if(solvesConnection != null) solutionRepository.close(solvesConnection);
             throw e;
         }
     }

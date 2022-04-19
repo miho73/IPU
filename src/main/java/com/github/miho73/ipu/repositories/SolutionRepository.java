@@ -11,9 +11,9 @@ import java.sql.*;
 
 @Repository("SolutionRepository")
 public class SolutionRepository extends com.github.miho73.ipu.repositories.Repository {
-    @Value("${db.solution.url}") private String DB_URL;
-    @Value("${db.solution.username}") private String DB_USERNAME;
-    @Value("${db.solution.password}") private String DB_PASSWORD;
+    @Value("${db.identification.url}") private String DB_URL;
+    @Value("${db.identification.username}") private String DB_USERNAME;
+    @Value("${db.identification.password}") private String DB_PASSWORD;
 
     @Override
     @PostConstruct
@@ -27,32 +27,21 @@ public class SolutionRepository extends com.github.miho73.ipu.repositories.Repos
         dataSource.setPassword(DB_PASSWORD);
     }
 
-    public void addUser(int usercode, Connection conn) throws SQLException {
-        String sql = "CREATE TABLE IF NOT EXISTS u" + usercode +
-                     "(code SERIAL NOT NULL," +
-                     "problem_code INTEGER NOT NULL," +
-                     "solved_time TIMESTAMP WITH TIME ZONE NOT NULL," +
-                     "solving_time INTEGER NOT NULL," +
-                     "correct BOOLEAN NOT NULL" +
-                     ");";
+    public void addSolution(int userCode, int problemCode, short time_took, String judgeResult, short corrects, short total, int experience, Connection conn) throws SQLException {
+        String sql = "INSERT INTO judges (user_code, problem_code, judge_time, time_took, judge_result, corrects, total, experience) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
         PreparedStatement psmt = conn.prepareStatement(sql);
-        psmt.execute();
-    }
-
-    public void addSolution(int problemCode, int solveTime, boolean correct, int userCode, Connection conn) throws SQLException {
-        String sql = "INSERT INTO u"+userCode+" (problem_code, solved_time, solving_time, correct) VALUES (?, ?, ?, ?)";
-
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-
-        PreparedStatement psmt = conn.prepareStatement(sql);
-        psmt.setInt(1, problemCode);
-        psmt.setTimestamp(2, timestamp);
-        psmt.setInt(3, solveTime);
-        psmt.setBoolean(4, correct);
-        psmt.execute();
+        psmt.setInt(1, userCode);
+        psmt.setInt(2, problemCode);
+        psmt.setTimestamp(3, timestamp);
+        psmt.setShort(4, time_took);
+        psmt.setString(5, judgeResult);
+        psmt.setShort(6, corrects);
+        psmt.setShort(7, corrects);
+        psmt.setShort(8, total);
+        psmt.setInt(9, experience);
     }
 
     public JSONArray getSolved(int frm, int len, int uCode, Connection conn) throws SQLException {
@@ -79,10 +68,11 @@ public class SolutionRepository extends com.github.miho73.ipu.repositories.Repos
 
     public int getNumberOfSolves(int uCode, int pCode, Connection conn) throws SQLException {
         LOGGER.debug("Get Number of Solves request for user "+uCode+" pCode="+pCode);
-        String sql = "SELECT COUNT(*) AS count FROM u"+uCode+" WHERE problem_code=?;";
+        String sql = "SELECT COUNT(*) AS count FROM judges WHERE problem_code=? AND user_code=?;";
 
         PreparedStatement psmt = conn.prepareStatement(sql);
         psmt.setInt(1, pCode);
+        psmt.setInt(2, uCode);
         ResultSet rs = psmt.executeQuery();
 
         if(!rs.next()) return -1;
@@ -90,9 +80,11 @@ public class SolutionRepository extends com.github.miho73.ipu.repositories.Repos
     }
 
     public void dropSolves(int uCode, Connection conn) throws SQLException {
-        String sql = "DROP TABLE u"+uCode+";";
+        LOGGER.debug("Delete all judges of user code "+uCode);
+        String sql = "DELETE FROM judges WHERE user_code=?;";
 
         PreparedStatement psmt = conn.prepareStatement(sql);
+        psmt.setInt(1, uCode);
         psmt.execute();
     }
 }

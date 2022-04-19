@@ -1,6 +1,5 @@
 package com.github.miho73.ipu.controllers;
 
-import com.github.miho73.ipu.domain.LoginForm;
 import com.github.miho73.ipu.domain.User;
 import com.github.miho73.ipu.exceptions.InvalidInputException;
 import com.github.miho73.ipu.library.events.AuthenticationFailureBadCredentialsEvent;
@@ -61,7 +60,10 @@ public class AuthControl {
 
     @PostMapping("/login")
     public String postLogin(@RequestParam(value = "ret", required = false, defaultValue = "/") String ret,
-                            @ModelAttribute LoginForm loginForm,
+                            @RequestParam("id") String id,
+                            @RequestParam("password") String password,
+                            @RequestParam("gToken") String gToken,
+                            @RequestParam("gVers") String gVers,
                             Model model,
                             HttpSession session,
                             HttpServletRequest request) {
@@ -75,8 +77,8 @@ public class AuthControl {
         ));
 
         // Login form validator
-        if(!IdValidator.matcher(loginForm.getId()).matches() || !PasswordValidator.matcher(loginForm.getPassword()).matches()) {
-            LOGGER.debug("Invalid login form: id="+loginForm.getId());
+        if(!IdValidator.matcher(id).matches() || !PasswordValidator.matcher(password).matches()) {
+            LOGGER.debug("Invalid login form: id="+id);
             model.addAttribute("error_text", "ID 또는 암호가 형식에 맞지 않아요.");
             return "auth/signin";
         }
@@ -95,15 +97,16 @@ public class AuthControl {
                 model.addAttribute("error_text", "로그인할 수 없어요.");
                 return "auth/signin";
             }
-            result = userService.checkLogin(loginForm, session);
+            result = userService.checkLogin(id, password, gToken, gVers, session);
         } catch (Exception e) {
-            LOGGER.error("Login error: "+e.getMessage()+" Form: id="+loginForm.getId()+", gVers="+loginForm.getgVers()+", gToken="+loginForm.getgToken(), e);
+            LOGGER.error("Login error: id="+id+", gVers="+gVers+", gToken="+gToken, e);
             model.addAttribute("error_text", "로그인하지 못했어요. 잠시 후에 다시 시도해주세요.");
             return "auth/signin";
         }
 
         if(result == AuthService.LOGIN_RESULT.OK) {
             publisher.publishEvent(new AuthenticationSuccessEvent(request));
+            if(!ret.startsWith("/")) return "redirect:/";
             return "redirect:"+ret;
         }
         else if(result == AuthService.LOGIN_RESULT.CAPTCHA_FAILED) {

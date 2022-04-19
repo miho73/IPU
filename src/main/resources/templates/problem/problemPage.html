@@ -41,18 +41,18 @@
                 <div th:each="ans,index: ${answer}">
                     <div class="left-indicate-black" th:if="${ans.method == 0}">
                         <p class="answer-guide" th:text="${ans.name}"></p>
-                        <input th:id="${'a'+index.index+'sa'}" type="button" th:if="${active}" class="end-btn ac-btn" value="정답" th:onclick="ac([[${index.index}]])">
-                        <input th:id="${'a'+index.index+'sw'}" type="button" th:if="${active}" class="end-btn wa-btn" value="오답" th:onclick="wa([[${index.index}]])">
+                        <input th:id="${'a'+index.index+'sa'}" type="button" th:if="${active}" class="end-btn ac-btn" value="정답" th:onclick="ac([[${index.index}]])" disabled>
+                        <input th:id="${'a'+index.index+'sw'}" type="button" th:if="${active}" class="end-btn wa-btn" value="오답" th:onclick="wa([[${index.index}]])" disabled>
                     </div>
                     <div class="left-indicate-black" th:if="${ans.method == 1}">
                         <p class="answer-guide" th:text="${ans.name}"></p>
-                        <input type="text" th:id="${'a'+index.index}" class="univ-input">
+                        <input type="text" th:id="${'a'+index.index}" class="univ-input" th:aria-label="${ans.name}">
                     </div>
                     <div class="left-indicate-black" th:if="${ans.method == 2}">
                         <p class="answer-guide" th:text="${ans.name}"></p>
-                        <input type="text" th:id="${'a'+index.index+'f1'}" class="univ-input">
+                        <input type="text" th:id="${'a'+index.index+'f1'}" class="univ-input" th:aria-label="${ans.name+' 분자부분'}">
                         <label>/</label>
-                        <input type="text" th:id="${'a'+index.index+'f2'}" class="univ-input">
+                        <input type="text" th:id="${'a'+index.index+'f2'}" class="univ-input" th:aria-label="${ans.name+' 분모부분'}">
                     </div>
                 </div>
                 <p>답안은 <a href="/docs/answer" class="univ" target="_blank">정답 입력과 채점</a>규칙에 맞게 입력해야 정답처리됩니다.</p>

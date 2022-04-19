@@ -2,7 +2,6 @@ package com.github.miho73.ipu.services;
 
 import com.github.miho73.ipu.domain.Problem;
 import com.github.miho73.ipu.exceptions.CannotJudgeException;
-import com.github.miho73.ipu.exceptions.InvalidJudgeTypeException;
 import com.github.miho73.ipu.library.ExperienceSystem;
 import com.github.miho73.ipu.repositories.ProblemRepository;
 import com.github.miho73.ipu.repositories.SolutionRepository;
@@ -87,17 +86,17 @@ public class ProblemService {
         }
     }
 
-    public boolean registerSolution(int code, int time, String answer, int userCode) throws SQLException, InvalidJudgeTypeException, CannotJudgeException {
+    public JSONObject registerSolution(int code, short time_took, JSONArray answer, int userCode) throws SQLException, CannotJudgeException {
         Connection probConnection = problemRepository.openConnection(),
                    solvesConnection = solutionRepository.openConnectionForEdit(),
                    userConnection = userRepository.openConnectionForEdit();
-        boolean result;
         try {
             Problem problem = problemRepository.getProblemSimple(code, probConnection);
             if(!problem.isActive()) {
                 throw new CannotJudgeException("disabled_problem");
             }
 
+            // Check last solve time
             Timestamp last_submit = (Timestamp) userRepository.getUserDataByCode(userCode, "last_solve", userConnection);
             Timestamp now = new Timestamp(System.currentTimeMillis());
             if(last_submit != null ){
@@ -107,31 +106,52 @@ public class ProblemService {
             }
             userRepository.updateUserTSByCode(userCode, "last_solve", now, userConnection);
 
-            /*
-            if(problem.getJudgementTypeInt() == 0) {
-                if(answer.equals("true")) result = true;
-                else if(answer.equals("false")) result = false;
-                else throw new CannotJudgeException("unexpected_acwa");
+            // Judge
+            // TODO: check input before process or save it to db
+            // TODO: check time took before save it to db
+            JSONArray storedAnswer = new JSONArray(problem.getAnswer());
+            if(storedAnswer.length() != answer.length()) {
+                throw new CannotJudgeException("answer_format");
             }
-            else {
-                result = switch (problem.getJudgementTypeInt()) {
-                    case 1, 2 -> answer.equals(problem.getAnswer());
-                    default -> throw new InvalidJudgeTypeException("unknown_judge");
-                };
+            short len = (short) storedAnswer.length();
+            short corrects = 0;
+            JSONArray judgeResults = new JSONArray();
+            for(int i = 0; i<len; i++) {
+                JSONObject sAnswer = storedAnswer.getJSONObject(i);
+                JSONObject judgeResult = new JSONObject();
+                if(sAnswer.getInt("method") == 0) {
+                    boolean correct = answer.getInt(i) == 0;
+                    judgeResult.put("acwa", correct);
+                    if(correct) corrects++;
+                }
+                else {
+                    boolean correct = sAnswer.getString("answer").equals(answer.get(i));
+                    judgeResult.put("answer", sAnswer.getString("answer"));
+                    judgeResult.put("yours", answer.get(i));
+                    judgeResult.put("acwa", correct);
+                    if(correct) corrects++;
+                }
+                judgeResults.put(judgeResult);
             }
-             */
-            result = false;
 
-            solutionRepository.addSolution(code, time, result, userCode, solvesConnection);
+            solutionRepository.addSolution(userCode, problem.getCode(), time_took, judgeResults.toString(), corrects, len, 0, solvesConnection);
             Problem.PROBLEM_DIFFICULTY difficulty = problem.getDifficulty();
 
+            // TODO: implement experience calculation system
             int solves = solutionRepository.getNumberOfSolves(userCode, code, solvesConnection);
             int exp = experienceSystem.getExp(difficulty, solves);
-            if(!result) exp=experienceSystem.toWa(exp, difficulty);
+            //if(!result) exp=experienceSystem.toWa(exp, difficulty);
             userRepository.addExperience(exp, userCode, userConnection);
 
             userRepository.commit(userConnection);
             solutionRepository.commit(solvesConnection);
+
+            JSONObject judgeReply = new JSONObject();
+            judgeReply.put("result", judgeResults);
+            judgeReply.put("corrects", corrects);
+            judgeReply.put("total", len);
+            judgeReply.put("exp", exp);
+            return judgeReply;
         }
         catch (SQLException | CannotJudgeException e) {
             if(e.getMessage().equals("intermediate")) userRepository.commit(userConnection);
@@ -143,7 +163,6 @@ public class ProblemService {
             problemRepository.close(probConnection);
             userRepository.close(userConnection);
         }
-        return result;
     }
 
     public Hashtable<Problem.PROBLEM_CATEGORY, Integer> getNumberOfProblemsInCategory() throws SQLException {

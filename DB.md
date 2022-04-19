@@ -34,26 +34,25 @@ IPU uses postgresql as DBMS. Here's the structure and user spec for IPU.
 > stared_problem TEXT NOT NULL
 > );
 > ```
-
-## 3. USER SOLVE HISTORY DB
-> Database name: solves  
-> `CREATE DATABASE solves OWNER <USERNAME>;`
-### 3.1 solves table
-> Table name: <each user's name>
-> ```sql
-> CREATE TABLE IF NOT EXISTS u<usercode>(
-> code SERIAL PRIMARY KEY NOT NULL,
+### 2.2 User judge history
+> ```
+> CREATE TABLE IF NOT EXISTS judges(
+> judge_code SERIAL PRIMARY KEY NOT NULL,
+> user_code INTEGER NOT NULL,
 > problem_code INTEGER NOT NULL,
-> solved_time TIMESTAMP WITH TIME ZONE NOT NULL,
-> solving_time INTEGER NOT NULL,
-> correct BOOLEAN NOT NULL
+> judge_time TIMESTAMP WITH TIME ZONE NOT NULL,
+> time_took SMALLINT NOT NULL,
+> judge_result TEXT NOT NULL,
+> corrects SMALLINT NOT NULL,
+> total SMALLINT NOT NULL,
+> experience INTEGER NOT NULL
 > );
 > ```
 
-## 4 PROBLEM DB
+## 3 PROBLEM DB
 > Database name: problem  
 > `CREATE DATABASE problem OWNER <USERNAME>;`
-### 4.1. problem table
+### 3.1. problem table
 > Table name: prob
 > ```sql
 > CREATE TABLE IF NOT EXISTS prob(
@@ -71,7 +70,7 @@ IPU uses postgresql as DBMS. Here's the structure and user spec for IPU.
 > answer TEXT
 > );
 > ```
-### 4.2. resource table
+### 3.2. resource table
 > Table name: resources
 > ```sql
 > CREATE TABLE IF NOT EXISTS resources(
@@ -82,7 +81,7 @@ IPU uses postgresql as DBMS. Here's the structure and user spec for IPU.
 > resource_name VARCHAR(100) NOT NULL
 > );
 > ```
-### problem issue table
+### 3.3 problem issue table
 > Table name: prob_issue
 > ```sql
 > CREATE TABLE IF NOT EXISTS prob_issue(
@@ -97,7 +96,7 @@ IPU uses postgresql as DBMS. Here's the structure and user spec for IPU.
 > written_at TIMESTAMP WITH TIME ZONE NOT NULL
 > );
 > ```
-### Issue commects table
+### 3.4 Issue commects table
 > Table name: issue_comments
 > ```sql
 > CREATE TABLE IF NOT EXISTS issue_comments (

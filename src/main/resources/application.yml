@@ -31,10 +31,6 @@ db:
     url: ENC(K7IOx54h7/hUi1JKi26EiXQCeN/zTCCESOhb/GL03pAR3X+9ry72AtdQkzuRHz0QPQ0E9jR9yS9hRf1PRkVBPuBu4bvN2DtRV1b/j2bJHyY=)
     username: ENC(mPSmJTPUPoe9xaUGdNbbFd3ygmKoNqEBjW9dQF0cVoQNLwHRow8gTpxPJGtediox)
     password: ENC(L4lv3cfQ6ik2xmdKUZuhVsRSxE99d+x4CQGK1NjK/gZWBjjfcaVm8Q/BduTaWy/+3uGeGgpJhr6wbbvl7vzXyytq05cUdzeP3vAm31KvkSf8mK23YepJKOv9hyFdlJ9VAZQLcx0phB3GzGrZGm544Q==)
-  solution:
-    url: ENC(+h9l6wr/7z91l8X/bBPNmw5avejt5C1zLRVOf1+FiihObMdn1wNTDvJLFY0w6mEceIbr3aLBmpIlNb/lD810al9IB2rSD6nerlWmOiAYwVk=)
-    username: ENC(mPSmJTPUPoe9xaUGdNbbFd3ygmKoNqEBjW9dQF0cVoQNLwHRow8gTpxPJGtediox)
-    password: ENC(L4lv3cfQ6ik2xmdKUZuhVsRSxE99d+x4CQGK1NjK/gZWBjjfcaVm8Q/BduTaWy/+3uGeGgpJhr6wbbvl7vzXyytq05cUdzeP3vAm31KvkSf8mK23YepJKOv9hyFdlJ9VAZQLcx0phB3GzGrZGm544Q==)
 
 captcha:
   v3:

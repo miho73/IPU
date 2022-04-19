@@ -1,12 +1,14 @@
 package com.github.miho73.ipu.controllers;
 
 import com.github.miho73.ipu.domain.Problem;
+import com.github.miho73.ipu.exceptions.CannotJudgeException;
 import com.github.miho73.ipu.library.ipuac.Renderer;
 import com.github.miho73.ipu.library.rest.response.RestfulReponse;
 import com.github.miho73.ipu.library.security.SHA;
 import com.github.miho73.ipu.repositories.UserRepository;
 import com.github.miho73.ipu.services.*;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -139,7 +141,7 @@ public class ProblemControl {
     public String getProblem(@PathVariable("pCode") String code, Model model, HttpSession session, HttpServletResponse response) throws IOException {
         try {
             if(forceLoginForProblem && !sessionService.checkLogin(session)) {
-                return "redirect:/login/?ret=/problem";
+                return "redirect:/login/?ret=/problem/"+code;
             }
             Problem problem = problemService.getProblem(Integer.parseInt(code));
             if(problem == null) {
@@ -351,8 +353,8 @@ public class ProblemControl {
     @ResponseBody
     public String registerSolve(HttpServletRequest request, HttpSession session, HttpServletResponse response,
                                 @RequestParam("code") int code,
-                                @RequestParam("time") int time,
-                                @RequestParam(value = "answer") String answer) {
+                                @RequestParam("time") short time,
+                                @RequestParam(value = "answer") String answerText) {
 
         try {
             if(!sessionService.checkLogin(session) || sessionService.hasPrivilege(SessionService.PRIVILEGES.USER, session)) {
@@ -361,9 +363,10 @@ public class ProblemControl {
             }
 
             int uCode = sessionService.getCode(session);
-            boolean aw = problemService.registerSolution(code, time, answer, uCode);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.OK, aw);
-        } catch (Exception e) {
+            JSONArray answer = new JSONArray(answerText);
+            JSONObject result = problemService.registerSolution(code, time, answer, uCode);
+            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.OK, result);
+        } catch (CannotJudgeException e) {
             response.setStatus(500);
             String msg;
             switch (e.getMessage()) {
@@ -372,20 +375,15 @@ public class ProblemControl {
                     response.setStatus(400);
                     return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.BAD_REQUEST, msg);
                 }
-                case "unexpected_acwa" -> {
-                    msg = "ueaw";
-                    response.setStatus(400);
-                    return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.BAD_REQUEST, msg);
-                }
-                case "unknown_judge" -> {
-                    msg = "unkj";
-                    response.setStatus(500);
-                    return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR, msg);
-                }
                 case "intermediate" -> {
                     msg = "intr";
                     response.setStatus(429);
                     return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.TOO_MANY_REQUESTS, msg);
+                }
+                case "answer_format" -> {
+                    msg = "ansf";
+                    response.setStatus(400);
+                    return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.BAD_REQUEST, msg);
                 }
                 default -> {
                     msg = "unkn";
@@ -393,6 +391,16 @@ public class ProblemControl {
                     return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR, msg);
                 }
             }
+        }
+        catch (SQLException e) {
+            response.setStatus(500);
+            LOGGER.error("Cannot register solution due to database error. ", e);
+            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR, "dber");
+        }
+        catch (JSONException e) {
+            response.setStatus(500);
+            LOGGER.error("Cannot register solution due to parsing exception. ", e);
+            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.BAD_REQUEST, "pras");
         }
     }
 

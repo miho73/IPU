@@ -11,6 +11,7 @@ function submitSolution(code) {
     if(!submitAcvited) {
         clearInterval(timer);
         gei('show-ans-btn').disabled = true;
+        disableInput();
 
         gei('answer-context').style.display = 'block';
         setTimeout(()=>gei('answer-context').style.transform = 'scaleY(1)', 2);
@@ -29,16 +30,7 @@ function submitSolution(code) {
 
 function afterSubmitSuccess(res) {
     gei('judging').style.display = 'none';
-    if(res.result == true) {
-        gei('ac').style.display = 'block';
-    }
-    else if (res.result == false) {
-        gei('wa').style.display = 'block';
-    }
-    else {
-        gei('sol-comment').innerText = "문제가 생겨 채점결과를 받지 못했어요. 채점은 되었으니 안심하세요.";
-        gei('solve-time-div').style.color = '#fec72e';
-    }    
+    console.log(res);
 }
 
 function afterSubmitFailure(error) {
@@ -49,14 +41,8 @@ function afterSubmitFailure(error) {
         case 'dis':
             msg = '문제가 비활성화되어 있기 때문에'
             break;
-        case 'ueaw':
-            msg = '정해진 형식의 답이 제출되지 않았기 때문에';
-            break;
-        case 'unkj':
-            msg = '채점 형식이 잘못 설정되어 있어서'
-            break;
         case 'unkn':
-            msg = '알 수 없는 이유로 '
+            msg = '문제가 생겨서'
             break;
         case 'intr':
             msg = '마지막 제출 후 1분이 지나지 않았기 때문에';
@@ -64,8 +50,16 @@ function afterSubmitFailure(error) {
         case 'forb':
             msg = '문제를 제출하려면 로그인해야 해요. 인증에 실패했기 때문에'
             break;
+        case "dber":
+            msg = '문제가 생겨서'
+            break;
+        case "pras":
+            msg = '제대로 제출되지 않아서'
+            break;
+        default:
+            msg = "문제가 생겨서"
     }
-    gei('was-error-submit').innerText = msg + ' 제출하지 못했어요.';
+    gei('was-error-submit').innerText = msg + ' 채점하지 못했어요.';
     gei('cannot-submit').style.display = 'flex';
 }
 
@@ -76,6 +70,22 @@ function showFinalDisplay() {
     setTimeout(()=>{
         gei('solve-time-div').style.opacity = 1;
     }, 5);
+}
+
+function disableInput() {
+    answers = gei('answer-field').children;
+    for(answerDiv of answers) {
+        inputs = answerDiv.getElementsByTagName('input');
+        for(input of inputs) {
+            if(input.type == 'text') {
+                input.disabled = true;
+            }
+            else if(input.type == 'button') {
+                input.disabled = false;
+            }
+        }
+    }
+    return true;
 }
 
 function checkAllSubmitable() {
@@ -148,14 +158,16 @@ function submitAll(code) {
             answer: JSON.stringify(answerJson)
         },
         success: afterSubmitSuccess,
-        error: afterSubmitFailure
-    })
-    console.log(answerJson)
+        error: afterSubmitFailure,
+        complete: function() {
+            gei('resubmit').disabled = false;
+        }
+    });
 }
 
 function resubmit(code) {
     gei('resubmit').disabled = true;
-    submitAll();
+    submitAll(code);
 }
 
 function changeStar(code) {
