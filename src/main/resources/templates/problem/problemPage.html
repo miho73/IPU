@@ -74,8 +74,31 @@
                     <circle class="loading" cx="12" cy="12" r="10" stroke="#aaa"/>
                 </svg>
             </p>
-            <p id="ac" class="obj-ac obj-result">맞았습니다!!</p>
-            <p id="wa" class="obj-wa obj-result">틀렸습니다</p>
+            <p id="judge-summary" class="obj-result"></p>
+            <table id="judge-results">
+                <thead>
+                <tr>
+                    <th>문제</th>
+                    <th>내 정답</th>
+                    <th>정답</th>
+                    <th>채점</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="ans,index: ${answer}" th:id="${'j'+index.index}">
+                    <td th:text="${ans.name}"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                </tbody>
+                <tfoot>
+                <tr>
+                    <td colspan="3">채점 결과</td>
+                    <td id="judge-acwa"></td>
+                </tr>
+                </tfoot>
+            </table>
         </div>
         <div id="cannot-submit" th:if="${active}">
             <p id="was-error-submit"></p>

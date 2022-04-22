@@ -466,6 +466,7 @@ button.univ-btn:active,a.univ-btn:active {
 }
 button.univ-btn:disabled,a.univ-btn:disabled {
     background-color: #0003;
+    cursor: default;
 }
 button.delete-button {
     border: none;

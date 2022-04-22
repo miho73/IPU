@@ -30,11 +30,61 @@ function submitSolution(code) {
 
 function afterSubmitSuccess(res) {
     gei('judging').style.display = 'none';
-    console.log(res);
+    gei('cannot-submit').remove();
+    gei('judge-summary').style.display = 'block';
+    gei('judge-results').style.display = 'table';
+    jResult = res.result;
+    if(jResult.total == jResult.corrects) {
+        gei('judge-summary').classList.add('obj-ac');
+        gei('judge-summary').innerText = `맞았습니다!!`;
+        gei('judge-acwa').classList.add('obj-ac');
+        gei('judge-acwa').innerText = `${jResult.corrects}/${jResult.corrects}`;
+    }
+    else if (jResult.corrects == 0) {
+        gei('judge-summary').classList.add('obj-wa');
+        gei('judge-summary').innerText = `틀렸습니다`;
+        gei('judge-acwa').classList.add('obj-wa');
+        gei('judge-acwa').innerText = `0/${jResult.corrects}`;
+    }
+    else {
+        gei('judge-summary').classList.add('obj-ac');
+        gei('judge-summary').innerText = `부분점수 (${jResult.corrects}/${jResult.total})`;
+        gei('judge-acwa').classList.add('obj-ac');
+        gei('judge-acwa').innerText = `${jResult.corrects}/${jResult.total}`;
+    }
+    jResult.result.forEach((judge, index) => {
+        tds = gei(`j${index}`).children;
+        if('yours' in judge && 'answer' in judge) {
+            tds[1].innerText = judge.yours;
+            tds[2].innerText = judge.answer;
+        }
+        else {
+            if(judge.acwa) {
+                tds[1].innerText = '정답';
+            }
+            else {
+                tds[1].innerText = '오답';
+            }
+        }
+        if(judge.acwa) {
+            tds[3].innerText = '맞았습니다!!';
+            tds[3].classList.add('obj-ac');
+        }
+        else {
+            tds[3].innerText = '틀렸습니다';
+            tds[3].classList.add('obj-wa');
+        }
+    });
+    window.scrollTo(0, document.body.scrollHeight);
 }
 
 function afterSubmitFailure(error) {
     gei('judging').style.display = 'none';
+    if(error.responseJSON == undefined) {
+        gei('was-error-submit').innerText = '문제가 생겨서 채점하지 못했어요.';
+        gei('cannot-submit').style.display = 'flex';
+        return;
+    }
     res = error.responseJSON['result'];
     var msg;
     switch(res) {
@@ -46,6 +96,12 @@ function afterSubmitFailure(error) {
             break;
         case 'intr':
             msg = '마지막 제출 후 1분이 지나지 않았기 때문에';
+            break;
+        case 'tiov':
+            msg = '풀이에 한 시간 이상이 걸렸기 때문에';
+            break;
+        case 'astl':
+            msg = '답안이 너무 길어서';
             break;
         case 'forb':
             msg = '문제를 제출하려면 로그인해야 해요. 인증에 실패했기 때문에'
@@ -158,15 +214,15 @@ function submitAll(code) {
             answer: JSON.stringify(answerJson)
         },
         success: afterSubmitSuccess,
-        error: afterSubmitFailure,
-        complete: function() {
-            gei('resubmit').disabled = false;
-        }
+        error: afterSubmitFailure
     });
 }
 
 function resubmit(code) {
     gei('resubmit').disabled = true;
+    setTimeout(()=>{
+        gei('resubmit').disabled = false;
+    }, 3000)
     submitAll(code);
 }
 

@@ -178,6 +178,7 @@ div#cannot-submit {
     flex-direction: column;
     justify-content: start;
     align-items: center;
+    margin-bottom: 40px;
 }
 p#was-error-submit {
     text-align: center;
@@ -195,12 +196,38 @@ p.obj-result {
     font-size: 1.6em;
     font-weight: 500;
     display: none;
+    margin: 10px 0;
 }
-p.obj-ac {
+p.obj-ac,td.obj-ac {
     color: #099134;
 }
-p.obj-wa {
+p.obj-wa,td.obj-wa {
     color: #f03b1b;
+}
+
+table#judge-results {
+    margin: 10px auto 50px auto;
+    border-collapse: collapse;
+    display: none;
+}
+table#judge-results>thead,table#judge-results>tfoot {
+    font-size: 1.2em;
+}
+th,td {
+    border: #ccc 1px solid;
+    border-spacing: 0;
+    padding: 15px 20px;
+    background-color: #fff;
+    text-align: center;
+}
+th {
+    font-size: 0.95em;
+    font-weight: 500;
+}
+td {
+    font-weight: 410;
+    color: #222;
+    word-break: break-all;
 }
 
 @media (max-width: 900px) {

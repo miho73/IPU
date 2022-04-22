@@ -67,9 +67,8 @@ public class UserService {
         return user;
     }
 
-    public JSONArray getSolved(int frm, int len, String id) throws SQLException {
+    public JSONArray getSolved(int frm, int len, int uCode) throws SQLException {
         Connection userConnection = userRepository.openConnection(), solvesConnection = solutionRepository.openConnection(), problemConnection = problemRepository.openConnection();
-        int uCode = (int) userRepository.getUserDataById(id, "user_code", userConnection);
         JSONArray arr = solutionRepository.getSolved(frm, len, uCode, solvesConnection);
         JSONArray cpy = new JSONArray();
         arr.forEach((con)->{
@@ -77,6 +76,7 @@ public class UserService {
             int pCode = ((JSONObject)con).getInt("code");
             try {
                 problem = problemRepository.getProblemSimple(pCode, problemConnection);
+                if(problem == null) return;
                 JSONArray tags = new JSONArray(problem.getTags());
                 tags.put(new JSONObject(Map.of(
                         "key", "diff",

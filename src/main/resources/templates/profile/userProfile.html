@@ -43,24 +43,26 @@
                         <thead>
                             <tr>
                                 <th style="width: 9%">번호</th>
-                                <th style="width: 23%;">문제 제목</th>
-                                <th style="width: 31%;">정보</th>
+                                <th style="width: 20%;">문제 제목</th>
+                                <th style="width: 30%;">정보</th>
                                 <th style="width: 14%;">풀이 시간</th>
-                                <th style="width: 23%;">푼 시각</th>
+                                <th style="width: 22%;">푼 시각</th>
+                                <th style="width: 5%">채점</th>
                             </tr>
                         </thead>
                         <tbody id="solveds">
-                        <tr th:each="solve,index: ${solved}">
-                            <td th:text="${index.index+1}"></td>
-                            <td>
-                                <a th:text="${solve.name}" th:href="${'/problem/'+solve.code}"></a>
-                            </td>
-                            <td class="tag-con">
-                                <div th:utext="${solve.tags}"></div>
-                            </td>
-                            <td th:text="${solve.solt+'초'}"></td>
-                            <td th:text="${solve.sol}"></td>
-                        </tr>
+                            <tr th:each="solve,index: ${solved}">
+                                <td th:text="${index.index+1}"></td>
+                                <td>
+                                    <a th:text="${solve.name}" th:href="${'/problem/'+solve.code}"></a>
+                                </td>
+                                <td class="tag-con">
+                                    <div th:utext="${solve.tags}"></div>
+                                </td>
+                                <td th:text="${solve.solt+'초'}"></td>
+                                <td th:text="${solve.sol}"></td>
+                                <td th:text="${solve.cor + '/' + solve.tot}" th:styleappend="${solve.cor == 0} ? 'color: #f03b1b' : 'color: #099134'"></td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="prob-list-table" th:if="${tab == 'stars'}">

@@ -28,7 +28,8 @@ public class SolutionRepository extends com.github.miho73.ipu.repositories.Repos
     }
 
     public void addSolution(int userCode, int problemCode, short time_took, String judgeResult, short corrects, short total, int experience, Connection conn) throws SQLException {
-        String sql = "INSERT INTO judges (user_code, problem_code, judge_time, time_took, judge_result, corrects, total, experience) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO judges (user_code, problem_code, judge_time, time_took, judge_result, corrects, total, experience) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
@@ -39,29 +40,33 @@ public class SolutionRepository extends com.github.miho73.ipu.repositories.Repos
         psmt.setShort(4, time_took);
         psmt.setString(5, judgeResult);
         psmt.setShort(6, corrects);
-        psmt.setShort(7, corrects);
-        psmt.setShort(8, total);
-        psmt.setInt(9, experience);
+        psmt.setShort(7, total);
+        psmt.setInt(8, experience);
+        psmt.execute();
     }
 
     public JSONArray getSolved(int frm, int len, int uCode, Connection conn) throws SQLException {
-        String sql = "SELECT code, problem_code, solved_time, solving_time, correct " +
-                     "FROM u"+uCode+" " +
-                     "WHERE code<=((SELECT code FROM u"+uCode+" ORDER BY code DESC LIMIT 1)-?) " +
-                     "ORDER BY code DESC LIMIT ?;";
+        String sql = "SELECT problem_code, judge_time, time_took, corrects, total FROM judges WHERE user_code = ? ORDER BY judge_code DESC;";
         PreparedStatement psmt = conn.prepareStatement(sql);
-        psmt.setInt(1, frm-1);
-        psmt.setInt(2, len);
+        psmt.setInt(1, uCode);
         ResultSet rs = psmt.executeQuery();
 
         JSONArray probs = new JSONArray();
-        while (rs.next()) {
+        while (frm-- > 0) {
+            if(!rs.next()) {
+                return new JSONArray();
+            }
+        }
+        int lenCheck = 0;
+        while (rs.next() && lenCheck < len) {
             JSONObject toPut = new JSONObject();
             toPut.put("code", rs.getInt("problem_code"));
-            toPut.put("cor", rs.getBoolean("correct"));
-            toPut.put("sol", rs.getString("solved_time"));
-            toPut.put("solt", rs.getString("solving_time"));
+            toPut.put("cor", rs.getInt("corrects"));
+            toPut.put("tot", rs.getInt("total"));
+            toPut.put("sol", rs.getString("judge_time"));
+            toPut.put("solt", rs.getString("time_took"));
             probs.put(toPut);
+            lenCheck++;
         }
         return probs;
     }

@@ -59,12 +59,14 @@ public class UserControl {
             tab = "solved";
         }
         sessionService.loadSessionToModel(session, model);
+        int uCode = sessionService.getCode(session);
         String uid = sessionService.getId(session);
         User user = userService.getProfileById(uid);
 
+        // Solved tab
         if(tab.equals("solved")) {
             int pg = Integer.parseInt(page), PROBLEM_PER_PAGE = 30;
-            JSONArray solved = userService.getSolved(pg* PROBLEM_PER_PAGE +1, PROBLEM_PER_PAGE, uid);
+            JSONArray solved = userService.getSolved(pg* PROBLEM_PER_PAGE, PROBLEM_PER_PAGE, uCode);
             JSONArray processed = tagService.processTagsToHtml(solved, session);
             model.addAllAttributes(Map.of(
                     "pg", pg,
@@ -75,7 +77,8 @@ public class UserControl {
             ));
         }
 
-        else if(tab.equals("stars")) {
+        // Stars tab
+        else {
             JSONArray stars = userService.getUserStaredProblem(user.getCode());
             JSONArray processed = tagService.processTagsToHtml(stars, session);
             System.out.println(processed.toList());
@@ -120,7 +123,8 @@ public class UserControl {
 
         if(tab.equals("solved")) {
             int pg = Integer.parseInt(page), PROBLEM_PER_PAGE = 30;
-            JSONArray solved = userService.getSolved(pg* PROBLEM_PER_PAGE +1, PROBLEM_PER_PAGE, uid);
+            int uCode = (int) userService.getUserDataById(uid, "user_code");
+            JSONArray solved = userService.getSolved(pg* PROBLEM_PER_PAGE +1, PROBLEM_PER_PAGE, uCode);
             JSONArray processed = tagService.processTagsToHtml(solved, session);
             model.addAllAttributes(Map.of(
                 "pg", pg,

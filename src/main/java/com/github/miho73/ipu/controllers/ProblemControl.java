@@ -361,6 +361,10 @@ public class ProblemControl {
                 response.setStatus(403);
                 return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.FORBIDDEN, "forb");
             }
+            if(answerText.length() > 1000) {
+                response.setStatus(413);
+                return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.FORBIDDEN, "astl");
+            }
 
             int uCode = sessionService.getCode(session);
             JSONArray answer = new JSONArray(answerText);
@@ -382,6 +386,11 @@ public class ProblemControl {
                 }
                 case "answer_format" -> {
                     msg = "ansf";
+                    response.setStatus(400);
+                    return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.BAD_REQUEST, msg);
+                }
+                case "timeover" -> {
+                    msg = "tiov";
                     response.setStatus(400);
                     return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.BAD_REQUEST, msg);
                 }

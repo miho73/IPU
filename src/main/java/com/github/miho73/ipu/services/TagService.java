@@ -75,10 +75,6 @@ public class TagService {
             if(finalStarList.contains(Integer.toString(workingProblem.getInt("code")))) {
                 html.append("<span class=\"tag tag-star\">⭐</span>");
             }
-            if(((JSONObject) result).has("cor")) {
-                if(((JSONObject) result).getBoolean("cor")) html.insert(0, "<span class=\"tag tag-ac\" title=\"Accepted\">AC</span>");
-                else html.insert(0, "<span class=\"tag tag-wa\" title=\"Wrong\">WA</span>");
-            }
             workingProblem.put("tags", html.toString());
             processedResult.put(workingProblem);
         });

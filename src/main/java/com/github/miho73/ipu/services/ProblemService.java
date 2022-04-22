@@ -107,11 +107,12 @@ public class ProblemService {
             userRepository.updateUserTSByCode(userCode, "last_solve", now, userConnection);
 
             // Judge
-            // TODO: check input before process or save it to db
-            // TODO: check time took before save it to db
             JSONArray storedAnswer = new JSONArray(problem.getAnswer());
             if(storedAnswer.length() != answer.length()) {
                 throw new CannotJudgeException("answer_format");
+            }
+            if(time_took >= 3600) {
+                throw new CannotJudgeException("timeover");
             }
             short len = (short) storedAnswer.length();
             short corrects = 0;
@@ -134,13 +135,12 @@ public class ProblemService {
                 judgeResults.put(judgeResult);
             }
 
-            solutionRepository.addSolution(userCode, problem.getCode(), time_took, judgeResults.toString(), corrects, len, 0, solvesConnection);
             Problem.PROBLEM_DIFFICULTY difficulty = problem.getDifficulty();
 
-            // TODO: implement experience calculation system
             int solves = solutionRepository.getNumberOfSolves(userCode, code, solvesConnection);
             int exp = experienceSystem.getExp(difficulty, solves);
             //if(!result) exp=experienceSystem.toWa(exp, difficulty);
+            solutionRepository.addSolution(userCode, code, time_took, judgeResults.toString(), corrects, len, exp, solvesConnection);
             userRepository.addExperience(exp, userCode, userConnection);
 
             userRepository.commit(userConnection);
