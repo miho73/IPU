@@ -209,12 +209,20 @@
                     window.location.href = [[${'/problem/'+prob_code}]];
                 },
                 error: function(err) {
-                    if(err.status == 403) {
-                        let x = confirm('문제를 업데이트하려면 로그인해야 해요.');
-                        if(x) {
-                            window.location.href = `/login/?ret=problem/[[${prob_code}]]/edit`;
-                        }
+                    if(err.responseJSON == null) {
+                        alert("문제가 생겨서 문제를 등록하지 못했어요.");
                     }
+                    switch(err.responseJSON.result) {
+                        case 'anjs':
+                            alert("정답 JSON이 올바르게 구성되어있지 않아요.");
+                            break;
+                        case 'dber':
+                            alert("문제가 생겨서 문제를 등록하지 못했어요.");
+                            break;
+                        default:
+                            alert("문제가 생겨서 문제를 등록하지 못했어요.");
+                    }
+                    gei('confirm').disabled = false;
                 }
             });
         }

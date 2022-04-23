@@ -47,8 +47,8 @@ public class RootControl {
     @ResponseBody
     public String inviteControl(HttpSession session, HttpServletRequest request, HttpServletResponse response, @RequestParam("q") String cmd) throws IOException {
         if(sessionService.hasPrivilege(SessionService.PRIVILEGES.INVITE_CODES, session)) {
-            response.sendError(403);
-            return null;
+            response.setStatus(403);
+            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.FORBIDDEN, "privilege i or higher is required");
         }
         String[] cmdParam = cmd.split(" ");
         if(cmdParam.length < 1 || cmdParam.length>3) {

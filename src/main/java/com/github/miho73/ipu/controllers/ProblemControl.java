@@ -40,7 +40,8 @@ public class ProblemControl {
     @Autowired private Renderer renderer = new Renderer();
     @Autowired private SHA sha = new SHA();
 
-    @Value("${ipu.access.force-login-for-problem}") private boolean forceLoginForProblem;
+    @Value("${ipu.access.force-login-for-problem}") private boolean FORCE_LOGIN_FOR_PROBLEM;
+    @Value("${ipu.judge.max-judge-for-problem}") private int MAX_JUDGES;
 
     public int NUMBER_OF_PROBLEMS;
     public int PROBLEM_PER_PAGE = 30;
@@ -140,7 +141,7 @@ public class ProblemControl {
     @GetMapping("/{pCode}")
     public String getProblem(@PathVariable("pCode") String code, Model model, HttpSession session, HttpServletResponse response) throws IOException {
         try {
-            if(forceLoginForProblem && !sessionService.checkLogin(session)) {
+            if(FORCE_LOGIN_FOR_PROBLEM && !sessionService.checkLogin(session)) {
                 return "redirect:/login/?ret=/problem/"+code;
             }
             Problem problem = problemService.getProblem(Integer.parseInt(code));
@@ -222,7 +223,7 @@ public class ProblemControl {
     @GetMapping(value = "/lib/{src}", produces = "application/octet-stream; charset=utf-8")
     @ResponseBody
     public byte[] resourceRequest(HttpServletResponse response, HttpSession session, @PathVariable("src")String hash) throws SQLException, IOException {
-        if(forceLoginForProblem && !sessionService.checkLogin(session)) {
+        if(FORCE_LOGIN_FOR_PROBLEM && !sessionService.checkLogin(session)) {
             response.sendError(403);
         }
 
@@ -233,6 +234,35 @@ public class ProblemControl {
         }
         return resource;
     }
+
+    public boolean validateAnswerJson(String ansJson) {
+        try {
+            if(ansJson.length() > 2000) {
+                return true;
+            }
+            JSONArray tj = new JSONArray(ansJson);
+            if(tj.length() > MAX_JUDGES) return true;
+            for(Object judgeo : tj) {
+                JSONObject judge = (JSONObject)judgeo;
+                if(!(judge.has("method") && judge.has("name"))) {
+                    return true;
+                }
+                if(!(0<=judge.getInt("method") && 2>=judge.getInt("method"))) {
+                    return true;
+                }
+                if(judge.has("answer")) {
+                    if(judge.getString("answer").length() > 100) {
+                        return true;
+                    }
+                }
+            }
+        }
+        catch (Exception e) {
+            return true;
+        }
+        return false;
+    }
+
     @PostMapping(value = "/register", produces = "application/json; charset=utf-8")
     @ResponseBody
     public String problemRegister(HttpServletRequest request, Model model, HttpSession session, HttpServletResponse response) throws IOException {
@@ -243,7 +273,10 @@ public class ProblemControl {
         try {
             String answer = request.getParameter("answer");
 
-            //TODO: Answer json check implementation
+            if(validateAnswerJson(answer)) {
+                response.setStatus(400);
+                return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.BAD_REQUEST, "anjs");
+            }
 
             Problem problem = new Problem();
             problem.setName         (request.getParameter("name"));
@@ -264,10 +297,7 @@ public class ProblemControl {
         }
         catch (SQLException e) {
             response.setStatus(500);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR, "database error");
-        } catch (NumberFormatException e) {
-            response.setStatus(500);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR, "unknown judge type");
+            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR, "dber");
         }
     }
 
@@ -287,7 +317,7 @@ public class ProblemControl {
     public String problemDetail(HttpServletRequest request, HttpServletResponse response, HttpSession session,
                                 @RequestParam("code") int code) {
         try {
-            if(forceLoginForProblem && !sessionService.checkLogin(session)) {
+            if(FORCE_LOGIN_FOR_PROBLEM && !sessionService.checkLogin(session)) {
                 response.setStatus(403);
                 return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.FORBIDDEN, "you must be logged in");
             }
@@ -326,7 +356,10 @@ public class ProblemControl {
         try {
             String answer = request.getParameter("answer");
 
-            //TODO: Answer json check implementation
+            if(validateAnswerJson(answer)) {
+                response.setStatus(400);
+                return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.BAD_REQUEST, "anjs");
+            }
 
             Problem problem = new Problem();
             problem.setCode         (Integer.parseInt(request.getParameter("code")));
@@ -342,10 +375,7 @@ public class ProblemControl {
             return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.OK);
         } catch (SQLException e) {
             response.setStatus(500);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR, "database error");
-        } catch (NumberFormatException e) {
-            response.setStatus(500);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR, "unknown judge type");
+            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR, "dber");
         }
     }
 
@@ -361,7 +391,7 @@ public class ProblemControl {
                 response.setStatus(403);
                 return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.FORBIDDEN, "forb");
             }
-            if(answerText.length() > 1000) {
+            if(answerText.length() > 1200) {
                 response.setStatus(413);
                 return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.FORBIDDEN, "astl");
             }

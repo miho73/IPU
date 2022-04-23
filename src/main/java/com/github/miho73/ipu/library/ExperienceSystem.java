@@ -20,19 +20,6 @@ public class ExperienceSystem {
         }
     };
 
-    private final Hashtable<Problem.PROBLEM_DIFFICULTY, Integer> waDiv = new Hashtable<>() {
-        {
-            put(Problem.PROBLEM_DIFFICULTY.UNSET, 0);
-            put(Problem.PROBLEM_DIFFICULTY.UNRATED, 2);
-            put(Problem.PROBLEM_DIFFICULTY.BRONZE, 2);
-            put(Problem.PROBLEM_DIFFICULTY.SILVER, 4);
-            put(Problem.PROBLEM_DIFFICULTY.GOLD, 4);
-            put(Problem.PROBLEM_DIFFICULTY.SAPPHIRE, 8);
-            put(Problem.PROBLEM_DIFFICULTY.RUBY, 8);
-            put(Problem.PROBLEM_DIFFICULTY.DIAMOND, 16);
-        }
-    };
-
     private final Hashtable<Integer, Double> powTable = new Hashtable<>() {
         {
             put( 0, 1.0);
@@ -58,9 +45,5 @@ public class ExperienceSystem {
 
     public int getExp(Problem.PROBLEM_DIFFICULTY difficulty, int solves) {
         return (int) Math.ceil(ExpTable.get(difficulty) * getDC(solves));
-    }
-
-    public int toWa(int exp, Problem.PROBLEM_DIFFICULTY difficulty) {
-        return exp/waDiv.get(difficulty);
     }
 }

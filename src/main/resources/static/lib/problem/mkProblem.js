@@ -18,8 +18,11 @@ function selectLocalImage(forwhat) {
                 gei('image-upload-result').innerText = `이미지를 업로드했어요. 코드=${data.result}`;
             },
             error: function(err) {
+                if(err.responseJSON == null) {
+                    gei('image-upload-result').innerText = '이미지를 등록하지 못했어요. 잠시 후에 다시 시도해주세요.';
+                }
                 switch(err.responseJSON.result) {
-                    case "file too large":
+                    case "forbidden":
                         gei('image-upload-result').innerText = '이미지를 업로드할 수 있는 권한이 없어요.';
                     case "file too large":
                         gei('image-upload-result').innerText = '업로드 가능한 크기는 최대 5MB에요. 크기를 줄여주세요.';
@@ -123,11 +126,18 @@ function confirme() {
             window.location.href = "/problem/"+code;
         },
         error: function(err) {
-            if(err.status == 403) {
-                let x = confirm('문제를 추가하려면 로그인해야 해요.');
-                if(x) {
-                    window.location.href = `/login/?ret=problem/make`;
-                }
+            if(err.responseJSON == null) {
+                alert("문제가 생겨서 문제를 등록하지 못했어요.");
+            }
+            switch(err.responseJSON.result) {
+                case 'anjs':
+                    alert("정답 JSON이 올바르게 구성되어있지 않아요.");
+                    break;
+                case 'dber':
+                    alert("문제가 생겨서 문제를 등록하지 못했어요.");
+                    break;
+                default:
+                    alert("문제가 생겨서 문제를 등록하지 못했어요.");
             }
             gei('confirm').disabled = false;
         }

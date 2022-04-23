@@ -43,6 +43,8 @@ captcha:
 ipu:
   access:
     force-login-for-problem: true
+  judge:
+    max-judge-for-problem: 30
 
 # Debug
 spring:

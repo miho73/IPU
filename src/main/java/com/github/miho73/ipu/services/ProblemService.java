@@ -139,7 +139,7 @@ public class ProblemService {
 
             int solves = solutionRepository.getNumberOfSolves(userCode, code, solvesConnection);
             int exp = experienceSystem.getExp(difficulty, solves);
-            //if(!result) exp=experienceSystem.toWa(exp, difficulty);
+            exp = exp * corrects / len;
             solutionRepository.addSolution(userCode, code, time_took, judgeResults.toString(), corrects, len, exp, solvesConnection);
             userRepository.addExperience(exp, userCode, userConnection);
 
