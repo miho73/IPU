@@ -21,16 +21,16 @@ docs.mappingFile: resources/docsMapping.json
 db:
   identification:
     url: jdbc:postgresql://localhost:5432/identification
-    username: ENC(bjwHiiIti9hI7QfDvdDkHQ4CCEt8LFwpWFu54Dk6b6caVpKV/KVU1w/eY/g9Qvca)
-    password: ENC(yRG2nJUsih22Z0vGX2rKpZgkfiBRmUUXHpC9xNxFCF6RUHaQHBYg2VOeu6BydN7P)
+    username: ENC(GS7r3gFT7ZZnAXVGEBLBhkqfFjlphBd39Z8feXXSgbV9cavHQc7+WkaizU0+qr49)
+    password: ENC(jDt1KR2NL44k74/JVXU8v2KCW5AM/oHejzBXEUyzOhl8hKh71FtHlvpjO9opJgD0)
   problem:
     url: jdbc:postgresql://localhost:5432/problem
-    username: ENC(lxXIHLICd7tfW17qMz1lN1THDrHITBddgnyCSJYwGMDDR0n9UfzrFgsLnSGOySwX)
-    password: ENC(ukSuagnZIUcev/8v125f7+epWhKCVkw0mA2YTG6EULLyaqzelbfmjUkixAjVMbqG)
+    username: ENC(GS7r3gFT7ZZnAXVGEBLBhkqfFjlphBd39Z8feXXSgbV9cavHQc7+WkaizU0+qr49)
+    password: ENC(jDt1KR2NL44k74/JVXU8v2KCW5AM/oHejzBXEUyzOhl8hKh71FtHlvpjO9opJgD0)
   invite:
     url: jdbc:postgresql://localhost:5432/invite
-    username: ENC(5YI5toVnfFFWtq40VUAc0njuKv8IWWgRiKjBdRS0UGbQTv3bMU2v5MtgSNqn3wlt)
-    password: ENC(qONxcaGxLHFqxnxqcmZQnRtLq3vdwMWelyqwuk2zFRaYz+CdYLud19uHBmFXCR7e)
+    username: ENC(GS7r3gFT7ZZnAXVGEBLBhkqfFjlphBd39Z8feXXSgbV9cavHQc7+WkaizU0+qr49)
+    password: ENC(jDt1KR2NL44k74/JVXU8v2KCW5AM/oHejzBXEUyzOhl8hKh71FtHlvpjO9opJgD0)
 
 captcha:
   v3:

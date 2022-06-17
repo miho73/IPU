@@ -38,8 +38,8 @@ function selectLocalImage(forwhat) {
 
 function preview() {
     payload = [];
-    payload[0] = gei('content').value;
-    payload[1] = gei('solution').value;
+    payload[0] = toLf(vContent.getValue());
+    payload[1] = toLf(vSolution.getValue());
     $.ajax({
        type: 'POST',
        url: '/problem/api/ipuac-translation',
@@ -72,10 +72,10 @@ function confirme() {
     let precond = true;
     if(!proceed) return;
     gei('confirm').disabled = true;
-    content = gei('content').value;
-    exp = gei('solution').value;
+    content = toLf(vContent.getValue());
+    exp = toLf(vSolution.getValue());
     namep = gei('name').value;
-    answer = gei('answer').value;
+    answer = toLf(vAnswer.getValue());
     if(namep == "" || namep == undefined) {
         gei('name').classList.add('formthis');
         location.href = "#name";
@@ -193,3 +193,7 @@ window.onbeforeunload = function (e) {
     }
     return '문제가 저장되지 않아요. 정말 닫을까요?';
 };
+
+function toLf(crlf) {
+    return crlf.replace(/\r\n/g, '\n');
+}

@@ -13,6 +13,13 @@
         <link rel="stylesheet" type="text/css" href="/lib/problem/problem-solve.css">
         <link rel="stylesheet" type="text/css" href="/lib/ipuac/ipuac.css">
 
+        <link rel="stylesheet" data-name="vs/editor/editor.main" href="/lib/monaco-editor/min/vs/editor/editor.main.css"/>
+        <link href="//cdn.jsdelivr.net/gh/wan2land/d2coding/d2coding-ligature-full.css" rel="stylesheet"/>
+        <script>var require = {paths: {'vs': '/lib/monaco-editor/min/vs'}};</script>
+        <script src="/lib/monaco-editor/min/vs/loader.js"></script>
+        <script src="/lib/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
+        <script src="/lib/monaco-editor/min/vs/editor/editor.main.js"></script>
+
         <script src="/lib/problem/mkProblem.js"></script>
         <script src="/lib/ipuac/ipuac.js"></script>
     </head>
@@ -56,19 +63,16 @@
             </div>
             <h3 id="pro-cont" class="sub-title">문제 내용*</h3>
             <div class="editor-container">
-                <textarea id="content" class="editor univ-text">== 문제 ==</textarea>
+                <div id="v-content" class="editor"></div>
             </div>
             <h3 id="pro-exp" class="sub-title">풀이*</h3>
             <div class="editor-container">
-                <textarea id="solution" class="editor univ-text">
-== 풀이 ==
-
-== 정답 ==</textarea>
+                <div id="v-solution" class="editor"></div>
             </div>
             <h3 class="sub-title" style="margin-bottom: 7px;">정답 및 채점</h3>
             <div>
                 <p style="margin: 10px 0 5px 0">정답은 반드시 <a href="/docs/mpp" class="univ" target="_blank">IPU 출제규칙</a>에 맞게 작성해주세요.</p>
-                <textarea id="answer" class="editor univ-text">[]</textarea>
+                <div id="v-answer" class="editor"></div>
             </div>
             <h3 id="pro-tags" class="sub-title" style="margin-bottom: 10px;">태그</h3>
             <div id="addc-tags-cont">
@@ -127,4 +131,10 @@
         });
     </script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML'></script>
+    <script src="/lib/ipuac/monaco-ipuac.js"></script>
+    <script>
+        const vContent = new monaco.editor.create(document.getElementById('v-content'), setIpuac('== 문제 =='));
+        const vSolution = new monaco.editor.create(document.getElementById('v-solution'), setIpuac('== 풀이 ==\n\n== 정답 =='));
+        const vAnswer = new monaco.editor.create(document.getElementById('v-answer'), {model: answerJsonModel()});
+    </script>
 </html>

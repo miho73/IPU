@@ -6,6 +6,11 @@ textarea.editor {
     resize: vertical;
     outline: none;
 }
+div.editor {
+    width: 100%;
+    min-height: 300px;
+    height: fit-content;
+}
 #display {
     overflow-y: auto !important;
 }
