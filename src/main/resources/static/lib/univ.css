@@ -1,12 +1,12 @@
-@import url(/lib/fonts/SpoqaHanSansNeo.css);
+@import url(//cdn.lucys.r-e.kr/fonts/SpoqaHanSansNeo.css);
 @font-face {
     font-family: Cafe24Shiningstar;
-    src: url("/lib/fonts/Cafe24/Cafe24Shiningstar.ttf") format('truetype');
+    src: url("//cdn.lucys.r-e.kr/fonts/Cafe24/Cafe24Shiningstar.ttf") format('truetype');
     font-display: swap;
 }
 @font-face {
     font-family: Cafe24Oneprettynight;
-    src: url("/lib/fonts/Cafe24/Cafe24Oneprettynight.ttf") format('truetype');
+    src: url("//cdn.lucys.r-e.kr/fonts/Cafe24/Cafe24Oneprettynight.ttf") format('truetype');
     font-display: swap;
 }
 

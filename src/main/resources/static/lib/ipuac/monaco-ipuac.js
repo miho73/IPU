@@ -231,7 +231,7 @@ monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
                         },
                         method: {
                             description: '0: 직접채점, 1: 수 채점, 2: 분수 채점',
-                            enum: ['0', '1', '2']
+                            enum: [0, 1, 2]
                         },
                         answer: {
                             description: '정답',
