@@ -109,6 +109,7 @@ public class AuthControl {
             return "redirect:/";
         }
         sessionService.clearSudo(session);
+        sessionService.completeSudo(session);
         sessionService.invalidSession(session);
         LOGGER.debug("Invalidated session "+session.getId());
         return "redirect:/";
