@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
 import javax.servlet.http.HttpSession;
+import java.time.Instant;
 import java.util.Map;
 
 @Service("SessionService")
@@ -30,6 +31,23 @@ public class SessionService {
 
     public void setAttribute(HttpSession session, String key, Object value) {
         session.setAttribute(key, value);
+    }
+    public Object getAttribute(HttpSession session, String key) {
+        return session.getAttribute(key);
+    }
+
+    public void prepareSudo(HttpSession session, String purpose, String ret) {
+        session.setAttribute("sudo", purpose);
+        session.setAttribute("sudoTime", Instant.now().getEpochSecond());
+        session.setAttribute("sudoRet", ret);
+    }
+    public void clearSudo(HttpSession session) {
+        session.removeAttribute("sudo");
+        session.removeAttribute("sudoTime");
+        session.removeAttribute("sudoRet");
+    }
+    public void completeSudo(HttpSession session) {
+        session.removeAttribute("sudoResult");
     }
 
     public void setUserSession(HttpSession session, User user) {

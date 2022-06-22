@@ -34,7 +34,7 @@
                 <a href="/profile" th:if="${logged}">
                     <p class="nav" th:text="${user.getName()}"></p>
                 </a>
-                <a href="/settings" th:if="${logged}">
+                <a href="/settings/personal" th:if="${logged}">
                     <p class="nav">설정</p>
                 </a>
                 <a href="/login/deauth" th:if="${logged}">
@@ -56,7 +56,7 @@
                 <div id="ham-usr-menu" th:if="${logged}">
                     <a href="/login/deauth" class="ham-usr-btn">로그아웃</a>
                     <a href="/profile" class="ham-usr-btn">프로필</a>
-                    <a href="/settings" class="ham-usr-btn">설정</a>
+                    <a href="/settings/personal" class="ham-usr-btn">설정</a>
                     <a href="/root" th:if="${root}" class="ham-usr-btn">루트</a>
                 </div>
                 <a th:href="${'/login/?ret='+(#httpServletRequest.requestURI)}" class="ham-usr-btn" th:unless="${logged}">로그인</a>

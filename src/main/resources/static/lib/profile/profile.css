@@ -27,33 +27,6 @@ a {
     color: #dd4124;
 }
 
-.settings-input {
-    margin-left: 10px;
-}
-@media (max-width: 700px) {
-    .settings-input {
-        width: 90% !important;
-        min-width: 0 !important;
-    }
-}
-p.field-title {
-    margin: 3px 0;
-    font-size: 0.9em;
-}
-td.t-field {
-    font-size: 0.8em;
-}
-#pwdreg {
-    transform: scaleY(0);
-    transform-origin: top;
-    transition: transform 0.25s ease;
-}
-
-p.caption {
-    color: #777;
-    font-size: 0.8em;
-    margin: 0 0 0 10px;
-}
 
 p.exp-dis {
     font-size: 20px;

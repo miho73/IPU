@@ -2,19 +2,26 @@ package com.github.miho73.ipu.services;
 
 import com.github.miho73.ipu.domain.User;
 import com.github.miho73.ipu.exceptions.InvalidInputException;
+import com.github.miho73.ipu.library.events.AuthenticationFailureBadCredentialsEvent;
+import com.github.miho73.ipu.library.events.AuthenticationSuccessEvent;
 import com.github.miho73.ipu.library.exceptions.CaptchaFailureException;
 import com.github.miho73.ipu.library.exceptions.DuplicatedException;
 import com.github.miho73.ipu.library.exceptions.ForbiddenException;
 import com.github.miho73.ipu.library.security.Captcha;
 import com.github.miho73.ipu.library.security.SHA;
 import com.github.miho73.ipu.library.security.SecureTools;
+import com.github.miho73.ipu.library.security.bruteforce.LoginAttemptService;
 import com.github.miho73.ipu.repositories.SolutionRepository;
 import com.github.miho73.ipu.repositories.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -24,16 +31,25 @@ import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
+import java.util.Map;
 import java.util.TimeZone;
+import java.util.regex.Pattern;
 
 @Service("AuthService")
 public class AuthService {
     @Autowired private UserRepository userRepository;
     @Autowired private SolutionRepository solutionRepository;
     @Autowired private SHA sha;
+    @Autowired private ApplicationEventPublisher publisher;
+    @Autowired private LoginAttemptService loginAttemptService;
     @Autowired private Captcha captcha;
     @Autowired private SessionService sessionService;
     @Autowired private InviteService inviteService;
+
+    private final Pattern PasswordValidator = Pattern.compile("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d!\"#$%&'()*+,\\-./:;<=>?@\\[\\]^_`{|}~\\\\\\)]{6,}$");
+
+    @Value("${captcha.v3.sitekey}") private String CAPTCHA_V3_SITE_KEY;
+    @Value("${captcha.v2.sitekey}") private String CAPTCHA_V2_SITE_KEY;
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
@@ -49,10 +65,15 @@ public class AuthService {
         ID_NOT_FOUND,
         INVALID_INPUT,
         CAPTCHA_FAILED,
-        BLOCKED
+        BLOCKED,
+        LOCKED
     }
 
-    public LOGIN_RESULT checkLogin(String id, String password, String gToken, String gVers, HttpSession session) throws SQLException, NoSuchAlgorithmException, InvalidInputException, IOException {
+    public LOGIN_RESULT completeLogin(String id, String password, String gToken, String gVers, HttpSession session, HttpServletRequest request) throws SQLException, NoSuchAlgorithmException, InvalidInputException, IOException {
+        if(checkLocked(request)) {
+            return LOGIN_RESULT.LOCKED;
+        }
+
         if(id.equals("") || password.equals("")) throw new InvalidInputException("");
 
         boolean captchaFlag = false;
@@ -64,7 +85,8 @@ public class AuthService {
 
             User user = userRepository.getUserForAuthentication(id, connection);
             if (user == null) {
-                LOGGER.debug("Login attempt: id=" + id + ", result=id not found");
+                LOGGER.debug("Login attempt: id=" + id + ", result=id not found("+id+")");
+                reportAuthFailure(request);
                 userRepository.close(connection);
                 return LOGIN_RESULT.ID_NOT_FOUND;
             }
@@ -87,32 +109,75 @@ public class AuthService {
                 return LOGIN_RESULT.OK;
             }
             LOGGER.debug("Login attempt: id=" + id + ", result=wrong password");
+            reportAuthFailure(request);
             userRepository.close(connection);
             return LOGIN_RESULT.BAD_PASSWORD;
         } else {
             LOGGER.debug("Login attempt: id=" + id + ", result=CAPTCHA failed");
+            reportAuthFailure(request);
             return LOGIN_RESULT.CAPTCHA_FAILED;
         }
     }
 
-    public boolean auth(String id, String pwd) throws SQLException, InvalidInputException, NoSuchAlgorithmException {
-        Connection connection = userRepository.openConnection();
+    private boolean checkLocked(HttpServletRequest request) {
+        String ip = request.getHeader("X-Forwarded-For");
+        if(ip == null) {
+            ip = request.getRemoteAddr();
+        }
+        else {
+            ip = ip.split(",")[0];
+        }
+        boolean ban = loginAttemptService.isBlocked(ip);
+        if(ban) LOGGER.debug("IP ban: IP="+ip);
+        return ban;
+    }
+    private void reportAuthFailure(HttpServletRequest request) {
+        publisher.publishEvent(new AuthenticationFailureBadCredentialsEvent(request));
+    }
+    private void reportAuthSuccess(HttpServletRequest request) {
+        publisher.publishEvent(new AuthenticationSuccessEvent(request));
+    }
 
+    /**
+     *
+     * @param id user id to authenticate
+     * @param pwd password that user provided
+     * @param request HttpServletRequest of request
+     * @return 0 when succeed / 1 when locked / 2 when user not found / 3 when password is wrong / 4 when captcha failure
+     * @throws SQLException Sql error
+     * @throws InvalidInputException hash error
+     * @throws NoSuchAlgorithmException hash error
+     */
+    public int auth(String id, String pwd, String gToken, String gVers, HttpServletRequest request) throws SQLException, InvalidInputException, NoSuchAlgorithmException, IOException {
+        if(checkLocked(request)) {
+            return 1;
+        }
+
+        boolean captchaFlag = false;
+        if(gVers.equals("v3") && captcha.getV3Result(gToken)) captchaFlag = true;
+        else if(gVers.equals("v2") && captcha.getV2Result(gToken)) captchaFlag = true;
+        if(!captchaFlag) {
+            return 4;
+        }
+
+        Connection connection = userRepository.openConnection();
         User user = userRepository.getUserForAuthentication(id, connection);
         if (user == null) {
-            LOGGER.debug("Authentication attempt: id=" + id + ", result=id not found");
+            LOGGER.debug("Authentication attempt: id=" + id + ", result=id not found("+id+")");
             userRepository.close(connection);
-            return false;
+            return 2;
         }
         String hash = sha.SHA512(pwd, user.getSalt());
         if (user.getPwd().equals(hash)) {
             LOGGER.debug("Authentication attempt: id=" + id + ", result=ok");
             userRepository.close(connection);
-            return true;
+            reportAuthSuccess(request);
+            return 0;
         }
         LOGGER.debug("Authentication: id=" + id + ", result=wrong password");
+        reportAuthFailure(request);
         userRepository.close(connection);
-        return false;
+        return 3;
     }
 
     private boolean IdDuplicationTest(String id) throws SQLException {
@@ -120,14 +185,6 @@ public class AuthService {
         Object code = userRepository.getUserDataById(id, "user_code", connection);
         userRepository.close(connection);
         return code==null;
-    }
-
-    public enum SIGNUP_RESULT {
-        OK,
-        CAPTCHA_FAILED,
-        INVALID_INVITE,
-        DUPLICATED_ID,
-        ERROR
     }
 
     public void addUser(User user, String captchaToken) throws IOException, CaptchaFailureException, SQLException, ForbiddenException, DuplicatedException, NoSuchAlgorithmException, InvalidInputException {
@@ -165,9 +222,12 @@ public class AuthService {
     }
 
     public void updatePassword(String nPwd, int uCode) throws NoSuchAlgorithmException, InvalidInputException, SQLException {
+        if(!PasswordValidator.matcher(nPwd).matches()) {
+            throw new InvalidInputException("pwd");
+        }
         byte[] salt = SecureTools.getSecureRandom(64);
         String hash = sha.SHA512(nPwd, salt);
-        Connection connection = userRepository.openConnection();
+        Connection connection = userRepository.openConnectionForEdit();
         try {
             userRepository.updatePassword(hash, Base64.getEncoder().encodeToString(salt), uCode, connection);
             userRepository.commitAndClose(connection);
@@ -175,7 +235,21 @@ public class AuthService {
         catch (Exception e) {
             userRepository.rollbackAndClose(connection);
             LOGGER.error("Cannot update password", e);
+            throw e;
         }
+    }
+
+    public void modelCaptchaV3(Model model) {
+        model.addAllAttributes(Map.of(
+                "capt_site", CAPTCHA_V3_SITE_KEY,
+                "captcha_version", "v3"
+        ));
+    }
+    public void modelCaptchaV2(Model model) {
+        model.addAllAttributes(Map.of(
+                "capt_site", CAPTCHA_V2_SITE_KEY,
+                "captcha_version", "v2"
+        ));
     }
 }
 

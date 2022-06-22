@@ -1,10 +1,3 @@
-function activePwd() {
-    gei('changepwd').style.display = 'none';
-    gei('pwdreg').style.display = 'block';
-    gei('pwdChange').checked = true;
-    setTimeout(()=>gei('pwdreg').style.transform = 'scaleY(1)', 2);
-}
-
 const idValidator = new RegExp('^(?=.*[A-Za-z])[A-Za-z0-9]{0,50}$');
 const pwdValidator = new RegExp('^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d!"#$%&\'()*+,\\-./:;<=>?@\\[\\]^_`{|}~\\\\\\)]{6,}$');
 

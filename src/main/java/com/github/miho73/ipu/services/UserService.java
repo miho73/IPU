@@ -224,4 +224,25 @@ public class UserService {
             return cpy;
         }
     }
+
+    public void resetAccount(int code) throws SQLException {
+        Connection userConnection = null;
+        Connection solvesConnection = null;
+        try {
+            userConnection = userRepository.openConnectionForEdit();
+            solvesConnection = solutionRepository.openConnectionForEdit();
+            userRepository.updateExperience(code, 0, userConnection);
+            solutionRepository.dropSolves(code, solvesConnection);
+            userRepository.commitAndClose(userConnection);
+            solutionRepository.commitAndClose(solvesConnection);
+        } catch (SQLException e) {
+            if (userConnection != null) {
+                userRepository.rollbackAndClose(userConnection);
+            }
+            if (solvesConnection != null) {
+                userRepository.rollbackAndClose(solvesConnection);
+            }
+            throw e;
+        }
+    }
 }

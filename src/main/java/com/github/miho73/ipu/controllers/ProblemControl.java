@@ -225,6 +225,7 @@ public class ProblemControl {
     public byte[] resourceRequest(HttpServletResponse response, HttpSession session, @PathVariable("src")String hash) throws SQLException, IOException {
         if(FORCE_LOGIN_FOR_PROBLEM && !sessionService.checkLogin(session)) {
             response.sendError(403);
+            return null;
         }
 
         byte[] resource = resourceService.getResource(hash);

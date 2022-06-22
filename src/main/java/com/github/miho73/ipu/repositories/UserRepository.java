@@ -258,4 +258,13 @@ public class UserRepository extends com.github.miho73.ipu.repositories.Repositor
         psmt.setInt(2, uCode);
         psmt.execute();
     }
+
+    public void updateExperience(int code, int exp, Connection conn) throws SQLException {
+        String sql = "UPDATE iden SET experience=? WHERE user_code=?;";
+
+        PreparedStatement psmt = conn.prepareStatement(sql);
+        psmt.setInt(1, exp);
+        psmt.setInt(2, code);
+        psmt.execute();
+    }
 }

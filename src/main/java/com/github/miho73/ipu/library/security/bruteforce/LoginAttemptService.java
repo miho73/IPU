@@ -28,7 +28,7 @@ public class LoginAttemptService {
     }
 
     public void loginSucceeded(String key) {
-        LOGGER.debug("Login success from "+key);
+        LOGGER.debug("Authentication success from "+key);
         attemptsCache.invalidate(key);
     }
 

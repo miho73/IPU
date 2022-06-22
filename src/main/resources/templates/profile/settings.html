@@ -21,60 +21,97 @@
                 <blockquote th:text="${bio}"></blockquote>
             </div>
             <hr style="border-top: 1px solid #ccc;">
-            <span style="display: none; font-size: 1.2em; color: #f00; margin-bottom: 15px;" id="errdis"></span>
-            <div class="page">
-                <div class="section">
-                    <p class="section-title">일반</p>
-                    <p class="field-title" style="margin-top: 0;">이름:</p>
-                    <input type="text" class="univ-input settings-input" th:value="${username}" id="name" name="name" autocomplete="nickname" placeholder="이름">
-                    <p class="caption" id="nc">이 이름은 모두에게 공개돼요.</p>
-                    <p  class="field-title">상태메시지:</p>
-                    <textarea class="univ-text settings-input" id="bios" name="bios" placeholder="상태메시지" th:text="${bio}"></textarea>
-                    <p class="caption" id="bioc">프로필 페이지에 뜨게 돼요.</p>
-                    <p  class="field-title">이메일:</p>
-                    <input type="text" class="univ-input settings-input" th:value="${email}" id="email" name="email" autocomplete="email" placeholder="이메일">
-                    <!--
-                    <p class="caption" style="text-decoration: line-through;">이 이메일로 암호복구 등의 알림을 보내드릴게요. 귀찮게는 안 해요ㅎㅎ</p>
-                    -->
-                    <p class="caption"  id="ec">이 버전의 IPU는 메일링을 지원하지 않아요. 일단 채워넣은거에요.</p>
-                </div>
-                <div class="section">
-                    <p class="section-title">보안</p>
-                    <a type="button" class="univ-btn" href="/settings/bye" style="color: #f00; font-size: 0.85em;">계정 삭제</a>
-                    <button type="button" id="changepwd" class="univ-btn" onclick="activePwd()">암호 변경</button>
-                    <input type="checkbox" style="display: none;" id="pwdChange" name="hasPwdChange">
-                    <div id="pwdreg" style="display: none;">
-                        <p style="margin: 5px 0;">새 암호:</p>
-                        <input type="password" class="univ-input" id="npwd" name="npwd" autocomplete="new-password" placeholder="새 암호">
-                        <p class="caption" style="margin-bottom: 0;">보안을 위해 추측하기 어려운 암호를 사용하세요.</p>
+            <p class="result" th:if="${task=='profile' && success}">프로필이 업데이트되었습니다</p>
+            <p class="result error" th:if="${task=='profile' && !success}">프로필을 업데이트하지 못했습니다.</p>
+            <p class="result" th:if="${task=='email' && success}">아직 구현 안됐는데 뭘 하실려고...</p>
+            <p class="result error" th:if="${task=='email' && !success}">이메일 기능은 아직 구현되지 않았습니다.</p>
+            <p class="result" th:if="${task=='reset' && success}">계정이 초기화되었습니다.</p>
+            <p class="result error" th:if="${task=='reset' && !success}">계정을 초기화하지 못했습니다.</p>
+            <p class="result" th:if="${task=='upwd' && success}">암호가 변경되었습니다.</p>
+            <p class="result error" th:if="${task=='upwd' && !success}">암호를 변경하지 못했습니다.</p>
+                <div class="menu-container" style="margin-top: 20px;">
+                    <div class="menu-selection">
+                        <a href="/settings/personal" class="menu-element" th:classappend="${tab == 0 ? 'menu-element-selected' : ''}">일반</a>
+                        <a href="/settings/account" class="menu-element" th:classappend="${tab == 1 ? 'menu-element-selected' : ''}">계정</a>
+                        <a href="/settings/security" class="menu-element" th:classappend="${tab == 2 ? 'menu-element-selected' : ''}">보안</a>
+                        <a href="/settings/info" class="menu-element" th:classappend="${tab == 3 ? 'menu-element-selected' : ''}">정보</a>
                     </div>
-                </div>
-                <div class="section">
-                    <p class="section-title">정보</p>
-                    <table>
-                        <tr>
-                            <td class="t-field">가입일</td>
-                            <td class="t-field" th:text="${joined}"></td>
-                        </tr>
-                        <tr>
-                            <td class="t-field">최종 로그인 시각</td>
-                            <td class="t-field" th:text="${lastLogin}"></td>
-                        </tr>
-                        <tr>
-                            <td class="t-field">최종 풀이 제출 시각</td>
-                            <td class="t-field" th:text="${lastSolve}"></td>
-                        </tr>
-                        <tr>
-                            <td class="t-field">사용자 UID</td>
-                            <td class="t-field" th:text="${usrCd}"></td>
-                        </tr>
-                    </table>
-                </div>
-                <div class="section">
-                    <p class="section-title">설정을 저장하려면 기존 암호를 입력하세요.</p>
-                    <input type="password" class="univ-input" id="lpwd" name="lpwd" style="margin: 0;" autocomplete="current-password" placeholder="기존 암호">
-                    <button type="button" onclick="upload()" class="univ-btn" style="margin-bottom: 20px">적용</button>
-                    <p class="caption" style="margin-bottom: 0;"></p>
+                    <div class="page" th:if="${tab == 0}">
+                        <div class="section">
+                            <form action="/settings/api/update/profile" method="post">
+                                <p class="section-title">프로필</p>
+                                <div class="field">
+                                    <p class="field-title">이름</p>
+                                    <input type="text" class="univ-input settings-input" th:value="${username}" id="name" name="name" autocomplete="nickname" placeholder="이름">
+                                </div>
+                                <div class="field">
+                                    <p class="field-title">상태메시지</p>
+                                    <textarea class="univ-text settings-input" id="bios" name="bio" placeholder="상태메시지" th:text="${bio}"></textarea>
+                                </div>
+                                <button class="univ-btn" type="submit">프로필 업데이트</button>
+                            </form>
+                        </div>
+                        <div class="section">
+                            <form action="/settings/api/update/email" method="post">
+                                <p class="section-title">이메일</p>
+                                <div class="field">
+                                    <p class="field-title">이메일</p>
+                                    <div class="input-field">
+                                        <input type="text" class="univ-input settings-input" th:value="${email}" id="email" name="email" autocomplete="email" placeholder="이메일">
+                                        <button class="univ-btn" type="submit">업데이트</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="page" th:if="${tab == 1}">
+                        <div class="section">
+                            <p class="section-title red">계정 초기화</p>
+                            <div class="field">
+                                <a type="button" class="univ-btn red" href="/settings/request/account/reset">계정 초기화</a>
+                                <p class="caption red">이 작업은 계정의 모든 풀이기록을 삭제하고 경험치를 0으로 설정합니다. 한번 진행하면 되돌릴 수 없으니 신중하세요.</p>
+                            </div>
+                        </div>
+                        <div class="section">
+                            <p class="section-title red">계정 삭제</p>
+                            <div class="field">
+                                <a type="button" class="univ-btn red" href="/settings/request/account/delete">계정 삭제</a>
+                                <p class="caption red">이 작업은 계정의 모든 정보를 삭제합니다. 한번 진행하면 되돌릴 수 없으니 신중하세요.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page" th:if="${tab == 2}">
+                        <div class="section">
+                            <p class="section-title">암호</p>
+                            <a type="button" class="univ-btn" href="/settings/request/password/update">암호 변경</a>
+                        </div>
+                    </div>
+                    <div class="page" th:if="${tab == 3}">
+                        <div class="section">
+                            <p class="section-title">정보</p>
+                            <table>
+                                <tr>
+                                    <td class="t-field">가입일</td>
+                                    <td class="t-field" th:text="${joined}"></td>
+                                </tr>
+                                <tr>
+                                    <td class="t-field">최종 로그인 시각</td>
+                                    <td class="t-field" th:text="${lastLogin}"></td>
+                                </tr>
+                                <tr>
+                                    <td class="t-field">최종 풀이 제출 시각</td>
+                                    <td class="t-field" th:text="${lastSolve}"></td>
+                                </tr>
+                                <tr>
+                                    <td class="t-field">사용자 UID</td>
+                                    <td class="t-field" th:text="${usrCd}"></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="section" th:if="${tab == -1}">
+                            <p>Oops. Something went wrong</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

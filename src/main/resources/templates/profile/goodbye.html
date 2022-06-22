@@ -5,6 +5,7 @@
         <title>탈퇴 - IPU</title>
         <th:block th:replace="fragments/header-comp.html :: header-comp"></th:block>
         <link rel="stylesheet" type="text/css" href="/lib/profile/goodbye.css">
+        <script th:src="${'https://www.google.com/recaptcha/api.js?render=' + capt_site}"></script>
         <meta name="title" content="IPU - 탈퇴">
         <meta property="og:title" content="IPU - 탈퇴">
         <meta name="twitter:title" content="IPU - 탈퇴">
@@ -19,14 +20,17 @@
             <div id="root">
                 <div id="header"></div>
                 <div style="text-align: center;">
-                    <h1 id="wanna-del" th:text="${'계정 '+username+'('+userid+')를 삭제할까요?'}"></h1>
+                    <h1 id="wanna-del" th:text="${'계정 '+username+'('+userid+')을(를) 삭제할까요?'}"></h1>
                     <p id="sel-acc-subt">계정을 삭제하면 즉시 모든 풀이기록, 프로필이 삭제될거에요.</p>
                     <p style="color: #f00; font-size: 2em; text-shadow: 0 0 2px #f00;" th:text="${fail}"></p>
-                    <form method="POST">
+                    <form method="POST" onsubmit="return beforeSubmit()">
                         <label class="fl">계속하려면 암호를 입력하세요</label><br>
-                        <input type="password" id="pwd" name="pwd" class="univ-input" style="margin: 5px 0 10px 0;" required><br>
+                        <input type="password" id="pwd" name="pwd" class="univ-input" style="margin: 5px 0 10px 0;"  required pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!&quot;#$%&'()*+,\-./:;<=>?@\[\]^_`{|}~\\\)]{6,}$" minlength="6"><br>
                         <label class="fl" style="margin-top: 5em;">삭제를 확인하려면 아래에 <i>"I Promise U"</i>를 정확하게 쓰세요.</label><br>
                         <input type="text" id="check" name="check" class="univ-input" onkeyup="changed()" style="margin: 5px 0 10px 0;" required spellcheck="false" autocomplete="off"><br>
+                        <input type="text" id="gtoken" style="display: none;" name="gToken" readonly required>
+                        <input type="text" id="gVers" style="display: none;" name="gVers" th:value="${captcha_version}" readonly>
+                        <div id="captcha" class="g-recaptcha" th:data-sitekey="${capt_site}" data-theme="dark"></div>
                         <button id="real-del" class="univ-btn" style="margin: 10px 0 30px 0;" type="submit" disabled>삭제</button>
                     </form>
                 </div>
@@ -34,7 +38,7 @@
         </div>
         <th:block th:replace="fragments/footer.html :: footer"></th:block>
     </body>
-    <script>
+    <script th:inline="javascript">
         function changed() {
             let t = gei('check').value;
             if(t == 'I Promise U') {
@@ -47,6 +51,20 @@
                 gei('check').classList.remove('okthis')
                 gei('real-del').disabled = true;
             }
+        }
+		grecaptcha.ready(function() {
+			grecaptcha.execute([[${capt_site}]], {action: 'signin'}).then(function(token) {
+				gei('gtoken').value = token;
+		  	});
+		});
+    </script>
+    <script>
+        function beforeSubmit() {
+            if(gei('gVers').value == 'v2') {
+				gei('gtoken').value = gei('g-recaptcha-response').value;
+				gei('g-recaptcha-response').remove();
+			}
+			return true;
         }
     </script>
 </html>

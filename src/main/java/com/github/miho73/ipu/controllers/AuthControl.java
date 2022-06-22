@@ -2,21 +2,16 @@ package com.github.miho73.ipu.controllers;
 
 import com.github.miho73.ipu.domain.User;
 import com.github.miho73.ipu.exceptions.InvalidInputException;
-import com.github.miho73.ipu.library.events.AuthenticationFailureBadCredentialsEvent;
-import com.github.miho73.ipu.library.events.AuthenticationSuccessEvent;
 import com.github.miho73.ipu.library.exceptions.CaptchaFailureException;
 import com.github.miho73.ipu.library.exceptions.DuplicatedException;
 import com.github.miho73.ipu.library.exceptions.ForbiddenException;
 import com.github.miho73.ipu.library.rest.response.RestfulReponse;
-import com.github.miho73.ipu.library.security.bruteforce.LoginAttemptService;
 import com.github.miho73.ipu.services.AuthService;
 import com.github.miho73.ipu.services.InviteService;
 import com.github.miho73.ipu.services.SessionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -27,22 +22,17 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
+import java.time.Instant;
 import java.util.Map;
 import java.util.regex.Pattern;
 
 @Controller("AuthControl")
 public class AuthControl {
-    @Value("${captcha.v3.sitekey}") private String CAPTCHA_V3_SITE_KEY;
-    @Value("${captcha.v2.sitekey}") private String CAPTCHA_V2_SITE_KEY;
-
-    @Autowired private AuthService userService;
+    @Autowired private AuthService authService;
     @Autowired private SessionService sessionService;
     @Autowired private InviteService inviteService;
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
-
-    @Autowired private ApplicationEventPublisher publisher;
-    @Autowired private LoginAttemptService loginAttemptService;
 
     private final Pattern IdValidator = Pattern.compile("^(?=.*[A-Za-z])[A-Za-z0-9]{0,50}$");
     private final Pattern PasswordValidator = Pattern.compile("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d!\"#$%&'()*+,\\-./:;<=>?@\\[\\]^_`{|}~\\\\\\)]{6,}$");
@@ -50,11 +40,10 @@ public class AuthControl {
     @GetMapping("/login")
     public String getLogin(@RequestParam(value = "ret", required = false, defaultValue = "/") String ret, Model model) {
         model.addAllAttributes(Map.of(
-                "capt_site", CAPTCHA_V3_SITE_KEY,
-                "captcha_version", "v3",
                 "return", ret,
                 "error_text", ""
         ));
+        authService.modelCaptchaV3(model);
         return "auth/signin";
     }
 
@@ -70,11 +59,8 @@ public class AuthControl {
         if(sessionService.checkLogin(session)) {
             return "redirect:"+ret;
         }
-        model.addAllAttributes(Map.of(
-                "capt_site", CAPTCHA_V3_SITE_KEY,
-                "captcha_version", "v3",
-                "return", ret
-        ));
+        model.addAttribute("return", ret);
+        authService.modelCaptchaV3(model);
 
         // Login form validator
         if(!IdValidator.matcher(id).matches() || !PasswordValidator.matcher(password).matches()) {
@@ -85,19 +71,7 @@ public class AuthControl {
 
         AuthService.LOGIN_RESULT result;
         try {
-            String ip = request.getHeader("X-Forwarded-For");
-            if(ip == null) {
-                ip = request.getRemoteAddr();
-            }
-            else {
-                ip = ip.split(",")[0];
-            }
-            if(loginAttemptService.isBlocked(ip)) {
-                LOGGER.debug("IP ban: IP="+ip);
-                model.addAttribute("error_text", "로그인할 수 없어요.");
-                return "auth/signin";
-            }
-            result = userService.checkLogin(id, password, gToken, gVers, session);
+            result = authService.completeLogin(id, password, gToken, gVers, session, request);
         } catch (Exception e) {
             LOGGER.error("Login error: id="+id+", gVers="+gVers+", gToken="+gToken, e);
             model.addAttribute("error_text", "로그인하지 못했어요. 잠시 후에 다시 시도해주세요.");
@@ -105,17 +79,16 @@ public class AuthControl {
         }
 
         if(result == AuthService.LOGIN_RESULT.OK) {
-            publisher.publishEvent(new AuthenticationSuccessEvent(request));
             if(!ret.startsWith("/")) return "redirect:/";
             return "redirect:"+ret;
         }
+        else if(result == AuthService.LOGIN_RESULT.LOCKED) {
+            model.addAttribute("error_text", "로그인할 수 없어요.");
+            return "auth/signin";
+        }
         else if(result == AuthService.LOGIN_RESULT.CAPTCHA_FAILED) {
-            model.addAllAttributes(Map.of(
-                    "capt_site", CAPTCHA_V2_SITE_KEY,
-                    "captcha_version", "v2",
-                    "error_text", "CAPTCHA 인증에 실패했어요. 다시 시도해주세요."
-            ));
-            publisher.publishEvent(new AuthenticationFailureBadCredentialsEvent(request));
+            model.addAttribute("error_text", "CAPTCHA 인증에 실패했어요. 다시 시도해주세요.");
+            authService.modelCaptchaV2(model);
             return "auth/signin";
         }
         else if (result == AuthService.LOGIN_RESULT.BLOCKED) {
@@ -124,7 +97,6 @@ public class AuthControl {
         }
         else if(result == AuthService.LOGIN_RESULT.BAD_PASSWORD || result == AuthService.LOGIN_RESULT.ID_NOT_FOUND) {
             model.addAttribute("error_text", "다시 시도해주세요.");
-            publisher.publishEvent(new AuthenticationFailureBadCredentialsEvent(request));
             return "auth/signin";
         }
         model.addAttribute("error_text", "문제가 발생해서 로그인하지 못했어요. 잠시 후에 다시 시도해주세요.");
@@ -136,6 +108,7 @@ public class AuthControl {
         if(session == null) {
             return "redirect:/";
         }
+        sessionService.clearSudo(session);
         sessionService.invalidSession(session);
         LOGGER.debug("Invalidated session "+session.getId());
         return "redirect:/";
@@ -143,9 +116,7 @@ public class AuthControl {
 
     @GetMapping("/signup")
     public String getSignup(Model model) {
-        model.addAllAttributes(Map.of(
-                "capt_site", CAPTCHA_V2_SITE_KEY
-        ));
+        authService.modelCaptchaV2(model);
         return "auth/signup";
     }
 
@@ -175,7 +146,7 @@ public class AuthControl {
         }
 
         try {
-            userService.addUser(new User(id, name, pwd, invite), gToken);
+            authService.addUser(new User(id, name, pwd, invite), gToken);
             return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.OK);
         } catch (IOException | SQLException | InvalidInputException | NoSuchAlgorithmException e) {
             response.setStatus(500);
@@ -189,6 +160,93 @@ public class AuthControl {
         } catch (DuplicatedException e) {
             response.setStatus(400);
             return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.BAD_REQUEST, "id_dupl");
+        }
+    }
+
+    @GetMapping("/sudo")
+    public String authSudo(Model model, HttpSession session, HttpServletResponse response) {
+        if(!sessionService.checkLogin(session)) {
+            model.addAllAttributes(Map.of(
+                    "blocked", true,
+                    "reason", "로그인되어있지 않아요",
+                    "fail", false
+            ));
+            return "auth/sudo";
+        }
+        sendSudo(model, session);
+        return "auth/sudo";
+    }
+    @PostMapping("/sudo")
+    public String sudoViaSudo(Model model, HttpSession session, HttpServletResponse response, HttpServletRequest request,
+                              @RequestParam("pwd") String pwd,
+                              @RequestParam("gToken") String gToken,
+                              @RequestParam("gVers") String gVers) throws IOException {
+        if(!sessionService.checkLogin(session)) {
+            model.addAllAttributes(Map.of(
+                    "blocked", true,
+                    "reason", "로그인되어있지 않아요",
+                    "fail", false
+            ));
+            return "auth/sudo";
+        }
+        try {
+            if(!PasswordValidator.matcher(pwd).matches()) {
+                sendSudo(model, session, "암호의 형식이 알맞지 않아요");
+                return "auth/sudo";
+            }
+            int auth = authService.auth(sessionService.getId(session), pwd, gToken, gVers, request);
+            if(auth == 0) {
+                String ret = (String) sessionService.getAttribute(session, "sudoRet");
+                sessionService.setAttribute(session, "sudoResult", session.getAttribute("sudo"));
+                sessionService.clearSudo(session);
+                response.sendRedirect(ret);
+                return null;
+            }
+            else {
+                switch (auth) {
+                    case 1 -> sendSudo(model, session, "인증할 수 없어요");
+                    case 2 -> sendSudo(model, session, "인증대상을 찾을 수 없어요");
+                    case 3 -> sendSudo(model, session, "암호가 잘못되었어요");
+                    case 4 -> sendSudo(model, session, "CAPTCHA 확인에 실패했어요");
+                }
+                return "auth/sudo";
+            }
+        } catch (SQLException | InvalidInputException | NoSuchAlgorithmException e) {
+            sendSudo(model, session, "문제가 생겨서 인증하지 못했어요");
+            return "auth/sudo";
+        }
+    }
+    private void sendSudo(Model model, HttpSession session, String... error) {
+        // clear old request
+        if(sessionService.getAttribute(session, "sudoTime") != null) {
+            if(Instant.now().getEpochSecond() - (long)session.getAttribute("sudoTime") >= 180) {
+                sessionService.clearSudo(session);
+            }
+        }
+
+        String sudo = (String) sessionService.getAttribute(session, "sudo");
+        if(sudo == null) {
+            model.addAllAttributes(Map.of(
+                    "blocked", true,
+                    "reason", "유효한 인증이 없습니다.",
+                    "fail", false
+            ));
+            return;
+        }
+        model.addAttribute("blocked", false);
+        authService.modelCaptchaV3(model);
+        if(error.length != 0) {
+            model.addAttribute("error", error[0]);
+            model.addAttribute("fail", true);
+        }
+        else {
+            model.addAttribute("fail", false);
+        }
+        switch (sudo) {
+            case "reset" -> model.addAttribute("purpose", "계정이 초기화");
+            case "delete" -> model.addAttribute("purpose", "계정이 삭제");
+            case "password" -> model.addAttribute("purpose", "암호를 변경하게");
+            default -> model.addAttribute("purpose", null);
         }
     }
 

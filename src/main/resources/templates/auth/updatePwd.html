@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+
+<html lang="ko" xmlns:th="https://www.thymeleaf.org">
+    <head>
+        <title>암호 변경 - IPU</title>
+        <th:block th:replace="fragments/header-comp.html :: header-comp"></th:block>
+        <meta property="og:title" content="암호 변경">
+        <meta name="twitter:title" content="암호 변경">
+        <meta name="description" content="암호 변경">
+        <meta property="og:description" content="암호 변경">
+        <meta name="twitter:description" content="암호 변경">
+    </head>
+    <body>
+        <div class="vh-center">
+            <h1>암호 변경</h1>
+            <form action="/settings/confirm/password/update" method="post" onsubmit="return check()">
+                <div class="sudo-container">
+                    <label>새 암호</label>
+                    <input id="pwd" type="password" class="univ-input" name="pwd" autocomplete="new-password" required pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!&quot;#$%&'()*+,\-./:;<=>?@\[\]^_`{|}~\\\)]{6,}$" minlength="6">
+                    <label>새 암호 확인</label>
+                    <input id="npwd" type="password" class="univ-input" name="pwdc" autocomplete="new-password" required pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!&quot;#$%&'()*+,\-./:;<=>?@\[\]^_`{|}~\\\)]{6,}$" minlength="6">
+                    <p id="error"></p>
+                    <button type="submit" class="univ-btn">확인</button>
+                </div>
+            </form>
+        </div>
+    </body>
+    <script>
+        function check() {
+            if(gei('pwd').value != gei('npwd').value) {
+                gei('npwd').classList.add('formthis');
+                gei('error').innerText = '암호 확인을 제대로 입력했는지 확인해주세요.';
+                return false;
+            }
+            else return true;
+        }
+    </script>
+    <style>
+        div.sudo-container {
+            width: fit-content;
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            padding: 10px 20px;
+            border: #888 solid 1px;
+            border-radius: 10px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            margin: 0 0 10px 0;
+        }
+        label {
+            font-size: 1.1em;
+        }
+        p {
+            width: fit-content;
+            margin: 7px auto 10px auto;
+        }
+    </style>
+</html>
