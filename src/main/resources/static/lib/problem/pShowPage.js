@@ -6,6 +6,13 @@ function load() {
     timer = setInterval(()=>timex++, 1000);
 }
 
+function answerOnly() {
+    gei('answer-context').style.display = 'block';
+    setTimeout(()=>gei('answer-context').style.transform = 'scaleY(1)', 2);
+    gei('finish-solve').remove();
+    gei('answer-sheet').remove();
+}
+
 submitAcvited = false;
 function submitSolution(code) {
     if(!submitAcvited) {

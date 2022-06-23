@@ -102,7 +102,7 @@ button.end-btn, input[type=button].end-btn {
     -o-transition: background-color .15s linear;
     transition: background-color .15s linear;
 }
-button#show-ans-btn,input[type=button].ac-btn {
+button#show-ans-btn,button#show-ans-only-btn,input[type=button].ac-btn {
     background-color: #00b040;
 }
 button#show-ans-btn:hover,input[type=button].ac-btn:hover {
@@ -135,6 +135,10 @@ div#finish-solve {
     text-align: center;
     margin-top: 20px;
     padding-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
 }
 div#self-judge {
     text-align: center;
