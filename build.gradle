@@ -6,27 +6,27 @@ plugins {
 
 group = 'com.github.miho73.ipu'
 version = '3.0.0'
-sourceCompatibility = '16'
+sourceCompatibility = '17'
 
 repositories {
 	mavenCentral()
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf:2.6.4'
-	implementation 'org.springframework.boot:spring-boot-starter-web:2.6.4'
-	implementation 'org.springframework.boot:spring-boot-starter-jdbc:2.6.4'
-	implementation 'org.springframework.boot:spring-boot-devtools:2.6.4'
-	implementation 'org.springframework.session:spring-session-core:2.6.2'
-	implementation 'org.postgresql:postgresql:42.3.3'
-	implementation 'org.json:json:20211205'
-	implementation 'com.google.guava:guava:31.0.1-jre'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf:2.7.0'
+	implementation 'org.springframework.boot:spring-boot-starter-web:2.7.0'
+	implementation 'org.springframework.boot:spring-boot-starter-jdbc:2.7.0'
+	implementation 'org.springframework.boot:spring-boot-devtools:2.7.0'
+	implementation 'org.springframework.session:spring-session-core:2.7.0'
+	implementation 'org.postgresql:postgresql:42.3.6'
+	implementation 'org.json:json:20220320'
+	implementation 'com.google.guava:guava:31.1-jre'
 	implementation 'junit:junit:4.13.2'
-    testImplementation 'org.springframework:spring-test:5.3.16'
-	testImplementation('org.springframework.boot:spring-boot-starter-test:2.6.4')
+    testImplementation 'org.springframework:spring-test:5.3.20'
+	testImplementation('org.springframework.boot:spring-boot-starter-test:2.7.0')
 	implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4'
-	runtimeOnly 'ch.qos.logback:logback-classic:1.2.10'
-	runtimeOnly 'ch.qos.logback:logback-core:1.2.10'
+	runtimeOnly 'ch.qos.logback:logback-classic:1.2.11'
+	runtimeOnly 'ch.qos.logback:logback-core:1.2.11'
 	runtimeOnly 'org.slf4j:slf4j-api:1.7.36'
 }
 

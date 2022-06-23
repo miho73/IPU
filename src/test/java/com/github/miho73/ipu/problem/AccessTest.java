@@ -13,6 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
@@ -64,6 +65,18 @@ public class AccessTest {
                                 .param("code", "1")
                 )
                 .andExpect(status().isForbidden());
+    }
+
+    @DisplayName("Get problem via api with invalid data (Fail)")
+    @Test
+    public void getProblemViaApiWithInvalidData() throws Exception {
+        mockMvc.perform(
+                        get("/problem/api/get")
+                                .param("code", "text")
+                                .session(session)
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Bad Request"));
     }
 
     @DisplayName("Get problem via api with login (Success)")

@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -175,14 +176,14 @@ public class ProblemControl {
     public String ipuacTranslation(HttpSession session, HttpServletResponse response, @RequestParam("code") String ipuacs) {
         if(sessionService.hasPrivilege(SessionService.PRIVILEGES.PROBLEM_MAKE, session)) {
             response.setStatus(403);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.FORBIDDEN, "forbidden");
+            return RestfulReponse.createRestfulResponse(HttpStatus.FORBIDDEN, "forbidden");
         }
         JSONArray codes = new JSONArray(ipuacs);
         JSONArray html = new JSONArray();
         for(int i=0; i<codes.length(); i++) {
             html.put(renderer.IPUACtoHTML(codes.getString(i)));
         }
-        return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.OK, html);
+        return RestfulReponse.createRestfulResponse(HttpStatus.OK, html);
     }
 
     @GetMapping("/make")
@@ -199,25 +200,25 @@ public class ProblemControl {
     public String imageUpload(@RequestParam(value = "img")MultipartFile resource, HttpSession session, HttpServletResponse response) throws IOException {
         if(sessionService.hasPrivilege(SessionService.PRIVILEGES.PROBLEM_MAKE, session)) {
             response.setStatus(403);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.FORBIDDEN, "forbidden");
+            return RestfulReponse.createRestfulResponse(HttpStatus.FORBIDDEN, "forbidden");
         }
         if(resource.getSize() > 5000000) {
             response.setStatus(400);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.BAD_REQUEST, "file too large");
+            return RestfulReponse.createRestfulResponse(HttpStatus.BAD_REQUEST, "file too large");
         }
         try {
             byte[] res = resource.getBytes();
             String hash = sha.MD5(res);
             resourceService.addResource(res, hash, sessionService.getId(session));
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.OK, hash);
+            return RestfulReponse.createRestfulResponse(HttpStatus.OK, hash);
         }
         catch (SQLException e) {
             response.setStatus(500);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR, "database error");
+            return RestfulReponse.createRestfulResponse(HttpStatus.INTERNAL_SERVER_ERROR, "database error");
         }
         catch (NoSuchAlgorithmException e) {
             response.setStatus(500);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR, "hash failure");
+            return RestfulReponse.createRestfulResponse(HttpStatus.INTERNAL_SERVER_ERROR, "hash failure");
         }
     }
     @GetMapping(value = "/lib/{src}", produces = "application/octet-stream; charset=utf-8")
@@ -269,14 +270,14 @@ public class ProblemControl {
     public String problemRegister(HttpServletRequest request, Model model, HttpSession session, HttpServletResponse response) throws IOException {
         if(sessionService.hasPrivilege(SessionService.PRIVILEGES.PROBLEM_MAKE, session)) {
             response.setStatus(404);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.FORBIDDEN);
+            return RestfulReponse.createRestfulResponse(HttpStatus.FORBIDDEN);
         }
         try {
             String answer = request.getParameter("answer");
 
             if(validateAnswerJson(answer)) {
                 response.setStatus(400);
-                return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.BAD_REQUEST, "anjs");
+                return RestfulReponse.createRestfulResponse(HttpStatus.BAD_REQUEST, "anjs");
             }
 
             Problem problem = new Problem();
@@ -294,11 +295,11 @@ public class ProblemControl {
             LOGGER.debug("Problem registered. Problem count now set to "+NUMBER_OF_PROBLEMS);
 
             response.setStatus(201);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.CREATED, NUMBER_OF_PROBLEMS);
+            return RestfulReponse.createRestfulResponse(HttpStatus.CREATED, NUMBER_OF_PROBLEMS);
         }
         catch (SQLException e) {
             response.setStatus(500);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR, "dber");
+            return RestfulReponse.createRestfulResponse(HttpStatus.INTERNAL_SERVER_ERROR, "dber");
         }
     }
 
@@ -320,14 +321,14 @@ public class ProblemControl {
         try {
             if(FORCE_LOGIN_FOR_PROBLEM && !sessionService.checkLogin(session)) {
                 response.setStatus(403);
-                return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.FORBIDDEN, "you must be logged in");
+                return RestfulReponse.createRestfulResponse(HttpStatus.FORBIDDEN, "you must be logged in");
             }
 
             JSONObject detail = new JSONObject();
             Problem problem = problemService.getFullProblem(code);
             if(problem == null) {
                 response.setStatus(404);
-                return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.NOT_FOUND, "resource not found");
+                return RestfulReponse.createRestfulResponse(HttpStatus.NOT_FOUND, "resource not found");
             }
             detail.put("cate", problem.getCategoryCode());
             detail.put("diff", problem.getDifficultyCode());
@@ -337,11 +338,11 @@ public class ProblemControl {
             detail.put("tags", problem.getTags());
             detail.put("active", problem.isActive());
             detail.put("answer", problem.getAnswer().toString());
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.OK, detail);
+            return RestfulReponse.createRestfulResponse(HttpStatus.OK, detail);
         }
         catch (SQLException e) {
             response.setStatus(500);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR, "database error");
+            return RestfulReponse.createRestfulResponse(HttpStatus.INTERNAL_SERVER_ERROR, "database error");
         }
     }
 
@@ -349,7 +350,7 @@ public class ProblemControl {
     @ResponseBody
     public String problemUpdate(HttpServletRequest request, HttpSession session, HttpServletResponse response) throws IOException {
         if(sessionService.hasPrivilege(SessionService.PRIVILEGES.PROBLEM_MAKE, session)) {
-            String ret = RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.FORBIDDEN);
+            String ret = RestfulReponse.createRestfulResponse(HttpStatus.FORBIDDEN);
             response.sendError(403);
             return ret;
         }
@@ -359,7 +360,7 @@ public class ProblemControl {
 
             if(validateAnswerJson(answer)) {
                 response.setStatus(400);
-                return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.BAD_REQUEST, "anjs");
+                return RestfulReponse.createRestfulResponse(HttpStatus.BAD_REQUEST, "anjs");
             }
 
             Problem problem = new Problem();
@@ -373,10 +374,10 @@ public class ProblemControl {
             problem.setAnswer       (answer);
             problem.setActive       (Boolean.parseBoolean(request.getParameter("active")));
             problemService.updateProblem(problem);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.OK);
+            return RestfulReponse.createRestfulResponse(HttpStatus.OK);
         } catch (SQLException e) {
             response.setStatus(500);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR, "dber");
+            return RestfulReponse.createRestfulResponse(HttpStatus.INTERNAL_SERVER_ERROR, "dber");
         }
     }
 
@@ -390,17 +391,17 @@ public class ProblemControl {
         try {
             if(!sessionService.checkLogin(session) || sessionService.hasPrivilege(SessionService.PRIVILEGES.USER, session)) {
                 response.setStatus(403);
-                return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.FORBIDDEN, "forb");
+                return RestfulReponse.createRestfulResponse(HttpStatus.FORBIDDEN, "forb");
             }
             if(answerText.length() > 1200) {
                 response.setStatus(413);
-                return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.FORBIDDEN, "astl");
+                return RestfulReponse.createRestfulResponse(HttpStatus.FORBIDDEN, "astl");
             }
 
             int uCode = sessionService.getCode(session);
             JSONArray answer = new JSONArray(answerText);
             JSONObject result = problemService.registerSolution(code, time, answer, uCode);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.OK, result);
+            return RestfulReponse.createRestfulResponse(HttpStatus.OK, result);
         } catch (CannotJudgeException e) {
             response.setStatus(500);
             String msg;
@@ -408,39 +409,39 @@ public class ProblemControl {
                 case "disabled_problem" -> {
                     msg = "dis";
                     response.setStatus(400);
-                    return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.BAD_REQUEST, msg);
+                    return RestfulReponse.createRestfulResponse(HttpStatus.BAD_REQUEST, msg);
                 }
                 case "intermediate" -> {
                     msg = "intr";
                     response.setStatus(429);
-                    return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.TOO_MANY_REQUESTS, msg);
+                    return RestfulReponse.createRestfulResponse(HttpStatus.TOO_MANY_REQUESTS, msg);
                 }
                 case "answer_format" -> {
                     msg = "ansf";
                     response.setStatus(400);
-                    return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.BAD_REQUEST, msg);
+                    return RestfulReponse.createRestfulResponse(HttpStatus.BAD_REQUEST, msg);
                 }
                 case "timeover" -> {
                     msg = "tiov";
                     response.setStatus(400);
-                    return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.BAD_REQUEST, msg);
+                    return RestfulReponse.createRestfulResponse(HttpStatus.BAD_REQUEST, msg);
                 }
                 default -> {
                     msg = "unkn";
                     response.setStatus(500);
-                    return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR, msg);
+                    return RestfulReponse.createRestfulResponse(HttpStatus.INTERNAL_SERVER_ERROR, msg);
                 }
             }
         }
         catch (SQLException e) {
             response.setStatus(500);
             LOGGER.error("Cannot register solution due to database error. ", e);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR, "dber");
+            return RestfulReponse.createRestfulResponse(HttpStatus.INTERNAL_SERVER_ERROR, "dber");
         }
         catch (JSONException e) {
             response.setStatus(500);
             LOGGER.error("Cannot register solution due to parsing exception. ", e);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.BAD_REQUEST, "pras");
+            return RestfulReponse.createRestfulResponse(HttpStatus.BAD_REQUEST, "pras");
         }
     }
 
@@ -451,20 +452,20 @@ public class ProblemControl {
         LOGGER.debug("Change star of user "+sessionService.getId(session)+". problem of "+code);
         if(sessionService.hasPrivilege(SessionService.PRIVILEGES.USER, session)) {
             response.setStatus(403);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.FORBIDDEN);
+            return RestfulReponse.createRestfulResponse(HttpStatus.FORBIDDEN);
         }
         try {
             int result = userService.changeUserStar(sessionService.getCode(session), Integer.parseInt(code));
             JSONObject res = new JSONObject();
             res.put("stared", result);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.OK, res);
+            return RestfulReponse.createRestfulResponse(HttpStatus.OK, res);
         }
         catch (NumberFormatException e) {
             response.setStatus(400);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.BAD_REQUEST);
+            return RestfulReponse.createRestfulResponse(HttpStatus.BAD_REQUEST);
         } catch (SQLException e) {
             response.setStatus(500);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR);
+            return RestfulReponse.createRestfulResponse(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

@@ -12,6 +12,7 @@ import com.github.miho73.ipu.services.SessionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -133,34 +134,34 @@ public class AuthControl {
         if(!IdValidator.matcher(id).matches()) {
             response.setStatus(400);
             LOGGER.debug("Signup id regex failure: "+id);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.BAD_REQUEST, "badform");
+            return RestfulReponse.createRestfulResponse(HttpStatus.BAD_REQUEST, "badform");
         }
         if(name.length() > 50) {
             response.setStatus(400);
             LOGGER.debug("Signup name regex failure: "+name);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.BAD_REQUEST, "badform");
+            return RestfulReponse.createRestfulResponse(HttpStatus.BAD_REQUEST, "badform");
         }
         if(!PasswordValidator.matcher(pwd).matches()) {
             response.setStatus(400);
             LOGGER.debug("Signup password regex failure");
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.BAD_REQUEST, "badform");
+            return RestfulReponse.createRestfulResponse(HttpStatus.BAD_REQUEST, "badform");
         }
 
         try {
             authService.addUser(new User(id, name, pwd, invite), gToken);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.OK);
+            return RestfulReponse.createRestfulResponse(HttpStatus.OK);
         } catch (IOException | SQLException | InvalidInputException | NoSuchAlgorithmException e) {
             response.setStatus(500);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR);
+            return RestfulReponse.createRestfulResponse(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (CaptchaFailureException e) {
             response.setStatus(400);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.BAD_REQUEST, "captcha");
+            return RestfulReponse.createRestfulResponse(HttpStatus.BAD_REQUEST, "captcha");
         } catch (ForbiddenException e) {
             response.setStatus(400);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.BAD_REQUEST, "invite");
+            return RestfulReponse.createRestfulResponse(HttpStatus.BAD_REQUEST, "invite");
         } catch (DuplicatedException e) {
             response.setStatus(400);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.BAD_REQUEST, "id_dupl");
+            return RestfulReponse.createRestfulResponse(HttpStatus.BAD_REQUEST, "id_dupl");
         }
     }
 

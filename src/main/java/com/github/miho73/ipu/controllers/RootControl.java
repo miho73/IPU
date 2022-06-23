@@ -8,6 +8,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -48,7 +49,7 @@ public class RootControl {
     public String inviteControl(HttpSession session, HttpServletRequest request, HttpServletResponse response, @RequestParam("q") String cmd) throws IOException {
         if(sessionService.hasPrivilege(SessionService.PRIVILEGES.INVITE_CODES, session)) {
             response.setStatus(403);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.FORBIDDEN, "privilege i or higher is required");
+            return RestfulReponse.createRestfulResponse(HttpStatus.FORBIDDEN, "privilege i or higher is required");
         }
         String[] cmdParam = cmd.split(" ");
         if(cmdParam.length < 1 || cmdParam.length>3) {
@@ -229,29 +230,29 @@ public class RootControl {
     public String searchResource(HttpSession session, HttpServletResponse response, @RequestParam("code") String code) throws IOException {
         if(sessionService.hasPrivilege(SessionService.PRIVILEGES.PROBLEM_MAKE, session)) {
             response.setStatus(404);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.FORBIDDEN);
+            return RestfulReponse.createRestfulResponse(HttpStatus.FORBIDDEN);
         }
         try {
             LOGGER.debug("Search resource. QUERY="+code);
             if(code.equals("LIST")) {
                 LOGGER.debug("List all resources");
-                return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.OK, resourceService.getAllResources());
+                return RestfulReponse.createRestfulResponse(HttpStatus.OK, resourceService.getAllResources());
             }
             else if(code.startsWith("code=")) {
-                return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.OK, resourceService.queryResource(code.substring(5)));
+                return RestfulReponse.createRestfulResponse(HttpStatus.OK, resourceService.queryResource(code.substring(5)));
             }
             else if(code.startsWith("name=")) {
-                return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.OK, resourceService.queryResourceByName(code.substring(5)));
+                return RestfulReponse.createRestfulResponse(HttpStatus.OK, resourceService.queryResourceByName(code.substring(5)));
             }
             else {
                 LOGGER.error("Resource search query not in format");
                 response.setStatus(400);
-                return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.BAD_REQUEST, "cannot parse query");
+                return RestfulReponse.createRestfulResponse(HttpStatus.BAD_REQUEST, "cannot parse query");
             }
         }
         catch (SQLException e) {
             response.sendError(500);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR, "database error");
+            return RestfulReponse.createRestfulResponse(HttpStatus.INTERNAL_SERVER_ERROR, "database error");
         }
     }
 
@@ -260,19 +261,19 @@ public class RootControl {
     public String changeName(HttpSession session, HttpServletResponse response, @RequestParam("code") String code, @RequestParam String name) throws IOException {
         if(sessionService.hasPrivilege(SessionService.PRIVILEGES.PROBLEM_MAKE, session)) {
             response.setStatus(403);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.FORBIDDEN);
+            return RestfulReponse.createRestfulResponse(HttpStatus.FORBIDDEN);
         }
         try {
             resourceService.changeName(code, name);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.OK);
+            return RestfulReponse.createRestfulResponse(HttpStatus.OK);
         }
         catch (SQLException e) {
             response.setStatus(500);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR, "database error");
+            return RestfulReponse.createRestfulResponse(HttpStatus.INTERNAL_SERVER_ERROR, "database error");
         }
         catch (InvalidInputException e) {
             response.setStatus(400);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR, e.getMessage());
+            return RestfulReponse.createRestfulResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
@@ -281,13 +282,13 @@ public class RootControl {
     public String searchProblemUsingResource(HttpSession session, HttpServletResponse response, @RequestParam("code") String code) throws IOException {
         if(sessionService.hasPrivilege(SessionService.PRIVILEGES.PROBLEM_MAKE, session)) {
             response.setStatus(403);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.FORBIDDEN);
+            return RestfulReponse.createRestfulResponse(HttpStatus.FORBIDDEN);
         }
         try {
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.OK, resourceService.searchProblemUsingResource(code));
+            return RestfulReponse.createRestfulResponse(HttpStatus.OK, resourceService.searchProblemUsingResource(code));
         } catch (SQLException e) {
             response.setStatus(500);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR, "database error");
+            return RestfulReponse.createRestfulResponse(HttpStatus.INTERNAL_SERVER_ERROR, "database error");
         }
     }
 
@@ -296,19 +297,19 @@ public class RootControl {
     public String deleteResource(HttpSession session, HttpServletResponse response, @RequestParam("code") String code) {
         if(sessionService.hasPrivilege(SessionService.PRIVILEGES.PROBLEM_MAKE, session)) {
             response.setStatus(403);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.FORBIDDEN);
+            return RestfulReponse.createRestfulResponse(HttpStatus.FORBIDDEN);
         }
         try {
             if(!resourceService.isResourceExists(code)) {
                 response.setStatus(400);
-                return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.BAD_REQUEST, "resource not found");
+                return RestfulReponse.createRestfulResponse(HttpStatus.BAD_REQUEST, "resource not found");
             }
             resourceService.deleteResource(code);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.OK);
+            return RestfulReponse.createRestfulResponse(HttpStatus.OK);
         }
         catch (SQLException e) {
             response.setStatus(500);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR, "database error");
+            return RestfulReponse.createRestfulResponse(HttpStatus.INTERNAL_SERVER_ERROR, "database error");
         }
     }
 }

@@ -8,6 +8,7 @@ import com.github.miho73.ipu.library.rest.response.RestfulReponse;
 import com.github.miho73.ipu.services.IssueService;
 import com.github.miho73.ipu.services.SessionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -82,7 +83,7 @@ public class IssueController {
             Issue issue = issueService.getIssue(code);
             if(issue == null) {
                 response.setStatus(404);
-                return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR, "issue code with "+code+" was not found");
+                return RestfulReponse.createRestfulResponse(HttpStatus.INTERNAL_SERVER_ERROR, "issue code with "+code+" was not found");
             }
             String result;
             switch (column) {
@@ -95,14 +96,14 @@ public class IssueController {
                 case "vote" -> result = Integer.toString(issue.getVote());
                 default -> {
                     response.setStatus(400);
-                    result = RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR, "unknown issue element");
+                    result = RestfulReponse.createRestfulResponse(HttpStatus.INTERNAL_SERVER_ERROR, "unknown issue element");
                 }
             }
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.OK, result);
+            return RestfulReponse.createRestfulResponse(HttpStatus.OK, result);
         }
         catch (SQLException e) {
             response.setStatus(500);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR, "database error");
+            return RestfulReponse.createRestfulResponse(HttpStatus.INTERNAL_SERVER_ERROR, "database error");
         }
     }
 
@@ -115,23 +116,23 @@ public class IssueController {
                            HttpSession session, HttpServletResponse response) {
         if(!sessionService.checkLogin(session)) {
             response.setStatus(403);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.FORBIDDEN);
+            return RestfulReponse.createRestfulResponse(HttpStatus.FORBIDDEN);
         }
         if(problemControl.NUMBER_OF_PROBLEMS < pCode) {
             response.setStatus(400);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.FORBIDDEN, "no problem found");
+            return RestfulReponse.createRestfulResponse(HttpStatus.FORBIDDEN, "no problem found");
         }
         if(name.equals("")) {
             response.setStatus(400);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.BAD_REQUEST, "issue name not in format");
+            return RestfulReponse.createRestfulResponse(HttpStatus.BAD_REQUEST, "issue name not in format");
         }
         if(type < 0 || type > 5) {
             response.setStatus(400);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.BAD_REQUEST, "unknown issue type");
+            return RestfulReponse.createRestfulResponse(HttpStatus.BAD_REQUEST, "unknown issue type");
         }
         if(content.equals("")) {
             response.setStatus(400);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.BAD_REQUEST, "content not in format");
+            return RestfulReponse.createRestfulResponse(HttpStatus.BAD_REQUEST, "content not in format");
         }
 
         try {
@@ -144,11 +145,11 @@ public class IssueController {
 
             issueService.addNewIssue(issue, sessionService.getId(session));
             response.setStatus(201);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.CREATED);
+            return RestfulReponse.createRestfulResponse(HttpStatus.CREATED);
         }
         catch (SQLException e) {
             response.setStatus(500);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR, "database error");
+            return RestfulReponse.createRestfulResponse(HttpStatus.INTERNAL_SERVER_ERROR, "database error");
         }
     }
 
@@ -162,20 +163,20 @@ public class IssueController {
         }
         catch (ResourceNotFoundException e) {
             response.setStatus(404);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.NOT_FOUND, e.getMessage());
+            return RestfulReponse.createRestfulResponse(HttpStatus.NOT_FOUND, e.getMessage());
         }
         catch (SQLException e) {
             response.setStatus(500);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.INTERNAL_SERVER_ERROR, "database error");
+            return RestfulReponse.createRestfulResponse(HttpStatus.INTERNAL_SERVER_ERROR, "database error");
         } catch (ForbiddenException e) {
             response.setStatus(403);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.FORBIDDEN, e.getMessage());
+            return RestfulReponse.createRestfulResponse(HttpStatus.FORBIDDEN, e.getMessage());
         }
         catch (IllegalArgumentException e) {
             response.setStatus(400);
-            return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.BAD_REQUEST, e.getMessage());
+            return RestfulReponse.createRestfulResponse(HttpStatus.BAD_REQUEST, e.getMessage());
         }
-        return RestfulReponse.createRestfulResponse(RestfulReponse.HTTP_CODE.OK);
+        return RestfulReponse.createRestfulResponse(HttpStatus.OK);
     }
 
     @PatchMapping("/api/close")

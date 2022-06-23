@@ -101,7 +101,7 @@
             else {
                 gei('issue-type').classList.remove('formthis');
             }
-            if(isInt(pCode) == false || !existsProblem) {
+            if(!existsProblem) {
                 gei('prob-code').classList.add('formthis');
                 location.href = "#prob-code";
                 precond = false;
