@@ -6,7 +6,7 @@ plugins {
 
 group = 'com.github.miho73.ipu'
 version = '3.0.0'
-sourceCompatibility = '17'
+sourceCompatibility = '16'
 
 repositories {
 	mavenCentral()
