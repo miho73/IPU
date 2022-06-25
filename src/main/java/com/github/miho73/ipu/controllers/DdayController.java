@@ -17,16 +17,11 @@ public class DdayController {
         String forWhat = "";
         long posix = 0;
         switch (dfor) {
-            case "sshs":
+            case "sshs" -> {
                 forWhat = "영재학교 2차 시험";
                 posix = 1657407600;
-                break;
-            case "nyrs":
-                forWhat = "새학기";
-                posix = 1646177400;
-                break;
-            default:
-                response.sendError(404);
+            }
+            default -> response.sendError(404);
         }
         model.addAllAttributes(Map.of(
             "forwhat", forWhat,

@@ -44,7 +44,7 @@ public class ProblemCrudTest {
     @Test
     public void createProblemTest() throws Exception {
         MvcResult result = mockMvc.perform(
-                post("/problem/register")
+                post("/problem/post")
                         .session(session)
                         .param("name", "test problem")
                         .param("cate", "etce")
@@ -62,7 +62,7 @@ public class ProblemCrudTest {
         String code = Integer.toString(respones.getInt("result"));
 
         mockMvc.perform(
-                get("/problem/api/get")
+                get("/api/problem/get")
                         .session(session)
                         .param("code", code)
                 )
@@ -85,7 +85,7 @@ public class ProblemCrudTest {
     @DisplayName("Problem add fraction format error")
     public void fractionFormatError() throws Exception {
         mockMvc.perform(
-                post("/problem/register")
+                post("/problem/post")
                         .session(session)
                         .param("name", "test problem")
                         .param("cate", "etce")
@@ -99,7 +99,7 @@ public class ProblemCrudTest {
                 .andExpect(status().isBadRequest());
 
         mockMvc.perform(
-                        post("/problem/register")
+                        post("/problem/post")
                                 .session(session)
                                 .param("name", "test problem")
                                 .param("cate", "etce")
@@ -113,7 +113,7 @@ public class ProblemCrudTest {
                 .andExpect(status().isBadRequest());
 
         mockMvc.perform(
-                        post("/problem/register")
+                        post("/problem/post")
                                 .session(session)
                                 .param("name", "test problem")
                                 .param("cate", "etce")

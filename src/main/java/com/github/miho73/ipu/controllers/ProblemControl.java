@@ -5,7 +5,6 @@ import com.github.miho73.ipu.exceptions.CannotJudgeException;
 import com.github.miho73.ipu.library.ipuac.Renderer;
 import com.github.miho73.ipu.library.rest.response.RestfulReponse;
 import com.github.miho73.ipu.library.security.SHA;
-import com.github.miho73.ipu.repositories.UserRepository;
 import com.github.miho73.ipu.services.*;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,11 +29,9 @@ import java.sql.SQLException;
 import java.util.*;
 
 @Controller("ProblemControl")
-@RequestMapping("/problem")
 public class ProblemControl {
     @Autowired private ProblemService problemService;
     @Autowired private SessionService sessionService;
-    @Autowired private UserRepository userRepository;
     @Autowired private UserService userService;
     @Autowired private ResourceService resourceService;
     @Autowired private TagService tagService;
@@ -46,6 +43,8 @@ public class ProblemControl {
 
     public int NUMBER_OF_PROBLEMS;
     public int PROBLEM_PER_PAGE = 30;
+    private final List<String> acceptedBranches = Arrays.asList("alge", "numb", "comb", "geom", "phys", "chem", "biol", "eart");
+    private final List<String> acceptedDifficulty = Arrays.asList("unse", "unra", "broz", "silv", "gold", "sapp", "ruby", "diam");
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
@@ -55,10 +54,12 @@ public class ProblemControl {
         LOGGER.debug("Problem count initialized to "+NUMBER_OF_PROBLEMS);
     }
 
-    @GetMapping("")
-    public String getProblemListPage(@RequestParam(value = "page", required = false, defaultValue = "0") String pagex, Model model, HttpSession session, HttpServletResponse response) throws IOException, SQLException {
+    // Get problem list
+    @GetMapping("/problem")
+    public String getProblemListPage(Model model, HttpSession session, HttpServletResponse response,
+                                     @RequestParam(value = "page", required = false, defaultValue = "0") int page) throws IOException, SQLException {
+
         sessionService.loadSessionToModel(session, model);
-        int page = Integer.parseInt(pagex);
         int frm = page*PROBLEM_PER_PAGE+1;
         if(frm<=0) {
             response.sendError(400);
@@ -75,13 +76,18 @@ public class ProblemControl {
         model.addAttribute("pages", Math.ceil((float)NUMBER_OF_PROBLEMS/PROBLEM_PER_PAGE));
         return "problem/problemList";
     }
-    @GetMapping("/latest")
+
+    // redirect to the latest problem page
+    @GetMapping("/problem/latest")
     public String getLastPageOfProblem(Model model, HttpSession session, HttpServletResponse response) {
         int page = (int) Math.floor((float)NUMBER_OF_PROBLEMS/PROBLEM_PER_PAGE);
         return "redirect:/problem/?page="+page;
     }
-    @GetMapping("/category")
-    public String getProblemCategoryPage(@RequestParam(value = "page", required = false, defaultValue = "0") String page, Model model, HttpSession session) throws SQLException {
+
+    // get problem category page
+    @GetMapping("/problem/category")
+    public String getProblemCategoryPage(Model model, HttpSession session) throws SQLException {
+
         sessionService.loadSessionToModel(session, model);
         Hashtable<Problem.PROBLEM_CATEGORY, Integer> dat = problemService.getNumberOfProblemsInCategory();
         model.addAllAttributes(Map.of(
@@ -96,16 +102,32 @@ public class ProblemControl {
         ));
         return "problem/problemCategory";
     }
-    @GetMapping("/search")
-    public String searchBySearch(@RequestParam(value = "page", required = false, defaultValue = "0") String page,
+
+    // process search query
+    @GetMapping("/problem/search")
+    public String searchBySearch(Model model, HttpSession session, HttpServletResponse response,
+                                 @RequestParam(value = "page", required = false, defaultValue = "0") int page, //TODO: implement page feature
                                  @RequestParam(value = "cont", required = false, defaultValue = "") String contains,
                                  @RequestParam(value = "diff", required = false, defaultValue = "") String difficulty,
-                                 @RequestParam(value = "cate", required = false, defaultValue = "") String category,
-                                 HttpSession session, Model model) throws SQLException {
+                                 @RequestParam(value = "cate", required = false, defaultValue = "") String category) throws SQLException, IOException {
+
+        // check query before process
+        if(contains.length() >= 100) {
+            response.sendError(400);
+            return null;
+        }
+        if(!category.equals("") && acceptedBranches.contains(category)) {
+            response.sendError(400);
+            return null;
+        }
+        if(!difficulty.equals("") && acceptedDifficulty.contains(difficulty)) {
+            response.sendError(400);
+            return null;
+        }
+
         sessionService.loadSessionToModel(session, model);
-        int pg = Integer.parseInt(page);
-        model.addAttribute("page", pg);
-        JSONArray sResult = problemService.searchProblem(pg, contains, category, difficulty);
+        model.addAttribute("page", page);
+        JSONArray sResult = problemService.searchProblem(page, contains, category, difficulty);
         JSONArray processedResult = tagService.processTagsToHtml(sResult, session);
 
         model.addAttribute("pList", processedResult.toList());
@@ -114,17 +136,21 @@ public class ProblemControl {
         model.addAttribute("cate", category);
         return "problem/problemSearch";
     }
-    Random rand = new Random();
-    @GetMapping("/random")
+
+    // redirect to random problem
+    @GetMapping("/problem/random")
     public void getRandomProblem(Model model, HttpSession session, HttpServletResponse response) throws IOException {
         sessionService.loadSessionToModel(session, model);
+        Random rand = new Random();
         rand.setSeed(System.nanoTime());
         response.sendRedirect("/problem/"+(rand.nextInt(NUMBER_OF_PROBLEMS)+1));
     }
-    private final List<String> acceptedBranches = Arrays.asList("alge", "numb", "comb", "geom", "phys", "chem", "biol", "eart");
-    @GetMapping("/random/branch")
-    public void getRandomProblemInBranch(@RequestParam("branch") String branch,
-                                         Model model, HttpSession session, HttpServletResponse response) throws IOException, SQLException {
+
+    // get random problem in branch
+    @GetMapping("/problem/random/branch")
+    public void getRandomProblemInBranch(Model model, HttpSession session, HttpServletResponse response,
+                                         @RequestParam("branch") String branch) throws IOException, SQLException {
+
         sessionService.loadSessionToModel(session, model);
         if(!acceptedBranches.contains(branch)) {
             response.sendError(400);
@@ -139,19 +165,24 @@ public class ProblemControl {
         }
     }
 
-    @GetMapping("/{pCode}")
+    // get problem
+    @GetMapping("/problem/{pCode}")
     public String getProblem(@PathVariable("pCode") String code, Model model, HttpSession session, HttpServletResponse response) throws IOException {
         try {
+            // if [force login for problem] is true, forbidden when request is not signed in
             if(FORCE_LOGIN_FOR_PROBLEM && !sessionService.checkLogin(session)) {
                 return "redirect:/login/?ret=/problem/"+code;
             }
+
+            // query problem from database
             Problem problem = problemService.getProblem(Integer.parseInt(code));
             if(problem == null) {
                 response.sendError(404);
                 return null;
             }
-            sessionService.loadSessionToModel(session, model);
             boolean isStared = (sessionService.checkLogin(session) && userService.isUserStaredProblem(sessionService.getCode(session), Integer.parseInt(code)));
+
+            sessionService.loadSessionToModel(session, model);
             model.addAllAttributes(Map.of(
                     "pCode", problem.getCode(),
                     "pName", problem.getName(),
@@ -164,21 +195,27 @@ public class ProblemControl {
             ));
             return "problem/problemPage";
         }
-        catch (Exception e) {
+        catch (SQLException e) {
             response.sendError(500);
             LOGGER.error("Cannot open problem '" +code+"'", e);
             return null;
         }
     }
 
-    @PostMapping(value = "/api/ipuac-translation", produces = "application/json; charset=utf-8")
+    // translate IPUAC code to HTML
+    @PostMapping(value = "/api/problem/ipuac-translation", produces = "application/json; charset=utf-8")
     @ResponseBody
-    public String ipuacTranslation(HttpSession session, HttpServletResponse response, @RequestParam("code") String ipuacs) {
+    public String ipuacTranslation(HttpSession session, HttpServletResponse response,
+                                   @RequestParam("code") String ipuac) {
+
+        // problem make required to use api
         if(sessionService.hasPrivilege(SessionService.PRIVILEGES.PROBLEM_MAKE, session)) {
             response.setStatus(403);
-            return RestfulReponse.createRestfulResponse(HttpStatus.FORBIDDEN, "forbidden");
+            return RestfulReponse.createRestfulResponse(HttpStatus.FORBIDDEN);
         }
-        JSONArray codes = new JSONArray(ipuacs);
+
+        // translate all requested codes
+        JSONArray codes = new JSONArray(ipuac);
         JSONArray html = new JSONArray();
         for(int i=0; i<codes.length(); i++) {
             html.put(renderer.IPUACtoHTML(codes.getString(i)));
@@ -186,29 +223,41 @@ public class ProblemControl {
         return RestfulReponse.createRestfulResponse(HttpStatus.OK, html);
     }
 
-    @GetMapping("/make")
+    // get make problem page
+    @GetMapping("/problem/make")
     public String problemMake(Model model, HttpSession session, HttpServletResponse response) throws IOException {
-        sessionService.loadSessionToModel(session, model);
+        // problem make required to get page
         if(sessionService.hasPrivilege(SessionService.PRIVILEGES.PROBLEM_MAKE, session)) {
             response.sendError(404);
             return null;
         }
+
+        sessionService.loadSessionToModel(session, model);
         return "problem/mkProblem";
     }
-    @PostMapping(value = "/make/upload", produces = "application/json; charset=utf-8")
+
+    // api to upload image
+    @PostMapping(value = "/api/resource/post", produces = "application/json; charset=utf-8")
     @ResponseBody
-    public String imageUpload(@RequestParam(value = "img")MultipartFile resource, HttpSession session, HttpServletResponse response) throws IOException {
+    public String imageUpload(HttpSession session, HttpServletResponse response,
+                              @RequestParam("img") MultipartFile resource) throws IOException {
+
+        // problem make required to upload image
         if(sessionService.hasPrivilege(SessionService.PRIVILEGES.PROBLEM_MAKE, session)) {
             response.setStatus(403);
-            return RestfulReponse.createRestfulResponse(HttpStatus.FORBIDDEN, "forbidden");
+            return RestfulReponse.createRestfulResponse(HttpStatus.FORBIDDEN);
         }
-        if(resource.getSize() > 5000000) {
+
+        // if file size exceed 1MB
+        if(resource.getSize() > 1000000) {
             response.setStatus(400);
             return RestfulReponse.createRestfulResponse(HttpStatus.BAD_REQUEST, "file too large");
         }
+
+        // insert into database
         try {
             byte[] res = resource.getBytes();
-            String hash = sha.MD5(res);
+            String hash = sha.MD5(res); // hash as resource uuid
             resourceService.addResource(res, hash, sessionService.getId(session));
             return RestfulReponse.createRestfulResponse(HttpStatus.OK, hash);
         }
@@ -221,65 +270,87 @@ public class ProblemControl {
             return RestfulReponse.createRestfulResponse(HttpStatus.INTERNAL_SERVER_ERROR, "hash failure");
         }
     }
-    @GetMapping(value = "/lib/{src}", produces = "application/octet-stream; charset=utf-8")
+
+    // get resource
+    @GetMapping(value = "/resource/get/{src}", produces = "application/octet-stream; charset=utf-8")
     @ResponseBody
-    public byte[] resourceRequest(HttpServletResponse response, HttpSession session, @PathVariable("src")String hash) throws SQLException, IOException {
+    public byte[] resourceRequest(HttpServletResponse response, HttpSession session,
+                                  @PathVariable("src") String hash) throws SQLException, IOException {
+
+        // user must have privilege to see problem
         if(FORCE_LOGIN_FOR_PROBLEM && !sessionService.checkLogin(session)) {
             response.sendError(403);
             return null;
         }
 
+        // query resource
         byte[] resource = resourceService.getResource(hash);
+
+        // resource not found
         if(resource == null) {
             response.sendError(404);
             return null;
         }
+
         return resource;
     }
 
+    /**
+     * check if answer form is valid
+     * @param ansJson answer form(in json) to validate
+     * @return true when INVALID
+     */
     public boolean validateAnswerJson(String ansJson) {
-        try {
-            if(ansJson.length() > 2000) {
-                return true;
-            }
-            JSONArray tj = new JSONArray(ansJson);
-            if(tj.length() > MAX_JUDGES) return true;
-            for(Object judgeo : tj) {
-                JSONObject judge = (JSONObject)judgeo;
-                if(!(judge.has("method") && judge.has("name"))) {
-                    return true;
-                }
-                if(!(0<=judge.getInt("method") && 2>=judge.getInt("method"))) {
-                    return true;
-                }
-                if(judge.has("answer")) {
-                    if(judge.getString("answer").length() > 100) {
-                        return true;
-                    }
-                }
-            }
-        }
-        catch (Exception e) {
+        //answer json too long
+        if(ansJson.length() > 2000) {
             return true;
         }
+
+        // separate answer json into each problem judge
+        JSONArray tj = new JSONArray(ansJson);
+
+        // error when judge count exceed judge limit
+        if(tj.length() > MAX_JUDGES) return true;
+
+        for(Object judgeObject : tj) {
+            JSONObject judge = (JSONObject)judgeObject;
+            // check if judge has method and name
+            if(!(judge.has("method") && judge.has("name"))) return true;
+
+            // check if method is 0, 1, 2
+            if(!(0<=judge.getInt("method") && 2>=judge.getInt("method"))) return true;
+
+            // if judge has answer, check its length
+            if(judge.has("answer")) {
+                if(judge.getString("answer").length() > 100) {
+                    return true;
+                }
+            }
+        }
+        // return OK when all checks pass
         return false;
     }
 
-    @PostMapping(value = "/register", produces = "application/json; charset=utf-8")
+    // api to register problem
+    @PostMapping(value = "/problem/post", produces = "application/json; charset=utf-8")
     @ResponseBody
-    public String problemRegister(HttpServletRequest request, Model model, HttpSession session, HttpServletResponse response) throws IOException {
+    public String problemRegister(HttpServletRequest request, Model model, HttpSession session, HttpServletResponse response) {
+        // problem make required to register problem
         if(sessionService.hasPrivilege(SessionService.PRIVILEGES.PROBLEM_MAKE, session)) {
             response.setStatus(404);
             return RestfulReponse.createRestfulResponse(HttpStatus.FORBIDDEN);
         }
+
         try {
             String answer = request.getParameter("answer");
 
+            // validate answer json
             if(validateAnswerJson(answer)) {
                 response.setStatus(400);
                 return RestfulReponse.createRestfulResponse(HttpStatus.BAD_REQUEST, "anjs");
             }
 
+            // form -> problem object
             Problem problem = new Problem();
             problem.setName         (request.getParameter("name"));
             problem.setCategory     (request.getParameter("cate"));
@@ -290,7 +361,11 @@ public class ProblemControl {
             problem.setAnswer       (answer);
             problem.setActive       (Boolean.parseBoolean(request.getParameter("active")));
             problem.setAuthor_name  (sessionService.getName(session));
+
+            // insert into database
             problemService.registerProblem(problem);
+
+            // increase problem count
             NUMBER_OF_PROBLEMS++;
             LOGGER.debug("Problem registered. Problem count now set to "+NUMBER_OF_PROBLEMS);
 
@@ -303,33 +378,41 @@ public class ProblemControl {
         }
     }
 
-    @GetMapping("/edit/{pCode}")
+    // edit problem page get
+    @GetMapping("/problem/edit/{pCode}")
     public String editProblem(@PathVariable("pCode") String code, Model model, HttpSession session, HttpServletResponse response) throws IOException {
-        sessionService.loadSessionToModel(session, model);
+        // problem make required to edit problem
         if(sessionService.hasPrivilege(SessionService.PRIVILEGES.PROBLEM_MAKE, session)) {
             response.sendError(404);
             return null;
         }
+
+        sessionService.loadSessionToModel(session, model);
         model.addAttribute("prob_code", code);
         return "problem/editProblem";
     }
 
-    @GetMapping(value = "/api/get", produces = "application/json; charset=utf-8")
+    // general api to get problem data
+    @GetMapping(value = "/api/problem/get", produces = "application/json; charset=utf-8")
     @ResponseBody
     public String problemDetail(HttpServletRequest request, HttpServletResponse response, HttpSession session,
                                 @RequestParam("code") int code) {
+
         try {
+            // user can view problem to use this api
             if(FORCE_LOGIN_FOR_PROBLEM && !sessionService.checkLogin(session)) {
                 response.setStatus(403);
                 return RestfulReponse.createRestfulResponse(HttpStatus.FORBIDDEN, "you must be logged in");
             }
 
-            JSONObject detail = new JSONObject();
+            // query problem
             Problem problem = problemService.getFullProblem(code);
             if(problem == null) {
                 response.setStatus(404);
                 return RestfulReponse.createRestfulResponse(HttpStatus.NOT_FOUND, "resource not found");
             }
+
+            JSONObject detail = new JSONObject();
             detail.put("cate", problem.getCategoryCode());
             detail.put("diff", problem.getDifficultyCode());
             detail.put("prob_cont", problem.getContent());
@@ -342,13 +425,16 @@ public class ProblemControl {
         }
         catch (SQLException e) {
             response.setStatus(500);
+            LOGGER.error("problem get api error", e);
             return RestfulReponse.createRestfulResponse(HttpStatus.INTERNAL_SERVER_ERROR, "database error");
         }
     }
 
-    @PutMapping("/update")
+    // api to update problem
+    @PutMapping("/problem/update")
     @ResponseBody
     public String problemUpdate(HttpServletRequest request, HttpSession session, HttpServletResponse response) throws IOException {
+        // problem make required to update problem
         if(sessionService.hasPrivilege(SessionService.PRIVILEGES.PROBLEM_MAKE, session)) {
             String ret = RestfulReponse.createRestfulResponse(HttpStatus.FORBIDDEN);
             response.sendError(403);
@@ -358,11 +444,13 @@ public class ProblemControl {
         try {
             String answer = request.getParameter("answer");
 
+            // check if new answer json is valid
             if(validateAnswerJson(answer)) {
                 response.setStatus(400);
                 return RestfulReponse.createRestfulResponse(HttpStatus.BAD_REQUEST, "anjs");
             }
 
+            // form -> object
             Problem problem = new Problem();
             problem.setCode         (Integer.parseInt(request.getParameter("code")));
             problem.setName         (request.getParameter("name"));
@@ -373,15 +461,18 @@ public class ProblemControl {
             problem.setTags         (request.getParameter("tags"));
             problem.setAnswer       (answer);
             problem.setActive       (Boolean.parseBoolean(request.getParameter("active")));
+
+            // update database
             problemService.updateProblem(problem);
             return RestfulReponse.createRestfulResponse(HttpStatus.OK);
         } catch (SQLException e) {
             response.setStatus(500);
+            LOGGER.error("cannot update problem", e);
             return RestfulReponse.createRestfulResponse(HttpStatus.INTERNAL_SERVER_ERROR, "dber");
         }
     }
 
-    @PostMapping("/api/solution/post")
+    @PostMapping("/api/problem/solution/post")
     @ResponseBody
     public String registerSolve(HttpServletRequest request, HttpSession session, HttpServletResponse response,
                                 @RequestParam("code") int code,
@@ -389,19 +480,24 @@ public class ProblemControl {
                                 @RequestParam(value = "answer") String answerText) {
 
         try {
+            // user must be signed in to submit solution
             if(!sessionService.checkLogin(session) || sessionService.hasPrivilege(SessionService.PRIVILEGES.USER, session)) {
                 response.setStatus(403);
                 return RestfulReponse.createRestfulResponse(HttpStatus.FORBIDDEN, "forb");
             }
+
+            // check solution json length
             if(answerText.length() > 1200) {
                 response.setStatus(413);
                 return RestfulReponse.createRestfulResponse(HttpStatus.FORBIDDEN, "astl");
             }
 
+            // register solution
             int uCode = sessionService.getCode(session);
             JSONArray answer = new JSONArray(answerText);
             JSONObject result = problemService.registerSolution(code, time, answer, uCode);
             return RestfulReponse.createRestfulResponse(HttpStatus.OK, result);
+
         } catch (CannotJudgeException e) {
             response.setStatus(500);
             String msg;
@@ -445,26 +541,29 @@ public class ProblemControl {
         }
     }
 
-    @PatchMapping("/api/change-star")
+    // api to change star
+    @PatchMapping(value = "/problem/api/change-star", produces = "application/json; charset=utf-8")
     @ResponseBody
-    public String updateStar(HttpSession session, @RequestParam("code") String code, HttpServletResponse response) {
-        response.setContentType("application/json");
+    public String updateStar(HttpSession session,
+                             @RequestParam("code") int code, HttpServletResponse response) {
+
         LOGGER.debug("Change star of user "+sessionService.getId(session)+". problem of "+code);
-        if(sessionService.hasPrivilege(SessionService.PRIVILEGES.USER, session)) {
+
+        // user must be signed in and can solve problem
+        if(!sessionService.checkLogin(session) || sessionService.hasPrivilege(SessionService.PRIVILEGES.USER, session)) {
             response.setStatus(403);
             return RestfulReponse.createRestfulResponse(HttpStatus.FORBIDDEN);
         }
+
         try {
-            int result = userService.changeUserStar(sessionService.getCode(session), Integer.parseInt(code));
+            // change star
+            int result = userService.changeUserStar(sessionService.getCode(session), code);
             JSONObject res = new JSONObject();
             res.put("stared", result);
             return RestfulReponse.createRestfulResponse(HttpStatus.OK, res);
-        }
-        catch (NumberFormatException e) {
-            response.setStatus(400);
-            return RestfulReponse.createRestfulResponse(HttpStatus.BAD_REQUEST);
         } catch (SQLException e) {
             response.setStatus(500);
+            LOGGER.error("cannot change star", e);
             return RestfulReponse.createRestfulResponse(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

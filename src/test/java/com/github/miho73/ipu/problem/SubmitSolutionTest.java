@@ -42,7 +42,7 @@ public class SubmitSolutionTest {
     @DisplayName("Submit solution with correct answer")
     public void CorrectTest() throws Exception {
         mockMvc.perform(
-                post("/problem/api/solution/post")
+                post("/api/problem/solution/post")
                         .session(session)
                         .param("code", "1")
                         .param("time", "123")
@@ -56,7 +56,7 @@ public class SubmitSolutionTest {
     @DisplayName("Submit solution with wrong answer")
     public void WrongTest() throws Exception {
         mockMvc.perform(
-                post("/problem/api/solution/post")
+                post("/api/problem/solution/post")
                         .session(session)
                         .param("code", "1")
                         .param("time", "123")
@@ -70,7 +70,7 @@ public class SubmitSolutionTest {
     @DisplayName("Submit solution with self judge AC")
     public void SelfACTest() throws Exception {
         mockMvc.perform(
-                        post("/problem/api/solution/post")
+                        post("/api/problem/solution/post")
                                 .session(session)
                                 .param("code", "2")
                                 .param("time", "123")
@@ -84,7 +84,7 @@ public class SubmitSolutionTest {
     @DisplayName("Submit solution with self judge WA")
     public void SelfWATest() throws Exception {
         mockMvc.perform(
-                        post("/problem/api/solution/post")
+                        post("/api/problem/solution/post")
                                 .session(session)
                                 .param("code", "2")
                                 .param("time", "123")

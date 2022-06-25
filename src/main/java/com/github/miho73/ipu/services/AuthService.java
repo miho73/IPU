@@ -11,7 +11,6 @@ import com.github.miho73.ipu.library.security.Captcha;
 import com.github.miho73.ipu.library.security.SHA;
 import com.github.miho73.ipu.library.security.SecureTools;
 import com.github.miho73.ipu.library.security.bruteforce.LoginAttemptService;
-import com.github.miho73.ipu.repositories.SolutionRepository;
 import com.github.miho73.ipu.repositories.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +37,6 @@ import java.util.regex.Pattern;
 @Service("AuthService")
 public class AuthService {
     @Autowired private UserRepository userRepository;
-    @Autowired private SolutionRepository solutionRepository;
     @Autowired private SHA sha;
     @Autowired private ApplicationEventPublisher publisher;
     @Autowired private LoginAttemptService loginAttemptService;
@@ -46,7 +44,7 @@ public class AuthService {
     @Autowired private SessionService sessionService;
     @Autowired private InviteService inviteService;
 
-    private final Pattern PasswordValidator = Pattern.compile("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d!\"#$%&'()*+,\\-./:;<=>?@\\[\\]^_`{|}~\\\\\\)]{6,}$");
+    private final Pattern PasswordValidator = Pattern.compile("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d!\"#$%&'()*+,\\-./:;<=>?@\\[\\]^_`{|}~\\\\]{6,}$");
 
     @Value("${captcha.v3.sitekey}") private String CAPTCHA_V3_SITE_KEY;
     @Value("${captcha.v2.sitekey}") private String CAPTCHA_V2_SITE_KEY;
@@ -108,9 +106,7 @@ public class AuthService {
             if (user.getPwd().equals(hash)) {
                 LOGGER.debug("Login attempt: id=" + id + ", result=ok");
                 user = userRepository.getUserById(id, connection);
-                LOGGER.debug("Queried user data to set session. id "+id);
-                userRepository.updateUserTSById(id, "last_login", new Timestamp(System.currentTimeMillis()), connection);
-                LOGGER.debug("Updated last login. id "+id);
+                userRepository.updateUserLastLoginById(id, new Timestamp(System.currentTimeMillis()), connection);
                 sessionService.setAttribute(session, "isLoggedIn", true);
                 sessionService.setUserSession(session, user);
                 LOGGER.debug("Set session for session id "+session.getId());
@@ -192,6 +188,11 @@ public class AuthService {
         return 3;
     }
 
+    /**
+     * check if id is already exists on database
+     * @param id id to check
+     * @return returns if id is already on database
+     */
     private boolean IdDuplicationTest(String id) throws SQLException {
         Connection connection = userRepository.openConnection();
         Object code = userRepository.getUserDataById(id, "user_code", connection);
@@ -200,6 +201,7 @@ public class AuthService {
     }
 
     public void addUser(User user, String captchaToken) throws IOException, CaptchaFailureException, SQLException, ForbiddenException, DuplicatedException, NoSuchAlgorithmException, InvalidInputException {
+
         if(!captcha.getV2Result(captchaToken)) {
             LOGGER.debug("Signup request: id="+user.getId()+", name="+user.getName()+", result=CAPTCHA failed");
             throw new CaptchaFailureException("for token "+captchaToken);
@@ -210,13 +212,16 @@ public class AuthService {
         }
         if(!IdDuplicationTest(user.getId())) {
             LOGGER.debug("Signup request: id="+user.getId()+", name="+user.getName()+", result=ID Duplicated");
-            throw new DuplicatedException(String.format("id %s already exists", user.getId()));
+            throw new DuplicatedException("id "+user.getId()+" already exists");
         }
 
+        // Generate hash salt and hash
         byte[] salt = SecureTools.getSecureRandom(64);
         String hash = sha.SHA512(user.getPwd(), salt);
         user.setPwd(hash);
         user.setSalt(Base64.getEncoder().encodeToString(salt));
+
+        // Insert into database
         Connection userConnection = null;
         try {
             userConnection = userRepository.openConnectionForEdit();
@@ -225,26 +230,35 @@ public class AuthService {
             userRepository.commitAndClose(userConnection);
             LOGGER.debug("Signup request: id="+user.getId()+", name="+user.getName()+", result=ok");
         }
-        catch (Exception e) {
-            LOGGER.error("Signup request: id="+user.getId()+", name="+user.getName()+", result=Internal error", e);
-            if(userConnection != null) userRepository.rollback(userConnection);
-            if(userConnection != null) userRepository.close(userConnection);
+        catch (SQLException e) {
+            LOGGER.error("Signup request: id="+user.getId()+", name="+user.getName()+", result=error", e);
+            if(userConnection != null) userRepository.rollbackAndClose(userConnection);
             throw e;
         }
     }
 
+    /**
+     * update user password
+     * @param nPwd new password for user
+     * @param uCode code of user to change password
+     */
     public void updatePassword(String nPwd, int uCode) throws NoSuchAlgorithmException, InvalidInputException, SQLException {
+        // check password form
         if(!PasswordValidator.matcher(nPwd).matches()) {
             throw new InvalidInputException("pwd");
         }
+
+        // update salt and hash
         byte[] salt = SecureTools.getSecureRandom(64);
         String hash = sha.SHA512(nPwd, salt);
+
+        // Update database
         Connection connection = userRepository.openConnectionForEdit();
         try {
             userRepository.updatePassword(hash, Base64.getEncoder().encodeToString(salt), uCode, connection);
             userRepository.commitAndClose(connection);
         }
-        catch (Exception e) {
+        catch (SQLException e) {
             userRepository.rollbackAndClose(connection);
             LOGGER.error("Cannot update password", e);
             throw e;

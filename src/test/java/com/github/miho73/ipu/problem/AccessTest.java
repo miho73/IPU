@@ -61,7 +61,7 @@ public class AccessTest {
     @Test
     public void getProblemViaApiWithoutLogin() throws Exception {
         mockMvc.perform(
-                        get("/problem/api/get")
+                        get("/api/problem/get")
                                 .param("code", "1")
                 )
                 .andExpect(status().isForbidden());
@@ -71,7 +71,7 @@ public class AccessTest {
     @Test
     public void getProblemViaApiWithInvalidData() throws Exception {
         mockMvc.perform(
-                        get("/problem/api/get")
+                        get("/api/problem/get")
                                 .param("code", "text")
                                 .session(session)
                 )
@@ -83,7 +83,7 @@ public class AccessTest {
     @Test
     public void getProblemViaApiWithLogin() throws Exception {
         mockMvc.perform(
-                        get("/problem/api/get")
+                        get("/api/problem/get")
                                 .param("code", "1")
                                 .session(session)
                 )
@@ -94,7 +94,7 @@ public class AccessTest {
     @Test
     public void getProblemResourceWithoutLogin() throws Exception {
         mockMvc.perform(
-                        get("/problem/lib/VLgV_m8Q-eSl8S3CYCiwxw==")
+                        get("/resource/get/VLgV_m8Q-eSl8S3CYCiwxw==")
                 )
                 .andExpect(status().isForbidden());
     }
@@ -103,7 +103,7 @@ public class AccessTest {
     @Test
     public void getProblemResourceWithLogin() throws Exception {
         mockMvc.perform(
-                        get("/problem/lib/VLgV_m8Q-eSl8S3CYCiwxw==")
+                        get("/resource/get/VLgV_m8Q-eSl8S3CYCiwxw==")
                                 .session(session)
                 )
                 .andExpect(status().isOk());

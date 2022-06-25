@@ -213,7 +213,7 @@ function submitAll(code) {
     }
     $.ajax({
         method: 'POST',
-        url: '/problem/api/solution/post',
+        url: '/api/problem/solution/post',
         dataType: 'json',
         data: {
             code: code,

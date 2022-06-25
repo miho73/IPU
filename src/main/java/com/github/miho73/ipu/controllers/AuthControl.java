@@ -120,6 +120,7 @@ public class AuthControl {
         }
     }
 
+    // sign out
     @GetMapping("/login/deauth")
     public String invalidSession(HttpSession session) {
         if(session == null || !sessionService.checkLogin(session)) {
@@ -132,34 +133,34 @@ public class AuthControl {
         return "redirect:/";
     }
 
+    // Get sign up page
     @GetMapping("/signup")
     public String getSignup(Model model) {
         authService.modelCaptchaV2(model);
         return "auth/signup";
     }
 
-    @PostMapping("/api/account/create")
+    // Create user account
+    @PostMapping(value = "/api/account/create", produces = "application/json; charset=utf-8")
     @ResponseBody
-    public String signup(@RequestParam("id") String id,
+    public String signup(HttpServletResponse response, HttpSession session,
+                         @RequestParam("id") String id,
                          @RequestParam("password") String pwd,
                          @RequestParam("name") String name,
                          @RequestParam("invite") String invite,
-                         @RequestParam("gToken") String gToken,
-                         HttpServletResponse response, HttpSession session) {
+                         @RequestParam("gToken") String gToken) {
 
+        // check form
         if(!IdValidator.matcher(id).matches()) {
             response.setStatus(400);
-            LOGGER.debug("Signup id regex failure: "+id);
             return RestfulReponse.createRestfulResponse(HttpStatus.BAD_REQUEST, "badform");
         }
         if(name.length() > 50) {
             response.setStatus(400);
-            LOGGER.debug("Signup name regex failure: "+name);
             return RestfulReponse.createRestfulResponse(HttpStatus.BAD_REQUEST, "badform");
         }
         if(!PasswordValidator.matcher(pwd).matches()) {
             response.setStatus(400);
-            LOGGER.debug("Signup password regex failure");
             return RestfulReponse.createRestfulResponse(HttpStatus.BAD_REQUEST, "badform");
         }
 
@@ -268,7 +269,7 @@ public class AuthControl {
         }
     }
 
-    @PostMapping("/api/invite-check")
+    @PostMapping(value = "/api/invite/check", produces = "application/json; charset=utf-8")
     @ResponseBody
     public String inviteCheck(@RequestBody String code) {
         boolean ok = false;
@@ -276,11 +277,12 @@ public class AuthControl {
             if(code.length()>=4){
                 ok = inviteService.checkExists(code.substring(code.length() - 4));
             }
-            LOGGER.debug("Invite code challenge. "+code+": "+(ok?"succeed":"failed"));
+            LOGGER.debug("Invite code challenge. "+code+": "+ok);
+            return RestfulReponse.createRestfulResponse(HttpStatus.OK, ok);
         }
-        catch (Exception e) {
+        catch (SQLException e) {
             LOGGER.error("Cannoot check invite code: "+code, e);
+            return RestfulReponse.createRestfulResponse(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return Boolean.toString(ok);
     }
 }

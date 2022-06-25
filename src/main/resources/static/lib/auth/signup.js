@@ -6,12 +6,12 @@ function keyDwn() {
 function checkCode() {
     gei('code-check').disabled = true;
     $.ajax({
-        url: "/api/invite-check",
+        url: "/api/invite/check",
         data: {"code": gei('invite').value},
         type: "POST",
         dataType: "json",
         success: function(data) {
-            if(data == true) {
+            if(data.result == true) {
                 gei('invite').style.opacity = 0;
                 gei('errdisplay').style.display = "none";
                 setTimeout(()=>{
@@ -48,7 +48,7 @@ function checkCode() {
 }
 
 const idValidator = new RegExp('^(?=.*[A-Za-z])[A-Za-z0-9]{0,50}$');
-const pwdValidator = new RegExp('^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d!"#$%&\'()*+,\\-./:;<=>?@\\[\\]^_`{|}~\\\\\\)]{6,}$');
+const pwdValidator = new RegExp('^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d!"#$%&\'()*+,\\-./:;<=>?@\\[\\]^_`{|}~\\\\]{6,}$');
 
 function create() {
     let id = gei("id").value, pwd = gei("pwd").value, name = gei("name").value;

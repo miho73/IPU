@@ -9,7 +9,7 @@ function selectLocalImage(forwhat) {
         $.ajax({
             type: 'POST',
             enctype: 'multipart/form-data',
-            url: '/problem/make/upload',
+            url: '/api/resource/post',
             dataType: 'json',
             data: fd,
             processData: false,
@@ -42,7 +42,7 @@ function preview() {
     payload[1] = toLf(vSolution.getValue());
     $.ajax({
        type: 'POST',
-       url: '/problem/api/ipuac-translation',
+       url: '/api/problem/ipuac-translation',
        data: {
            code: JSON.stringify(payload)
        },
@@ -108,7 +108,7 @@ function confirme() {
     }
     $.ajax({
         type: 'POST',
-        url: '/problem/register',
+        url: '/problem/post',
         dataType: 'json',
         data: {
             name: namep,

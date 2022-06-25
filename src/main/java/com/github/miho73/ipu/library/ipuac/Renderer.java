@@ -131,7 +131,7 @@ public class Renderer {
                 if(matcher.find()) {
                     String[] lstCfg = matcher.group(2).split("&");
                     if(matcher.group(1).startsWith("img:")) {
-                        line = matcher.replaceFirst("<img src=\"/problem/lib/"+matcher.group(1).substring(4)+"\" class=\"ac-img\" "+String.join(" ", lstCfg)+">");
+                        line = matcher.replaceFirst("<img src=\"/resource/get/"+matcher.group(1).substring(4)+"\" class=\"ac-img\" "+String.join(" ", lstCfg)+">");
                     }
                     else line = matcher.replaceFirst("<img src=\""+matcher.group(1)+"\" class=\"ac-img\" "+String.join(" ", lstCfg)+">");
                 }
@@ -141,7 +141,7 @@ public class Renderer {
                 Matcher matcher = image.matcher(line);
                 if(matcher.find()) {
                     if(matcher.group(1).startsWith("img:")) {
-                        line = matcher.replaceFirst("<img src=\"/problem/lib/"+matcher.group(1).substring(4)+"\" class=\"ac-img\">");
+                        line = matcher.replaceFirst("<img src=\"/resource/get/"+matcher.group(1).substring(4)+"\" class=\"ac-img\">");
                     }
                     else line = matcher.replaceFirst("<img src=\""+matcher.group(1)+"\" class=\"ac-img\">");
                 }

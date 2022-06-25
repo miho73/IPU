@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.TimeZone;
 
 @Controller("IssueController")
-@RequestMapping("issue")
 public class IssueController {
     @Autowired SessionService sessionService;
     @Autowired IssueService issueService;
@@ -31,15 +30,16 @@ public class IssueController {
     @Autowired Renderer renderer;
 
     private final int ISSUE_PER_PAGE = 30;
-    private DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.S'Z'");
+    private final DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.S'Z'");
 
     public IssueController() {
         df.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
-    @GetMapping("")
-    public String getIssuePage(@RequestParam(name = "page", required = false, defaultValue = "0") int page,
-                               Model model, HttpSession session) throws SQLException {
+    @GetMapping("/issue")
+    public String getIssuePage(Model model, HttpSession session,
+                               @RequestParam(name = "page", required = false, defaultValue = "0") int page) throws SQLException {
+
         sessionService.loadSessionToModel(session, model);
         List<Issue> issueList = issueService.getIssueList(page*ISSUE_PER_PAGE+1, ISSUE_PER_PAGE);
         model.addAllAttributes(Map.of(
@@ -48,9 +48,10 @@ public class IssueController {
         return "issue/issuePage";
     }
 
-    @GetMapping("/{issueCode}")
-    public String getIssueViewerPage(@PathVariable("issueCode") int issueCode,
-                                     Model model, HttpSession session) throws SQLException {
+    @GetMapping("/issue/{issueCode}")
+    public String getIssueViewerPage(Model model, HttpSession session,
+                                     @PathVariable("issueCode") int issueCode) throws SQLException {
+
         sessionService.loadSessionToModel(session, model);
 
         Issue issue = issueService.getIssue(issueCode);
@@ -65,7 +66,7 @@ public class IssueController {
         return "issue/issueViewPage";
     }
 
-    @GetMapping("/new")
+    @GetMapping("/issue/new")
     public String createNewIssuePage(Model model, HttpSession session) {
         if(!sessionService.checkLogin(session)) {
             return "redirect:/login/?ret=/issue/new";
@@ -74,11 +75,11 @@ public class IssueController {
         return "issue/createNewIssue";
     }
 
-    @GetMapping("/api/get/{param}")
+    @GetMapping("/issue/api/get/{param}")
     @ResponseBody
-    public String getIssue(@RequestParam("issue-code") int code,
-                           @PathVariable("param") String column,
-                           HttpServletResponse response) {
+    public String getIssue(HttpServletResponse response,
+                           @RequestParam("issue-code") int code,
+                           @PathVariable("param") String column) {
         try {
             Issue issue = issueService.getIssue(code);
             if(issue == null) {
@@ -107,13 +108,13 @@ public class IssueController {
         }
     }
 
-    @PostMapping("/api/create-new")
+    @PostMapping("/issue/api/create-new")
     @ResponseBody
-    public String newIssue(@RequestParam("name") String name,
+    public String newIssue(HttpSession session, HttpServletResponse response,
+                           @RequestParam("name") String name,
                            @RequestParam("type") int type,
                            @RequestParam("pCode") int pCode,
-                           @RequestParam("content") String content,
-                           HttpSession session, HttpServletResponse response) {
+                           @RequestParam("content") String content) {
         if(!sessionService.checkLogin(session)) {
             response.setStatus(403);
             return RestfulReponse.createRestfulResponse(HttpStatus.FORBIDDEN);
@@ -153,11 +154,12 @@ public class IssueController {
         }
     }
 
-    @PatchMapping("/api/name/update")
+    @PatchMapping("/issue/api/name/update")
     @ResponseBody
-    public String updateTitle(@RequestParam("issue-code") int issueCode,
-                              @RequestParam("new-name") String newName,
-                              HttpSession session, HttpServletResponse response) {
+    public String updateTitle(HttpSession session, HttpServletResponse response,
+                              @RequestParam("issue-code") int issueCode,
+                              @RequestParam("new-name") String newName) {
+
         try {
             issueService.updateIssueTitle(issueCode, newName, sessionService.getId(session));
         }
@@ -179,7 +181,7 @@ public class IssueController {
         return RestfulReponse.createRestfulResponse(HttpStatus.OK);
     }
 
-    @PatchMapping("/api/close")
+    @PatchMapping("/issue/api/close")
     @ResponseBody
     public String closeIssue() {
         return "";

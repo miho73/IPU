@@ -143,8 +143,8 @@ public class UserRepository extends com.github.miho73.ipu.repositories.Repositor
     }
 
     // Update user data type of timestamp
-    public void updateUserTSById(String id, String column, Timestamp timestamp, Connection conn) throws SQLException {
-        String sql = "UPDATE iden SET "+column+"=? WHERE user_id=?;";
+    public void updateUserLastLoginById(String id, Timestamp timestamp, Connection conn) throws SQLException {
+        String sql = "UPDATE iden SET last_login=? WHERE user_id=?;";
         PreparedStatement psmt = conn.prepareStatement(sql);
         psmt.setTimestamp(1, timestamp);
         psmt.setString(2, id);

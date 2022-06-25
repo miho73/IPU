@@ -359,6 +359,7 @@ public class UserControl {
         return "profile/goodbye";
     }
 
+    //TODO: change url to /api/account/delete
     @PostMapping("/settings/request/account/delete")
     public String byeAcc(Model model, HttpSession session, HttpServletRequest request, HttpServletResponse response,
                          @RequestParam("pwd") String pwd,

@@ -32,9 +32,12 @@ public class ProblemService {
 
     public JSONArray getProblemList(int from, int length) throws SQLException {
         JSONArray root = new JSONArray();
+
+        // Get problem
         Connection connection = problemRepository.openConnection();
         List<Problem> problems = problemRepository.getProblemBriefly(from, length, connection);
         problemRepository.close(connection);
+
         for(Problem problem : problems) {
             JSONObject element = new JSONObject();
             element.put("code", problem.getCode());

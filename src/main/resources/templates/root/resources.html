@@ -122,7 +122,7 @@
                         return;
                     }
                     resArr.forEach(res => {
-                        html+=`<tr><td><button class="res-hash-copy" onclick="navigator.clipboard.writeText(this.innerText)">${res.resource_code}</button></td><td><img src="/problem/lib/${res.resource_code}" width="100%"></td><td>${res.registered}</td><td>${res.registered_by}</td><td>${res.resource_name}</td></tr>`;
+                        html+=`<tr><td><button class="res-hash-copy" onclick="navigator.clipboard.writeText(this.innerText)">${res.resource_code}</button></td><td><img src="/resource/get/${res.resource_code}" width="100%"></td><td>${res.registered}</td><td>${res.registered_by}</td><td>${res.resource_name}</td></tr>`;
                     });
                     gei('resource-list').innerHTML = html;
                 },
