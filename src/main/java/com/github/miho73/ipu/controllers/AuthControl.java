@@ -38,25 +38,50 @@ public class AuthControl {
     private final Pattern IdValidator = Pattern.compile("^(?=.*[A-Za-z])[A-Za-z0-9]{0,50}$");
     private final Pattern PasswordValidator = Pattern.compile("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d!\"#$%&'()*+,\\-./:;<=>?@\\[\\]^_`{|}~\\\\\\)]{6,}$");
 
+    // Get login page
     @GetMapping("/login")
-    public String getLogin(@RequestParam(value = "ret", required = false, defaultValue = "/") String ret, Model model) {
+    public String getLogin(Model model, HttpServletResponse response, HttpSession session,
+                           @RequestParam(value = "ret", required = false, defaultValue = "/") String ret,
+                           @RequestParam(value = "error", required = false, defaultValue = "0") int error,
+                           @RequestParam(value = "captcha", required = false, defaultValue = "3") int captchaVersion) throws IOException {
+
+        // redirect if user is already logged in
+        if(sessionService.checkLogin(session)) {
+            return "redirect:"+ret;
+        }
+
+        // Send Bad Request if return address is too long
+        if(ret.length() >= 100) {
+            response.sendError(400);
+            return null;
+        }
         model.addAllAttributes(Map.of(
                 "return", ret,
-                "error_text", ""
+                "error", error
         ));
-        authService.modelCaptchaV3(model);
+        // load captcha
+        if(captchaVersion == 3) authService.modelCaptchaV3(model);
+        else if(captchaVersion == 2) authService.modelCaptchaV2(model);
+        else {
+            response.sendError(400);
+            return null;
+        }
         return "auth/signin";
     }
 
+    /**
+     * Process login request
+     * Error cods:
+     * 1 is id or password does not satisfies form
+     */
     @PostMapping("/login")
-    public String postLogin(@RequestParam(value = "ret", required = false, defaultValue = "/") String ret,
-                            @RequestParam("id") String id,
-                            @RequestParam("password") String password,
-                            @RequestParam("gToken") String gToken,
-                            @RequestParam("gVers") String gVers,
-                            Model model,
-                            HttpSession session,
-                            HttpServletRequest request) {
+    public String  postLogin(Model model, HttpSession session, HttpServletRequest request,
+                             @RequestParam(value = "ret", required = false, defaultValue = "/") String ret,
+                             @RequestParam("id") String id,
+                             @RequestParam("password") String password,
+                             @RequestParam("gToken") String gToken,
+                             @RequestParam("gVers") String gVers) {
+
         if(sessionService.checkLogin(session)) {
             return "redirect:"+ret;
         }
@@ -65,48 +90,39 @@ public class AuthControl {
 
         // Login form validator
         if(!IdValidator.matcher(id).matches() || !PasswordValidator.matcher(password).matches()) {
-            LOGGER.debug("Invalid login form: id="+id);
-            model.addAttribute("error_text", "ID 또는 암호가 형식에 맞지 않아요.");
-            return "auth/signin";
+            return "redirect:/login/?error=1&ret="+ret;
         }
 
-        AuthService.LOGIN_RESULT result;
         try {
-            result = authService.completeLogin(id, password, gToken, gVers, session, request);
-        } catch (Exception e) {
-            LOGGER.error("Login error: id="+id+", gVers="+gVers+", gToken="+gToken, e);
-            model.addAttribute("error_text", "로그인하지 못했어요. 잠시 후에 다시 시도해주세요.");
-            return "auth/signin";
-        }
+            int result = authService.completeLogin(id, password, gToken, gVers, session, request);
 
-        if(result == AuthService.LOGIN_RESULT.OK) {
-            if(!ret.startsWith("/")) return "redirect:/";
-            return "redirect:"+ret;
+            if(result == 0) { // login success
+                if(!ret.startsWith("/")) return "redirect:/";
+                return "redirect:"+ret;
+            }
+            else if(result == 1) { // login locked
+                return "redirect:/login/?error=2&ret="+ret;
+            }
+            else if(result == 2 || result == 3) { // id/password failure
+                return "redirect:/login/?error=3&ret="+ret;
+            }
+            else if (result == 4) { // user blocked
+                return "redirect:/login/?error=4&ret="+ret;
+            }
+            else if(result == 5) { // CAPTCHA failure
+                return "redirect:/login/?error=5&captcha=2&ret="+ret;
+            }
+            else { // none of above
+                return "redirect:/login/?error=6&ret="+ret;
+            }
+        } catch (Exception e) {
+            return "redirect:/login/?error=6&ret="+ret;
         }
-        else if(result == AuthService.LOGIN_RESULT.LOCKED) {
-            model.addAttribute("error_text", "로그인할 수 없어요.");
-            return "auth/signin";
-        }
-        else if(result == AuthService.LOGIN_RESULT.CAPTCHA_FAILED) {
-            model.addAttribute("error_text", "CAPTCHA 인증에 실패했어요. 다시 시도해주세요.");
-            authService.modelCaptchaV2(model);
-            return "auth/signin";
-        }
-        else if (result == AuthService.LOGIN_RESULT.BLOCKED) {
-            model.addAttribute("error_text", "이 계정으로는 로그인할 수 없어요.");
-            return "auth/signin";
-        }
-        else if(result == AuthService.LOGIN_RESULT.BAD_PASSWORD || result == AuthService.LOGIN_RESULT.ID_NOT_FOUND) {
-            model.addAttribute("error_text", "다시 시도해주세요.");
-            return "auth/signin";
-        }
-        model.addAttribute("error_text", "문제가 발생해서 로그인하지 못했어요. 잠시 후에 다시 시도해주세요.");
-        return "auth/signin";
     }
 
     @GetMapping("/login/deauth")
     public String invalidSession(HttpSession session) {
-        if(session == null) {
+        if(session == null || !sessionService.checkLogin(session)) {
             return "redirect:/";
         }
         sessionService.clearSudo(session);

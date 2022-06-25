@@ -42,7 +42,7 @@ public class AccessTest {
     @Test
     public void getProblemWithoutLogin() throws Exception {
         mockMvc.perform(
-                        get("/problem/1")
+                    get("/problem/1")
                 )
                 .andExpect(status().isFound());
     }
@@ -51,7 +51,7 @@ public class AccessTest {
     @Test
     public void getProblemWithLogin() throws Exception {
         mockMvc.perform(
-                        get("/problem/1")
+                    get("/problem/1")
                                 .session(session)
                 )
                 .andExpect(status().isOk());

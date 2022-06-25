@@ -101,7 +101,7 @@ button.submit:disabled{
     background-color: #fffb;
 }
 
-p#err {
+p.err {
     position: absolute;
     font-size: 2em;
     color: #f00;
@@ -149,7 +149,7 @@ div#captcha {
     div#capt-show {
         font-size: 0.8em;
     }
-    p#err {
+    p.err {
         font-size: 1em;
         font-weight: 720;
     }

@@ -23,7 +23,12 @@
 		</style>
 	</head>
 	<body>
-		<p id="err" th:text="${error_text}"></p>
+		<p class="err" th:if="${error==1}">ID 또는 암호가 형식에 맞지 않아요.</p>
+		<p class="err" th:if="${error==2}">로그인할 수 없어요.</p>
+		<p class="err" th:if="${error==3}">다시 시도해주세요.</p>
+		<p class="err" th:if="${error==4}">이 계정으로는 로그인할 수 없어요.</p>
+		<p class="err" th:if="${error==5}">CAPTCHA 인증에 실패했어요. 다시 시도해주세요.</p>
+		<p class="err" th:if="${error==6}">로그인하지 못했어요. 잠시 후에 다시 시도해주세요.</p>
 		<div class="vh-center">
 			<form method="POST" onsubmit="return login()" th:action="${'/login?ret='+return}">
 				<label class="title">로그인</label>

@@ -59,43 +59,52 @@ public class AuthService {
         df.setTimeZone(tz);
     }
 
-    public enum LOGIN_RESULT {
-        OK,
-        BAD_PASSWORD,
-        ID_NOT_FOUND,
-        INVALID_INPUT,
-        CAPTCHA_FAILED,
-        BLOCKED,
-        LOCKED
-    }
-
-    public LOGIN_RESULT completeLogin(String id, String password, String gToken, String gVers, HttpSession session, HttpServletRequest request) throws SQLException, NoSuchAlgorithmException, InvalidInputException, IOException {
-        if(checkLocked(request)) {
-            return LOGIN_RESULT.LOCKED;
+    /**
+     * process login
+     * @param id        Id to login
+     * @param password  Password of user to login
+     * @param gToken    Google reCAPTCHA token
+     * @param gVers     Google reCAPTCHA version(v2 or v3)
+     * @param session   User session to login
+     * @param request   HttpServetRequest of login request
+     * @return 0 when succeed / 1 when login locked / 2 when id not found / 3 when password is wrong / 4 when user is blocked / 5 when reCAPTCHA failure
+     */
+    public short completeLogin(String id, String password, String gToken, String gVers, HttpSession session, HttpServletRequest request) throws SQLException, NoSuchAlgorithmException, InvalidInputException, IOException {
+        // return 1 if login is locked
+        if(this.checkLocked(request)) {
+            return 1;
         }
 
-        if(id.equals("") || password.equals("")) throw new InvalidInputException("");
+        // if form is empty, throw InvalidInputException
+        if(id.equals("") || password.equals(""))
+            return 1;
 
+        // complete captcha test
         boolean captchaFlag = false;
         if(gVers.equals("v3") && captcha.getV3Result(gToken)) captchaFlag = true;
         else if(gVers.equals("v2") && captcha.getV2Result(gToken)) captchaFlag = true;
 
+        // if captcha ok
         if (captchaFlag) {
             Connection connection = userRepository.openConnection();
-
             User user = userRepository.getUserForAuthentication(id, connection);
+
+            // when user is not found
             if (user == null) {
                 LOGGER.debug("Login attempt: id=" + id + ", result=id not found("+id+")");
                 reportAuthFailure(request);
                 userRepository.close(connection);
-                return LOGIN_RESULT.ID_NOT_FOUND;
+                return 2;
             }
+            // when user does not have 'u' privilege, block login
             if (!user.getPrivilege().contains("u")) {
                 LOGGER.debug("Login attempt: id=" + id + ", result=blocked");
                 userRepository.close(connection);
-                return LOGIN_RESULT.BLOCKED;
+                return 4;
             }
+            // check password
             String hash = sha.SHA512(password, user.getSalt());
+            // when login succeed
             if (user.getPwd().equals(hash)) {
                 LOGGER.debug("Login attempt: id=" + id + ", result=ok");
                 user = userRepository.getUserById(id, connection);
@@ -106,16 +115,19 @@ public class AuthService {
                 sessionService.setUserSession(session, user);
                 LOGGER.debug("Set session for session id "+session.getId());
                 userRepository.close(connection);
-                return LOGIN_RESULT.OK;
+                return 0;
             }
-            LOGGER.debug("Login attempt: id=" + id + ", result=wrong password");
-            reportAuthFailure(request);
-            userRepository.close(connection);
-            return LOGIN_RESULT.BAD_PASSWORD;
-        } else {
+            else {
+                LOGGER.debug("Login attempt: id=" + id + ", result=wrong password");
+                reportAuthFailure(request);
+                userRepository.close(connection);
+                return 3;
+            }
+        }
+        // when captcha failure
+        else {
             LOGGER.debug("Login attempt: id=" + id + ", result=CAPTCHA failed");
-            reportAuthFailure(request);
-            return LOGIN_RESULT.CAPTCHA_FAILED;
+            return 5;
         }
     }
 
